@@ -72,12 +72,13 @@ public class ConnectionManager {
         }
     }
 
-    public void tableFromDatabase(GridPane grid, String select_what, String select_from, String select_condition) {
+    public <T extends InternalLink> void linkTableFromDatabase(GridPane grid, String select_what, String select_from, String select_condition, String link_by, Class<T> cls, ButtonService buttonS) throws Exception{
         ArrayList columnNames = new ArrayList();
         ArrayList data = new ArrayList();
 
         //  Connect to an MySQL Database, run query, get result set
         String sql = "SELECT " + select_what + " FROM " + select_from + " WHERE " + select_condition;
+        System.out.println(sql);
 
         try (Connection connection = DriverManager.getConnection(url, userid, password);
              Statement stmt = connection.createStatement();
@@ -99,7 +100,7 @@ public class ConnectionManager {
                 data.add(row);
             }
 
-
+            //first argument has to be id number
             for (int i = 0; i < columns; i++) {
                 Text heading = new Text((String) columnNames.get(i));
                 grid.add(heading, i+2, 2);
@@ -109,8 +110,24 @@ public class ConnectionManager {
             for (int i = 0; i < data.size(); i++){
                 for (int j = 0; j < columns; j++){
                     ArrayList currentRow = (ArrayList) data.get(i);
-                    Text buff = new Text((String) currentRow.get(j).toString());
-                    grid.add(buff, j+2, i+3);
+                    if (columnNames.get(j).equals(link_by)){
+                        try {
+                            T buff = cls.newInstance();
+                            buff.setLabel((String) currentRow.get(j).toString());
+                            buff.setButtonService(buttonS);
+                            grid.add(buff, j + 2, i + 3);
+                        }
+                        catch(Exception e){
+                            {
+                                System.out.println( e.getMessage() );
+                            }
+                        }
+                    }
+                    else {
+                        Text buff = new Text((String) currentRow.get(j).toString());
+                        grid.add(buff, j+2, i+3);
+
+                    }
                 }
 
             }
