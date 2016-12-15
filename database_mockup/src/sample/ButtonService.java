@@ -20,11 +20,22 @@ import java.util.*;
  */
 public class ButtonService {
     ArrayList<Button> buttonList = new ArrayList<Button>();
+    ConnectionManager connector = new ConnectionManager();
+    GridPane grid;
+    GridPaneBuilder builder;
+    Stage primaryStage;
 
-    public void addButtons(GridPane grid, ArrayList<Button> buttons) {
+    ButtonService(GridPane grid, GridPaneBuilder builder, Stage primaryStage){
+        this.grid = grid;
+        this.builder = builder;
+        this. primaryStage = primaryStage;
+    }
 
-        for (int i = 0; i < buttons.size(); i++) {
-            grid.add(buttons.get(i), 0, i);
+
+    public void addButtons() {
+
+        for (int i = 0; i < buttonList.size(); i++) {
+            grid.add(buttonList.get(i), 0, i);
         }
     }
 
@@ -33,24 +44,18 @@ public class ButtonService {
 
     }
 
+    public void update_grid(){
+        grid = builder.build();
+        addButtons();
+        primaryStage.setScene(new Scene(grid, 640, 480));
+    }
+
     public void initialize(){
-        Button count_btn = new Button("Count fishes");
+        FishButton count_btn = new FishButton(this, "Count fishes");
         add(count_btn);
-
-        count_btn.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent e) {
-                GridPane root = builder.build();
-
-                for (int i = 1; i <= "COUNT(DISTINCT species_id FROM census_subject"; i++ )
-
-                tableFromDatabase(root,"first, last FROM census_person");
-                buttonControl.addButtons(root, buttonControl.buttonList);
-                primaryStage.setScene(new Scene(root, 640, 480));
-
-            }
-        });
+        UserButton user_btn = new UserButton(this, "Tell me who works here");
+        add(user_btn);
+        primaryStage.setScene(new Scene(grid, 640, 480));
 
 
     }

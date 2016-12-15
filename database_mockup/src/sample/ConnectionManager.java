@@ -72,19 +72,41 @@ public class ConnectionManager {
         }
     }
 
-    public int getCount(String count_what, String count_where){
-        String sql = "SELECT COUNT(DISTINCT " + count_what +") FROM " + count_where;
+    public Long getCount(String count_what, String count_from){
+        String sql = "SELECT COUNT(DISTINCT " + count_what +") FROM " + count_from;
 
         try (Connection connection = DriverManager.getConnection(url, userid, password);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(sql)) {
-            ResultSetMetaData md = rs.getMetaData();
-            int columns = md.getColumnCount();
+            rs.next();
+            Long result = (Long) rs.getObject(1);
+
+            return result;
         }
         catch (SQLException e)
         {
             System.out.println( e.getMessage() );
         }
+        Long zero = new Long(0);
+        return zero;
+    }
+
+    public Long getCount(String count_what, String count_from, String count_condition){
+        String sql = "SELECT COUNT(" + count_what +") FROM " + count_from + " WHERE " + count_condition;
+
+        try (Connection connection = DriverManager.getConnection(url, userid, password);
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            rs.next();
+            Long result = (Long) rs.getObject(1);
+            return result;
+        }
+        catch (SQLException e)
+        {
+            System.out.println( e.getMessage() );
+        }
+        Long zero = new Long(0);
+        return zero;
     }
 
 }

@@ -16,7 +16,7 @@ import java.sql.*;
 import java.util.*;
 
 public class Main extends Application {
-    ButtonService buttonControl = new ButtonService();
+    ButtonService buttonControl;
 
 
 
@@ -33,21 +33,11 @@ public class Main extends Application {
         builder.hgap(10);
         builder.vgap(5);
         GridPane root = builder.build();
+        buttonControl = new ButtonService(root, builder, primaryStage);
+        buttonControl.initialize();
+        buttonControl.addButtons();
+  /*
 
-        Button usr_btn = new Button("Show User Information");
-        buttonControl.add(usr_btn);
-
-        usr_btn.setOnAction(new EventHandler<ActionEvent>() {
-
-        @Override
-        public void handle(ActionEvent e) {
-            GridPane root = builder.build();
-            tableFromDatabase(root,"first, last FROM census_person");
-            buttonControl.addButtons(root, buttonControl.buttonList);
-            primaryStage.setScene(new Scene(root, 640, 480));
-
-        }
-            });
 
         Button fish_btn = new Button("Show Fish Information");
         buttonControl.add(fish_btn);
@@ -65,8 +55,8 @@ public class Main extends Application {
             }
         });
         buttonControl.addButtons(root, buttonControl.buttonList);
-
-        primaryStage.setScene(new Scene(root, 640, 480));
+*/
+        //primaryStage.setScene(new Scene(root, 640, 480));
         //tableFromDatabase(root);
         primaryStage.show();
     }
