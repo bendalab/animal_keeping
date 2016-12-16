@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPaneBuilder;
@@ -14,6 +15,10 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import java.sql.*;
 import java.util.*;
+import javafx.scene.control.ScrollBar;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Orientation;
 
 /**
  * Created by huben on 14.12.16.
@@ -46,8 +51,11 @@ public class ButtonService {
 
     public void update_grid(){
         grid = builder.build();
+        ScrollPane sc = new ScrollPane(grid);
         addButtons();
-        primaryStage.setScene(new Scene(grid, 640, 480));
+        primaryStage.setScene(new Scene(sc, 640, 480));
+
+
     }
 
     public void initialize(){
@@ -56,7 +64,6 @@ public class ButtonService {
         UserButton user_btn = new UserButton(this, "Tell me who works here");
         add(user_btn);
         primaryStage.setScene(new Scene(grid, 640, 480));
-
 
     }
 
