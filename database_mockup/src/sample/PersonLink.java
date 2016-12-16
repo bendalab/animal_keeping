@@ -13,7 +13,7 @@ public class PersonLink extends InternalLink {
                     buttonS.update_grid();
                     //field "alias" results in NullPointerException!!
                     try {
-                        connector.linkTableFromDatabase(buttonS.grid, "t.id, tt.name, t.subject_id, s.name, t.start_datetime, t.end_datetime, p.first, p.last", "census_treatment as t, census_person as p, census_subject as s , census_treatmenttype as tt", "t.type_id = tt.id  AND p.id = t.person_id AND t.subject_id = s.id AND p.id = " + getText(), "subject_id", IndividualLink.class, buttonS);
+                        connector.linkTableFromDatabase(buttonS.grid, "t.id, tt.name as Treatment , t.subject_id, s.name as \"Subject Name\", t.start_datetime, t.end_datetime, p.first, p.last", "census_treatment as t, census_person as p, census_subject as s , census_treatmenttype as tt", "t.type_id = tt.id  AND p.id = t.person_id AND t.subject_id = s.id AND p.id = " + getText(), "subject_id", IndividualLink.class, buttonS);
                     }
                     catch (Exception e) {
                         System.out.println( e.getMessage() );
@@ -28,20 +28,9 @@ public class PersonLink extends InternalLink {
         super(label);
     }
     PersonLink(String label, ButtonService parent) {
-        super(label);
-        super.setOnAction(event -> {
+        this();
+        this.setText(label);
 
-                    parent.update_grid();
-                    //field "alias" results in NullPointerException!!
-                    try {
-                        connector.linkTableFromDatabase(buttonS.grid, "t.id, tt.name, t.subject_id, s.name, t.start_datetime, t.end_datetime, p.first, p.last", "census_treatment as t, census_person as p, census_subject as s , census_treatmenttype as tt", "t.type_id = tt.id  AND p.id = t.person_id AND t.subject_id = s.id AND p.id = " + getText(), "subject_id", IndividualLink.class, buttonS);
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-
-
-        );
     }
 
 }
