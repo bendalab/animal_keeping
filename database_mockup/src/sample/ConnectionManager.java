@@ -107,7 +107,7 @@ public class ConnectionManager {
 
             }
 
-            for (int i = 0; i < data.size(); i++){
+            for (int i = 0; i < data.size() && i < 20; i++){
                 for (int j = 0; j < columns; j++){
                     ArrayList currentRow = (ArrayList) data.get(i);
                     if (columnNames.get(j).equals(link_by)){
