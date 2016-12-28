@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<!--
+  ~ Hibernate, Relational Persistence for Idiomatic Java
+  ~
+  ~ License: GNU Lesser General Public License (LGPL), version 2.1 or later.
+  ~ See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
+  -->
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="model">
+    <class name="Quota" table="census_quota">
+        <id name="id" column="id">
+            <generator class="increment"/>
+        </id>
+        <property name="number" type="long" column="number" not-null="false"/>
+        <many-to-one name="speciesType" column="species_id" class="SpeciesType" not-null="true"/>
+        <many-to-one name="license" column="license_id" class="License" not-null="true"/>
+    </class>
+</hibernate-mapping>
