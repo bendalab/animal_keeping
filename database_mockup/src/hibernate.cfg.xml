@@ -40,6 +40,10 @@
         <mapping resource="model/SubjectType.hbm.xml"/>
         <mapping resource="model/Subject.hbm.xml"/>
         <mapping resource="model/Quota.hbm.xml"/>
+        <mapping resource="model/HousingType.hbm.xml"/>
+        <mapping resource="model/HousingUnit.hbm.xml"/>
+        <mapping resource="model/Housing.hbm.xml"/>
+        <mapping resource="model/HousingNote.hbm.xml"/>
         <mapping resource="model/SubjectNote.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>
