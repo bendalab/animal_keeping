@@ -35,5 +35,10 @@
         <!-- List of XML mapping files -->
         <mapping resource="model/Person.hbm.xml"/>
         <mapping resource="model/License.hbm.xml"/>
+        <mapping resource="model/SpeciesType.hbm.xml"/>
+        <mapping resource="model/SupplierType.hbm.xml"/>
+        <mapping resource="model/SubjectType.hbm.xml"/>
+        <mapping resource="model/Subject.hbm.xml"/>
+        <mapping resource="model/SubjectNote.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>
