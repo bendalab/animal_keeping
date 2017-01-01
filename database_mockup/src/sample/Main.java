@@ -1,41 +1,49 @@
 package sample;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Parent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.Scene;
-import javafx.scene.layout.GridPaneBuilder;
-import javafx.scene.text.Text;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import javafx.stage.Stage;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
-import java.sql.*;
-import java.util.*;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.Scene;
 
 public class Main extends Application {
     ButtonService buttonControl;
+    public static SessionFactory sessionFactory;
+    private Stage primaryStage;
+    private BorderPane rootLayout;
 
 
-
-
-
-
-        @Override
+    @Override
     public void start(Stage primaryStage) throws Exception{
-        //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Database contents");
-        ArrayList<Button> buttonList = new ArrayList<>();
+        this.primaryStage = primaryStage;
+        this.primaryStage.setTitle("AnimalKeepingDB");
 
-        GridPaneBuilder builder = GridPaneBuilder.create();
-        builder.hgap(10);
-        builder.vgap(5);
-        GridPane root = builder.build();
-        buttonControl = new ButtonService(root, builder, primaryStage);
-        buttonControl.initialize();
-        buttonControl.addButtons();
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(Main.class.getResource("MainView.fxml"));
+        System.out.println(sample.Main.class.getResource("PersonsView.fxml"));
+        //rootLayout = loader.load();
+
+        // Show the scene containing the root layout.
+        Scene scene = new Scene(loader.load());
+        primaryStage.setScene(scene);
+
+
+        //primaryStage.setTitle("Database contents");
+        //ArrayList<Button> buttonList = new ArrayList<>();
+
+        //GridPaneBuilder builder = GridPaneBuilder.create();
+        //builder.hgap(10);
+        //builder.vgap(5);
+        //GridPane root = builder.build();
+        //buttonControl = new ButtonService(root, builder, primaryStage);
+        //buttonControl.initialize();
+        //buttonControl.addButtons();
+
+        connectToDataBase();
   /*
 
 
@@ -59,6 +67,38 @@ public class Main extends Application {
         //primaryStage.setScene(new Scene(root, 640, 480));
         //tableFromDatabase(root);
         primaryStage.show();
+    }
+
+    private void connectToDataBase() {
+        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+                .configure() // configures settings from hibernate.cfg.xml
+                .build();
+        try {
+
+            sessionFactory = new MetadataSources( registry ).buildMetadata().buildSessionFactory();
+        }
+        catch (Exception e) {
+            // The registry would be destroyed by the SessionFactory, but we had trouble building the SessionFactory
+            // so destroy it manually.
+            StandardServiceRegistryBuilder.destroy( registry );
+            System.out.println("\n Exception!!!!");
+            System.out.println(e.getCause());
+            e.printStackTrace();
+        }
+    }
+
+    public void stop() {
+        if (sessionFactory != null) {
+            System.out.println("close session factory");
+            sessionFactory.close();
+        }
+        //super.stop();
+        // Save file
+    }
+
+
+    public SessionFactory getSessionFactory() {
+        return  sessionFactory;
     }
 
 
