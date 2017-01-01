@@ -19,6 +19,13 @@
         <property name="firstName" type="string" column="first" not-null="true"/>
         <property name="lastName" type="string" column="last" not-null="true"/>
         <property name="email" type="string" column="email" not-null="true"/>
+        <set name="treatments" table="census_treatment"
+             inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="person_id" not-null="false" />
+            </key>
+            <one-to-many class="Treatment" />
+        </set>
     </class>
 
 </hibernate-mapping>

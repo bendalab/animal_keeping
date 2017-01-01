@@ -1,5 +1,8 @@
 package model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by jan on 27.12.16.
  */
@@ -9,6 +12,8 @@ public class Person {
     private String firstName;
     private String lastName;
     private String email;
+    private Set<Treatment> treatments =
+            new HashSet<Treatment>(0);
 
     public Person() {
         // this form used by Hibernate
@@ -53,6 +58,14 @@ public class Person {
         this.email = email;
     }
 
+
+    public Set<Treatment> getTreatments() {
+        return treatments;
+    }
+
+    public void setTreatments(Set<Treatment> treatments) {
+        this.treatments = treatments;
+    }
     @Override
     public String toString() {
         return "Person{" +
