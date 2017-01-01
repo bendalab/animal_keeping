@@ -31,30 +31,26 @@
         <property name="hibernate.connection.password">
             test
         </property>
+        <property name="hibernate.enable_lazy_load_no_trans">
+            true
+        </property>
+
 
         <!-- List of XML mapping files -->
-        <mapping resource="model/Person.hbm.xml"/>
-        <mapping resource="model/License.hbm.xml"/>
-        <mapping resource="model/SpeciesType.hbm.xml"/>
-        <mapping resource="model/SupplierType.hbm.xml"/>
-        <mapping resource="model/SubjectType.hbm.xml"/>
-        <mapping resource="model/Subject.hbm.xml"/>
-        <mapping resource="model/Quota.hbm.xml"/>
-        <mapping resource="model/HousingType.hbm.xml"/>
-        <mapping resource="model/HousingUnit.hbm.xml"/>
-        <mapping resource="model/Housing.hbm.xml"/>
-        <mapping resource="model/HousingNote.hbm.xml"/>
-        <mapping resource="model/SubjectNote.hbm.xml"/>
-        <mapping resource="model/TreatmentType.hbm.xml"/>
-        <mapping resource="model/Treatment.hbm.xml"/>
-        <mapping resource="model/TreatmentNote.hbm.xml"/>
-
-
-
-
-
-
-
-
+        <mapping resource="animalkeeping/mappings/Person.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/License.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/SpeciesType.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/SupplierType.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/SubjectType.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/Subject.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/Quota.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/HousingType.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/HousingUnit.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/Housing.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/HousingNote.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/SubjectNote.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/TreatmentType.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/Treatment.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/TreatmentNote.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>
