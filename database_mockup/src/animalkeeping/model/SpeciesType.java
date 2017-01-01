@@ -7,6 +7,7 @@ public class SpeciesType {
     private Long id;
     private String name;
     private String trivial;
+    private Integer count;
 
     public SpeciesType() {}
 
@@ -37,6 +38,14 @@ public class SpeciesType {
 
     public void setTrivial(String trivial) {
         this.trivial = trivial;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
     }
 
     @Override

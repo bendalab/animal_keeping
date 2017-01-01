@@ -17,5 +17,8 @@
         </id>
         <property name="name" type="string" column="name" not-null="true"/>
         <property name="trivial" type="string" column="trivial" not-null="false"/>
+        <property name="count" update="false" insert="false"
+                  formula="(SELECT COUNT(*) FROM census_subject as s where s.species_id = id)"
+                  type="integer"  />
     </class>
 </hibernate-mapping>
