@@ -23,7 +23,7 @@ public class UserButton extends Button {
             public void handle(ActionEvent e) {
                 parent.update_grid();
                 try {
-                    connector.linkTableFromDatabase(parent.grid, "id, first, last", "census_person", "TRUE", "id", PersonLink.class, parent);
+                    connector.linkTableFromDatabase(parent.grid, "id, first, last", "census_person", "TRUE", "id", PersonLink.class, parent, "Users");
                 }
                 catch (Exception ex) {
                     System.out.println( ex.getMessage() );

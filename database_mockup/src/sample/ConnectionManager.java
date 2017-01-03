@@ -30,7 +30,7 @@ public class ConnectionManager {
 
             //  Get column names
             for (int i = 1; i <= columns; i++) {
-                columnNames.add(md.getColumnName(i));
+                columnNames.add(md.getColumnLabel(i));
             }
             while (rs.next()) {
                 ArrayList row = new ArrayList(columns);
@@ -72,7 +72,7 @@ public class ConnectionManager {
         }
     }
 
-    public <T extends InternalLink> void linkTableFromDatabase(GridPane grid, String select_what, String select_from, String select_condition, String link_by, Class<T> cls, ButtonService buttonS) throws Exception{
+    public <T extends InternalLink> void linkTableFromDatabase(GridPane grid, String select_what, String select_from, String select_condition, String link_by, Class<T> cls, ButtonService buttonS, String title) throws Exception{
         ArrayList columnNames = new ArrayList();
         ArrayList data = new ArrayList();
 
@@ -88,7 +88,7 @@ public class ConnectionManager {
 
             //  Get column names
             for (int i = 1; i <= columns; i++) {
-                columnNames.add(md.getColumnName(i));
+                columnNames.add(md.getColumnLabel(i));
             }
             while (rs.next()) {
                 ArrayList row = new ArrayList(columns);
@@ -99,6 +99,7 @@ public class ConnectionManager {
 
                 data.add(row);
             }
+            grid.add(new Text(title), 1, 1, columns, 1);
 
             //first argument has to be id number
             for (int i = 0; i < columns; i++) {
@@ -195,6 +196,28 @@ public class ConnectionManager {
         }
 
         return species_names;
+    }
+    public String getName(String personId){
+        String sql = "SELECT first, last FROM census_person WHERE id = " + personId;
+        String first;
+        String last;
+
+
+        try (Connection connection = DriverManager.getConnection(url, userid, password);
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            rs.next();
+            first = (String) rs.getObject(1);
+            last = (String) rs.getObject(2);
+            return first + " " + last;
+        }
+
+        catch (SQLException e)
+        {
+            System.out.println( e.getMessage() );
+        }
+
+        return " ";
     }
 
 }
