@@ -1,9 +1,6 @@
 package animalkeeping.ui;
 
-import animalkeeping.model.Subject;
-import animalkeeping.model.SpeciesType;
-import animalkeeping.model.SubjectType;
-import animalkeeping.model.SupplierType;
+import animalkeeping.model.*;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
@@ -54,7 +51,8 @@ public class SubjectsTable extends TableView {
         Session session = Main.sessionFactory.openSession();
         try {
             session.beginTransaction();
-            List result = session.createQuery("from Subject").list();
+
+            List<Subject> result = session.createQuery("from Subject").list();
 
             this.getItems().addAll(result);
             session.getTransaction().commit();

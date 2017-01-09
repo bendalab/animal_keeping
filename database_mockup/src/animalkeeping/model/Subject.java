@@ -1,5 +1,8 @@
 package animalkeeping.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by jan on 27.12.16.
  */
@@ -10,7 +13,8 @@ public class Subject {
     private SpeciesType speciesType;
     private SubjectType subjectType;
     private SupplierType supplier;
-
+    private Set<Treatment> treatments =
+            new HashSet<Treatment>(0);
     public Subject() {}
 
     public Subject(String name, SpeciesType speciesType, SubjectType subjectType) {

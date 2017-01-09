@@ -69,7 +69,7 @@
                      <children>
                         <VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="14.0" prefHeight="369.0" prefWidth="92.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <Button fx:id="homeBtn" mnemonicParsing="false" onAction="#showInventory" text="Home" />
+                              <Button fx:id="homeBtn" mnemonicParsing="false" onAction="#showInventory" text="Inventory" />
                               <Button fx:id="personsBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showPersons" text="Persons" />
                               <Button fx:id="subjectsBtn" mnemonicParsing="false" onAction="#showSubjects" text="Subjects" textAlignment="CENTER" />
                               <Button fx:id="treatmentsBtn" mnemonicParsing="false" onAction="#showTreatments" text="Treatments" />
