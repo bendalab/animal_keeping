@@ -1,12 +1,14 @@
 package animalkeeping.ui.controller;
 
-import animalkeeping.ui.InventoryTable;
-import animalkeeping.ui.PersonsTable;
-import animalkeeping.ui.SubjectsTable;
-import animalkeeping.ui.TreatmentsTable;
+import animalkeeping.ui.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.scene.Node;
+import java.awt.*;
+import javafx.fxml.FXMLLoader;
 
 public class MainViewController {
 
@@ -26,7 +28,12 @@ public class MainViewController {
     private ScrollPane scrollPane;
 
     @FXML
-    private void showPersons() {
+    private VBox masterBox;
+
+
+    @FXML
+    private void showPersons() throws Exception{
+        //Main.getPrimaryStage().setScene(FXMLLoader.load(Main.class.getResource("fxml/PersonView.fxml")));
         this.scrollPane.setContent(null);
         PersonsTable personTable = new PersonsTable();
         this.scrollPane.setContent(personTable);

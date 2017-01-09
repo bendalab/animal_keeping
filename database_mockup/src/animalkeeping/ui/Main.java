@@ -1,5 +1,6 @@
 package animalkeeping.ui;
 
+import animalkeeping.ui.controller.FrameControl;
 import javafx.application.Application;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
@@ -9,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.Scene;
+
 
 public class Main extends Application {
     ButtonService buttonControl;
@@ -66,6 +68,7 @@ public class Main extends Application {
 */
         //primaryStage.setScene(new Scene(root, 640, 480));
         //tableFromDatabase(root);
+        FrameControl controlFrames = new FrameControl(primaryStage);
         primaryStage.show();
     }
 
@@ -96,6 +99,7 @@ public class Main extends Application {
         // Save file
     }
 
+    public Stage getPrimaryStage(){return primaryStage;}
 
     public SessionFactory getSessionFactory() {
         return  sessionFactory;

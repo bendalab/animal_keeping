@@ -47,6 +47,9 @@ public class SpeciesType {
         this.trivial = trivial;
     }
 
+    /*
+        I have not yet found a way to reliably store this information. Problem is, it initializes with the wrong values.
+     */
     public Integer getCount() {
         if(true)
         return getCountInit();
