@@ -59,32 +59,27 @@ public class SpeciesType {
         this.count = count;
     }
 
+    /* Go through all subjects; for each subject, check if any housing associated with that fish has no
+    end date; if true, that means the fish is still in one of the housing units. In this case, it is assumed that
+    the fish is alive.
+     */
     public Integer getCountInit() {
         Session session = Main.sessionFactory.openSession();
         int numberAlive = 0;
         try {
             session.beginTransaction();
-
             List<Subject> result = session.createQuery("from Subject where species_id = " + this.getId().toString()).list();
-
 
             for (Subject currentSubject : result) {
                 Long index = currentSubject.getId();
-                //System.out.println(index);
-
                 List<Housing> houseList = session.createQuery("from Housing where subject_id = " + index.toString()).list();
-                Boolean alive = new Boolean(false);
                 for (Housing house : houseList) {
-                    if (house.getEnd() == null)
-                        alive = true;
+                    if (house.getEnd() == null) {
+                        numberAlive += 1;
+                        break;
+                    }
                 }
-
-                if(alive)
-                    numberAlive += 1;
-                }
-
-
-
+            }
             session.getTransaction().commit();
             session.close();
         } catch (HibernateException e) {
