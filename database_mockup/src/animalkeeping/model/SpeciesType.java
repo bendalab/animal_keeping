@@ -16,13 +16,11 @@ public class SpeciesType {
     private Integer count;
 
     public SpeciesType() {
-        this.count = initCount();
     }
 
     public SpeciesType(String name, String trivial) {
         this.name = name;
         this.trivial = trivial;
-        this.count = initCount();
     }
 
     public Long getId() {
@@ -50,6 +48,10 @@ public class SpeciesType {
     }
 
     public Integer getCount() {
+        if(true)
+        return getCountInit();
+
+        else
         return count;
     }
 
@@ -57,43 +59,41 @@ public class SpeciesType {
         this.count = count;
     }
 
-    public Integer initCount() {
-        Session session2 = Main.sessionFactory.openSession();
+    public Integer getCountInit() {
+        Session session = Main.sessionFactory.openSession();
         int numberAlive = 0;
         try {
-            session2.beginTransaction();
+            session.beginTransaction();
 
-            List<Subject> result = session2.createQuery("from Subject").list();
+            List<Subject> result = session.createQuery("from Subject where species_id = " + this.getId().toString()).list();
 
 
             for (Subject currentSubject : result) {
-
                 Long index = currentSubject.getId();
-                System.out.println(index);
+                //System.out.println(index);
 
-                List<Housing> houseList = session2.createQuery("from Housing where subject_id = " + index.toString()).list();
+                List<Housing> houseList = session.createQuery("from Housing where subject_id = " + index.toString()).list();
                 Boolean alive = new Boolean(false);
                 for (Housing house : houseList) {
                     if (house.getEnd() == null)
                         alive = true;
                 }
-                if (!alive) {
-                    System.out.println("The fish is deceased");
-                } else {
-                    System.out.println(houseList);
+
+                if(alive)
                     numberAlive += 1;
                 }
 
 
-            }
-            session2.getTransaction().commit();
-            session2.close();
+
+            session.getTransaction().commit();
+            session.close();
         } catch (HibernateException e) {
             e.printStackTrace();
-            if (session2.isOpen()) {
-                session2.close();
+            if (session.isOpen()) {
+                session.close();
             }
         }
+        this.count = numberAlive;
         return  numberAlive;
     }
 
