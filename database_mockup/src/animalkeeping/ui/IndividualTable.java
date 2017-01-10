@@ -5,22 +5,18 @@ import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellEditEvent;
-import javafx.util.Callback;
-import javafx.scene.input.MouseEvent;
+
 import java.util.List;
-import javafx.event.EventHandler;
 
 
 /**
- * Created by jan on 01.01.17.
+ * Created by huben on 10.01.17.
  */
-public class SubjectsTable extends TableView {
+public class IndividualTable extends javafx.scene.control.TableView {
+
+    private Integer id;
     private TableColumn<Subject, Number> idCol;
     private TableColumn<Subject, String> nameCol;
     private TableColumn<Subject, String> aliasCol;
@@ -28,27 +24,9 @@ public class SubjectsTable extends TableView {
     private TableColumn<Subject, String> subjectCol;
     private TableColumn<Subject, String> supplierCol;
 
-
-    public SubjectsTable() {
+    public IndividualTable(int id){
         super();
-        Callback<TableColumn, TableCell> subjectCellFactory =
-                new Callback<TableColumn, TableCell>() {
-                    public TableCell call(TableColumn p) {
-                        TableCell cell = new TableCell<Subject, String>() {};
-
-                        cell.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>()      {
-                            @Override
-                            public void handle(MouseEvent event) {
-                                if (event.getClickCount() > 0) {
-                                    System.out.println("double clicked!");
-                                    TableCell c = (TableCell) event.getSource();
-                                    System.out.println("Cell text: " + c.getText());
-                                }
-                            }
-                        });
-                        return cell;
-                    }
-                };
+        this.id = id;
         idCol = new TableColumn<Subject, Number>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
         nameCol = new TableColumn<Subject, String>("name");
@@ -65,18 +43,14 @@ public class SubjectsTable extends TableView {
         init();
     }
 
-    public SubjectsTable(ObservableList<Subject> items) {
-        this();
-        this.setItems(items);
-    }
 
-    private void init() {
 
+    public void init(){
         Session session = Main.sessionFactory.openSession();
         try {
             session.beginTransaction();
 
-            List<Subject> result = session.createQuery("from Subject").list();
+            List<Subject> result = session.createQuery("from Subject where id = " + this.id.toString()).list();
 
             this.getItems().addAll(result);
             session.getTransaction().commit();
@@ -88,5 +62,5 @@ public class SubjectsTable extends TableView {
             }
         }
     }
-}
 
+}
