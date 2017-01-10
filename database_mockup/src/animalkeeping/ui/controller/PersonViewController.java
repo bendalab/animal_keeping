@@ -1,9 +1,11 @@
 package animalkeeping.ui.controller;
 
-import animalkeeping.ui.Main;
+import animalkeeping.ui.*;
 import animalkeeping.model.Person;
 import animalkeeping.ui.Main;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -33,8 +35,14 @@ public class PersonViewController {
     @FXML
     private TableColumn<Person, String> emailCol;
 
+
+    @FXML
+    private Button returnBtn;
+
+
     @FXML
     private Button refreshBtn;
+
 
     public void refreshTable() {
         personsTable.getItems().clear();
@@ -57,4 +65,12 @@ public class PersonViewController {
             }
         }
     }
+
+    @FXML
+    private void returnToMainView() throws Exception{
+        Main.getPrimaryStage().setScene(new Scene(FXMLLoader.load(Main.class.getResource("fxml/MainView.fxml"))));
+
+    }
+
+
 }

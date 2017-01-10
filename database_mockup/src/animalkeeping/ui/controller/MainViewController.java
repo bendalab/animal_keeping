@@ -35,9 +35,9 @@ public class MainViewController {
     @FXML
     private void showPersons() throws Exception{
         Main.getPrimaryStage().setScene(new Scene(FXMLLoader.load(Main.class.getResource("fxml/PersonsView.fxml"))));
-        this.scrollPane.setContent(null);
+        /*this.scrollPane.setContent(null);
         PersonsTable personTable = new PersonsTable();
-        this.scrollPane.setContent(personTable);
+        this.scrollPane.setContent(personTable);*/
     }
 
     @FXML

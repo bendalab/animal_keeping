@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="animalkeeping.ui.controller.MainViewController">
+<VBox fx:id="masterBox" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="animalkeeping.ui.controller.MainViewController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -67,7 +67,7 @@
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
-                        <VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="14.0" prefHeight="369.0" prefWidth="92.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox fx:id="navigationBar" alignment="TOP_CENTER" layoutX="10.0" layoutY="14.0" prefHeight="369.0" prefWidth="92.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <Button fx:id="homeBtn" mnemonicParsing="false" onAction="#showInventory" text="Inventory" />
                               <Button fx:id="personsBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showPersons" text="Persons" />
