@@ -15,7 +15,7 @@ import javafx.scene.Scene;
 public class Main extends Application {
     ButtonService buttonControl;
     public static SessionFactory sessionFactory;
-    private Stage primaryStage;
+    private static Stage primaryStage;
     private BorderPane rootLayout;
 
 
@@ -99,7 +99,7 @@ public class Main extends Application {
         // Save file
     }
 
-    public Stage getPrimaryStage(){return primaryStage;}
+    public static Stage getPrimaryStage(){return primaryStage;}
 
     public SessionFactory getSessionFactory() {
         return  sessionFactory;

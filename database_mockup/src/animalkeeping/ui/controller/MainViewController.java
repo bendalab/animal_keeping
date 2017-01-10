@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import javafx.scene.Node;
 import java.awt.*;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 
 public class MainViewController {
 
@@ -33,7 +34,7 @@ public class MainViewController {
 
     @FXML
     private void showPersons() throws Exception{
-        //Main.getPrimaryStage().setScene(FXMLLoader.load(Main.class.getResource("fxml/PersonView.fxml")));
+        Main.getPrimaryStage().setScene(new Scene(FXMLLoader.load(Main.class.getResource("fxml/PersonsView.fxml"))));
         this.scrollPane.setContent(null);
         PersonsTable personTable = new PersonsTable();
         this.scrollPane.setContent(personTable);
