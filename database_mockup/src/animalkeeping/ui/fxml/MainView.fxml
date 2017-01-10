@@ -11,6 +11,7 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -73,6 +74,7 @@
                               <Button fx:id="personsBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showPersons" text="Persons" />
                               <Button fx:id="subjectsBtn" mnemonicParsing="false" onAction="#showSubjects" text="Subjects" textAlignment="CENTER" />
                               <Button fx:id="treatmentsBtn" mnemonicParsing="false" onAction="#showTreatments" text="Treatments" />
+                              <TextField fx:id="idField" onAction="#goToId" promptText="go to id" />
                            </children>
                            <padding>
                               <Insets top="20.0" />

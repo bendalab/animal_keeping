@@ -48,10 +48,10 @@ public class TreatmentsTable extends TableView<Treatment>{
         init();
     }
 
-    public TreatmentsTable(ObservableList<Treatment> items) {
+  /*  public TreatmentsTable(ObservableList<Treatment> items) {
         this();
         this.setItems(items);
-    }
+    }*/
 
     private void init() {
         Session session = Main.sessionFactory.openSession();

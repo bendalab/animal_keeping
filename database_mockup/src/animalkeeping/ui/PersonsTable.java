@@ -31,10 +31,10 @@ public class PersonsTable extends TableView {
         init();
     }
 
-    public PersonsTable(ObservableList<Person> items) {
+   /* public PersonsTable(ObservableList<Person> items) {
         this();
         this.setItems(items);
-    }
+    }*/
 
     private void init() {
 

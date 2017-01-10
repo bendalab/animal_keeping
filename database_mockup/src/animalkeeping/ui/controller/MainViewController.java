@@ -2,6 +2,7 @@ package animalkeeping.ui.controller;
 
 import animalkeeping.ui.*;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
@@ -24,6 +25,9 @@ public class MainViewController {
 
     @FXML
     private Button homeBtn;
+
+    @FXML
+    private TextField idField;
 
     @FXML
     private ScrollPane scrollPane;
@@ -59,5 +63,13 @@ public class MainViewController {
         this.scrollPane.setContent(null);
         InventoryTable inventoryTable= new InventoryTable();
         this.scrollPane.setContent(inventoryTable);
+    }
+
+    @FXML
+    private void goToId(){
+        this.scrollPane.setContent(null);
+        System.out.println(idField.getText());
+        IndividualTable individualTable = new IndividualTable(Integer.parseInt(idField.getText()));
+        this.scrollPane.setContent(individualTable);
     }
 }
