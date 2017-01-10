@@ -17,6 +17,7 @@ import java.util.List;
 public class IndividualTable extends javafx.scene.control.TableView {
 
     private Integer id;
+    private String name;
     private TableColumn<Subject, Number> idCol;
     private TableColumn<Subject, String> nameCol;
     private TableColumn<Subject, String> aliasCol;
@@ -40,17 +41,52 @@ public class IndividualTable extends javafx.scene.control.TableView {
         supplierCol = new TableColumn<Subject, String>("supplier");
         supplierCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSupplier().getName()));
         this.getColumns().addAll(idCol, nameCol, aliasCol, speciesCol, subjectCol, supplierCol);
-        init();
+        initId();
+    }
+    public IndividualTable(String name){
+        super();
+        this.name = name;
+        idCol = new TableColumn<Subject, Number>("id");
+        idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
+        nameCol = new TableColumn<Subject, String>("name");
+        nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
+        aliasCol = new TableColumn<Subject, String>("alias");
+        aliasCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAlias()));
+        speciesCol = new TableColumn<Subject, String>("species");
+        speciesCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSpeciesType().getName()));
+        subjectCol = new TableColumn<Subject, String>("subject");
+        subjectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubjectType().getName()));
+        supplierCol = new TableColumn<Subject, String>("supplier");
+        supplierCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSupplier().getName()));
+        this.getColumns().addAll(idCol, nameCol, aliasCol, speciesCol, subjectCol, supplierCol);
+        initName();
     }
 
 
 
-    public void init(){
+    public void initId(){
         Session session = Main.sessionFactory.openSession();
         try {
             session.beginTransaction();
 
             List<Subject> result = session.createQuery("from Subject where id = " + this.id.toString()).list();
+
+            this.getItems().addAll(result);
+            session.getTransaction().commit();
+            session.close();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (session.isOpen()) {
+                session.close();
+            }
+        }
+    }
+    public void initName(){
+        Session session = Main.sessionFactory.openSession();
+        try {
+            session.beginTransaction();
+
+            List<Subject> result = session.createQuery("from Subject where name = \'" + this.name + "\'").list();
 
             this.getItems().addAll(result);
             session.getTransaction().commit();
