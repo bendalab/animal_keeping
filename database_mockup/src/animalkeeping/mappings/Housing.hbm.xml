@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="animalkeeping.model">
+    <class name="Housing" table="census_housing">
+        <id name="id" column="id">
+            <generator class="increment"/>
+        </id>
+        <property name="comment" type="string" column="comment" not-null="false"/>
+        <property name="start" type="timestamp" column="start_datetime" not-null="true"/>
+        <property name="end"  type="timestamp" column="end_datetime" not-null="false"/>
+
+        <many-to-one name="housing" column="type_id" class="HousingUnit" not-null="true"/>
+        <many-to-one name="subject" column="subject_id" class="Subject" not-null="false"/>
+
+    </class>
+</hibernate-mapping>

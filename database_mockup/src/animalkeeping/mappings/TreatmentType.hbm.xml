@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="animalkeeping.model">
+    <class name="TreatmentType" table="census_treatmenttype">
+        <id name="id" column="id">
+            <generator class="increment"/>
+        </id>
+        <property name="description" type="string" column="description" not-null="false"/>
+        <property name="name" type="string" column="name" unique="true" not-null="true"/>
+        <property name="invasive"  type="boolean" column="invasive" not-null="true"/>
+
+        <many-to-one name="license" column="license_id" class="License" not-null="false"/>
+
+    </class>
+</hibernate-mapping>

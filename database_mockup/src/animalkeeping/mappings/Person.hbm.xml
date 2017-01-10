@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="animalkeeping.model">
+
+    <class name="Person" table="census_person">
+        <id name="id" column="id">
+            <generator class="increment"/>
+        </id>
+        <property name="firstName" type="string" column="first" not-null="true"/>
+        <property name="lastName" type="string" column="last" not-null="true"/>
+        <property name="email" type="string" column="email" not-null="true"/>
+        <set name="treatments" table="census_treatment"
+             inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="person_id" not-null="false" />
+            </key>
+            <one-to-many class="Treatment" />
+        </set>
+    </class>
+
+</hibernate-mapping>
