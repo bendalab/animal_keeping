@@ -21,7 +21,7 @@ import java.util.Set;
 public class PersonViewController {
 
     @FXML
-    private TableView personsTable;
+    private PersonsTable personsTable;
 
     @FXML
     private TableColumn<Person, Number> idCol;

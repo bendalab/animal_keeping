@@ -1,6 +1,7 @@
 package animalkeeping.ui.controller;
 
 import animalkeeping.ui.*;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
@@ -43,10 +44,11 @@ public class MainViewController {
 
     @FXML
     private void showPersons() throws Exception{
-        Main.getPrimaryStage().setScene(new Scene(FXMLLoader.load(Main.class.getResource("fxml/PersonsView.fxml"))));
-        /*this.scrollPane.setContent(null);
+        //Main.getPrimaryStage().setScene(new Scene(FXMLLoader.load(Main.class.getResource("fxml/PersonsView.fxml"))));
+
+        this.scrollPane.setContent(null);
         PersonsTable personTable = new PersonsTable();
-        this.scrollPane.setContent(personTable);*/
+        this.scrollPane.setContent(personTable);
     }
 
     @FXML
