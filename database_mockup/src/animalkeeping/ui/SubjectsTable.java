@@ -32,7 +32,7 @@ public class SubjectsTable extends TableView {
 
     public SubjectsTable() {
         super();
-        Callback<TableColumn<Subject,String>, TableCell<Subject,String>> subjectCellFactory =
+       /* Callback<TableColumn<Subject,String>, TableCell<Subject,String>> subjectCellFactory =
                 new Callback<TableColumn<Subject,String>, TableCell<Subject,String>>() {
                     public TableCell call(TableColumn p) {
                         TableCell cell = new TableCell<Subject, String>() {
@@ -64,12 +64,13 @@ public class SubjectsTable extends TableView {
                         });
                         return cell;
                     }
-                };
+                };*/
         idCol = new TableColumn<Subject, Number>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
         nameCol = new TableColumn<Subject, String>("name");
         nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
-        nameCol.setCellFactory(subjectCellFactory);
+        //nameCol.setCellFactory(subjectCellFactory);
+        nameCol.setCellFactory(new CellFactoryProvider(getScene()).c);
         aliasCol = new TableColumn<Subject, String>("alias");
         aliasCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAlias()));
         speciesCol = new TableColumn<Subject, String>("species");
