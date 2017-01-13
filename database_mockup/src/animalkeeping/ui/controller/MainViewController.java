@@ -38,6 +38,8 @@ public class MainViewController {
     @FXML
     private VBox masterBox;
 
+    @FXML
+    private VBox contextButtonBox;
 
     @FXML
     private void showPersons() throws Exception{
