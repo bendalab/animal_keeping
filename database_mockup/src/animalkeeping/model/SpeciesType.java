@@ -14,6 +14,7 @@ public class SpeciesType {
     private String name;
     private String trivial;
     private Integer count;
+    private Integer allTimeCount;
 
     public SpeciesType() {
     }
@@ -55,9 +56,13 @@ public class SpeciesType {
         this.count = count;
     }
 
+    public Integer getAllTimeCount() {
+        return allTimeCount;
     }
 
-
+    public void setAllTimeCount(Integer allTimeCount) {
+        this.allTimeCount = allTimeCount;
+    }
 
     @Override
     public String toString() {
