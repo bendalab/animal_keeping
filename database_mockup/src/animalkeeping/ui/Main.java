@@ -2,14 +2,14 @@ package animalkeeping.ui;
 
 import animalkeeping.ui.controller.FrameControl;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import javafx.stage.Stage;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.Scene;
 
 
 public class Main extends Application {
@@ -26,7 +26,6 @@ public class Main extends Application {
 
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource("fxml/MainView.fxml"));
-        System.out.println(Main.class.getResource("fxml/MainView.fxml"));
         //rootLayout = loader.load();
 
         // Show the scene containing the root layout.
