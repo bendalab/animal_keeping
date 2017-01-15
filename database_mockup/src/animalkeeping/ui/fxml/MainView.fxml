@@ -66,36 +66,28 @@
         </Label>
             <SplitPane dividerPositions="0.2" layoutX="114.0" layoutY="51.0" minWidth="-Infinity" prefHeight="371.0" prefWidth="640.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                  <VBox fx:id="navigationBar" alignment="TOP_CENTER" prefHeight="369.0" prefWidth="92.0" spacing="15.0">
                      <children>
-                        <VBox fx:id="navigationBar" alignment="TOP_CENTER" layoutX="10.0" layoutY="14.0" prefHeight="369.0" prefWidth="92.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <children>
-                              <Button fx:id="homeBtn" mnemonicParsing="false" onAction="#showInventory" text="Inventory" />
-                              <Button fx:id="personsBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showPersons" text="Persons" />
-                              <Button fx:id="subjectsBtn" mnemonicParsing="false" onAction="#showSubjects" text="Subjects" textAlignment="CENTER" />
-                              <Button fx:id="treatmentsBtn" mnemonicParsing="false" onAction="#showTreatments" text="Treatments" />
-                              <TextField fx:id="idField" onAction="#goToId" promptText="go to id" />
-                           </children>
-                           <padding>
-                              <Insets top="20.0" />
-                           </padding>
-                        </VBox>
+                        <Button fx:id="homeBtn" mnemonicParsing="false" onAction="#showInventory" text="Inventory" />
+                        <Button fx:id="personsBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showPersons" text="Persons" />
+                        <Button fx:id="subjectsBtn" mnemonicParsing="false" onAction="#showSubjects" text="Subjects" textAlignment="CENTER" />
+                        <Button fx:id="treatmentsBtn" mnemonicParsing="false" onAction="#showTreatments" text="Treatments" />
+                        <TextField fx:id="idField" onAction="#goToId" promptText="go to id" />
                      </children>
-                  </AnchorPane>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                     <children>
-                        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <content>
-                              <TableView prefHeight="369.0" prefWidth="538.0">
-                                <columns>
-                                  <TableColumn prefWidth="75.0" text="C1" />
-                                  <TableColumn prefWidth="75.0" text="C2" />
-                                </columns>
-                              </TableView>
-                           </content>
-                        </ScrollPane>
-                     </children>
-                  </AnchorPane>
+                     <padding>
+                        <Insets top="20.0" />
+                     </padding>
+                  </VBox>
+                  <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true">
+                     <content>
+                        <TableView prefHeight="369.0" prefWidth="538.0">
+                          <columns>
+                            <TableColumn prefWidth="75.0" text="C1" />
+                            <TableColumn prefWidth="75.0" text="C2" />
+                          </columns>
+                        </TableView>
+                     </content>
+                  </ScrollPane>
               </items>
             </SplitPane>
       </children>
