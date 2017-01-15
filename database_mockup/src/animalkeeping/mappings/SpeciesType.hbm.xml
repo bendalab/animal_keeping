@@ -15,6 +15,6 @@
                   formula="(SELECT COUNT(*) FROM census_subject s, census_housing h WHERE s.species_id = id AND h.subject_id = s.id AND h.end_datetime IS NULL)"
                   type="integer"  />
         <property name="allTimeCount" update="false" insert="false"
-                  formula="(SELECT COUNT(*) FROM census_subject s WHERE s.specied_id = id)" type="integer" />
+                  formula="(SELECT COUNT(*) FROM census_subject s WHERE s.species_id = id)" type="integer" />
     </class>
 </hibernate-mapping>
