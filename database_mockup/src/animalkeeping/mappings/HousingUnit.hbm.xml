@@ -12,9 +12,24 @@
         <property name="name" type="string" column="name" unique="true" not-null="true"/>
         <property name="description" type="string" column="description" not-null="false"/>
         <property name="dimensions" type="string" column="dimensions" not-null="false"/>
-
+        <property name="population" update="false" insert="false"
+                  formula="(SELECT COUNT(*) FROM census_housing h WHERE h.type_id = id AND h.end_datetime IS NULL)"
+                  type="integer" />
         <many-to-one name="housingType" column="type_id" class="HousingType" not-null="true"/>
         <many-to-one name="parentUnit" column="parent_unit_id" class="HousingUnit" not-null="false"/>
-
+        <set name="housings" table="census_housing"
+             inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="type_id" not-null="true" />
+            </key>
+            <one-to-many class="Housing" />
+        </set>
+        <set name="childHousingUnits" table="census_housingunit"
+             inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="parent_unit_id" not-null="false" />
+            </key>
+            <one-to-many class="HousingUnit" />
+        </set>
     </class>
 </hibernate-mapping>
