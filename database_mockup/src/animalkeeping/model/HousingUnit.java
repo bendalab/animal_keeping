@@ -1,5 +1,8 @@
 package animalkeeping.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by jan on 28.12.16.
  */
@@ -10,6 +13,11 @@ public class HousingUnit {
     private String dimensions;
     private HousingType housingType;
     private HousingUnit parentUnit;
+    private Integer population;
+    private Set<Housing> housings =
+            new HashSet<Housing>(0);
+    private Set<HousingUnit> childHousingUnits =
+            new HashSet<HousingUnit>(0);
 
     public HousingUnit() {}
 
@@ -65,6 +73,30 @@ public class HousingUnit {
 
     public void setParentUnit(HousingUnit parentUnit) {
         this.parentUnit = parentUnit;
+    }
+
+    public Integer getPopulation() {
+        return population;
+    }
+
+    public void setPopulation(Integer population) {
+        this.population = population;
+    }
+
+    public Set<Housing> getHousings() {
+        return housings;
+    }
+
+    public void setHousings(Set<Housing> housings) {
+        this.housings = housings;
+    }
+
+    public Set<HousingUnit> getChildHousingUnits() {
+        return childHousingUnits;
+    }
+
+    public void setChildHousingUnits(Set<HousingUnit> childHousingUnits) {
+        this.childHousingUnits = childHousingUnits;
     }
 
     @Override
