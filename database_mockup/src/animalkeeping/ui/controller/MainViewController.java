@@ -71,8 +71,9 @@ public class MainViewController {
     @FXML
     private void showInventory() {
         this.scrollPane.setContent(null);
-        InventoryTable inventoryTable= new InventoryTable();
-        this.scrollPane.setContent(inventoryTable);
+        InventoryController inventory = new InventoryController();
+        // InventoryTable inventoryTable= new InventoryTable();
+        this.scrollPane.setContent(inventory);
     }
 
     @FXML
