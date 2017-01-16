@@ -52,8 +52,9 @@ public class MainViewController {
     @FXML
     private void showSubjects() {
         this.scrollPane.setContent(null);
-        SubjectsTable subjectsTable = new SubjectsTable();
-        this.scrollPane.setContent(subjectsTable);
+        //SubjectsTable subjectsTable = new SubjectsTable();
+        FishView fish = new FishView();
+        this.scrollPane.setContent(fish);
     }
 
     @FXML

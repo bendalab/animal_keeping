@@ -14,5 +14,15 @@
        <many-to-one name="subjectType" column="type_id" class="SubjectType" not-null="true"/>
        <many-to-one name="speciesType" column="species_id" class="SpeciesType" not-null="true"/>
        <many-to-one name="supplier" column="source_id" class="SupplierType" not-null="false"/>
+        <set name="treatments" table="census_treatment"
+             inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="subject_id" not-null="false" />
+            </key>
+            <one-to-many class="Treatment" />
+        </set>
+
+
+
    </class>
 </hibernate-mapping>

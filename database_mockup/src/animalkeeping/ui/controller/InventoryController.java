@@ -168,7 +168,7 @@ public class InventoryController extends VBox implements Initializable {
         }*/
 
 
-        for (Housing housing : h.getAllHousings()) {
+        for (Housing housing : h.getAllHousings(true)) {
             subjects.add(housing.getSubject());
 
         }

@@ -64,7 +64,7 @@ public class IndividualTable extends javafx.scene.control.TableView {
 
 
 
-    public void initId(){
+    public void initId() {
         Session session = Main.sessionFactory.openSession();
         try {
             session.beginTransaction();
@@ -80,7 +80,9 @@ public class IndividualTable extends javafx.scene.control.TableView {
                 session.close();
             }
         }
+
     }
+
     public void initName(){
         Session session = Main.sessionFactory.openSession();
         try {
