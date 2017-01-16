@@ -72,7 +72,9 @@
                         <Button fx:id="personsBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showPersons" text="Persons" />
                         <Button fx:id="subjectsBtn" mnemonicParsing="false" onAction="#showSubjects" text="Subjects" textAlignment="CENTER" />
                         <Button fx:id="treatmentsBtn" mnemonicParsing="false" onAction="#showTreatments" text="Treatments" />
-                        <TextField fx:id="idField" onAction="#goToId" promptText="go to id" />
+                        <TextField fx:id="idField" onAction="#goToId" promptText="go to id"/>
+                        <Button fx:id="addUsrBtn" mnemonicParsing="false" onAction="#showUserAddInterface" text="Add User" />
+                        <VBox fx:id="contextButtonBox" prefHeight="200.0" prefWidth="100.0" />
                      </children>
                      <padding>
                         <Insets top="20.0" />

@@ -28,6 +28,9 @@ public class MainViewController {
     private Button homeBtn;
 
     @FXML
+    private Button addUsrBtn;
+
+    @FXML
     private TextField idField;
 
     @FXML
@@ -36,6 +39,8 @@ public class MainViewController {
     @FXML
     private VBox masterBox;
 
+    @FXML
+    private VBox contextButtonBox;
 
     @FXML
     private void showPersons() throws Exception{
@@ -79,4 +84,13 @@ public class MainViewController {
         IndividualTable individualTable = new IndividualTable(Integer.parseInt(idField.getText()));
         this.scrollPane.setContent(individualTable);
     }
+
+    @FXML
+    private void showUserAddInterface() throws Exception{
+        Main.getPrimaryStage().setScene(new Scene(FXMLLoader.load(Main.class.getResource("fxml/UserAddView.fxml"))));
+        /*this.scrollPane.setContent(null);
+        PersonsTable personTable = new PersonsTable();
+        this.scrollPane.setContent(personTable);*/
+    }
+
 }

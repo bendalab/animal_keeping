@@ -1,6 +1,8 @@
 package animalkeeping.ui.controller;
 
 import animalkeeping.model.*;
+import animalkeeping.ui.HousingTable;
+import animalkeeping.ui.InventoryTable;
 import animalkeeping.ui.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.hibernate.HibernateException;
@@ -24,16 +27,11 @@ import java.util.*;
  * Created by jan on 14.01.17.
  */
 public class InventoryController extends VBox implements Initializable {
-
-    @FXML
-    private PieChart populationChart;
-    //@FXML private ListView<String> housingUnitsList;
-    @FXML
-    private VBox unitsBox;
-    @FXML
-    private VBox chartVbox;
-    @FXML
-    private Label allLabel;
+    @FXML private PieChart populationChart;
+    @FXML private VBox unitsBox;
+    @FXML private VBox chartVbox;
+    @FXML private Label allLabel;
+    @FXML private ScrollPane tableScrollPane;
     private HashMap<String, HousingUnit> unitsHashMap;
 
 
@@ -82,10 +80,8 @@ public class InventoryController extends VBox implements Initializable {
                     }
                 });
                 unitsBox.getChildren().add(label);
-
-                unitsBox.setMargin(label, new Insets(0., 0., 5., 5.0));
-
-            }
+                unitsBox.setMargin(label, new Insets(0., 0., 5., 5.0 ));
+              }
         } else {
             System.out.println("mist");
         }
@@ -94,10 +90,13 @@ public class InventoryController extends VBox implements Initializable {
     @FXML
     private void listAllPopulation() {
         List<SpeciesType> result = null;
+
+        List<Housing> housings = null;
         Session session = Main.sessionFactory.openSession();
         try {
             session.beginTransaction();
             result = session.createQuery("from SpeciesType").list();
+            housings = session.createQuery("from Housing where end_datetime is null").list();
             session.getTransaction().commit();
             session.close();
         } catch (HibernateException e) {
@@ -110,18 +109,21 @@ public class InventoryController extends VBox implements Initializable {
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         if (result != null) {
             for (SpeciesType st : result) {
+
                 count += st.getCount();
                 pieChartData.add(new PieChart.Data(st.getName() + " (" + st.getCount() + ")", st.getCount()));
             }
         }
         populationChart.setTitle("Total population: " + count.toString());
         populationChart.setData(pieChartData);
+        tableScrollPane.setContent(null);
+        HousingTable table = new HousingTable(housings);
+        tableScrollPane.setContent(table);
     }
 
 
     private void listPopulation(HousingUnit housingUnit) {
-        Set<Housing> housings = housingUnit.getHousings();
-
+        Set<Housing> housings = housingUnit.getAllHousings(true);
 
         Set<Subject> subjects = new HashSet<>();
         collectSubjects(subjects, housingUnit, true);
@@ -144,30 +146,16 @@ public class InventoryController extends VBox implements Initializable {
 
         populationChart.setTitle(housingUnit.getName() + ": " + subjects.size());
         populationChart.setData(pieChartData);
+        tableScrollPane.setContent(null);
+        HousingTable table = new HousingTable(housings);
+        tableScrollPane.setContent(table);
     }
-
 
     private void collectSubjects(Set<Subject> subjects, HousingUnit h) {
         collectSubjects(subjects, h, true);
     }
 
-
     private void collectSubjects(Set<Subject> subjects, HousingUnit h, Boolean currentOnly) {
-     /*  for (Housing housing : h.getHousings()) {
-            if(currentOnly) {
-                if (housing.getEnd() == null) {
-                    subjects.add(housing.getSubject());
-                }
-            } else {
-                subjects.add(housing.getSubject());
-            }
-        }
-        Set<HousingUnit> child_units = h.getChildHousingUnits();
-        for ( HousingUnit child : child_units) {
-            collectSubjects(subjects, child);
-        }*/
-
-
         for (Housing housing : h.getAllHousings(true)) {
             subjects.add(housing.getSubject());
 

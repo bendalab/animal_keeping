@@ -86,8 +86,6 @@ public class HousingUnit {
     public Set<Housing> getHousings() {return housings;}
 
     public Set<Housing> getAllHousings(Boolean current) {
-
-
         Set<Housing> allHousings = new HashSet<Housing>(0);
 
         for (Housing h : getHousings()){
@@ -100,7 +98,6 @@ public class HousingUnit {
                 allHousings.add(h);
             }
         }
-
 
         Set<HousingUnit> childHouseUnits = getChildHousingUnits();
 

@@ -2,12 +2,14 @@ package animalkeeping.ui;
 
 import animalkeeping.model.*;
 import javafx.beans.property.ReadOnlyLongWrapper;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -18,47 +20,58 @@ public class IndividualTable extends javafx.scene.control.TableView {
 
     private Integer id;
     private String name;
-    private TableColumn<Subject, Number> idCol;
-    private TableColumn<Subject, String> nameCol;
-    private TableColumn<Subject, String> aliasCol;
-    private TableColumn<Subject, String> speciesCol;
-    private TableColumn<Subject, String> subjectCol;
-    private TableColumn<Subject, String> supplierCol;
+    private TableColumn<Treatment, Number> idCol;
+    private TableColumn<Treatment, String> subectCol;
+    private TableColumn<Treatment, String> personCol;
+    private TableColumn<Treatment, String> treatmentCol;
+    private TableColumn<Treatment, Date> startCol;
+    private TableColumn<Treatment, Date> endCol;
+    private TableColumn<Treatment, Boolean> finalCol;
 
     public IndividualTable(int id){
         super();
         this.id = id;
-        idCol = new TableColumn<Subject, Number>("id");
+        idCol = new TableColumn<Treatment, Number>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        nameCol = new TableColumn<Subject, String>("name");
-        nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
-        aliasCol = new TableColumn<Subject, String>("alias");
-        aliasCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAlias()));
-        speciesCol = new TableColumn<Subject, String>("species");
-        speciesCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSpeciesType().getName()));
-        subjectCol = new TableColumn<Subject, String>("subject");
-        subjectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubjectType().getName()));
-        supplierCol = new TableColumn<Subject, String>("supplier");
-        supplierCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSupplier().getName()));
-        this.getColumns().addAll(idCol, nameCol, aliasCol, speciesCol, subjectCol, supplierCol);
+        subectCol = new TableColumn<Treatment, String>("subject");
+        subectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubject().getName()));
+        personCol = new TableColumn<Treatment, String>("by person");
+        personCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getPerson().getFirstName() +
+                " " + data.getValue().getPerson().getLastName()));
+        treatmentCol = new TableColumn<Treatment, String>("treatment");
+        treatmentCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getType().getName()));
+        startCol = new TableColumn<Treatment, Date>("start");
+        startCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getStart()));
+        endCol = new TableColumn<Treatment, Date>("end");
+        endCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getEnd()));
+        finalCol = new TableColumn<Treatment, Boolean>("is final");
+        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Boolean>(data.getValue().getType().isInvasive()));
+
+
+        this.getColumns().addAll(idCol, subectCol, personCol, treatmentCol, startCol, endCol, finalCol);
         initId();
     }
     public IndividualTable(String name){
         super();
         this.name = name;
-        idCol = new TableColumn<Subject, Number>("id");
+        idCol = new TableColumn<Treatment, Number>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        nameCol = new TableColumn<Subject, String>("name");
-        nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
-        aliasCol = new TableColumn<Subject, String>("alias");
-        aliasCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAlias()));
-        speciesCol = new TableColumn<Subject, String>("species");
-        speciesCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSpeciesType().getName()));
-        subjectCol = new TableColumn<Subject, String>("subject");
-        subjectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubjectType().getName()));
-        supplierCol = new TableColumn<Subject, String>("supplier");
-        supplierCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSupplier().getName()));
-        this.getColumns().addAll(idCol, nameCol, aliasCol, speciesCol, subjectCol, supplierCol);
+        subectCol = new TableColumn<Treatment, String>("subject");
+        subectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubject().getName()));
+        personCol = new TableColumn<Treatment, String>("by person");
+        personCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getPerson().getFirstName() +
+                " " + data.getValue().getPerson().getLastName()));
+        treatmentCol = new TableColumn<Treatment, String>("treatment");
+        treatmentCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getType().getName()));
+        startCol = new TableColumn<Treatment, Date>("start");
+        startCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getStart()));
+        endCol = new TableColumn<Treatment, Date>("end");
+        endCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getEnd()));
+        finalCol = new TableColumn<Treatment, Boolean>("is final");
+        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Boolean>(data.getValue().getType().isInvasive()));
+
+
+        this.getColumns().addAll(idCol, subectCol, personCol, treatmentCol, startCol, endCol, finalCol);
         initName();
     }
 
@@ -69,7 +82,7 @@ public class IndividualTable extends javafx.scene.control.TableView {
         try {
             session.beginTransaction();
 
-            List<Subject> result = session.createQuery("from Subject where id = " + this.id.toString()).list();
+            List<Subject> result = session.createQuery("from Treatment where subject.id = " + this.id.toString()).list();
 
             this.getItems().addAll(result);
             session.getTransaction().commit();
@@ -88,7 +101,8 @@ public class IndividualTable extends javafx.scene.control.TableView {
         try {
             session.beginTransaction();
 
-            List<Subject> result = session.createQuery("from Subject where name = \'" + this.name + "\'").list();
+            List<Subject> result = session.createQuery("from Treatment where subject.name = \'" + this.name + "\'").list();
+
 
             this.getItems().addAll(result);
             session.getTransaction().commit();
