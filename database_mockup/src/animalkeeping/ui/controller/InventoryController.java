@@ -1,6 +1,8 @@
 package animalkeeping.ui.controller;
 
 import animalkeeping.model.*;
+import animalkeeping.ui.HousingTable;
+import animalkeeping.ui.InventoryTable;
 import animalkeeping.ui.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.hibernate.HibernateException;
@@ -26,10 +29,10 @@ import java.util.*;
 public class InventoryController extends VBox implements Initializable {
 
     @FXML private PieChart populationChart;
-    //@FXML private ListView<String> housingUnitsList;
     @FXML private VBox unitsBox;
     @FXML private VBox chartVbox;
     @FXML private Label allLabel;
+    @FXML private ScrollPane tableScrollPane;
     private HashMap<String, HousingUnit> unitsHashMap;
 
 
@@ -41,6 +44,7 @@ public class InventoryController extends VBox implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        this.setMaxHeight(10000);
     }
 
     @Override
@@ -78,7 +82,6 @@ public class InventoryController extends VBox implements Initializable {
                     }
                 });
                 unitsBox.getChildren().add(label);
-
                 unitsBox.setMargin(label, new Insets(0., 0., 5., 5.0 ));
 
             }
@@ -90,10 +93,12 @@ public class InventoryController extends VBox implements Initializable {
     @FXML
     private void listAllPopulation() {
         List<SpeciesType> result = null;
+        List<Housing> housings = null;
         Session session = Main.sessionFactory.openSession();
         try {
             session.beginTransaction();
             result = session.createQuery("from SpeciesType").list();
+            housings = session.createQuery("from Housing where end_datetime is null").list();
             session.getTransaction().commit();
             session.close();
         } catch (HibernateException e) {
@@ -112,13 +117,15 @@ public class InventoryController extends VBox implements Initializable {
         }
         populationChart.setTitle("Total population: " + count.toString());
         populationChart.setData(pieChartData);
+
+
+        tableScrollPane.setContent(null);
+        HousingTable table = new HousingTable(housings);
+        tableScrollPane.setContent(table);
     }
 
 
     private void listPopulation(HousingUnit housingUnit) {
-        Set<Housing> housings = housingUnit.getHousings();
-
-
         Set<Subject> subjects = new HashSet<>();
         collectSubjects(subjects, housingUnit, true);
 
@@ -140,15 +147,18 @@ public class InventoryController extends VBox implements Initializable {
 
         populationChart.setTitle(housingUnit.getName() + ": " + subjects.size());
         populationChart.setData(pieChartData);
+        tableScrollPane.setContent(null);
+        HousingTable table = new HousingTable(housingUnit);
+        tableScrollPane.setContent(table);
     }
 
 
-    private void collectSubjects(Set<Subject> subjects, HousingUnit h) {
+    public static void collectSubjects(Set<Subject> subjects, HousingUnit h) {
         collectSubjects(subjects, h, true);
     }
 
 
-    private void collectSubjects(Set<Subject> subjects, HousingUnit h, Boolean currentOnly) {
+    public static void collectSubjects(Set<Subject> subjects, HousingUnit h, Boolean currentOnly) {
         for (Housing housing : h.getHousings()) {
             if(currentOnly) {
                 if (housing.getEnd() == null) {
@@ -160,7 +170,29 @@ public class InventoryController extends VBox implements Initializable {
         }
         Set<HousingUnit> child_units = h.getChildHousingUnits();
         for ( HousingUnit child : child_units) {
-            collectSubjects(subjects, child);
+            collectSubjects(subjects, child, currentOnly);
+        }
+    }
+
+
+    public static void collectHousings(Set<Housing> housings, HousingUnit h) {
+        collectHousings(housings, h, true);
+    }
+
+
+    public static void collectHousings(Set<Housing> housings, HousingUnit h, Boolean currentOnly) {
+         for (Housing housing : h.getHousings()) {
+            if(currentOnly) {
+                if (housing.getEnd() == null) {
+                    housings.add(housing);
+                }
+            } else {
+                housings.add(housing);
+            }
+        }
+        Set<HousingUnit> child_units = h.getChildHousingUnits();
+        for ( HousingUnit child : child_units) {
+            collectHousings(housings, child, currentOnly);
         }
     }
 }

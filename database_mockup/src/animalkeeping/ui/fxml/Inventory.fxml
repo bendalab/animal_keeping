@@ -5,43 +5,46 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
-   <content>
-      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="525.0" prefWidth="489.0">
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox fx:id="unitsBox">
          <children>
-            <VBox fx:id="unitsBox">
-               <children>
-                  <Label onMouseClicked="#listAllPopulation" text="Housing units">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                     <padding>
-                        <Insets bottom="10.0" />
-                     </padding>
-                  </Label>
-                  <Label fx:id="allLabel" onMouseClicked="#listAllPopulation" text="All" textFill="#274fee" underline="true">
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                     <VBox.margin>
-                        <Insets left="5.0" />
-                     </VBox.margin>
-                     <padding>
-                        <Insets bottom="5.0" />
-                     </padding>
-                  </Label>
-               </children>
-            </VBox>
-            <Separator maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="431.0" prefWidth="1895.0">
-               <children>
-                  <PieChart fx:id="populationChart" blendMode="DARKEN" labelLineLength="10.0" />
-               </children>
-            </VBox>
+            <Label onMouseClicked="#listAllPopulation" text="Inventory">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+               <padding>
+                  <Insets bottom="10.0" />
+               </padding>
+            </Label>
+            <Label fx:id="allLabel" onMouseClicked="#listAllPopulation" text="All" textFill="#274fee" underline="true">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <VBox.margin>
+                  <Insets left="5.0" />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="5.0" />
+               </padding>
+            </Label>
          </children>
       </VBox>
-   </content>
-</ScrollPane>
+      <Separator maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+         <children>
+            <PieChart fx:id="populationChart" blendMode="DARKEN" labelLineLength="10.0" />
+         </children>
+      </VBox>
+      <ScrollPane fx:id="tableScrollPane" fitToHeight="true" fitToWidth="true">
+        <content>
+          <AnchorPane />
+        </content>
+      </ScrollPane>
+   </children>
+</VBox>
