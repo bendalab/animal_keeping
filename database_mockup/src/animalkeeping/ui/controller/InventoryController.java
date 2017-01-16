@@ -25,11 +25,15 @@ import java.util.*;
  */
 public class InventoryController extends VBox implements Initializable {
 
-    @FXML private PieChart populationChart;
+    @FXML
+    private PieChart populationChart;
     //@FXML private ListView<String> housingUnitsList;
-    @FXML private VBox unitsBox;
-    @FXML private VBox chartVbox;
-    @FXML private Label allLabel;
+    @FXML
+    private VBox unitsBox;
+    @FXML
+    private VBox chartVbox;
+    @FXML
+    private Label allLabel;
     private HashMap<String, HousingUnit> unitsHashMap;
 
 
@@ -79,7 +83,7 @@ public class InventoryController extends VBox implements Initializable {
                 });
                 unitsBox.getChildren().add(label);
 
-                unitsBox.setMargin(label, new Insets(0., 0., 5., 5.0 ));
+                unitsBox.setMargin(label, new Insets(0., 0., 5., 5.0));
 
             }
         } else {
@@ -105,7 +109,7 @@ public class InventoryController extends VBox implements Initializable {
         Integer count = 0;
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         if (result != null) {
-            for (SpeciesType st : result){
+            for (SpeciesType st : result) {
                 count += st.getCount();
                 pieChartData.add(new PieChart.Data(st.getName() + " (" + st.getCount() + ")", st.getCount()));
             }
@@ -149,7 +153,7 @@ public class InventoryController extends VBox implements Initializable {
 
 
     private void collectSubjects(Set<Subject> subjects, HousingUnit h, Boolean currentOnly) {
-        for (Housing housing : h.getHousings()) {
+     /*  for (Housing housing : h.getHousings()) {
             if(currentOnly) {
                 if (housing.getEnd() == null) {
                     subjects.add(housing.getSubject());
@@ -161,6 +165,12 @@ public class InventoryController extends VBox implements Initializable {
         Set<HousingUnit> child_units = h.getChildHousingUnits();
         for ( HousingUnit child : child_units) {
             collectSubjects(subjects, child);
+        }*/
+
+
+        for (Housing housing : h.getAllHousings()) {
+            subjects.add(housing.getSubject());
+
         }
     }
 }
