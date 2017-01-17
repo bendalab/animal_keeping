@@ -2,6 +2,7 @@ package animalkeeping.ui;
 
 import animalkeeping.model.Person;
 import animalkeeping.model.Treatment;
+import animalkeeping.ui.controller.TimelineController;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -14,6 +15,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -26,12 +28,14 @@ import java.util.ResourceBundle;
  */
 public class PersonsView  extends VBox implements Initializable {
     @FXML private ScrollPane tableScrollPane;
+    @FXML private VBox timelineVBox;
     @FXML private TextField firstNameField;
     @FXML private TextField lastNameField;
     @FXML private TextField emailField;
     @FXML private TextField idField;
     @FXML private TableView treatmentTable;
     private PersonsTable personsTable;
+    private TimelineController timeline;
     private TableColumn<Treatment, Number> idCol;
     private TableColumn<Treatment, String> typeCol;
     private TableColumn<Treatment, Date> startDateCol;
@@ -51,9 +55,10 @@ public class PersonsView  extends VBox implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         personsTable = new PersonsTable();
-
+        timeline = new TimelineController();
         //personsTable.resize();
         this.tableScrollPane.setContent(personsTable);
+        this.timelineVBox.getChildren().add(timeline);
         idField.setEditable(false);
         idField.setText("");
         firstNameField.setText("");
@@ -88,12 +93,14 @@ public class PersonsView  extends VBox implements Initializable {
             System.out.println(p.getTreatments().size());
             treatmentTable.getItems().clear();
             treatmentTable.getItems().addAll(p.getTreatments());
+            timeline.setTreatments(p.getTreatments());
         } else {
             idField.setText("");
             firstNameField.setText("");
             lastNameField.setText("");
             emailField.setText("");
             treatmentTable.getItems().clear();
+            timeline.setTreatments(null);
         }
     }
 

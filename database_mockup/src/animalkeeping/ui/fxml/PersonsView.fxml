@@ -17,7 +17,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-
 <VBox xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <SplitPane dividerPositions="0.2556390977443609" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="800.0" prefWidth="600.0">
@@ -26,7 +25,7 @@
                <children>
                   <TabPane prefHeight="259.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <tabs>
-                        <Tab text="Person Info">
+                        <Tab closable="false" text="Person Info">
                            <content>
                               <VBox maxHeight="-Infinity" prefHeight="200.0">
                                  <children>
@@ -63,7 +62,7 @@
                               </VBox>
                            </content>
                         </Tab>
-                        <Tab text="Treatments">
+                        <Tab closable="false" text="Treatments">
                           <content>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
@@ -76,6 +75,11 @@
                                  </children>
                               </AnchorPane>
                           </content>
+                        </Tab>
+                        <Tab closable="false" text="Timeline">
+                           <content>
+                              <VBox fx:id="timelineVBox" prefHeight="200.0" prefWidth="100.0" />
+                           </content>
                         </Tab>
                      </tabs>
                   </TabPane>
