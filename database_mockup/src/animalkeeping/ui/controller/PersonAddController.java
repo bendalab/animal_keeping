@@ -1,5 +1,6 @@
 package animalkeeping.ui.controller;
 
+import animalkeeping.model.Person;
 import animalkeeping.ui.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -9,9 +10,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import java.awt.*;
+import java.util.*;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import org.dom4j.Text;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 
 /**
  * Created by huben on 11.01.17.
@@ -34,9 +39,29 @@ public class PersonAddController {
 
     @FXML
     private void addUser(){
-        String firstName = firstFld.getText();
-        String lastName = lastFld.getText();
-        String emailadresse = emailFld.getText();
+        Person nP = new Person();
+        nP.setFirstName(firstFld.getText());
+        nP.setLastName(lastFld.getText());
+        nP.setEmail(emailFld.getText());
+
+        Session session = Main.sessionFactory.openSession();
+        try {
+            session.beginTransaction();
+
+            System.out.println(nP);
+
+            session.save(nP);
+
+            session.getTransaction().commit();
+            session.close();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (session.isOpen()) {
+                session.close();
+            }
+        }
+
+
         //database add new person, give id
     }
     @FXML
