@@ -22,7 +22,7 @@ import java.util.*;
 
 public class TimelineController extends VBox implements Initializable {
 
-    @FXML private AnchorPane plotPane;
+    @FXML private VBox chartBox;
     private ScatterChart<Date, Number> timelineChart;
     private DateAxis xAxis;
     private NumberAxis yAxis;
@@ -50,13 +50,12 @@ public class TimelineController extends VBox implements Initializable {
         xAxis = new DateAxis(new Date(0), new Date());
         yAxis = new NumberAxis(0, 10, 5);
         timelineChart = new ScatterChart<Date, Number>(xAxis, yAxis);
-        //timelineChart.re
         timelineChart.autosize();
         timelineChart.setPrefHeight(150);
-        timelineChart.setPrefWidth(1000);
+        //timelineChart.setPrefWidth(1000);
         timelineChart.setLegendSide(Side.RIGHT);
-        plotPane.getChildren().clear();
-        plotPane.getChildren().add(timelineChart);
+        chartBox.getChildren().clear();
+        chartBox.getChildren().add(timelineChart);
     }
 
 
