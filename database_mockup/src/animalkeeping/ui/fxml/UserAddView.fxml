@@ -69,7 +69,7 @@
             <TextField fx:id="speciesIdField" layoutX="223.0" layoutY="160.0" promptText="Species Id" />
             <TextField fx:id="aliasField" layoutX="223.0" layoutY="198.0" promptText="Alias (optional)" />
             <TextField fx:id="sourceIdField" layoutX="403.0" layoutY="128.0" promptText="source_id" />
-            <TextField fx:id="HousingIdField" layoutX="403.0" layoutY="160.0" promptText="Housing Id" />
+            <TextField fx:id="housingIdField" layoutX="403.0" layoutY="160.0" promptText="Housing Id" />
             <DatePicker fx:id="datePicker" layoutX="395.0" layoutY="96.0" promptText="Date Added" />
             <Button fx:id="addSubject" layoutX="363.0" layoutY="237.0" mnemonicParsing="false" onAction="#addSubject" text="Add subject to database" />
       </children>
