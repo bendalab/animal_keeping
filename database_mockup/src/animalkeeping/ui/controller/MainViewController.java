@@ -44,20 +44,14 @@ public class MainViewController {
 
     @FXML
     private void showPersons() throws Exception{
-
-
-        //Main.getPrimaryStage().setScene(new Scene(FXMLLoader.load(Main.class.getResource("fxml/PersonsView.fxml"))));
-
         this.scrollPane.setContent(null);
         PersonsView pv = new PersonsView();
-        //PersonsTable personTable = new PersonsTable();
         this.scrollPane.setContent(pv);
     }
 
     @FXML
     private void showSubjects() {
         this.scrollPane.setContent(null);
-        //SubjectsTable subjectsTable = new SubjectsTable();
         FishView fish = new FishView();
         this.scrollPane.setContent(fish);
     }

@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<VBox fx:id="masterBox" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="animalkeeping.ui.controller.MainViewController">
+<VBox fx:id="masterBox" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="animalkeeping.ui.controller.MainViewController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -57,41 +54,31 @@
         </Menu>
       </menus>
     </MenuBar>
-    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
       <children>
-        <Label alignment="CENTER" layoutX="155.0" layoutY="177.0" style="&#10;" text="Drag components from Library here…" textAlignment="CENTER" textFill="#9f9f9f" wrapText="false">
-          <font>
-            <Font size="18.0" />
-          </font>
-        </Label>
-            <SplitPane dividerPositions="0.2" layoutX="114.0" layoutY="51.0" minWidth="-Infinity" prefHeight="371.0" prefWidth="640.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-              <items>
-                  <VBox fx:id="navigationBar" alignment="TOP_CENTER" prefHeight="369.0" prefWidth="92.0" spacing="15.0">
+            <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <VBox fx:id="navigationBar" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="369.0" prefWidth="130.0" spacing="15.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Button fx:id="homeBtn" mnemonicParsing="false" onAction="#showInventory" text="Inventory" />
-                        <Button fx:id="personsBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showPersons" text="Persons" />
-                        <Button fx:id="subjectsBtn" mnemonicParsing="false" onAction="#showSubjects" text="Subjects" textAlignment="CENTER" />
-                        <Button fx:id="treatmentsBtn" mnemonicParsing="false" onAction="#showTreatments" text="Treatments" />
-                        <TextField fx:id="idField" onAction="#goToId" promptText="go to id"/>
-                        <Button fx:id="addUsrBtn" mnemonicParsing="false" onAction="#showUserAddInterface" text="Add User" />
+                        <Group>
+                           <children>
+                              <Button fx:id="homeBtn" mnemonicParsing="false" onAction="#showInventory" prefWidth="95.0" text="Inventory" />
+                              <Button fx:id="personsBtn" layoutY="41.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showPersons" prefWidth="95.0" text="Persons" />
+                              <Button fx:id="subjectsBtn" layoutY="82.0" mnemonicParsing="false" onAction="#showSubjects" prefWidth="95.0" text="Subjects" textAlignment="CENTER" />
+                              <Button fx:id="treatmentsBtn" layoutY="123.0" mnemonicParsing="false" onAction="#showTreatments" prefWidth="95.0" text="Treatments" />
+                           </children>
+                        </Group>
+                        <TextField fx:id="idField" onAction="#goToId" promptText="go to id" />
+                        <Button fx:id="addUsrBtn" mnemonicParsing="false" onAction="#showUserAddInterface" prefWidth="95.0" text="Add User" />
                         <VBox fx:id="contextButtonBox" prefHeight="200.0" prefWidth="100.0" />
                      </children>
                      <padding>
                         <Insets top="20.0" />
                      </padding>
                   </VBox>
-                  <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true">
-                     <content>
-                        <TableView prefHeight="369.0" prefWidth="538.0">
-                          <columns>
-                            <TableColumn prefWidth="75.0" text="C1" />
-                            <TableColumn prefWidth="75.0" text="C2" />
-                          </columns>
-                        </TableView>
-                     </content>
-                  </ScrollPane>
-              </items>
-            </SplitPane>
+                  <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
       </children>
     </AnchorPane>
   </children>
