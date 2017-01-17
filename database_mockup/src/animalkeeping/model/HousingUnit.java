@@ -83,8 +83,31 @@ public class HousingUnit {
         this.population = population;
     }
 
-    public Set<Housing> getHousings() {
-        return housings;
+    public Set<Housing> getHousings() {return housings;}
+
+    public Set<Housing> getAllHousings(Boolean current) {
+        Set<Housing> allHousings = new HashSet<Housing>(0);
+
+        for (Housing h : getHousings()){
+            if (current) {
+                if (h.getEnd() == null){
+                    allHousings.add(h);
+                }
+            }
+            else {
+                allHousings.add(h);
+            }
+        }
+
+        Set<HousingUnit> childHouseUnits = getChildHousingUnits();
+
+        if (!(childHouseUnits.isEmpty())) {
+            for (HousingUnit child : childHouseUnits){
+                allHousings.addAll(child.getAllHousings(current));
+            }
+        }
+
+        return allHousings;
     }
 
     public void setHousings(Set<Housing> housings) {

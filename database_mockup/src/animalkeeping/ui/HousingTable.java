@@ -62,8 +62,7 @@ public class HousingTable extends TableView{
 
 
     private void initTableContent(HousingUnit unit, Boolean show_all) {
-        Set<Housing> housings = new HashSet<>();
-        InventoryController.collectHousings(housings, unit, !show_all);
+        Set<Housing> housings = unit.getAllHousings(show_all);
         initTableContent(housings);
     }
 

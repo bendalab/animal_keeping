@@ -27,7 +27,6 @@ import java.util.*;
  * Created by jan on 14.01.17.
  */
 public class InventoryController extends VBox implements Initializable {
-
     @FXML private PieChart populationChart;
     @FXML private VBox unitsBox;
     @FXML private VBox chartVbox;
@@ -44,7 +43,6 @@ public class InventoryController extends VBox implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        this.setMaxHeight(10000);
     }
 
     @Override
@@ -83,8 +81,7 @@ public class InventoryController extends VBox implements Initializable {
                 });
                 unitsBox.getChildren().add(label);
                 unitsBox.setMargin(label, new Insets(0., 0., 5., 5.0 ));
-
-            }
+              }
         } else {
             System.out.println("mist");
         }
@@ -93,6 +90,7 @@ public class InventoryController extends VBox implements Initializable {
     @FXML
     private void listAllPopulation() {
         List<SpeciesType> result = null;
+
         List<Housing> housings = null;
         Session session = Main.sessionFactory.openSession();
         try {
@@ -110,15 +108,14 @@ public class InventoryController extends VBox implements Initializable {
         Integer count = 0;
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         if (result != null) {
-            for (SpeciesType st : result){
+            for (SpeciesType st : result) {
+
                 count += st.getCount();
                 pieChartData.add(new PieChart.Data(st.getName() + " (" + st.getCount() + ")", st.getCount()));
             }
         }
         populationChart.setTitle("Total population: " + count.toString());
         populationChart.setData(pieChartData);
-
-
         tableScrollPane.setContent(null);
         HousingTable table = new HousingTable(housings);
         tableScrollPane.setContent(table);
@@ -126,6 +123,8 @@ public class InventoryController extends VBox implements Initializable {
 
 
     private void listPopulation(HousingUnit housingUnit) {
+        Set<Housing> housings = housingUnit.getAllHousings(true);
+
         Set<Subject> subjects = new HashSet<>();
         collectSubjects(subjects, housingUnit, true);
 
@@ -148,51 +147,18 @@ public class InventoryController extends VBox implements Initializable {
         populationChart.setTitle(housingUnit.getName() + ": " + subjects.size());
         populationChart.setData(pieChartData);
         tableScrollPane.setContent(null);
-        HousingTable table = new HousingTable(housingUnit);
+        HousingTable table = new HousingTable(housings);
         tableScrollPane.setContent(table);
     }
 
-
-    public static void collectSubjects(Set<Subject> subjects, HousingUnit h) {
+    private void collectSubjects(Set<Subject> subjects, HousingUnit h) {
         collectSubjects(subjects, h, true);
     }
 
+    private void collectSubjects(Set<Subject> subjects, HousingUnit h, Boolean currentOnly) {
+        for (Housing housing : h.getAllHousings(true)) {
+            subjects.add(housing.getSubject());
 
-    public static void collectSubjects(Set<Subject> subjects, HousingUnit h, Boolean currentOnly) {
-        for (Housing housing : h.getHousings()) {
-            if(currentOnly) {
-                if (housing.getEnd() == null) {
-                    subjects.add(housing.getSubject());
-                }
-            } else {
-                subjects.add(housing.getSubject());
-            }
-        }
-        Set<HousingUnit> child_units = h.getChildHousingUnits();
-        for ( HousingUnit child : child_units) {
-            collectSubjects(subjects, child, currentOnly);
-        }
-    }
-
-
-    public static void collectHousings(Set<Housing> housings, HousingUnit h) {
-        collectHousings(housings, h, true);
-    }
-
-
-    public static void collectHousings(Set<Housing> housings, HousingUnit h, Boolean currentOnly) {
-         for (Housing housing : h.getHousings()) {
-            if(currentOnly) {
-                if (housing.getEnd() == null) {
-                    housings.add(housing);
-                }
-            } else {
-                housings.add(housing);
-            }
-        }
-        Set<HousingUnit> child_units = h.getChildHousingUnits();
-        for ( HousingUnit child : child_units) {
-            collectHousings(housings, child, currentOnly);
         }
     }
 }

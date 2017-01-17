@@ -71,6 +71,15 @@ public class Subject {
         this.supplier = supplier;
     }
 
+    public Set<Treatment> getTreatments() {
+        return treatments;
+    }
+
+    public void setTreatments(Set<Treatment> treatments) {
+        this.treatments = treatments;
+    }
+
+
     @Override
     public String toString() {
         return "Subject{" +
