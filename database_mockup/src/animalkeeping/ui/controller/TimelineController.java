@@ -2,7 +2,6 @@ package animalkeeping.ui.controller;
 
 
 import animalkeeping.model.Treatment;
-import animalkeeping.model.TreatmentType;
 import animalkeeping.ui.DateAxis;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,12 +12,14 @@ import javafx.geometry.Side;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 public class TimelineController extends VBox implements Initializable {
 
@@ -52,7 +53,6 @@ public class TimelineController extends VBox implements Initializable {
         timelineChart = new ScatterChart<Date, Number>(xAxis, yAxis);
         timelineChart.autosize();
         timelineChart.setPrefHeight(150);
-        //timelineChart.setPrefWidth(1000);
         timelineChart.setLegendSide(Side.RIGHT);
         chartBox.getChildren().clear();
         chartBox.getChildren().add(timelineChart);
@@ -64,9 +64,6 @@ public class TimelineController extends VBox implements Initializable {
             timelineChart.setData(null);
             return;
         }
-        timelineChart.getXAxis().setAutoRanging(true);
-        timelineChart.getYAxis().setAutoRanging(true);
-        timelineChart.getYAxis().setTickLabelsVisible(false);
 
         ObservableList<XYChart.Series<Date, Number>> seriesData = FXCollections.observableArrayList();
         HashMap<String, ObservableList<XYChart.Data<Date, Number>>> series = new HashMap<>();
@@ -86,6 +83,20 @@ public class TimelineController extends VBox implements Initializable {
             seriesData.add(new XYChart.Series<>(s, series.get(s)));
         }
         timelineChart.setData(seriesData);
+
+        if (treatments.size() == 1) {
+            timelineChart.getXAxis().setAutoRanging(false);
+            Date date = seriesData.get(0).getData().get(0).getXValue();
+            long time_org = date.getTime();
+            Date min_date = new Date(time_org - (60*60*25*1000));
+            Date max_date = new Date(time_org + (60*60*25*1000));
+            ((DateAxis)timelineChart.getXAxis()).setLowerBound(min_date);
+            ((DateAxis)timelineChart.getXAxis()).setUpperBound(max_date);
+        } else {
+            timelineChart.getXAxis().setAutoRanging(true);
+        }
+        timelineChart.getYAxis().setTickLabelsVisible(false);
+        timelineChart.getXAxis().setLabel("Date");
     }
 
 
