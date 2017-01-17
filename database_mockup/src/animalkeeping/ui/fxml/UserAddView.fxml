@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -59,11 +60,18 @@
             <Font size="18.0" />
           </font>
         </Label>
-            <TextField fx:id="firstFld" layoutX="14.0" layoutY="96.0" promptText="First Name" />
-            <TextField fx:id="lastFld" layoutX="14.0" layoutY="128.0" promptText="Last Name" />
-            <TextField fx:id="emailFld" layoutX="14.0" layoutY="160.0" promptText="eMail" />
+            <TextField fx:id="first" layoutX="14.0" layoutY="96.0" promptText="First Name" />
+            <TextField fx:id="last" layoutX="14.0" layoutY="128.0" promptText="Last Name" />
+            <TextField fx:id="email" layoutX="14.0" layoutY="160.0" promptText="eMail" />
             <Button fx:id="userAddBtn" layoutX="61.0" layoutY="211.0" mnemonicParsing="false" onAction="#addUser" text="Add User" />
-            <Button fx:id="returnBtn" layoutX="250.0" layoutY="39.0" mnemonicParsing="false" onAction="#returnToMainView" text="Return to main view" />
+            <TextField fx:id="nameField" layoutX="223.0" layoutY="96.0" promptText="Name" />
+            <TextField fx:id="typeIdField" layoutX="223.0" layoutY="128.0" promptText="type_id" />
+            <TextField fx:id="speciesIdField" layoutX="223.0" layoutY="160.0" promptText="Species Id" />
+            <TextField fx:id="aliasField" layoutX="223.0" layoutY="198.0" promptText="Alias (optional)" />
+            <TextField fx:id="sourceIdField" layoutX="403.0" layoutY="128.0" promptText="source_id" />
+            <TextField fx:id="housingIdField" layoutX="403.0" layoutY="160.0" promptText="Housing Id" />
+            <DatePicker fx:id="datePicker" layoutX="395.0" layoutY="96.0" promptText="Date Added" />
+            <Button fx:id="addSubject" layoutX="363.0" layoutY="237.0" mnemonicParsing="false" onAction="#addSubject" text="Add subject to database" />
       </children>
     </AnchorPane>
   </children>
