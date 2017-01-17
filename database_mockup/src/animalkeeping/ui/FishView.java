@@ -2,6 +2,7 @@ package animalkeeping.ui;
 
 import animalkeeping.model.Subject;
 import animalkeeping.model.Treatment;
+import animalkeeping.ui.controller.TimelineController;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -32,8 +33,10 @@ public class FishView extends VBox implements Initializable {
     @FXML private TextField supplierField;
     @FXML private Label aliveField;
     @FXML private TableView treatmentTable;
+    @FXML private VBox timelineVBox;
 
     private FishTable fishTable;
+    private TimelineController timeline;
     private TableColumn<Treatment, Number> idCol;
     private TableColumn<Treatment, String> typeCol;
     private TableColumn<Treatment, Date> startDateCol;
@@ -53,9 +56,11 @@ public class FishView extends VBox implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         FishTable fishTable = new FishTable();
+        timeline = new TimelineController();
 
         //personsTable.resize();
         this.tableScrollPane.setContent(fishTable);
+        this.timelineVBox.getChildren().add(timeline);
         idField.setEditable(false);
         idField.setText("");
         aliasField.setText("");
@@ -92,6 +97,7 @@ public class FishView extends VBox implements Initializable {
             System.out.println(s.getTreatments().size());
             treatmentTable.getItems().clear();
             treatmentTable.getItems().addAll(s.getTreatments());
+            timeline.setTreatments(s.getTreatments());
         } else {
             idField.setText("");
             aliasField.setText("");
@@ -99,12 +105,12 @@ public class FishView extends VBox implements Initializable {
             speciesField.setText("");
             aliveField.setText("");
             treatmentTable.getItems().clear();
+            timeline.setTreatments(null);
         }
     }
 
 
     private class FishTableListChangeListener implements ListChangeListener<Subject> {
-
         @Override
         public void onChanged(Change<? extends Subject> c) {
             if (c.getList().size() > 0) {

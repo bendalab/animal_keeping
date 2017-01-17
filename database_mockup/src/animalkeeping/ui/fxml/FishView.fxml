@@ -76,6 +76,11 @@
                         </AnchorPane>
                      </content>
                   </Tab>
+                  <Tab closable="false" text="Timeline">
+                     <content>
+                        <VBox fx:id="timelineVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" />
+                     </content>
+                  </Tab>
                </tabs>
             </TabPane>
          </children>
