@@ -72,6 +72,7 @@
             <TextField fx:id="housingIdField" layoutX="403.0" layoutY="160.0" promptText="Housing Id" />
             <DatePicker fx:id="datePicker" layoutX="395.0" layoutY="96.0" promptText="Date Added" />
             <Button fx:id="addSubject" layoutX="363.0" layoutY="237.0" mnemonicParsing="false" onAction="#addSubject" text="Add subject to database" />
+            <Button fx:id="returnBtn" layoutX="301.0" layoutY="18.0" mnemonicParsing="false" onAction="#returnToMainView" text="return to main view" />
       </children>
     </AnchorPane>
   </children>
