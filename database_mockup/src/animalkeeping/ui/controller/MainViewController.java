@@ -87,4 +87,18 @@ public class MainViewController {
         this.scrollPane.setContent(personTable);*/
     }
 
+    @FXML
+    private void connectToDatabase() {
+        Main.connectToDatabase();
+    }
+
+    @FXML
+    private  void closeApplication() {
+        Main.getPrimaryStage().close();
+    }
+
+    @FXML
+    private void disconnectFromDatabase() {
+        Main.sessionFactory.close();
+    }
 }
