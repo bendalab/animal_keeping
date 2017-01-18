@@ -7,7 +7,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -86,19 +85,29 @@ public class Main extends Application {
     public static HashMap<String, String> getCredentials() {
         HashMap<String, String> credentials = new HashMap<>();
         Dialog<ConnectionDetails> dialog = new Dialog<>();
+        dialog.setWidth(600);
         dialog.setTitle("Enter connection details");
         dialog.setResizable(true);
+
         Label label1 = new Label("user: ");
         Label label2 = new Label("password: ");
-        TextField text1 = new TextField("huben");
-        PasswordField text2 = new PasswordField();
-        text2.setText("test");
+        Label label3 = new Label( "hostName:");
+
+        TextField nameField = new TextField("huben");
+        PasswordField passwordField = new PasswordField();
+        passwordField.setText("test");
+        TextField hostField = new TextField("jdbc:mysql://localhost/animal_keeping");
 
         GridPane grid = new GridPane();
-        grid.add(label1, 1, 1);
-        grid.add(text1, 2, 1);
-        grid.add(label2, 1, 2);
-        grid.add(text2, 2, 2);
+        grid.add(label3, 1, 1);
+        grid.add(hostField, 2, 1);
+
+        grid.add(label1, 1, 3);
+        grid.add(nameField, 2, 3);
+
+        grid.add(label2, 1, 4);
+        grid.add(passwordField, 2, 4);
+
         dialog.getDialogPane().setContent(grid);
 
         ButtonType buttonTypeOk = new ButtonType("Okay", ButtonBar.ButtonData.OK_DONE);
@@ -108,7 +117,8 @@ public class Main extends Application {
             @Override
             public ConnectionDetails call(ButtonType b) {
                 if (b == buttonTypeOk) {
-                return new ConnectionDetails(text1.getText(), text2.getText());
+                return new ConnectionDetails(nameField.getText(), passwordField.getText(),
+                                             hostField.getText());
                 }
             return null;
             }
@@ -118,6 +128,7 @@ public class Main extends Application {
 		    ConnectionDetails det = result.get();
 		    credentials.put("hibernate.connection.username", det.getUser());
             credentials.put("hibernate.connection.password", det.getPasswd());
+            credentials.put("hibernate.connection.url", det.getHostName());
         }
         return credentials;
     }
@@ -125,10 +136,12 @@ public class Main extends Application {
     private static class ConnectionDetails {
 		private String user;
 		private String passwd;
+		private String hostName;
 
-		ConnectionDetails(String s1, String s2) {
-			user = s1;
-			passwd = s2;
+		ConnectionDetails(String userName, String password, String host) {
+			user = userName;
+			passwd = password;
+			hostName = host;
 		}
 
         public String getUser() {
@@ -138,6 +151,8 @@ public class Main extends Application {
         public String getPasswd() {
             return passwd;
         }
+
+        public String getHostName() { return hostName; }
 
         @Override
 		public String toString() {
