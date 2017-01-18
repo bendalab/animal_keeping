@@ -6,9 +6,9 @@
 
 <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox fx:id="chartBox" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+      <VBox fx:id="chartBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
    </children>
    <padding>
-      <Insets left="10.0" right="10.0" />
+      <Insets left="20.0" right="20.0" />
    </padding>
 </HBox>

@@ -19,7 +19,7 @@
 
 <VBox xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <SplitPane dividerPositions="0.2556390977443609" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="800.0" prefWidth="600.0">
+      <SplitPane dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="800.0" prefWidth="600.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="150.0" prefWidth="160.0">
                <children>
@@ -27,9 +27,9 @@
                      <tabs>
                         <Tab closable="false" text="Person Info">
                            <content>
-                              <VBox maxHeight="-Infinity" prefHeight="200.0">
+                              <VBox maxHeight="-Infinity" prefHeight="250.0">
                                  <children>
-                                    <GridPane alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="130.0" prefWidth="174.0">
+                                    <GridPane alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="130.0" prefWidth="174.0" vgap="5.0">
                                       <columnConstraints>
                                         <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
                                         <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="275.0" />
@@ -51,6 +51,9 @@
                                           <TextField fx:id="lastNameField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="last name textField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
                                           <TextField fx:id="emailField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="email textField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
                                        </children>
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
                                     </GridPane>
                                     <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="29.0" prefWidth="598.0" spacing="5.0">
                                        <children>
@@ -59,12 +62,18 @@
                                        </children>
                                     </HBox>
                                  </children>
+                                 <padding>
+                                    <Insets bottom="10.0" />
+                                 </padding>
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
                               </VBox>
                            </content>
                         </Tab>
                         <Tab closable="false" text="Treatments">
                           <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="200.0">
                                  <children>
                                     <TableView fx:id="treatmentTable" layoutX="41.0" layoutY="-36.0" prefHeight="155.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <columns>
@@ -78,7 +87,7 @@
                         </Tab>
                         <Tab closable="false" text="Timeline">
                            <content>
-                              <VBox fx:id="timelineVBox" prefHeight="200.0" prefWidth="100.0" />
+                              <VBox fx:id="timelineVBox" prefHeight="250.0" prefWidth="100.0" />
                            </content>
                         </Tab>
                      </tabs>
