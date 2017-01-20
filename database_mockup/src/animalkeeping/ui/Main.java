@@ -12,8 +12,13 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.Properties;
 
 
 public class Main extends Application {
@@ -93,10 +98,39 @@ public class Main extends Application {
         Label label2 = new Label("password: ");
         Label label3 = new Label( "hostName:");
 
-        TextField nameField = new TextField("huben");
+        Properties prop = new Properties();
+        String userName = "huben";
+        String password = "test";
+        String host = "jdbc:mysql://localhost/animal_keeping";
+
+
+        //load properties from file
+
+        try {
+
+            InputStream input = new FileInputStream("config.properties");
+
+            // load a properties file
+            prop.load(input);
+
+
+            // get the property value and print it out
+            userName = prop.getProperty("userName");
+            password = prop.getProperty("password");
+            host = prop.getProperty("host");
+        }
+
+        catch(FileNotFoundException e){
+            System.out.println("File not found");
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+
+        TextField nameField = new TextField(userName);
         PasswordField passwordField = new PasswordField();
-        passwordField.setText("test");
-        TextField hostField = new TextField("jdbc:mysql://localhost/animal_keeping");
+        passwordField.setText(password);
+        TextField hostField = new TextField(host);
 
         GridPane grid = new GridPane();
         grid.add(label3, 1, 1);
