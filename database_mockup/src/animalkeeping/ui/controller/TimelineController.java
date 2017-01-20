@@ -52,8 +52,9 @@ public class TimelineController extends VBox implements Initializable {
         yAxis = new NumberAxis(0, 10, 5);
         timelineChart = new ScatterChart<Date, Number>(xAxis, yAxis);
         timelineChart.autosize();
-        timelineChart.setPrefHeight(150);
-        timelineChart.setLegendSide(Side.RIGHT);
+        timelineChart.setPrefHeight(250);
+        timelineChart.setMaxHeight(1000);
+        timelineChart.setLegendSide(Side.TOP);
         chartBox.getChildren().clear();
         chartBox.getChildren().add(timelineChart);
     }
