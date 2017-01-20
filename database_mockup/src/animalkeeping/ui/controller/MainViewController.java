@@ -45,38 +45,61 @@ public class MainViewController {
     @FXML
     private void showPersons() throws Exception{
         this.scrollPane.setContent(null);
+        try{
         PersonsView pv = new PersonsView();
-        this.scrollPane.setContent(pv);
+        this.scrollPane.setContent(pv);}
+        catch(Exception e){
+            Main.connectToDatabase();
+            e.printStackTrace();}
     }
 
     @FXML
     private void showSubjects() {
         this.scrollPane.setContent(null);
-        FishView fish = new FishView();
-        this.scrollPane.setContent(fish);
+
+        try{
+            FishView fish = new FishView();
+            this.scrollPane.setContent(fish);}
+        catch(Exception e){
+            Main.connectToDatabase();
+            e.printStackTrace();}
     }
 
     @FXML
     private void showTreatments() {
         this.scrollPane.setContent(null);
-        TreatmentsTable treatmentsTable = new TreatmentsTable();
-        this.scrollPane.setContent(treatmentsTable);
+        try{
+            TreatmentsTable treatmentsTable = new TreatmentsTable();
+            this.scrollPane.setContent(treatmentsTable);}
+        catch(Exception e){
+            Main.connectToDatabase();
+            e.printStackTrace();}
     }
 
     @FXML
     private void showInventory() {
         this.scrollPane.setContent(null);
+        try{
         InventoryController inventory = new InventoryController();
+        this.scrollPane.setContent(inventory);}
+        catch(Exception e){
+            Main.connectToDatabase();
+            e.printStackTrace();}
+
         // InventoryTable inventoryTable= new InventoryTable();
-        this.scrollPane.setContent(inventory);
+
     }
 
     @FXML
     private void goToId(){
         this.scrollPane.setContent(null);
         System.out.println(idField.getText());
+        try{
         IndividualTable individualTable = new IndividualTable(Integer.parseInt(idField.getText()));
-        this.scrollPane.setContent(individualTable);
+        this.scrollPane.setContent(individualTable);}
+        catch(Exception e){
+            Main.connectToDatabase();
+            e.printStackTrace();}
     }
 
     @FXML
