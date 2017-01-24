@@ -23,6 +23,7 @@ import java.util.Properties;
 
 public class Main extends Application {
     public static SessionFactory sessionFactory;
+    private static Boolean connected;
     private static Stage primaryStage;
 
     @Override
@@ -38,7 +39,7 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static void connectToDatabase() {
+    public static boolean connectToDatabase() {
         HashMap<String, String> properties = getCredentials();
         /*
         HashMap<String, String> properties = new HashMap<>();
@@ -57,6 +58,8 @@ public class Main extends Application {
 
         try {
             sessionFactory = new MetadataSources( registry ).buildMetadata().buildSessionFactory();
+            connected = true;
+            return true;
         }
         catch (Exception e) {
             StandardServiceRegistryBuilder.destroy( registry );
@@ -67,6 +70,8 @@ public class Main extends Application {
         	alert.setContentText(s);
         	alert.show();
             e.printStackTrace();
+            connected = false;
+            return false;
         }
     }
 
@@ -166,6 +171,12 @@ public class Main extends Application {
         }
         return credentials;
     }
+
+
+    public static Boolean isConnected() {
+        return connected;
+    }
+
 
     private static class ConnectionDetails {
 		private String user;
