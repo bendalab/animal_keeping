@@ -3,12 +3,15 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -58,9 +61,27 @@
                               <Button fx:id="treatmentsBtn" layoutY="123.0" mnemonicParsing="false" onAction="#showTreatments" prefWidth="95.0" text="Treatments" />
                            </children>
                         </Group>
-                        <TextField fx:id="idField" onAction="#goToId" promptText="go to id" />
+                        <Separator prefWidth="200.0" />
+                        <Separator prefWidth="200.0" />
                         <Button fx:id="addUsrBtn" mnemonicParsing="false" onAction="#showUserAddInterface" prefWidth="95.0" text="Add User" />
+                        <Separator prefWidth="200.0" />
                         <VBox fx:id="contextButtonBox" prefHeight="200.0" prefWidth="100.0" />
+                        <TitledPane animated="false" text="find">
+                          <content>
+                              <VBox spacing="10.0">
+                                 <children>
+                                    <ComboBox fx:id="findBox" prefWidth="150.0" promptText="Subject" />
+                                    <TextField fx:id="idField" onAction="#goToId" promptText="go to id" />
+                                    <HBox alignment="CENTER_RIGHT" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <Button mnemonicParsing="false" text="go" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                          </content>
+                        </TitledPane>
+                        <HBox VBox.vgrow="ALWAYS" />
                      </children>
                      <padding>
                         <Insets top="20.0" />
