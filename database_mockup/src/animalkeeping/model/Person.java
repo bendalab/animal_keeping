@@ -1,5 +1,8 @@
 package animalkeeping.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -66,12 +69,38 @@ public class Person {
     public void setTreatments(Set<Treatment> treatments) {
         this.treatments = treatments;
     }
+
     @Override
     public String toString() {
         return "Person{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
+                "id=" + getId() +
+                ", firstName='" + getFirstName() + '\'' +
+                ", lastName='" + getLastName() + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Person))
+            return false;
+        if (obj == this)
+            return true;
+
+        Person rhs = (Person) obj;
+        return new EqualsBuilder().
+                // if deriving: appendSuper(super.equals(obj)).
+                        append(getFirstName(), rhs.getFirstName()).
+                        append(getLastName(), rhs.getLastName()).
+                        append(getId(), rhs.getId()).
+                        isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).
+                        append(getId()).
+                        append(getFirstName()).
+                        append(getLastName()).
+                        toHashCode();
     }
 }
