@@ -11,7 +11,7 @@ import org.hibernate.Session;
 
 import java.util.List;
 
-public class PersonsTable extends TableView {
+public class PersonsTable extends TableView<Person> {
     private TableColumn<Person, Number> idCol;
     private TableColumn<Person, String> firstNameCol;
     private TableColumn<Person, String> lastNameCol;
@@ -37,12 +37,10 @@ public class PersonsTable extends TableView {
     }*/
 
     private void init() {
-
         Session session = Main.sessionFactory.openSession();
         try {
             session.beginTransaction();
-            List result = session.createQuery("from Person").list();
-
+            List<Person> result = session.createQuery("from Person").list();
             this.getItems().addAll(result);
             session.getTransaction().commit();
             session.close();
