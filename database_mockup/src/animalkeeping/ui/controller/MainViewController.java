@@ -1,8 +1,11 @@
 package animalkeeping.ui.controller;
 
 import animalkeeping.ui.*;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.sun.tools.corba.se.idl.constExpr.BooleanNot;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -15,48 +18,45 @@ import javafx.scene.Scene;
 
 public class MainViewController {
 
-    @FXML
-    private Button personsBtn;
+    @FXML private Button personsBtn;
+    @FXML private Button treatmentsBtn;
+    @FXML private Button subjectsBtn;
+    @FXML private Button homeBtn;
+    @FXML private Button addUsrBtn;
+    @FXML private TextField idField;
+    @FXML private ScrollPane scrollPane;
+    @FXML private VBox masterBox;
+    @FXML private VBox contextButtonBox;
+    @FXML private ComboBox<String> findBox;
 
     @FXML
-    private Button treatmentsBtn;
-
-    @FXML
-    private Button subjectsBtn;
-
-    @FXML
-    private Button homeBtn;
-
-    @FXML
-    private Button addUsrBtn;
-
-    @FXML
-    private TextField idField;
-
-    @FXML
-    private ScrollPane scrollPane;
-
-    @FXML
-    private VBox masterBox;
-
-    @FXML
-    private VBox contextButtonBox;
+    private void initialize() {
+        findBox.getItems().clear();
+        findBox.getItems().addAll("Person", "Subject", "Housing unit", "Treatment");
+        findBox.getSelectionModel().select("Subject");
+        connectToDatabase();
+    }
 
     @FXML
     private void showPersons() throws Exception{
         this.scrollPane.setContent(null);
         try{
-        PersonsView pv = new PersonsView();
-        this.scrollPane.setContent(pv);}
+            PersonsView pv = new PersonsView();
+            this.scrollPane.setContent(pv);
+            this.contextButtonBox.getChildren().clear();
+            this.contextButtonBox.getChildren().add(pv.getControls());
+        }
         catch(Exception e){
             Main.connectToDatabase();
-            e.printStackTrace();}
+            e.printStackTrace();
+        }
     }
+
 
     @FXML
     private void showSubjects() {
         this.scrollPane.setContent(null);
-
+        this.contextButtonBox.getChildren().clear();
         try{
             FishView fish = new FishView();
             this.scrollPane.setContent(fish);}
@@ -68,6 +68,7 @@ public class MainViewController {
     @FXML
     private void showTreatments() {
         this.scrollPane.setContent(null);
+        this.contextButtonBox.getChildren().clear();
         try{
             TreatmentsTable treatmentsTable = new TreatmentsTable();
             this.scrollPane.setContent(treatmentsTable);}
@@ -79,27 +80,67 @@ public class MainViewController {
     @FXML
     private void showInventory() {
         this.scrollPane.setContent(null);
-        try{
-        InventoryController inventory = new InventoryController();
-        this.scrollPane.setContent(inventory);}
-        catch(Exception e){
+        this.contextButtonBox.getChildren().clear();
+        try {
+            InventoryController inventory = new InventoryController();
+            this.scrollPane.setContent(inventory);}
+        catch(Exception e) {
             Main.connectToDatabase();
-            e.printStackTrace();}
-
-        // InventoryTable inventoryTable= new InventoryTable();
-
+            e.printStackTrace();
+        }
     }
+
+    private Integer looksLikeId(String text) {
+        Integer integer = null;
+        try {
+            integer = Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+
+        }
+        if (integer != null && integer < 0)
+            integer = null;
+        return integer;
+    }
+
 
     @FXML
     private void goToId(){
         this.scrollPane.setContent(null);
-        System.out.println(idField.getText());
-        try{
-        IndividualTable individualTable = new IndividualTable(Integer.parseInt(idField.getText()));
-        this.scrollPane.setContent(individualTable);}
-        catch(Exception e){
-            Main.connectToDatabase();
-            e.printStackTrace();}
+        Integer id = looksLikeId(idField.getText());
+        System.out.println(id != null);
+        String selectedTable = findBox.getSelectionModel().getSelectedItem();
+        if (selectedTable == null) {
+            selectedTable = findBox.getItems().get(0);
+        }
+        if (!Main.isConnected()) {
+            if (!Main.connectToDatabase()) {
+                return;
+            }
+        }
+
+        if (selectedTable.equals("Subject")) {
+            if (Main.isConnected()) {
+                if (id != null) {
+                    IndividualTable individualTable = new IndividualTable(id);
+                    this.scrollPane.setContent(individualTable);
+                } else {
+                    IndividualTable individualTable = new IndividualTable(idField.getText());
+                    this.scrollPane.setContent(individualTable);
+                }
+            }
+        } else if (selectedTable.equals("Person")) {
+            PersonsView pv = new PersonsView();
+            if (id != null) {
+                pv.setSelectedPerson(id);
+            } else {
+                pv.setSelectedPerson(idField.getText());
+            }
+            this.scrollPane.setContent(pv);
+        } else if (selectedTable.equals("Treatment")) {
+            System.out.println("not yet supported");
+        } else {
+            System.out.println("invalid selection");
+        }
     }
 
     @FXML
