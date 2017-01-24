@@ -10,17 +10,16 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -33,7 +32,7 @@ public class PersonsView  extends VBox implements Initializable {
     @FXML private TextField lastNameField;
     @FXML private TextField emailField;
     @FXML private TextField idField;
-    @FXML private TableView treatmentTable;
+    @FXML private TableView<Treatment> treatmentTable;
     private PersonsTable personsTable;
     private TimelineController timeline;
     private TableColumn<Treatment, Number> idCol;
@@ -41,6 +40,10 @@ public class PersonsView  extends VBox implements Initializable {
     private TableColumn<Treatment, Date> startDateCol;
     private TableColumn<Treatment, Date> endDateCol;
     private TableColumn<Treatment, String> subjectCol;
+    private VBox controls;
+    private Person selectedPerson;
+    private Button editBtn, deleteBtn;
+
 
     public PersonsView() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/PersonsView.fxml"));
@@ -69,22 +72,45 @@ public class PersonsView  extends VBox implements Initializable {
         emailField.setText("");
 
         personsTable.getSelectionModel().getSelectedItems().addListener(new PersonTableListChangeListener());
-        idCol = new TableColumn<Treatment, Number>("id");
+        idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        subjectCol = new TableColumn<Treatment, String>("subject");
+        subjectCol = new TableColumn<>("subject");
         subjectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubject().getName()));
-        typeCol = new TableColumn<Treatment, String>("treatment");
+        typeCol = new TableColumn<>("treatment");
         typeCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getType().getName()));
-        startDateCol = new TableColumn<Treatment, Date>("start");
-        startDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getStart()));
-        endDateCol = new TableColumn<Treatment, Date>("end");
-        endDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getEnd()));
+        startDateCol = new TableColumn<>("start");
+        startDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getStart()));
+        endDateCol = new TableColumn<>("end");
+        endDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getEnd()));
         treatmentTable.getColumns().clear();
         treatmentTable.getColumns().addAll(idCol, subjectCol, typeCol, startDateCol, endDateCol);
+
+        controls = new VBox();
+        controls.setAlignment(Pos.CENTER);
+        //controls.setPadding(new Insets(0.0, 0.0, 10.0, 0.0));
+        controls.setSpacing(10);
+        Label heading = new Label("Person controls:");
+        heading.setUnderline(true);
+        controls.getChildren().add(heading);
+
+        editBtn = new Button();
+        editBtn.setPrefWidth(100);
+        editBtn.setOnAction(event -> editPerson());
+        editBtn.setText("edit");
+        controls.getChildren().add(editBtn);
+
+        deleteBtn = new Button();
+        deleteBtn.setText("delete");
+        deleteBtn.setPrefWidth(100);
+        deleteBtn.setOnAction(event -> deletePerson());
+        controls.getChildren().add(deleteBtn);
     }
 
 
     private void personSelected(Person p) {
+        selectedPerson = p;
+        editBtn.setDisable(p == null);
+        deleteBtn.setDisable(p == null);
         if (p != null) {
             idField.setText(p.getId().toString());
             firstNameField.setText(p.getFirstName());
@@ -101,6 +127,61 @@ public class PersonsView  extends VBox implements Initializable {
             emailField.setText("");
             treatmentTable.getItems().clear();
             timeline.setTreatments(null);
+        }
+    }
+
+
+    private void editPerson() {
+        System.out.println("edit person: " + (selectedPerson != null ? selectedPerson.toString() : ""));
+    }
+
+
+    private void deletePerson() {
+        System.out.println("delete person: " + (selectedPerson != null ? selectedPerson.toString() : ""));
+    }
+
+
+    public VBox getControls() {
+        return controls;
+    }
+
+
+    public void setSelectedPerson(Integer id) {
+        Session session = Main.sessionFactory.openSession();
+        List<Person> persons = null;
+        try {
+            session.beginTransaction();
+            persons = session.createQuery("from Person where id = " + id.toString(), Person.class).list();
+            session.getTransaction().commit();
+            session.close();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (session.isOpen()) {
+                session.close();
+            }
+        }
+        if (persons != null && persons.size() > 0) {
+            personsTable.getSelectionModel().select(persons.get(0));
+        }
+    }
+
+
+    public void setSelectedPerson(String name) {
+        Session session = Main.sessionFactory.openSession();
+        List<Person> persons = null;
+        try {
+            session.beginTransaction();
+            persons = session.createQuery("from Person where concat(first, last) like '%" + name + "%'", Person.class).list();
+            session.getTransaction().commit();
+            session.close();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (session.isOpen()) {
+                session.close();
+            }
+        }
+        if (persons != null && persons.size() > 0) {
+            personsTable.getSelectionModel().select(persons.get(0));
         }
     }
 
