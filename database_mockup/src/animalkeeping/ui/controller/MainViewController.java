@@ -5,10 +5,10 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 //import com.sun.tools.corba.se.idl.constExpr.BooleanNot;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.Node;
@@ -28,6 +28,7 @@ public class MainViewController {
     @FXML private VBox masterBox;
     @FXML private VBox contextButtonBox;
     @FXML private ComboBox<String> findBox;
+    @FXML private TitledPane findPane;
 
     @FXML
     private void initialize() {
@@ -176,7 +177,7 @@ public class MainViewController {
         subjectsBtn.setDisable(false);
         inventoryBtn.setDisable(false);
         treatmentsBtn.setDisable(false);
-        findBox.setDisable(false);
+        findPane.setDisable(false);
         addUsrBtn.setDisable(false);
         showInventory();
     }

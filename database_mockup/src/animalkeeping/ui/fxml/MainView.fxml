@@ -62,7 +62,7 @@
                         <Button fx:id="addUsrBtn" disable="true" mnemonicParsing="false" onAction="#showUserAddInterface" prefWidth="95.0" text="Add User" />
                         <Separator prefWidth="200.0" />
                         <VBox fx:id="contextButtonBox" prefHeight="200.0" prefWidth="100.0" />
-                        <TitledPane animated="false" disable="true" text="find">
+                        <TitledPane fx:id="findPane" animated="false" disable="true" text="find">
                           <content>
                               <VBox spacing="10.0">
                                  <children>
