@@ -39,21 +39,10 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static boolean connectToDatabase() {
-        HashMap<String, String> properties = getCredentials();
-        /*
-        HashMap<String, String> properties = new HashMap<>();
-        properties.put("hibernate.connection.username", "huben");
-        properties.put("hibernate.connection.password", "test");
-        */
-        /*
-        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-                .configure() // configures settings from hibernate.cfg.xml
-                .build();
-        */
+    public static  boolean connectToDatabase(ConnectionDetails credentials) {
         StandardServiceRegistryBuilder registrybuilder = new StandardServiceRegistryBuilder();
         registrybuilder.configure();
-        registrybuilder.applySettings(properties);
+        registrybuilder.applySettings(credentials.getCredentials());
         final StandardServiceRegistry registry = registrybuilder.build();
 
         try {
@@ -64,16 +53,18 @@ public class Main extends Application {
         catch (Exception e) {
             StandardServiceRegistryBuilder.destroy( registry );
             Alert alert = new Alert(Alert.AlertType.ERROR);
-        	alert.setTitle("Connection error!");
+            alert.setTitle("Connection error!");
             alert.setHeaderText("Cannot establish connection to database!");
-        	String s = e.getLocalizedMessage();
-        	alert.setContentText(s);
-        	alert.show();
+            String s = e.getLocalizedMessage();
+            alert.setContentText(s);
+            alert.show();
             e.printStackTrace();
             connected = false;
             return false;
         }
+
     }
+
 
     public void stop() {
         if (sessionFactory != null) {
@@ -92,98 +83,17 @@ public class Main extends Application {
         launch(args);
     }
 
-    public static HashMap<String, String> getCredentials() {
-        HashMap<String, String> credentials = new HashMap<>();
-        Dialog<ConnectionDetails> dialog = new Dialog<>();
-        dialog.setWidth(600);
-        dialog.setTitle("Enter connection details");
-        dialog.setResizable(true);
-
-        Label label1 = new Label("user: ");
-        Label label2 = new Label("password: ");
-        Label label3 = new Label( "hostName:");
-
-        Properties prop = new Properties();
-        String userName = "huben";
-        String password = "test";
-        String host = "jdbc:mysql://localhost/animal_keeping";
-
-
-        //load properties from file
-
-        try {
-
-            InputStream input = new FileInputStream("config.properties");
-
-            // load a properties file
-            prop.load(input);
-
-
-            // get the property value and print it out
-            userName = prop.getProperty("userName");
-            password = prop.getProperty("password");
-            host = prop.getProperty("host");
-        }
-
-        catch(FileNotFoundException e){
-            System.out.println("File not found");
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
-
-        TextField nameField = new TextField(userName);
-        PasswordField passwordField = new PasswordField();
-        passwordField.setText(password);
-        TextField hostField = new TextField(host);
-
-        GridPane grid = new GridPane();
-        grid.add(label3, 1, 1);
-        grid.add(hostField, 2, 1);
-
-        grid.add(label1, 1, 3);
-        grid.add(nameField, 2, 3);
-
-        grid.add(label2, 1, 4);
-        grid.add(passwordField, 2, 4);
-
-        dialog.getDialogPane().setContent(grid);
-
-        ButtonType buttonTypeOk = new ButtonType("Okay", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
-
-        dialog.setResultConverter(new Callback<ButtonType, ConnectionDetails>() {
-            @Override
-            public ConnectionDetails call(ButtonType b) {
-                if (b == buttonTypeOk) {
-                return new ConnectionDetails(nameField.getText(), passwordField.getText(),
-                                             hostField.getText());
-                }
-            return null;
-            }
-        });
-		Optional<ConnectionDetails> result = dialog.showAndWait();
-		if (result.isPresent()) {
-		    ConnectionDetails det = result.get();
-		    credentials.put("hibernate.connection.username", det.getUser());
-            credentials.put("hibernate.connection.password", det.getPasswd());
-            credentials.put("hibernate.connection.url", det.getHostName());
-        }
-        return credentials;
-    }
-
 
     public static Boolean isConnected() {
         return connected;
     }
 
-
-    private static class ConnectionDetails {
+    public static class ConnectionDetails {
 		private String user;
 		private String passwd;
 		private String hostName;
 
-		ConnectionDetails(String userName, String password, String host) {
+		public ConnectionDetails(String userName, String password, String host) {
 			user = userName;
 			passwd = password;
 			hostName = host;
@@ -198,6 +108,14 @@ public class Main extends Application {
         }
 
         public String getHostName() { return hostName; }
+
+        public HashMap<String, String> getCredentials() {
+		    HashMap<String, String> cred = new HashMap<>();
+            cred.put("hibernate.connection.username", getUser());
+            cred.put("hibernate.connection.password", getPasswd());
+            cred.put("hibernate.connection.url", getHostName());
+            return  cred;
+		}
 
         @Override
 		public String toString() {
