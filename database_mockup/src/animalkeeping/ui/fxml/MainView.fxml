@@ -23,10 +23,6 @@
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#connectToDatabase" text="connect">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator></MenuItem>
             <MenuItem disable="true" mnemonicParsing="false" text="disconnect">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
@@ -55,18 +51,18 @@
                      <children>
                         <Group>
                            <children>
-                              <Button fx:id="homeBtn" mnemonicParsing="false" onAction="#showInventory" prefWidth="95.0" text="Inventory" />
-                              <Button fx:id="personsBtn" layoutY="41.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showPersons" prefWidth="95.0" text="Persons" />
-                              <Button fx:id="subjectsBtn" layoutY="82.0" mnemonicParsing="false" onAction="#showSubjects" prefWidth="95.0" text="Subjects" textAlignment="CENTER" />
-                              <Button fx:id="treatmentsBtn" layoutY="123.0" mnemonicParsing="false" onAction="#showTreatments" prefWidth="95.0" text="Treatments" />
+                              <Button fx:id="inventoryBtn" disable="true" mnemonicParsing="false" onAction="#showInventory" prefWidth="95.0" text="Inventory" />
+                              <Button fx:id="personsBtn" disable="true" layoutY="41.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showPersons" prefWidth="95.0" text="Persons" />
+                              <Button fx:id="subjectsBtn" disable="true" layoutY="82.0" mnemonicParsing="false" onAction="#showSubjects" prefWidth="95.0" text="Subjects" textAlignment="CENTER" />
+                              <Button fx:id="treatmentsBtn" disable="true" layoutY="123.0" mnemonicParsing="false" onAction="#showTreatments" prefWidth="95.0" text="Treatments" />
                            </children>
                         </Group>
                         <Separator prefWidth="200.0" />
                         <Separator prefWidth="200.0" />
-                        <Button fx:id="addUsrBtn" mnemonicParsing="false" onAction="#showUserAddInterface" prefWidth="95.0" text="Add User" />
+                        <Button fx:id="addUsrBtn" disable="true" mnemonicParsing="false" onAction="#showUserAddInterface" prefWidth="95.0" text="Add User" />
                         <Separator prefWidth="200.0" />
                         <VBox fx:id="contextButtonBox" prefHeight="200.0" prefWidth="100.0" />
-                        <TitledPane animated="false" text="find">
+                        <TitledPane animated="false" disable="true" text="find">
                           <content>
                               <VBox spacing="10.0">
                                  <children>
