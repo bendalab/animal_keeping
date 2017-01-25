@@ -21,7 +21,7 @@ public class MainViewController {
     @FXML private Button personsBtn;
     @FXML private Button treatmentsBtn;
     @FXML private Button subjectsBtn;
-    @FXML private Button homeBtn;
+    @FXML private Button inventoryBtn;
     @FXML private Button addUsrBtn;
     @FXML private TextField idField;
     @FXML private ScrollPane scrollPane;
@@ -34,8 +34,12 @@ public class MainViewController {
         findBox.getItems().clear();
         findBox.getItems().addAll("Person", "Subject", "Housing unit", "Treatment");
         findBox.getSelectionModel().select("Subject");
-        connectToDatabase();
+        this.scrollPane.setContent(null);
+        LoginController login = new LoginController();
+        login.addEventHandler(LoginController.DatabaseEvent.CONNECT, event -> connectedToDatabase());
+        this.scrollPane.setContent(login);
     }
+
 
     @FXML
     private void showPersons() throws Exception{
@@ -47,7 +51,6 @@ public class MainViewController {
             this.contextButtonBox.getChildren().add(pv.getControls());
         }
         catch(Exception e){
-            Main.connectToDatabase();
             e.printStackTrace();
         }
     }
@@ -61,7 +64,6 @@ public class MainViewController {
             FishView fish = new FishView();
             this.scrollPane.setContent(fish);}
         catch(Exception e){
-            Main.connectToDatabase();
             e.printStackTrace();}
     }
 
@@ -73,7 +75,6 @@ public class MainViewController {
             TreatmentsTable treatmentsTable = new TreatmentsTable();
             this.scrollPane.setContent(treatmentsTable);}
         catch(Exception e){
-            Main.connectToDatabase();
             e.printStackTrace();}
     }
 
@@ -85,7 +86,6 @@ public class MainViewController {
             InventoryController inventory = new InventoryController();
             this.scrollPane.setContent(inventory);}
         catch(Exception e) {
-            Main.connectToDatabase();
             e.printStackTrace();
         }
     }
@@ -113,9 +113,7 @@ public class MainViewController {
             selectedTable = findBox.getItems().get(0);
         }
         if (!Main.isConnected()) {
-            if (!Main.connectToDatabase()) {
-                return;
-            }
+            return;
         }
 
         if (selectedTable.equals("Subject")) {
@@ -152,11 +150,6 @@ public class MainViewController {
     }
 
     @FXML
-    private void connectToDatabase() {
-        Main.connectToDatabase();
-    }
-
-    @FXML
     private  void closeApplication() {
         Main.getPrimaryStage().close();
     }
@@ -164,5 +157,17 @@ public class MainViewController {
     @FXML
     private void disconnectFromDatabase() {
         Main.sessionFactory.close();
+    }
+
+
+    private void connectedToDatabase() {
+        subjectsBtn.setDisable(false);
+        personsBtn.setDisable(false);
+        subjectsBtn.setDisable(false);
+        inventoryBtn.setDisable(false);
+        treatmentsBtn.setDisable(false);
+        findBox.setDisable(false);
+        addUsrBtn.setDisable(false);
+        showInventory();
     }
 }
