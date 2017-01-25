@@ -2,7 +2,7 @@ package animalkeeping.ui.controller;
 
 import animalkeeping.ui.*;
 import com.sun.org.apache.xpath.internal.operations.Bool;
-import com.sun.tools.corba.se.idl.constExpr.BooleanNot;
+//import com.sun.tools.corba.se.idl.constExpr.BooleanNot;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
