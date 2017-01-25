@@ -166,6 +166,16 @@ public class PersonsView  extends VBox implements Initializable {
     }
 
 
+    public void nameFilter(String name) {
+        this.personsTable.setNameFilter(name);
+    }
+
+
+    public void idFilter(Long id) {
+        this.personsTable.setIdFilter(id);
+    }
+
+
     public void setSelectedPerson(String name) {
         Session session = Main.sessionFactory.openSession();
         List<Person> persons = null;
