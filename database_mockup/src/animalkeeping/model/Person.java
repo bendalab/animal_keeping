@@ -16,7 +16,7 @@ public class Person {
     private String lastName;
     private String email;
     private Set<Treatment> treatments =
-            new HashSet<Treatment>(0);
+            new HashSet<>(0);
 
     public Person() {
         // this form used by Hibernate
