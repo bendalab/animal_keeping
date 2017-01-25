@@ -70,7 +70,7 @@
                                     <TextField fx:id="idField" onAction="#goToId" promptText="go to id" />
                                     <HBox alignment="CENTER_RIGHT" VBox.vgrow="ALWAYS">
                                        <children>
-                                          <Button mnemonicParsing="false" text="go" />
+                                          <Button mnemonicParsing="false" onAction="#goToId" text="go" />
                                        </children>
                                     </HBox>
                                  </children>
