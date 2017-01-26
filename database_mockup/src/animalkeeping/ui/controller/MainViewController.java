@@ -35,9 +35,19 @@ public class MainViewController {
         findBox.getItems().addAll("Person", "Subject", "Housing unit", "Treatment");
         findBox.getSelectionModel().select("Subject");
         this.scrollPane.setContent(null);
-        LoginController login = new LoginController();
-        login.addEventHandler(LoginController.DatabaseEvent.CONNECT, event -> connectedToDatabase());
-        this.scrollPane.setContent(login);
+        if (!Main.isConnected()) {
+            LoginController login = new LoginController();
+            login.addEventHandler(LoginController.DatabaseEvent.CONNECT, event -> connectedToDatabase());
+            this.scrollPane.setContent(login);
+        }
+        else {
+            try{
+                connectedToDatabase();}
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+
     }
 
 
