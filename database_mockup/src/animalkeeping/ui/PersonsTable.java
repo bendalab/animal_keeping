@@ -45,8 +45,7 @@ public class PersonsTable extends TableView<Person> {
         Session session = Main.sessionFactory.openSession();
         try {
             session.beginTransaction();
-            List<Person> result = session.createQuery("from Person").list();
-            // this.getItems().addAll(result);
+            List<Person> result = session.createQuery("from Person", Person.class).list();
             session.getTransaction().commit();
             session.close();
             masterList.addAll(result);
@@ -54,8 +53,6 @@ public class PersonsTable extends TableView<Person> {
             SortedList<Person> sortedList = new SortedList<>(filteredList);
             sortedList.comparatorProperty().bind(this.comparatorProperty());
             this.setItems(sortedList);
-
-            //result);
         } catch (HibernateException e) {
             e.printStackTrace();
             if (session.isOpen()) {
