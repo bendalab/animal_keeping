@@ -128,15 +128,13 @@ public class MainViewController {
         }
 
         if (selectedTable.equals("Subject")) {
-            if (Main.isConnected()) {
-                if (id != null) {
-                    IndividualTable individualTable = new IndividualTable(id);
-                    this.scrollPane.setContent(individualTable);
-                } else {
-                    IndividualTable individualTable = new IndividualTable(idField.getText());
-                    this.scrollPane.setContent(individualTable);
-                }
+            FishView fv = new FishView();
+            if (id != null) {
+                fv.idFilter(id);
+            } else {
+                fv.nameFilter(idField.getText());
             }
+            this.scrollPane.setContent(fv);
         } else if (selectedTable.equals("Person")) {
             PersonsView pv = new PersonsView();
             if (id != null) {
