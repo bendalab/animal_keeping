@@ -67,7 +67,7 @@
                               <VBox spacing="10.0">
                                  <children>
                                     <ComboBox fx:id="findBox" prefWidth="150.0" promptText="Subject" />
-                                    <TextField fx:id="idField" onAction="#goToId" promptText="go to id" />
+                                    <TextField fx:id="idField" onAction="#goToId" promptText="find by id or name" />
                                     <HBox alignment="CENTER_RIGHT" VBox.vgrow="ALWAYS">
                                        <children>
                                           <Button mnemonicParsing="false" onAction="#goToId" text="go" />
