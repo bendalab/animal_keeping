@@ -23,7 +23,7 @@ import java.util.Properties;
 
 public class Main extends Application {
     public static SessionFactory sessionFactory;
-    private static Boolean connected;
+    private static Boolean connected = false;
     private static Stage primaryStage;
 
     @Override
