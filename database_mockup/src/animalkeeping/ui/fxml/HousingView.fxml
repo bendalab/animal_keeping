@@ -1,27 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TreeTableColumn?>
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111">
-  <content>
-      <SplitPane dividerPositions="0.5184563758389261" prefHeight="160.0" prefWidth="200.0">
-        <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-               <children>
-                  <TreeTableView fx:id="housingTable" layoutX="-13.0" layoutY="51.0" prefHeight="396.0" prefWidth="222.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <columns>
-                      <TreeTableColumn prefWidth="75.0" text="C1" />
-                      <TreeTableColumn prefWidth="75.0" text="C2" />
-                    </columns>
-                  </TreeTableView>
-               </children>
-            </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
-        </items>
-      </SplitPane>
-  </content>
-</ScrollPane>
+<TabPane fx:id="tabPane" prefHeight="249.0" prefWidth="410.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <tabs>
+      <Tab text="Housing units">
+         <content>
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="162.0" prefWidth="308.0">
+               <content>
+                  <SplitPane dividerPositions="0.5184563758389261" prefHeight="160.0" prefWidth="200.0">
+                    <items>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                           <children>
+                              <TreeTableView fx:id="table" layoutX="-13.0" layoutY="51.0" prefHeight="396.0" prefWidth="222.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columns>
+                                    <TreeTableColumn fx:id="unitsColumn" prefWidth="75.0" text="Units" />
+                                    <TreeTableColumn fx:id="descriptionColumn" prefWidth="75.0" text="Description" />
+                                  <TreeTableColumn fx:id="populationColumn" maxWidth="75.0" prefWidth="75.0" text="Population" />
+                                </columns>
+                              </TreeTableView>
+                           </children>
+                        </AnchorPane>
+                        <VBox>
+                           <children>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Label fx:id="nameLabel" prefHeight="17.0" prefWidth="66.0" text="Label" AnchorPane.leftAnchor="-5.0" AnchorPane.rightAnchor="5.0">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                    </Label>
+                                    <GridPane layoutX="10.0" layoutY="10.0" prefHeight="148.0" prefWidth="132.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="NEVER" maxWidth="86.0" minWidth="10.0" prefWidth="71.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="78.0" minWidth="10.0" prefWidth="51.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints />
+                                        <RowConstraints />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label text="dimensions" GridPane.rowIndex="5" />
+                                          <Label text="population" GridPane.rowIndex="6" />
+                                          <TextField fx:id="dimensionsField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <TextField fx:id="populationField" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                          <TextField fx:id="typeField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                          <Label text="type" GridPane.rowIndex="4" />
+                                          <Label text="id" GridPane.rowIndex="3" />
+                                          <TextField fx:id="idField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                              </AnchorPane>
+                           </children>
+                        </VBox>
+                    </items>
+                  </SplitPane>
+               </content>
+            </ScrollPane>
+         </content>
+      </Tab>
+      <Tab text="Housing types">
+         <content>
+            <SplitPane dividerPositions="0.5422077922077922" prefHeight="160.0" prefWidth="200.0">
+              <items>
+                  <ScrollPane>
+                     <content>
+                        <ListView fx:id="typesList" prefHeight="180.0" prefWidth="308.0" />
+                     </content>
+                  </ScrollPane>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                     <children>
+                        <Label fx:id="unitTypeLabel" prefHeight="17.0" prefWidth="137.0" text="Label" />
+                        <HBox>
+                           <children>
+                              <Label prefWidth="60.0" text="id:" />
+                              <TextField fx:id="typeIdField" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <Label text="description:" VBox.vgrow="ALWAYS" />
+                        <TextArea fx:id="typeDescription" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+              </items>
+            </SplitPane>
+         </content>
+      </Tab>
+   </tabs>
+</TabPane>
