@@ -51,10 +51,11 @@
                      <children>
                         <Group>
                            <children>
-                              <Button fx:id="inventoryBtn" disable="true" mnemonicParsing="false" onAction="#showInventory" prefWidth="95.0" text="Inventory" />
-                              <Button fx:id="personsBtn" disable="true" layoutY="41.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showPersons" prefWidth="95.0" text="Persons" />
-                              <Button fx:id="subjectsBtn" disable="true" layoutY="82.0" mnemonicParsing="false" onAction="#showSubjects" prefWidth="95.0" text="Subjects" textAlignment="CENTER" />
-                              <Button fx:id="treatmentsBtn" disable="true" layoutY="123.0" mnemonicParsing="false" onAction="#showTreatments" prefWidth="95.0" text="Treatments" />
+                              <Button fx:id="inventoryBtn" disable="true" mnemonicParsing="false" onAction="#showInventory" prefWidth="120.0" text="Inventory" />
+                              <Button fx:id="personsBtn" disable="true" layoutY="42.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showPersons" prefWidth="120.0" text="Persons" />
+                              <Button fx:id="subjectsBtn" disable="true" layoutY="84.0" mnemonicParsing="false" onAction="#showSubjects" prefWidth="120.0" text="Subjects" textAlignment="CENTER" />
+                              <Button fx:id="treatmentsBtn" disable="true" layoutY="126.0" mnemonicParsing="false" onAction="#showTreatments" prefWidth="120.0" text="Treatments" />
+                              <Button fx:id="housingUnitsBtn" disable="true" layoutY="168.0" mnemonicParsing="false" onAction="#showHousingUnits" prefWidth="120.0" text="Animal keeping" />
                            </children>
                         </Group>
                         <Separator prefWidth="200.0" />
@@ -82,6 +83,9 @@
                      <padding>
                         <Insets top="20.0" />
                      </padding>
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
                   </VBox>
                   <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="940.0" prefWidth="894.0" HBox.hgrow="ALWAYS" />
                </children>
