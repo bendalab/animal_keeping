@@ -69,11 +69,12 @@ public class PersonAddController {
         nP.setLastName(lastFld.getText());
         nP.setEmail(emailFld.getText());
 
-        ChangeLogInterceptor interceptor = new ChangeLogInterceptor();
+        ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
+        Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
+        interceptorX.setSession(session);
 
-        Session session = Main.sessionFactory.openSession();
-        interceptor.setSession(session);
         try {
+
             session.beginTransaction();
 
             System.out.println(nP);
