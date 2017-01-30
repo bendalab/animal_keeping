@@ -22,11 +22,12 @@ private Set inserts = new HashSet();
 private Set updates = new HashSet();
 private Set deletes = new HashSet();
 
-public void setSession(Session session) {
-    this.session=session;
-}
+    public void setSession(Session session) {
+        this.session=session;
+    }
 
-public boolean onSave(Object entity,Serializable id,
+    @Override
+    public boolean onSave(Object entity,Serializable id,
                       Object[] state,String[] propertyNames,Type[] types)
         throws CallbackException {
 
@@ -38,8 +39,8 @@ public boolean onSave(Object entity,Serializable id,
     return false;
 
 }
-
-public boolean onFlushDirty(Object entity,Serializable id,
+    @Override
+    public boolean onFlushDirty(Object entity,Serializable id,
                             Object[] currentState,Object[] previousState,
                             String[] propertyNames,Type[] types)
         throws CallbackException {

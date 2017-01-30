@@ -79,7 +79,7 @@ public class PersonAddController {
 
             System.out.println(nP);
 
-            session.save(nP);
+            session.saveOrUpdate(nP);
 
             session.getTransaction().commit();
             session.close();
