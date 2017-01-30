@@ -23,6 +23,7 @@ public class MainViewController {
     @FXML private Button subjectsBtn;
     @FXML private Button inventoryBtn;
     @FXML private Button addUsrBtn;
+    @FXML private Button housingUnitsBtn;
     @FXML private TextField idField;
     @FXML private ScrollPane scrollPane;
     @FXML private VBox masterBox;
@@ -101,6 +102,22 @@ public class MainViewController {
         }
     }
 
+    @FXML
+    private void showHousingUnits() {
+        this.scrollPane.setContent(null);
+        this.contextButtonBox.getChildren().clear();
+        try {
+            HousingView housingView = new HousingView();
+            this.scrollPane.setFitToHeight(true);
+            this.scrollPane.setFitToWidth(true);
+            this.scrollPane.setContent(housingView);
+            this.contextButtonBox.getChildren().add(housingView.getControls());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     private Long looksLikeId(String text) {
         Long aLong = null;
         try {
@@ -177,6 +194,7 @@ public class MainViewController {
         treatmentsBtn.setDisable(false);
         findPane.setDisable(false);
         addUsrBtn.setDisable(false);
+        housingUnitsBtn.setDisable(false);
         showInventory();
     }
 }
