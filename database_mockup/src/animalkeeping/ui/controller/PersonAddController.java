@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 /**
  * Created by huben on 11.01.17.
  */
-public class PersonAddController {
+public class PersonAddController  {
     @FXML
     private TextField firstFld;
     @FXML

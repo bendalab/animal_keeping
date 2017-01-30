@@ -1,5 +1,6 @@
 package animalkeeping.model;
 
+import animalkeeping.logging.ChangeLogInterface;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -10,7 +11,7 @@ import java.util.Set;
  * Created by jan on 27.12.16.
  */
 
-public class Person {
+public class Person implements ChangeLogInterface {
     private Long id;
     private String firstName;
     private String lastName;
@@ -102,5 +103,10 @@ public class Person {
                         append(getFirstName()).
                         append(getLastName()).
                         toHashCode();
+    }
+
+    @Override
+    public String getType(){
+        return this.getClass().toString();
     }
 }
