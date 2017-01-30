@@ -2,6 +2,7 @@ package animalkeeping.logging;
 
 import animalkeeping.*;
 import org.hibernate.CallbackException;
+import org.hibernate.EmptyInterceptor;
 import org.hibernate.Session;
 
 import java.io.Serializable;
@@ -13,7 +14,7 @@ import java.util.Set;
 /**
  * Created by huben on 30.01.17.
  */
-public class ChangeLogInterceptor {
+public class ChangeLogInterceptor extends EmptyInterceptor {
 
 
 Session session;

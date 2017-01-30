@@ -1,5 +1,7 @@
 package animalkeeping.ui.controller;
 
+import animalkeeping.logging.ChangeLogInterceptor;
+import animalkeeping.logging.ChangeLogInterface;
 import animalkeeping.model.*;
 import animalkeeping.ui.*;
 import javafx.fxml.FXML;
@@ -16,11 +18,13 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
 
+import org.hibernate.*;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import org.dom4j.Text;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
+import org.hibernate.EmptyInterceptor;
+
 import java.util.*;
 import java.util.List;
 import java.util.function.Supplier;
@@ -28,7 +32,7 @@ import java.util.function.Supplier;
 /**
  * Created by huben on 11.01.17.
  */
-public class PersonAddController  {
+public class PersonAddController {
     @FXML
     private TextField firstFld;
     @FXML
@@ -65,7 +69,10 @@ public class PersonAddController  {
         nP.setLastName(lastFld.getText());
         nP.setEmail(emailFld.getText());
 
+        ChangeLogInterceptor interceptor = new ChangeLogInterceptor();
+
         Session session = Main.sessionFactory.openSession();
+        interceptor.setSession(session);
         try {
             session.beginTransaction();
 
