@@ -75,21 +75,21 @@ public void postFlush(Iterator iterator) {
     try{
 
         for (Iterator it = inserts.iterator(); it.hasNext();) {
-            ChangeLog entity = (ChangeLog) it.next();
+            ChangeLogInterface entity = (ChangeLogInterface) it.next();
             System.out.println("postFlush - insert");
-            ChangeLogUtil.LogIt("Saved",entity, session.connection());
+            ChangeLogUtil.LogIt("Saved",entity);
         }
 
         for (Iterator it = updates.iterator(); it.hasNext();) {
-            IAuditLog entity = (IAuditLog) it.next();
+            ChangeLogInterface entity = (ChangeLogInterface) it.next();
             System.out.println("postFlush - update");
-            AuditLogUtil.LogIt("Updated",entity, session.connection());
+            ChangeLogUtil.LogIt("Updated",entity);
         }
 
         for (Iterator it = deletes.iterator(); it.hasNext();) {
-            ChangeLog entity = (ChangeLog) it.next();
+            ChangeLogInterface entity = (ChangeLogInterface) it.next();
             System.out.println("postFlush - delete");
-            ChangeLogUtil.LogIt("Deleted",entity, session.connection());
+            ChangeLogUtil.LogIt("Deleted",entity);
         }
 
     } finally {
@@ -99,4 +99,4 @@ public void postFlush(Iterator iterator) {
     }
 }
 }
-}
+

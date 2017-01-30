@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="animalkeeping.logging">
+
+    <class name="ChangeLog" table="changelog">
+        <id name="id" column="id">
+            <generator class="increment"/>
+        </id>
+        <property name="typeOfAction" type="string" column="action" not-null="true"/>
+        <property name="actionTime" type="timestamp" column="created_time" not-null="true"/>
+        <property name="targetType" type="string" column="target_type" not-null="true"/>
+        <property name="targetId" column="target_id" not-null="true"/>
+
+    </class>
+
+</hibernate-mapping>
