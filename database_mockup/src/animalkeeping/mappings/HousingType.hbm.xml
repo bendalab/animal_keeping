@@ -11,5 +11,12 @@
         </id>
         <property name="name" type="string" column="name" not-null="true" unique="true"/>
         <property name="description" type="string" column="description" not-null="false"/>
+        <set name="housingUnits" table="census_housingunits"
+             inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="type_id" not-null="false" />
+            </key>
+            <one-to-many class="HousingUnit" />
+        </set>
     </class>
 </hibernate-mapping>
