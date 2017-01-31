@@ -39,7 +39,7 @@ public class ChangeLog {
         this.typeOfAction = typeOfAction;
     }
 
-    public Date geactionTime() {
+    public Date getActionTime() {
         return actionTime;
     }
 
