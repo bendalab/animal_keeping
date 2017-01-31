@@ -37,7 +37,7 @@
             <Label text="password" GridPane.rowIndex="2" />
             <TextField fx:id="hostField" GridPane.columnIndex="1" />
             <TextField fx:id="userField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <PasswordField fx:id="passwordField" onInputMethodTextChanged="#passwordEntered" onKeyTyped="#passwordEntered" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <PasswordField fx:id="passwordField" onInputMethodTextChanged="#passwordEntered" onKeyTyped="#passwordEntered" onAction="#connect"  GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <children>
                   <Button fx:id="connectBtn" mnemonicParsing="false" onAction="#connect" text="connect" />
