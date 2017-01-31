@@ -3,10 +3,11 @@ package animalkeeping.logging;
 import animalkeeping.*;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
+import org.hibernate.Interceptor;
 import org.hibernate.Session;
+import org.hibernate.type.Type;
 
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -14,7 +15,7 @@ import java.util.Set;
 /**
  * Created by huben on 30.01.17.
  */
-public class ChangeLogInterceptor extends EmptyInterceptor {
+public class ChangeLogInterceptor extends EmptyInterceptor{
 
 
 Session session;
@@ -26,19 +27,20 @@ private Set deletes = new HashSet();
         this.session=session;
     }
 
+
+
     @Override
-    public boolean onSave(Object entity,Serializable id,
-                      Object[] state,String[] propertyNames,Type[] types)
-        throws CallbackException {
+    public boolean onSave(Object entity,Serializable id, Object[] state,String[] propertyNames,Type[] types)
+    {
 
-    System.out.println("onSave");
+        System.out.println("onSave");
 
-    if (entity instanceof ChangeLog){
-        inserts.add(entity);
+        if (entity instanceof ChangeLogInterface){
+            inserts.add(entity);
+        }
+        return false;
+
     }
-    return false;
-
-}
     @Override
     public boolean onFlushDirty(Object entity,Serializable id,
                             Object[] currentState,Object[] previousState,
@@ -53,7 +55,7 @@ private Set deletes = new HashSet();
     return false;
 
 }
-
+    @Override
 public void onDelete(Object entity, Serializable id,
                      Object[] state, String[] propertyNames,
                      Type[] types) {
@@ -66,11 +68,13 @@ public void onDelete(Object entity, Serializable id,
 }
 
 //called before commit into database
+@Override
 public void preFlush(Iterator iterator) {
     System.out.println("preFlush");
 }
 
 //called after committed into database
+@Override
 public void postFlush(Iterator iterator) {
     System.out.println("postFlush");
 

@@ -22,9 +22,15 @@ Session tempSession = Main.sessionFactory.openSession();
 
 ChangeLog auditRecord = new ChangeLog(action, entity.getType(),entity.getId());
 tempSession.save(auditRecord);
-tempSession.flush();
+tempSession.getTransaction().commit();
+//tempSession.flush();
 
- } finally {
+ }
+ catch(Exception e){
+     e.printStackTrace();
+    }
+
+ finally {
 tempSession.close();
  }
 }
