@@ -52,5 +52,6 @@
         <mapping resource="animalkeeping/mappings/TreatmentType.hbm.xml"/>
         <mapping resource="animalkeeping/mappings/Treatment.hbm.xml"/>
         <mapping resource="animalkeeping/mappings/TreatmentNote.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/ChangeLog.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>
