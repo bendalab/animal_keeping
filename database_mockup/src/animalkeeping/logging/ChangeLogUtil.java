@@ -21,6 +21,7 @@ Session tempSession = Main.sessionFactory.openSession();
  try {
 
 ChangeLog auditRecord = new ChangeLog(action, entity.getType(),entity.getId());
+tempSession.beginTransaction();
 tempSession.save(auditRecord);
 tempSession.getTransaction().commit();
 //tempSession.flush();
