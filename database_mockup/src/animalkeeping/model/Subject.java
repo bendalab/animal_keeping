@@ -1,12 +1,15 @@
 package animalkeeping.model;
 
+import animalkeeping.logging.ChangeLogInterface;
+import animalkeeping.logging.ChangeLogUtil;
+
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created by jan on 27.12.16.
  */
-public class Subject {
+public class Subject implements ChangeLogInterface{
     private Long id;
     private String name;
     private String alias;
@@ -90,5 +93,10 @@ public class Subject {
                 ", subjectType=" + subjectType.getName() +
                 ", supplier=" + supplier.getName() +
                 '}';
+    }
+
+    @Override
+    public String getType(){
+        return this.getClass().toString();
     }
 }

@@ -96,7 +96,9 @@ public class PersonAddController {
 
     @FXML
     private void addSubject(){
-        Session session = Main.sessionFactory.openSession();
+        ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
+        Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
+        interceptorX.setSession(session);
         try {
             session.beginTransaction();
         Subject newS = new Subject();
