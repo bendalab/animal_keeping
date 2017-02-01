@@ -16,9 +16,9 @@ import java.util.List;
 /**
  * Created by huben on 10.01.17.
  */
-public class IndividualTable extends javafx.scene.control.TableView {
+public class IndividualTable extends javafx.scene.control.TableView<Treatment> {
 
-    private Integer id;
+    private Long id;
     private String name;
     private TableColumn<Treatment, Number> idCol;
     private TableColumn<Treatment, String> subectCol;
@@ -28,24 +28,24 @@ public class IndividualTable extends javafx.scene.control.TableView {
     private TableColumn<Treatment, Date> endCol;
     private TableColumn<Treatment, Boolean> finalCol;
 
-    public IndividualTable(int id){
+    public IndividualTable(Long id){
         super();
         this.id = id;
-        idCol = new TableColumn<Treatment, Number>("id");
+        idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        subectCol = new TableColumn<Treatment, String>("subject");
+        subectCol = new TableColumn<>("subject");
         subectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubject().getName()));
-        personCol = new TableColumn<Treatment, String>("by person");
+        personCol = new TableColumn<>("by person");
         personCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getPerson().getFirstName() +
                 " " + data.getValue().getPerson().getLastName()));
-        treatmentCol = new TableColumn<Treatment, String>("treatment");
+        treatmentCol = new TableColumn<>("treatment");
         treatmentCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getType().getName()));
-        startCol = new TableColumn<Treatment, Date>("start");
-        startCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getStart()));
-        endCol = new TableColumn<Treatment, Date>("end");
-        endCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getEnd()));
-        finalCol = new TableColumn<Treatment, Boolean>("is final");
-        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Boolean>(data.getValue().getType().isInvasive()));
+        startCol = new TableColumn<>("start");
+        startCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getStart()));
+        endCol = new TableColumn<>("end");
+        endCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getEnd()));
+        finalCol = new TableColumn<>("is final");
+        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getType().isInvasive()));
 
 
         this.getColumns().addAll(idCol, subectCol, personCol, treatmentCol, startCol, endCol, finalCol);
@@ -54,21 +54,21 @@ public class IndividualTable extends javafx.scene.control.TableView {
     public IndividualTable(String name){
         super();
         this.name = name;
-        idCol = new TableColumn<Treatment, Number>("id");
+        idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        subectCol = new TableColumn<Treatment, String>("subject");
+        subectCol = new TableColumn<>("subject");
         subectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubject().getName()));
-        personCol = new TableColumn<Treatment, String>("by person");
+        personCol = new TableColumn<>("by person");
         personCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getPerson().getFirstName() +
                 " " + data.getValue().getPerson().getLastName()));
-        treatmentCol = new TableColumn<Treatment, String>("treatment");
+        treatmentCol = new TableColumn<>("treatment");
         treatmentCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getType().getName()));
-        startCol = new TableColumn<Treatment, Date>("start");
-        startCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getStart()));
-        endCol = new TableColumn<Treatment, Date>("end");
-        endCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getEnd()));
-        finalCol = new TableColumn<Treatment, Boolean>("is final");
-        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Boolean>(data.getValue().getType().isInvasive()));
+        startCol = new TableColumn<>("start");
+        startCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getStart()));
+        endCol = new TableColumn<>("end");
+        endCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getEnd()));
+        finalCol = new TableColumn<>("is final");
+        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getType().isInvasive()));
 
 
         this.getColumns().addAll(idCol, subectCol, personCol, treatmentCol, startCol, endCol, finalCol);
@@ -77,12 +77,13 @@ public class IndividualTable extends javafx.scene.control.TableView {
 
 
 
-    public void initId() {
+    private void initId() {
         Session session = Main.sessionFactory.openSession();
         try {
             session.beginTransaction();
 
-            List<Subject> result = session.createQuery("from Treatment where subject.id = " + this.id.toString()).list();
+            List<Treatment> result = session.createQuery("from Treatment where subject.id = " + this.id.toString(),
+                    Treatment.class).list();
 
             this.getItems().addAll(result);
             session.getTransaction().commit();
@@ -96,13 +97,13 @@ public class IndividualTable extends javafx.scene.control.TableView {
 
     }
 
-    public void initName(){
+    private void initName(){
         Session session = Main.sessionFactory.openSession();
         try {
             session.beginTransaction();
 
-            List<Subject> result = session.createQuery("from Treatment where subject.name = \'" + this.name + "\'").list();
-
+            List<Treatment> result = session.createQuery("from Treatment where subject.name = \'" + this.name + "\'",
+                    Treatment.class).list();
 
             this.getItems().addAll(result);
             session.getTransaction().commit();

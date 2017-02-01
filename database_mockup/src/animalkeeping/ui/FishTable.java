@@ -1,6 +1,5 @@
 package animalkeeping.ui;
 
-import animalkeeping.model.Person;
 import animalkeeping.model.Subject;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -11,7 +10,7 @@ import org.hibernate.Session;
 
 import java.util.List;
 
-public class FishTable extends TableView {
+public class FishTable extends TableView<Subject> {
     private TableColumn<Subject, Number> idCol;
     private TableColumn<Subject, String> aliasCol;
     private TableColumn<Subject, String> speciesCol;
@@ -19,13 +18,13 @@ public class FishTable extends TableView {
 
     public FishTable() {
         super();
-        idCol = new TableColumn<Subject, Number>("id");
+        idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        aliasCol = new TableColumn<Subject, String>("name");
+        aliasCol = new TableColumn<>("name");
         aliasCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
-        speciesCol = new TableColumn<Subject, String>("species");
+        speciesCol = new TableColumn<>("species");
         speciesCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSpeciesType().getName()));
-        supplierCol = new TableColumn<Subject, String>("supplier");
+        supplierCol = new TableColumn<>("supplier");
         supplierCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSupplier().getName()));
         this.getColumns().addAll(idCol, aliasCol, speciesCol, supplierCol);
         init();
@@ -41,8 +40,7 @@ public class FishTable extends TableView {
         Session session = Main.sessionFactory.openSession();
         try {
             session.beginTransaction();
-            List result = session.createQuery("from Subject").list();
-
+            List<Subject> result = session.createQuery("from Subject", Subject.class).list();
             this.getItems().addAll(result);
             session.getTransaction().commit();
             session.close();

@@ -3,7 +3,10 @@ package animalkeeping.ui;
 import animalkeeping.model.*;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.hibernate.HibernateException;
@@ -21,63 +24,31 @@ import javafx.scene.Parent;
 /**
  * Created by jan on 01.01.17.
  */
-public class SubjectsTable extends TableView {
+public class SubjectsTable extends TableView<Subject> {
     private TableColumn<Subject, Number> idCol;
     private TableColumn<Subject, String> nameCol;
     private TableColumn<Subject, String> aliasCol;
     private TableColumn<Subject, String> speciesCol;
     private TableColumn<Subject, String> subjectCol;
     private TableColumn<Subject, String> supplierCol;
-
+    private ObservableList<Subject> masterList = FXCollections.observableArrayList();
+    private FilteredList<Subject> filteredList;
 
     public SubjectsTable() {
         super();
-       /* Callback<TableColumn<Subject,String>, TableCell<Subject,String>> subjectCellFactory =
-                new Callback<TableColumn<Subject,String>, TableCell<Subject,String>>() {
-                    public TableCell call(TableColumn p) {
-                        TableCell cell = new TableCell<Subject, String>() {
-
-                            @Override
-                            public void updateItem(String item, boolean empty) {
-                                super.updateItem(item, empty);
-                                setText(empty ? null : getString());
-                                setGraphic(null);
-                            }
-
-                            private String getString() {
-                                return getItem() == null ? "" : getItem().toString();
-
-                            }
-
-
-                        };
-                        cell.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>()      {
-                            @Override
-                            public void handle(MouseEvent event) {
-                                TableCell c = (TableCell) event.getSource();
-                                System.out.println("Cell text: " + c.getText());
-                                ScrollPane frame = (ScrollPane) getScene().lookup("#scrollPane");
-                                frame.setContent(null);
-                                IndividualTable individualTable = new IndividualTable(c.getText());
-                                frame.setContent(individualTable);
-                            }
-                        });
-                        return cell;
-                    }
-                };*/
-        idCol = new TableColumn<Subject, Number>("id");
+        idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        nameCol = new TableColumn<Subject, String>("name");
+        nameCol = new TableColumn<>("name");
         nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
         //nameCol.setCellFactory(subjectCellFactory);
         nameCol.setCellFactory(new CellFactoryProvider(getScene()).c);
-        aliasCol = new TableColumn<Subject, String>("alias");
+        aliasCol = new TableColumn<>("alias");
         aliasCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAlias()));
-        speciesCol = new TableColumn<Subject, String>("species");
+        speciesCol = new TableColumn<>("species");
         speciesCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSpeciesType().getName()));
-        subjectCol = new TableColumn<Subject, String>("subject");
+        subjectCol = new TableColumn<>("subject");
         subjectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubjectType().getName()));
-        supplierCol = new TableColumn<Subject, String>("supplier");
+        supplierCol = new TableColumn<>("supplier");
         supplierCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSupplier().getName()));
         this.getColumns().addAll(idCol, nameCol, aliasCol, speciesCol, subjectCol, supplierCol);
         init();
@@ -93,10 +64,12 @@ public class SubjectsTable extends TableView {
         Session session = Main.sessionFactory.openSession();
         try {
             session.beginTransaction();
-
-            List<Subject> result = session.createQuery("from Subject").list();
-
-            this.getItems().addAll(result);
+            List<Subject> result = session.createQuery("from Subject", Subject.class).list();
+            masterList.addAll(result);
+            filteredList = new FilteredList<>(masterList, p -> true);
+            SortedList<Subject> sortedList = new SortedList<>(filteredList);
+            sortedList.comparatorProperty().bind(this.comparatorProperty());
+            this.setItems(sortedList);
             session.getTransaction().commit();
             session.close();
         } catch (HibernateException e) {
@@ -105,6 +78,27 @@ public class SubjectsTable extends TableView {
                 session.close();
             }
         }
+    }
+
+
+    public void setNameFilter(String name) {
+        filteredList.setPredicate(subject -> {
+            if (name == null || name.isEmpty()) {
+                return true;
+            }
+            String lowerCaseFilter = name.toLowerCase();
+            if (subject.getName().toLowerCase().contains(lowerCaseFilter)) {
+                return true;
+            } else if (subject.getAlias() != null && subject.getAlias().toLowerCase().contains(lowerCaseFilter)) {
+                return true;
+            }
+            return false;
+        });
+    }
+
+
+    public void setIdFilter(Long id) {
+        filteredList.setPredicate(subject -> id == null || id.equals(subject.getId()));
     }
 }
 

@@ -22,9 +22,6 @@ import java.net.URL;
 import java.util.Date;
 import java.util.ResourceBundle;
 
-/**
- * Created by grewe on 1/12/17.
- */
 public class FishView extends VBox implements Initializable {
     @FXML private ScrollPane tableScrollPane;
     @FXML private TextField idField;
@@ -32,10 +29,10 @@ public class FishView extends VBox implements Initializable {
     @FXML private TextField speciesField;
     @FXML private TextField supplierField;
     @FXML private Label aliveField;
-    @FXML private TableView treatmentTable;
+    @FXML private TableView<Treatment> treatmentTable;
     @FXML private VBox timelineVBox;
 
-    private FishTable fishTable;
+    private SubjectsTable fishTable;
     private TimelineController timeline;
     private TableColumn<Treatment, Number> idCol;
     private TableColumn<Treatment, String> typeCol;
@@ -55,7 +52,7 @@ public class FishView extends VBox implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        FishTable fishTable = new FishTable();
+        fishTable = new SubjectsTable();
         timeline = new TimelineController();
 
         //personsTable.resize();
@@ -72,16 +69,16 @@ public class FishView extends VBox implements Initializable {
         aliveField.setText("");
 
         fishTable.getSelectionModel().getSelectedItems().addListener(new FishTableListChangeListener());
-        idCol = new TableColumn<Treatment, Number>("id");
+        idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        aliasCol = new TableColumn<Treatment, String>("alias");
+        aliasCol = new TableColumn<>("alias");
         aliasCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubject().getName()));
-        typeCol = new TableColumn<Treatment, String>("treatment");
+        typeCol = new TableColumn<>("treatment");
         typeCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getType().getName()));
-        startDateCol = new TableColumn<Treatment, Date>("start");
-        startDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getStart()));
-        endDateCol = new TableColumn<Treatment, Date>("end");
-        endDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getEnd()));
+        startDateCol = new TableColumn<>("start");
+        startDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getStart()));
+        endDateCol = new TableColumn<>("end");
+        endDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getEnd()));
         treatmentTable.getColumns().clear();
         treatmentTable.getColumns().addAll(idCol, aliasCol, typeCol, startDateCol, endDateCol);
     }
@@ -94,10 +91,9 @@ public class FishView extends VBox implements Initializable {
             speciesField.setText(s.getSpeciesType().getName());
             supplierField.setText(s.getSupplier().getName());
             aliveField.setText("Possibly");
-            System.out.println(s.getTreatments().size());
             treatmentTable.getItems().clear();
-            treatmentTable.getItems().addAll(s.getTreatments());
-            timeline.setTreatments(s.getTreatments());
+            //treatmentTable.getItems().addAll(s.getTreatments());
+            //timeline.setTreatments(s.getTreatments());
         } else {
             idField.setText("");
             aliasField.setText("");
@@ -109,6 +105,14 @@ public class FishView extends VBox implements Initializable {
         }
     }
 
+    public void nameFilter(String name) {
+        this.fishTable.setNameFilter(name);
+    }
+
+
+    public void idFilter(Long id) {
+        this.fishTable.setIdFilter(id);
+    }
 
     private class FishTableListChangeListener implements ListChangeListener<Subject> {
         @Override

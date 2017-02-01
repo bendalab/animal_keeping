@@ -76,10 +76,10 @@ public class LoginController extends FlowPane implements Initializable{
     static class DatabaseEvent extends Event {
         private static final long serialVersionUID = 20121107L;
 
-        public static final EventType<DatabaseEvent> CONNECT =
+        static final EventType<DatabaseEvent> CONNECT =
                 new EventType<>(Event.ANY, "CONNECT");
 
-        public DatabaseEvent() {
+        DatabaseEvent() {
             super(CONNECT);
         }
 
