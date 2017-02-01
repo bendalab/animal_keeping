@@ -18,36 +18,33 @@ public class CellFactoryProvider{
 
     public CellFactoryProvider(Scene currentScene){
         this.c = new Callback<TableColumn<Subject, String>, TableCell<Subject, String>>() {
-                    public TableCell call(TableColumn p) {
-                        TableCell cell = new TableCell<Subject, String>() {
+            public TableCell call(TableColumn p) {
+                TableCell cell = new TableCell<Subject, String>() {
 
-                            @Override
-                            public void updateItem(String item, boolean empty) {
-                                super.updateItem(item, empty);
-                                setText(empty ? null : getString());
-                                setGraphic(null);
-                            }
-
-                            private String getString() {
-                                return getItem() == null ? "" : getItem().toString();
-
-                            }
-
-
-                        };
-                        cell.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                            @Override
-                            public void handle(MouseEvent event) {
-                                TableCell c = (TableCell) event.getSource();
-                                System.out.println("Cell text: " + c.getText());
-                                ScrollPane frame = (ScrollPane) currentScene.lookup("#scrollPane");
-                                frame.setContent(null);
-                                IndividualTable individualTable = new IndividualTable(c.getText());
-                                frame.setContent(individualTable);
-                            }
-                        });
-                        return cell;
+                    @Override
+                    public void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setText(empty ? null : getString());
+                        setGraphic(null);
+                    }
+                    private String getString() {
+                        return getItem() == null ? "" : getItem().toString();
                     }
                 };
+
+                cell.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        TableCell c = (TableCell) event.getSource();
+                        //System.out.println("Cell text: " + c.getText());
+                        ScrollPane frame = (ScrollPane) currentScene.lookup("#scrollPane");
+                        frame.setContent(null);
+                        IndividualTable individualTable = new IndividualTable(c.getText());
+                        frame.setContent(individualTable);
+                    }
+                });
+                return cell;
+            }
+        };
     }
 }
