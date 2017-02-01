@@ -43,6 +43,7 @@ public class Main extends Application {
         StandardServiceRegistryBuilder registrybuilder = new StandardServiceRegistryBuilder();
         registrybuilder.configure();
         registrybuilder.applySettings(credentials.getCredentials());
+
         final StandardServiceRegistry registry = registrybuilder.build();
 
         try {
