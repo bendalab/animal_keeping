@@ -1,5 +1,7 @@
 package animalkeeping.ui.controller;
 
+import animalkeeping.logging.ChangeLogInterceptor;
+import animalkeeping.logging.ChangeLogInterface;
 import animalkeeping.model.*;
 import animalkeeping.ui.*;
 import javafx.fxml.FXML;
@@ -16,11 +18,13 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
 
+import org.hibernate.*;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import org.dom4j.Text;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
+import org.hibernate.EmptyInterceptor;
+
 import java.util.*;
 import java.util.List;
 import java.util.function.Supplier;
@@ -65,13 +69,17 @@ public class PersonAddController {
         nP.setLastName(lastFld.getText());
         nP.setEmail(emailFld.getText());
 
-        Session session = Main.sessionFactory.openSession();
+        ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
+        Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
+        interceptorX.setSession(session);
+
         try {
+
             session.beginTransaction();
 
             System.out.println(nP);
 
-            session.save(nP);
+            session.saveOrUpdate(nP);
 
             session.getTransaction().commit();
             session.close();
@@ -88,7 +96,9 @@ public class PersonAddController {
 
     @FXML
     private void addSubject(){
-        Session session = Main.sessionFactory.openSession();
+        ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
+        Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
+        interceptorX.setSession(session);
         try {
             session.beginTransaction();
         Subject newS = new Subject();

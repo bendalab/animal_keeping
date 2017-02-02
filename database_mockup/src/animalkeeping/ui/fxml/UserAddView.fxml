@@ -60,9 +60,9 @@
             <Font size="18.0" />
           </font>
         </Label>
-            <TextField fx:id="first" layoutX="14.0" layoutY="96.0" promptText="First Name" />
-            <TextField fx:id="last" layoutX="14.0" layoutY="128.0" promptText="Last Name" />
-            <TextField fx:id="email" layoutX="14.0" layoutY="160.0" promptText="eMail" />
+            <TextField fx:id="firstFld" layoutX="14.0" layoutY="96.0" promptText="First Name" />
+            <TextField fx:id="lastFld" layoutX="14.0" layoutY="128.0" promptText="Last Name" />
+            <TextField fx:id="emailFld" layoutX="14.0" layoutY="160.0" promptText="eMail" />
             <Button fx:id="userAddBtn" layoutX="61.0" layoutY="211.0" mnemonicParsing="false" onAction="#addUser" text="Add User" />
             <TextField fx:id="nameField" layoutX="223.0" layoutY="96.0" promptText="Name" />
             <TextField fx:id="typeIdField" layoutX="223.0" layoutY="128.0" promptText="type_id" />
