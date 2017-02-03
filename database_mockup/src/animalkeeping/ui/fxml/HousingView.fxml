@@ -4,30 +4,63 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TreeTableColumn?>
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-
-<VBox xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="162.0" prefWidth="308.0">
-         <content>
-            <TreeTableView fx:id="table" prefHeight="500.0" prefWidth="222.0">
-              <columns>
-                  <TreeTableColumn fx:id="unitsColumn" maxWidth="1.7976931348623157E308" prefWidth="75.0" text="unit" />
-                <TreeTableColumn fx:id="typeColumn" maxWidth="1.7976931348623157E308" prefWidth="75.0" text="type" />
-                  <TreeTableColumn fx:id="dimensionColumn" maxWidth="1.7976931348623157E308" prefWidth="224.0" text="dimensions" />
-                  <TreeTableColumn fx:id="populationColumn" maxWidth="1.7976931348623157E308" prefWidth="75.0" text="population" />
-                  <TreeTableColumn fx:id="descriptionColumn" maxWidth="1.7976931348623157E308" prefWidth="75.0" text="description" />
-              </columns>
-            </TreeTableView>
-         </content>
-      </ScrollPane>
-      <ScrollPane>
+      <Label text="Housing units:">
+         <font>
+            <Font size="16.0" style="Bold" />
+         </font>
+      </Label>
+      <SplitPane fx:id="unitsSplit" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+         <items>
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="300.0" prefWidth="308.0">
+               <content>
+                  <TreeTableView fx:id="table" prefHeight="500.0" prefWidth="222.0">
+                    <columns>
+                        <TreeTableColumn fx:id="unitsColumn" maxWidth="1.7976931348623157E308" prefWidth="75.0" text="unit" />
+                      <TreeTableColumn fx:id="typeColumn" maxWidth="1.7976931348623157E308" prefWidth="75.0" text="type" />
+                        <TreeTableColumn fx:id="dimensionColumn" maxWidth="1.7976931348623157E308" prefWidth="224.0" text="dimensions" />
+                        <TreeTableColumn fx:id="populationColumn" maxWidth="1.7976931348623157E308" prefWidth="75.0" text="population" />
+                        <TreeTableColumn fx:id="descriptionColumn" maxWidth="1.7976931348623157E308" prefWidth="75.0" text="description" />
+                    </columns>
+                  </TreeTableView>
+               </content>
+            </ScrollPane>
+            <ScrollPane fx:id="tabScrollPane">
+              <content>
+                  <TabPane fx:id="plotTabPane" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                      <Tab fx:id="populationTab" text="Population" />
+                      <Tab text="History" />
+                    </tabs>
+                  </TabPane>
+              </content>
+            </ScrollPane>
+         </items>
+      </SplitPane>
+      <Separator prefWidth="200.0">
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding>
+      </Separator>
+      <Label text="Housing types:">
+         <font>
+            <Font size="16.0" style="Bold" />
+         </font>
+      </Label>
+      <ScrollPane fx:id="typesScrollPane" hbarPolicy="NEVER" prefHeight="200.0">
          <content>
             <HBox>
                <children>

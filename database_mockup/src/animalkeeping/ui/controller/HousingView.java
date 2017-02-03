@@ -33,16 +33,23 @@ public class HousingView extends VBox implements Initializable {
     @FXML private Label nameLabel;
     @FXML private TreeTableView<HousingUnit> table;
     @FXML private TreeTableColumn<HousingUnit, String> unitsColumn;
-    @FXML private TreeTableColumn<HousingUnit, String> descriptionColumn;
+    @FXML private TreeTableColumn<HousingUnit, String> typeColumn;
+    @FXML private TreeTableColumn<HousingUnit, String> dimensionColumn;
     @FXML private TreeTableColumn<HousingUnit, Number> populationColumn;
+    @FXML private TreeTableColumn<HousingUnit, String> descriptionColumn;
     @FXML private ListView<HousingType> typesList;
     @FXML private Label unitTypeLabel;
     @FXML private TextArea typeDescription;
     @FXML private TextField typeIdField;
-    @FXML private TabPane tabPane;
+    @FXML private Tab populationTab;
+    @FXML private TabPane plotTabPane;
+    @FXML private ScrollPane tabScrollPane, typesScrollPane;
+    @FXML private SplitPane unitsSplit;
 
+    private PopulationChart populationChart;
     private VBox controls;
     private Button editBtn, deleteBtn, newBtn;
+
 
     public HousingView () {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/HousingView.fxml"));
@@ -52,7 +59,6 @@ public class HousingView extends VBox implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        this.setVgrow(table, Priority.ALWAYS);
         this.setFillWidth(true);
     }
 
@@ -61,13 +67,19 @@ public class HousingView extends VBox implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         unitsColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<HousingUnit, String> hu) ->
                 new ReadOnlyStringWrapper(hu.getValue().getValue() != null ? hu.getValue().getValue().getName() : ""));
-        unitsColumn.setPrefWidth(200);
+        unitsColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.25));
+        typeColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<HousingUnit, String> hu) ->
+                new ReadOnlyStringWrapper(hu.getValue().getValue() != null ? hu.getValue().getValue().getHousingType().getName() : ""));
+        typeColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
+        dimensionColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<HousingUnit, String> hu) ->
+                new ReadOnlyStringWrapper(hu.getValue().getValue() != null ? hu.getValue().getValue().getDimensions() : ""));
+        dimensionColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.15));
         descriptionColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<HousingUnit, String> hu) ->
                 new ReadOnlyStringWrapper(hu.getValue().getValue() != null ? hu.getValue().getValue().getDescription() : ""));
-        descriptionColumn.setPrefWidth(200);
+        descriptionColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.25));
         populationColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<HousingUnit, Number> hu) ->
                 new ReadOnlyIntegerWrapper(hu.getValue().getValue() != null ? hu.getValue().getValue().getAllHousings(true).size() : 0));
-        populationColumn.setPrefWidth(50);
+        populationColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.15));
         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
@@ -77,9 +89,17 @@ public class HousingView extends VBox implements Initializable {
             }
         });
 
+        plotTabPane.prefWidthProperty().bind(tabScrollPane.widthProperty());
+        plotTabPane.prefHeightProperty().bind(tabScrollPane.heightProperty());
+        populationChart = new PopulationChart();
+        populationChart.prefHeightProperty().bind(plotTabPane.heightProperty());
+        populationChart.prefWidthProperty().bind(plotTabPane.widthProperty());
+        populationTab.setContent(populationChart);
+        unitsSplit.prefHeightProperty().bind(this.heightProperty().multiply(0.66));
+        typesScrollPane.prefHeightProperty().bind(this.heightProperty().multiply(0.33));
+
         controls = new VBox();
         controls.setAlignment(Pos.CENTER);
-        //controls.setPadding(new Insets(0.0, 0.0, 10.0, 0.0));
         controls.setSpacing(10);
         Label heading = new Label("Housing controls:");
         heading.setUnderline(true);
@@ -102,7 +122,6 @@ public class HousingView extends VBox implements Initializable {
         deleteBtn.setPrefWidth(100);
         deleteBtn.setOnAction(event -> deleteBtnPressed());
         controls.getChildren().add(deleteBtn);
-
         refresh();
     }
 
@@ -182,6 +201,8 @@ public class HousingView extends VBox implements Initializable {
     }
 
     private void setSelectedUnit(HousingUnit unit) {
+        populationChart.listPopulation(unit);
+        /*
         if (unit != null) {
             nameLabel.setText(unit.getName());
             idField.setText(unit.getId().toString());
@@ -195,6 +216,7 @@ public class HousingView extends VBox implements Initializable {
             populationField.setText("");
             typeField.setText("");
         }
+        */
     }
 
     private void setSelectedType(HousingType ht) {
@@ -219,13 +241,13 @@ public class HousingView extends VBox implements Initializable {
     }
 
     private void newBtnPressed() {
-        String tabName = this.tabPane.getSelectionModel().getSelectedItem().getText();
+        /*String tabName = this.tabPane.getSelectionModel().getSelectedItem().getText();
         if (tabName.contains("types")) {
             newHousingType();
         } else {
             newHousingUnit();
         }
-        refresh();
+        refresh();*/
     }
 
     private void newHousingUnit() {
@@ -271,12 +293,14 @@ public class HousingView extends VBox implements Initializable {
     }
 
     private void deleteBtnPressed() {
+        /*
         String tabName = this.tabPane.getSelectionModel().getSelectedItem().getText();
         if (tabName.contains("types")) {
             deleteType();
         } else {
             deleteHousing();
         }
+        */
         refresh();
     }
 
