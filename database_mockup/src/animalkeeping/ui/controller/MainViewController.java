@@ -3,6 +3,8 @@ package animalkeeping.ui.controller;
 import animalkeeping.ui.*;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 //import com.sun.tools.corba.se.idl.constExpr.BooleanNot;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -49,7 +51,6 @@ public class MainViewController {
                 e.printStackTrace();
             }
         }
-
     }
 
 
@@ -110,6 +111,8 @@ public class MainViewController {
             HousingView housingView = new HousingView();
             this.scrollPane.setFitToHeight(true);
             this.scrollPane.setFitToWidth(true);
+            housingView.minHeightProperty().bind(this.scrollPane.heightProperty());
+            housingView.minWidthProperty().bind(this.scrollPane.widthProperty());
             this.scrollPane.setContent(housingView);
             this.contextButtonBox.getChildren().add(housingView.getControls());
         } catch (Exception e) {
