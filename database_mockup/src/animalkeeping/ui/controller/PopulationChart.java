@@ -53,6 +53,11 @@ public class PopulationChart extends VBox implements Initializable {
 
 
     public void listPopulation(HousingUnit housingUnit) {
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+        if (housingUnit == null) {
+            populationChart.setData(pieChartData);
+            return;
+        }
         Set<Subject> subjects = new HashSet<>();
         collectSubjects(subjects, housingUnit);
 
@@ -67,7 +72,6 @@ public class PopulationChart extends VBox implements Initializable {
             }
         }
 
-        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         for (String st : counts.keySet()) {
             pieChartData.add(new PieChart.Data(st + " (" + counts.get(st) + ")", counts.get(st)));
         }
