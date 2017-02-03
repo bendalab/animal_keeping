@@ -6,15 +6,12 @@ import animalkeeping.ui.HousingTypeTable;
 import animalkeeping.ui.Main;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
@@ -38,11 +35,7 @@ public class HousingView extends VBox implements Initializable {
     @FXML private TreeTableColumn<HousingUnit, String> dimensionColumn;
     @FXML private TreeTableColumn<HousingUnit, Number> populationColumn;
     @FXML private TreeTableColumn<HousingUnit, String> descriptionColumn;
-    @FXML private ListView<HousingType> typesList;
-    @FXML private Label unitTypeLabel;
-    @FXML private TextArea typeDescription;
-    @FXML private TextField typeIdField;
-    @FXML private Tab populationTab;
+    @FXML private Tab populationTab, historyTab;
     @FXML private TabPane plotTabPane;
     @FXML private ScrollPane typesScrollPane;
     @FXML private SplitPane unitsSplit;
@@ -234,21 +227,13 @@ public class HousingView extends VBox implements Initializable {
     }
 
     private void setSelectedType(HousingType ht) {
-        if (ht != null) {
-            unitTypeLabel.setText(ht.getName());
-            typeIdField.setText(ht.getId().toString());
-            typeDescription.setText(ht.getDescription());
-        } else {
-            unitTypeLabel.setText("");
-            typeIdField.setText("");
-            typeDescription.setText("");
-        }
+        deleteTypeBtn.setDisable(ht != null);
+        editTypeBtn.setDisable(ht != null);
     }
 
     private void refresh() {
         fillHousingTree();
         housingTypes.refresh();
-        //fillTypes();
     }
 
     private void editHousingUnit() {
@@ -262,7 +247,7 @@ public class HousingView extends VBox implements Initializable {
 
 
     private void newHousingUnit() {
-        HousingType t = typesList.getItems().get(0);
+        HousingType t = housingTypes.getItems().get(0);
         HousingUnit test = new HousingUnit();
         test.setName("Test");
         test.setDescription("A simple test unit that can be safely deleted.");
