@@ -1,6 +1,5 @@
 package animalkeeping.model;
 
-
 import animalkeeping.logging.ChangeLogInterface;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
