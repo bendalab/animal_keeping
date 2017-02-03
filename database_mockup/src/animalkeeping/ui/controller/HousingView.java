@@ -1,17 +1,18 @@
 package animalkeeping.ui.controller;
 
-import animalkeeping.model.Housing;
 import animalkeeping.model.HousingType;
 import animalkeeping.model.HousingUnit;
+import animalkeeping.ui.HousingTypeTable;
 import animalkeeping.ui.Main;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.hibernate.HibernateException;
@@ -43,12 +44,15 @@ public class HousingView extends VBox implements Initializable {
     @FXML private TextField typeIdField;
     @FXML private Tab populationTab;
     @FXML private TabPane plotTabPane;
-    @FXML private ScrollPane tabScrollPane, typesScrollPane;
+    @FXML private ScrollPane typesScrollPane;
     @FXML private SplitPane unitsSplit;
+    @FXML private VBox tabVBox;
 
     private PopulationChart populationChart;
+    private HousingTypeTable housingTypes;
     private VBox controls;
-    private Button editBtn, deleteBtn, newBtn;
+    private Button editUnitBtn, deleteUnitBtn, newUnitBtn;
+    private Button editTypeBtn, deleteTypeBtn, newTypeBtn;
 
 
     public HousingView () {
@@ -88,15 +92,22 @@ public class HousingView extends VBox implements Initializable {
                 setSelectedUnit(null);
             }
         });
-
-        plotTabPane.prefWidthProperty().bind(tabScrollPane.widthProperty());
-        plotTabPane.prefHeightProperty().bind(tabScrollPane.heightProperty());
+        plotTabPane.prefWidthProperty().bind(this.widthProperty());
+        plotTabPane.prefHeightProperty().bind(tabVBox.heightProperty());
         populationChart = new PopulationChart();
         populationChart.prefHeightProperty().bind(plotTabPane.heightProperty());
-        populationChart.prefWidthProperty().bind(plotTabPane.widthProperty());
+        populationChart.minWidthProperty().bind(plotTabPane.prefWidthProperty().multiply(0.95));
         populationTab.setContent(populationChart);
         unitsSplit.prefHeightProperty().bind(this.heightProperty().multiply(0.66));
+        unitsSplit.prefWidthProperty().bind(this.widthProperty());
         typesScrollPane.prefHeightProperty().bind(this.heightProperty().multiply(0.33));
+        typesScrollPane.prefWidthProperty().bind(this.widthProperty());
+
+        typesScrollPane.setContent(null);
+        housingTypes = new HousingTypeTable();
+        housingTypes.prefWidthProperty().bind(typesScrollPane.widthProperty());
+        housingTypes.prefHeightProperty().bind(typesScrollPane.heightProperty());
+        typesScrollPane.setContent(housingTypes);
 
         controls = new VBox();
         controls.setAlignment(Pos.CENTER);
@@ -105,23 +116,41 @@ public class HousingView extends VBox implements Initializable {
         heading.setUnderline(true);
         controls.getChildren().add(heading);
 
-        newBtn = new Button();
-        newBtn.setPrefWidth(100);
-        newBtn.setOnAction(event -> newBtnPressed());
-        newBtn.setText("new");
-        controls.getChildren().add(newBtn);
+        newUnitBtn = new Button();
+        newUnitBtn.setPrefWidth(100);
+        newUnitBtn.setOnAction(event -> newHousingUnit());
+        newUnitBtn.setText("new unit");
+        controls.getChildren().add(newUnitBtn);
 
-        editBtn = new Button();
-        editBtn.setPrefWidth(100);
-        editBtn.setOnAction(event -> editBtnPressed());
-        editBtn.setText("edit");
-        controls.getChildren().add(editBtn);
+        editUnitBtn = new Button();
+        editUnitBtn.setPrefWidth(100);
+        editUnitBtn.setOnAction(event -> editHousingUnit());
+        editUnitBtn.setText("edit unit");
+        controls.getChildren().add(editUnitBtn);
 
-        deleteBtn = new Button();
-        deleteBtn.setText("delete");
-        deleteBtn.setPrefWidth(100);
-        deleteBtn.setOnAction(event -> deleteBtnPressed());
-        controls.getChildren().add(deleteBtn);
+        deleteUnitBtn = new Button();
+        deleteUnitBtn.setText("delete unit");
+        deleteUnitBtn.setPrefWidth(100);
+        deleteUnitBtn.setOnAction(event -> deleteHousingUnit());
+        controls.getChildren().add(deleteUnitBtn);
+
+        newTypeBtn = new Button();
+        newTypeBtn.setPrefWidth(100);
+        newTypeBtn.setOnAction(event -> newHousingType());
+        newTypeBtn.setText("new type");
+        controls.getChildren().add(newTypeBtn);
+
+        editTypeBtn = new Button();
+        editTypeBtn.setPrefWidth(100);
+        editTypeBtn.setOnAction(event -> editHousingType());
+        editTypeBtn.setText("edit type");
+        controls.getChildren().add(editTypeBtn);
+
+        deleteTypeBtn = new Button();
+        deleteTypeBtn.setText("delete type");
+        deleteTypeBtn.setPrefWidth(100);
+        deleteTypeBtn.setOnAction(event -> deleteHousingType());
+        controls.getChildren().add(deleteTypeBtn);
         refresh();
     }
 
@@ -155,7 +184,7 @@ public class HousingView extends VBox implements Initializable {
     }
 
 
-    private void fillTypes() {
+   /* private void fillTypes() {
         Session session = Main.sessionFactory.openSession();
         List<HousingType> housingTypes = null;
         try {
@@ -189,7 +218,7 @@ public class HousingView extends VBox implements Initializable {
         if (housingTypes != null) {
             typesList.getItems().addAll(housingTypes);
         }
-    }
+    }*/
 
 
     private void fillRecursive(HousingUnit unit, TreeItem<HousingUnit> item) {
@@ -202,21 +231,6 @@ public class HousingView extends VBox implements Initializable {
 
     private void setSelectedUnit(HousingUnit unit) {
         populationChart.listPopulation(unit);
-        /*
-        if (unit != null) {
-            nameLabel.setText(unit.getName());
-            idField.setText(unit.getId().toString());
-            dimensionsField.setText(unit.getDimensions());
-            populationField.setText(unit.getPopulation().toString());
-            typeField.setText((unit.getHousingType().getName()));
-        } else {
-            nameLabel.setText("");
-            idField.setText("");
-            dimensionsField.setText("");
-            populationField.setText("");
-            typeField.setText("");
-        }
-        */
     }
 
     private void setSelectedType(HousingType ht) {
@@ -225,30 +239,27 @@ public class HousingView extends VBox implements Initializable {
             typeIdField.setText(ht.getId().toString());
             typeDescription.setText(ht.getDescription());
         } else {
-            unitTypeLabel.setText(ht.getName());
-            typeIdField.setText(ht.getId().toString());
-            typeDescription.setText(ht.getDescription());
+            unitTypeLabel.setText("");
+            typeIdField.setText("");
+            typeDescription.setText("");
         }
     }
 
     private void refresh() {
         fillHousingTree();
-        fillTypes();
+        housingTypes.refresh();
+        //fillTypes();
     }
 
-    private void editBtnPressed() {
+    private void editHousingUnit() {
 
     }
 
-    private void newBtnPressed() {
-        /*String tabName = this.tabPane.getSelectionModel().getSelectedItem().getText();
-        if (tabName.contains("types")) {
-            newHousingType();
-        } else {
-            newHousingUnit();
-        }
-        refresh();*/
+
+    private void editHousingType() {
+
     }
+
 
     private void newHousingUnit() {
         HousingType t = typesList.getItems().get(0);
@@ -269,8 +280,9 @@ public class HousingView extends VBox implements Initializable {
                 session.close();
             }
         }
-        System.out.println("new unit!");
+        refresh();
     }
+
 
     private void newHousingType() {
         HousingType test = new HousingType();
@@ -288,40 +300,41 @@ public class HousingView extends VBox implements Initializable {
                 session.close();
             }
         }
-        System.out.println("new type!");
-
-    }
-
-    private void deleteBtnPressed() {
-        /*
-        String tabName = this.tabPane.getSelectionModel().getSelectedItem().getText();
-        if (tabName.contains("types")) {
-            deleteType();
-        } else {
-            deleteHousing();
-        }
-        */
         refresh();
     }
 
-    private void deleteHousing() {
+
+    private void deleteHousingUnit() {
         HousingUnit h = table.getSelectionModel().getSelectedItem().getValue();
         if (!h.getHousings().isEmpty()) {
             showInfo("Cannot delete housing unit " + h.getName() + " since it is referenced by " +
                     Integer.toString(h.getHousings().size()) + " housing entries!");
         } else {
-            Main.sessionFactory.openSession().delete(h);
+            Session session = Main.sessionFactory.openSession();
+            session.beginTransaction();
+            session.delete(h);
+            session.getTransaction().commit();
+            session.close();
         }
+        table.getSelectionModel().select(null);
+        refresh();
     }
 
-    private void deleteType() {
-        HousingType ht = typesList.getSelectionModel().getSelectedItem();
+
+    private void deleteHousingType() {
+        HousingType ht = housingTypes.getSelectionModel().getSelectedItem();
         if (!ht.getHousingUnits().isEmpty()) {
             showInfo("Cannot delete housing type " + ht.getName() + " since it is referenced by " +
                     Integer.toString(ht.getHousingUnits().size()) + " housing units!");
         } else {
-            Main.sessionFactory.openSession().delete(ht);
+            Session session = Main.sessionFactory.openSession();
+            session.beginTransaction();
+            session.delete(ht);
+            session.getTransaction().commit();
+            session.close();
         }
+        housingTypes.getSelectionModel().select(null);
+        refresh();
     }
 
     public VBox getControls() {
