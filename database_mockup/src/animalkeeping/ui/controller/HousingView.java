@@ -2,6 +2,7 @@ package animalkeeping.ui.controller;
 
 import animalkeeping.model.HousingType;
 import animalkeeping.model.HousingUnit;
+import animalkeeping.ui.HousingTypeDialog;
 import animalkeeping.ui.HousingTypeTable;
 import animalkeeping.ui.HousingUnitDialog;
 import animalkeeping.ui.Main;
@@ -252,7 +253,9 @@ public class HousingView extends VBox implements Initializable {
 
 
     private void editHousingType() {
-
+        HousingType ht = housingTypes.getSelectionModel().getSelectedItem();
+        showEditTypeDialog(ht);
+        housingTypes.refresh();
     }
 
 
@@ -263,22 +266,41 @@ public class HousingView extends VBox implements Initializable {
 
 
     private void newHousingType() {
-        HousingType test = new HousingType();
-        test.setName("Test");
-        test.setDescription("A simple test type that can be safely deleted.");
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.save(test);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
+        showEditTypeDialog(null);
+        housingTypes.refresh();
+    }
+
+
+    private void showEditTypeDialog(HousingType type) {
+        HousingTypeDialog htd = new HousingTypeDialog(type);
+        Dialog<HousingType> dialog = new Dialog<>();
+        dialog.setTitle("Housing type");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(htd);
+        dialog.setWidth(200);
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return htd.getHousingType();
+            }
+            return null;
+        });
+        Optional<HousingType> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            try {
+                Session session = Main.sessionFactory.openSession();
+                session.beginTransaction();
+                session.saveOrUpdate(result.get());
+                session.getTransaction().commit();
                 session.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-        refresh();
     }
 
 
