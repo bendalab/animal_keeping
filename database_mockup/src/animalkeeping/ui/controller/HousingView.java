@@ -14,7 +14,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
@@ -24,9 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-/**
- * Created by jan on 28.01.17.
- */
+
 public class HousingView extends VBox implements Initializable {
     @FXML private TextField dimensionsField;
     @FXML private TextField typeField;
@@ -213,7 +210,7 @@ public class HousingView extends VBox implements Initializable {
     private void editHousingUnit() {
         HousingUnit unit = table.getSelectionModel().getSelectedItem().getValue();
         showEditUnitDialog(unit);
-        refresh();
+        fillHousingTree();
     }
 
     private void showEditUnitDialog(HousingUnit unit) {
@@ -228,14 +225,11 @@ public class HousingView extends VBox implements Initializable {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
-        dialog.setResultConverter(new Callback<ButtonType, HousingUnit>() {
-            @Override
-            public HousingUnit call(ButtonType b) {
-                if (b == buttonTypeOk) {
-                    return hud.getHousingUnit();
-                }
-                return null;
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return hud.getHousingUnit();
             }
+            return null;
         });
         Optional<HousingUnit> result = dialog.showAndWait();
         if (result.isPresent()) {
@@ -261,7 +255,7 @@ public class HousingView extends VBox implements Initializable {
 
     private void newHousingUnit() {
         showEditUnitDialog(null);
-        refresh();
+        fillHousingTree();
     }
 
 
@@ -317,7 +311,7 @@ public class HousingView extends VBox implements Initializable {
             session.close();
         }
         table.getSelectionModel().select(null);
-        refresh();
+        fillHousingTree();
     }
 
 
@@ -334,18 +328,18 @@ public class HousingView extends VBox implements Initializable {
             session.close();
         }
         housingTypes.getSelectionModel().select(null);
-        refresh();
+        housingTypes.refresh();
     }
 
-    public VBox getControls() {
+    VBox getControls() {
         return controls;
     }
+
 
     private void showInfo(String  info) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information");
         alert.setHeaderText(info);
         alert.show();
-
     }
 }
