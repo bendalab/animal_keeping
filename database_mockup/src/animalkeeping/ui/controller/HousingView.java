@@ -219,6 +219,7 @@ public class HousingView extends VBox implements Initializable {
         dialog.setTitle("Housing unit");
         dialog.setResizable(true);
         dialog.getDialogPane().setContent(hud);
+        hud.prefWidthProperty().bind(dialog.widthProperty());
         dialog.setWidth(200);
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -272,6 +273,7 @@ public class HousingView extends VBox implements Initializable {
         dialog.setResizable(true);
         dialog.getDialogPane().setContent(htd);
         dialog.setWidth(200);
+        htd.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
