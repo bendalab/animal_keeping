@@ -3,6 +3,7 @@ package animalkeeping.ui.controller;
 import animalkeeping.model.HousingType;
 import animalkeeping.model.HousingUnit;
 import animalkeeping.ui.HousingTypeTable;
+import animalkeeping.ui.HousingUnitDialog;
 import animalkeeping.ui.Main;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -12,12 +13,14 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -78,7 +81,7 @@ public class HousingView extends VBox implements Initializable {
                 new ReadOnlyIntegerWrapper(hu.getValue().getValue() != null ? hu.getValue().getValue().getAllHousings(true).size() : 0));
         populationColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.15));
         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> setSelectedUnit(newSelection.getValue()));
+        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> setSelectedUnit(newSelection != null ? newSelection.getValue() : null));
 
         plotTabPane.prefWidthProperty().bind(this.widthProperty());
         plotTabPane.prefHeightProperty().bind(tabVBox.heightProperty());
@@ -96,7 +99,7 @@ public class HousingView extends VBox implements Initializable {
         housingTypes.prefWidthProperty().bind(typesScrollPane.widthProperty());
         housingTypes.prefHeightProperty().bind(typesScrollPane.heightProperty());
         housingTypes.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        housingTypes.getSelectionModel().selectedItemProperty().addListener((ov, old_val, new_val) -> setSelectedType(ov.getValue()));
+        housingTypes.getSelectionModel().selectedItemProperty().addListener((ov, old_val, new_val) -> setSelectedType(ov != null ? ov.getValue() : null));
         typesScrollPane.setContent(housingTypes);
 
         controls = new VBox();
@@ -207,7 +210,50 @@ public class HousingView extends VBox implements Initializable {
 
 
     private void editHousingUnit() {
+        HousingUnit unit = table.getSelectionModel().getSelectedItem().getValue();
+        HousingUnitDialog hud = new HousingUnitDialog(unit);
+        Dialog<HousingUnit> dialog = new Dialog<>();
+        dialog.setTitle("Housing unit");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(hud);
+        System.out.println(dialog.getDialogPane().getWidth());
+        System.out.println(hud.getWidth());
 
+        dialog.setWidth(200);
+        System.out.println(dialog.getDialogPane().getWidth());
+        System.out.println(hud.getWidth());
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+        dialog.setResultConverter(new Callback<ButtonType, HousingUnit>() {
+            @Override
+            public HousingUnit call(ButtonType b) {
+                if (b == buttonTypeOk) {
+                    return hud.getHousingUnit();
+                }
+                return null;
+            }
+        });
+        Optional<HousingUnit> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            if (result.get().getId() != null) {
+                try {
+                    Session session = Main.sessionFactory.openSession();
+                    session.beginTransaction();
+                    session.saveOrUpdate(result.get());
+                    session.getTransaction().commit();
+                    session.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            refresh();
+        } else {
+            return;
+        }
     }
 
 
@@ -217,6 +263,16 @@ public class HousingView extends VBox implements Initializable {
 
 
     private void newHousingUnit() {
+
+
+
+
+
+
+
+
+
+
         HousingType t = housingTypes.getItems().get(0);
         HousingUnit test = new HousingUnit();
         test.setName("Test");
