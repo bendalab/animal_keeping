@@ -48,6 +48,7 @@ public class HousingUnitDialog extends VBox implements Initializable {
         nameField = new TextField();
         dimensionsField = new TextField();
         descriptionArea = new TextArea();
+        descriptionArea.setWrapText(true);
         parentUnitComboBox = new ComboBox<>();
         parentUnitComboBox.setConverter(new StringConverter<HousingUnit>() {
             @Override

@@ -38,6 +38,7 @@ public class HousingTypeDialog extends VBox {
         idLabel = new Label();
         nameField = new TextField();
         descriptionArea = new TextArea();
+        descriptionArea.setWrapText(true);
 
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(5, 0, 5, 0));
