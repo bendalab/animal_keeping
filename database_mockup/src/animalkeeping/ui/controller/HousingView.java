@@ -211,23 +211,22 @@ public class HousingView extends VBox implements Initializable {
 
     private void editHousingUnit() {
         HousingUnit unit = table.getSelectionModel().getSelectedItem().getValue();
+        showEditUnitDialog(unit);
+        refresh();
+    }
+
+    private void showEditUnitDialog(HousingUnit unit) {
         HousingUnitDialog hud = new HousingUnitDialog(unit);
         Dialog<HousingUnit> dialog = new Dialog<>();
         dialog.setTitle("Housing unit");
         dialog.setResizable(true);
         dialog.getDialogPane().setContent(hud);
-        System.out.println(dialog.getDialogPane().getWidth());
-        System.out.println(hud.getWidth());
-
         dialog.setWidth(200);
-        System.out.println(dialog.getDialogPane().getWidth());
-        System.out.println(hud.getWidth());
+
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
-
         dialog.setResultConverter(new Callback<ButtonType, HousingUnit>() {
             @Override
             public HousingUnit call(ButtonType b) {
@@ -239,20 +238,15 @@ public class HousingView extends VBox implements Initializable {
         });
         Optional<HousingUnit> result = dialog.showAndWait();
         if (result.isPresent()) {
-            if (result.get().getId() != null) {
-                try {
-                    Session session = Main.sessionFactory.openSession();
-                    session.beginTransaction();
-                    session.saveOrUpdate(result.get());
-                    session.getTransaction().commit();
-                    session.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            try {
+                Session session = Main.sessionFactory.openSession();
+                session.beginTransaction();
+                session.saveOrUpdate(result.get());
+                session.getTransaction().commit();
+                session.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            refresh();
-        } else {
-            return;
         }
     }
 
@@ -263,34 +257,7 @@ public class HousingView extends VBox implements Initializable {
 
 
     private void newHousingUnit() {
-
-
-
-
-
-
-
-
-
-
-        HousingType t = housingTypes.getItems().get(0);
-        HousingUnit test = new HousingUnit();
-        test.setName("Test");
-        test.setDescription("A simple test unit that can be safely deleted.");
-
-        test.setHousingType(t);
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.save(test);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
+        showEditUnitDialog(null);
         refresh();
     }
 
