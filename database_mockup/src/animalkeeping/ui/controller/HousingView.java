@@ -2,18 +2,20 @@ package animalkeeping.ui.controller;
 
 import animalkeeping.model.HousingType;
 import animalkeeping.model.HousingUnit;
-import animalkeeping.ui.HousingTypeDialog;
-import animalkeeping.ui.HousingTypeTable;
-import animalkeeping.ui.HousingUnitDialog;
-import animalkeeping.ui.Main;
+import animalkeeping.ui.*;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
@@ -45,8 +47,8 @@ public class HousingView extends VBox implements Initializable {
     private PopulationChart populationChart;
     private HousingTypeTable housingTypes;
     private VBox controls;
-    private Button editUnitBtn, deleteUnitBtn, newUnitBtn;
-    private Button editTypeBtn, deleteTypeBtn, newTypeBtn;
+    private ControlLabel editUnitLabel, deleteUnitLabel;
+    private ControlLabel editTypeLabel, deleteTypeLabel;
 
 
     public HousingView () {
@@ -101,51 +103,61 @@ public class HousingView extends VBox implements Initializable {
         typesScrollPane.setContent(housingTypes);
 
         controls = new VBox();
-        controls.setAlignment(Pos.CENTER);
-        controls.setSpacing(10);
-        Label heading = new Label("Housing controls:");
-        heading.setUnderline(true);
-        controls.getChildren().add(heading);
+        controls.setAlignment(Pos.TOP_LEFT);
+        controls.setSpacing(5);
 
-        newUnitBtn = new Button();
-        newUnitBtn.setPrefWidth(100);
-        newUnitBtn.setOnAction(event -> newHousingUnit());
-        newUnitBtn.setText("new unit");
-        controls.getChildren().add(newUnitBtn);
+        ControlLabel newUnitLabel = new ControlLabel("new housing unit");
+        newUnitLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                newHousingUnit();
+            }
+        });
+        controls.getChildren().add(newUnitLabel);
 
-        editUnitBtn = new Button();
-        editUnitBtn.setDisable(true);
-        editUnitBtn.setPrefWidth(100);
-        editUnitBtn.setOnAction(event -> editHousingUnit());
-        editUnitBtn.setText("edit unit");
-        controls.getChildren().add(editUnitBtn);
+        editUnitLabel = new ControlLabel("edit housing unit", true);
+        editUnitLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                editHousingUnit();
+            }
+        });
+        controls.getChildren().add(editUnitLabel);
 
-        deleteUnitBtn = new Button();
-        deleteUnitBtn.setDisable(true);
-        deleteUnitBtn.setText("delete unit");
-        deleteUnitBtn.setPrefWidth(100);
-        deleteUnitBtn.setOnAction(event -> deleteHousingUnit());
-        controls.getChildren().add(deleteUnitBtn);
+        deleteUnitLabel = new ControlLabel("delete housing unit", true);
+        deleteUnitLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                deleteHousingUnit();
+            }
+        });
+        controls.getChildren().add(deleteUnitLabel);
 
-        newTypeBtn = new Button();
-        newTypeBtn.setPrefWidth(100);
-        newTypeBtn.setOnAction(event -> newHousingType());
-        newTypeBtn.setText("new type");
-        controls.getChildren().add(newTypeBtn);
+        controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
 
-        editTypeBtn = new Button();
-        editTypeBtn.setDisable(true);
-        editTypeBtn.setPrefWidth(100);
-        editTypeBtn.setOnAction(event -> editHousingType());
-        editTypeBtn.setText("edit type");
-        controls.getChildren().add(editTypeBtn);
+        ControlLabel newTypeLabel = new ControlLabel("new housing type");
+        newTypeLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                newHousingType();
+            }
+        });
+        controls.getChildren().add(newTypeLabel);
 
-        deleteTypeBtn = new Button();
-        deleteTypeBtn.setDisable(true);
-        deleteTypeBtn.setText("delete type");
-        deleteTypeBtn.setPrefWidth(100);
-        deleteTypeBtn.setOnAction(event -> deleteHousingType());
-        controls.getChildren().add(deleteTypeBtn);
+        editTypeLabel = new ControlLabel("edit housing type", true);
+        editTypeLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                editHousingType();
+            }
+        });
+        controls.getChildren().add(editTypeLabel);
+
+        deleteTypeLabel = new ControlLabel("delete housing unit", true);
+        deleteTypeLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                deleteHousingType();
+            }
+        });
+        controls.getChildren().add(deleteTypeLabel);
+        controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
+
+
         refresh();
     }
 
@@ -190,14 +202,14 @@ public class HousingView extends VBox implements Initializable {
 
     private void setSelectedUnit(HousingUnit unit) {
         populationChart.listPopulation(unit);
-        deleteUnitBtn.setDisable(unit == null);
-        editUnitBtn.setDisable(unit == null);
+        deleteUnitLabel.setDisable(unit == null);
+        editUnitLabel.setDisable(unit == null);
     }
 
 
     private void setSelectedType(HousingType ht) {
-        deleteTypeBtn.setDisable(ht == null);
-        editTypeBtn.setDisable(ht == null);
+        deleteTypeLabel.setDisable(ht == null);
+        editTypeLabel.setDisable(ht == null);
     }
 
 
