@@ -1,16 +1,12 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.HousingType;
-import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-
-import java.net.URL;
-import java.util.ResourceBundle;
 
 
 public class HousingTypeDialog extends VBox {
@@ -45,12 +41,13 @@ public class HousingTypeDialog extends VBox {
         grid.add(new Label("ID"), 1, 1);
         grid.add(idLabel, 2, 1);
 
-        grid.add(new Label("name"), 1, 3);
-        grid.add(nameField, 2, 3, 2,1);
+        grid.add(new Label("name (*)"), 1, 2);
+        grid.add(nameField, 2, 2, 2,1);
 
-        grid.add(new Label("description"), 1, 6);
-        grid.add(descriptionArea, 1, 7, 3, 3);
+        grid.add(new Label("description"), 1, 3);
+        grid.add(descriptionArea, 1, 4, 3, 3);
 
+        grid.add(new Label("(*) required"), 1, 7);
         this.getChildren().add(grid);
     }
 
@@ -64,6 +61,9 @@ public class HousingTypeDialog extends VBox {
 
 
     public HousingType getHousingType() {
+        if (this.nameField.getText().isEmpty()) {
+            return null;
+        }
         type.setName(nameField.getText());
         type.setDescription(descriptionArea.getText());
         return type;
