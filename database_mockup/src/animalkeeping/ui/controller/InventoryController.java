@@ -1,6 +1,7 @@
 package animalkeeping.ui.controller;
 
 import animalkeeping.model.*;
+import animalkeeping.ui.ControlLabel;
 import animalkeeping.ui.HousingTable;
 import animalkeeping.ui.InventoryTable;
 import animalkeeping.ui.Main;
@@ -32,7 +33,10 @@ public class InventoryController extends VBox implements Initializable {
     @FXML private VBox chartVbox;
     @FXML private Label allLabel;
     @FXML private ScrollPane tableScrollPane;
+    private VBox controls;
     private HashMap<String, HousingUnit> unitsHashMap;
+    private ControlLabel animalUseLabel;
+    private ControlLabel exportLabel;
 
 
     public InventoryController() {
@@ -48,6 +52,11 @@ public class InventoryController extends VBox implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         unitsHashMap = new HashMap<>();
+        controls = new VBox();
+        animalUseLabel = new ControlLabel("animal use", true);
+        exportLabel = new ControlLabel("export overview", true);
+        controls.getChildren().add(animalUseLabel);
+        controls.getChildren().add(exportLabel);
         this.fillList();
         listAllPopulation();
     }
@@ -73,12 +82,7 @@ public class InventoryController extends VBox implements Initializable {
                 Label label = new Label(h.getName());
                 label.setUnderline(true);
                 label.setTextFill(allLabel.getTextFill());
-                label.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        listPopulation(unitsHashMap.get(h.getName()));
-                    }
-                });
+                label.setOnMouseClicked(event -> listPopulation(unitsHashMap.get(h.getName())));
                 unitsBox.getChildren().add(label);
                 unitsBox.setMargin(label, new Insets(0., 0., 5., 5.0 ));
               }
@@ -149,6 +153,10 @@ public class InventoryController extends VBox implements Initializable {
         tableScrollPane.setContent(null);
         HousingTable table = new HousingTable(housings);
         tableScrollPane.setContent(table);
+    }
+
+    public  VBox getControls() {
+        return controls;
     }
 
     private void collectSubjects(Set<Subject> subjects, HousingUnit h) {
