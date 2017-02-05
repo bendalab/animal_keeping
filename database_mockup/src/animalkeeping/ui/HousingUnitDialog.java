@@ -7,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.hibernate.HibernateException;
@@ -136,10 +137,10 @@ public class HousingUnitDialog extends VBox implements Initializable {
         grid.add(new Label("parent"), 1, 2);
         grid.add(parentUnitComboBox, 2, 2, 2,1);
 
-        grid.add(new Label("name"), 1, 3);
+        grid.add(new Label("name (*)"), 1, 3);
         grid.add(nameField, 2, 3, 2,1);
 
-        grid.add(new Label("type"), 1, 4);
+        grid.add(new Label("type (*)"), 1, 4);
         grid.add(typeComboBox, 2, 4, 2, 1);
 
         grid.add(new Label("dimensions"), 1, 5);
@@ -147,6 +148,10 @@ public class HousingUnitDialog extends VBox implements Initializable {
 
         grid.add(new Label("description"), 1, 6);
         grid.add(descriptionArea, 1, 7, 3, 3);
+
+        Label l = new Label("(*) required");
+        l.setFont(new Font(Font.getDefault().getFamily(), 10));
+        grid.add(l, 1, 10);
 
         this.getChildren().add(grid);
     }
@@ -164,6 +169,9 @@ public class HousingUnitDialog extends VBox implements Initializable {
 
 
     public HousingUnit getHousingUnit() {
+        if (nameField.getText().isEmpty() || typeComboBox.getSelectionModel().isEmpty()) {
+            return null;
+        }
         unit.setName(nameField.getText());
         unit.setDescription(descriptionArea.getText());
         unit.setDimensions(dimensionsField.getText());
