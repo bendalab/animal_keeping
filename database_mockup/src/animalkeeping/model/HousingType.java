@@ -1,5 +1,8 @@
 package animalkeeping.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by jan on 28.12.16.
  */
@@ -7,6 +10,8 @@ public class HousingType {
     private Long id;
     private String name;
     private String description;
+    private Set<HousingUnit> housingUnits =
+            new HashSet<>(0);
 
     public HousingType() {}
 
@@ -37,6 +42,14 @@ public class HousingType {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Set<HousingUnit> getHousingUnits() {
+        return housingUnits;
+    }
+
+    public void setHousingUnits(Set<HousingUnit> housingUnits) {
+        this.housingUnits = housingUnits;
     }
 
     @Override

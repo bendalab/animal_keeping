@@ -1,34 +1,31 @@
 package animalkeeping.ui.controller;
 
-import animalkeeping.ui.*;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-//import com.sun.tools.corba.se.idl.constExpr.BooleanNot;
-import javafx.collections.ListChangeListener;
+import animalkeeping.ui.FishView;
+import animalkeeping.ui.Main;
+import animalkeeping.ui.PersonsView;
+import animalkeeping.ui.TreatmentsTable;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.scene.Node;
-import java.awt.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+
+import java.util.Vector;
+
 
 public class MainViewController {
-
-    @FXML private Button personsBtn;
-    @FXML private Button treatmentsBtn;
-    @FXML private Button subjectsBtn;
-    @FXML private Button inventoryBtn;
+    @FXML private TitledPane animalHousingPane;
+    @FXML private TitledPane personsPane;
+    @FXML private TitledPane inventoryPane;
+    @FXML private TitledPane subjectsPane;
+    @FXML private TitledPane treatmentsPane;
     @FXML private Button addUsrBtn;
     @FXML private TextField idField;
     @FXML private ScrollPane scrollPane;
     @FXML private VBox masterBox;
-    @FXML private VBox contextButtonBox;
     @FXML private ComboBox<String> findBox;
     @FXML private TitledPane findPane;
+    private Vector<TitledPane> panes;
 
     @FXML
     private void initialize() {
@@ -48,6 +45,12 @@ public class MainViewController {
                 e.printStackTrace();
             }
         }
+        panes = new Vector<>();
+        panes.add(inventoryPane);
+        panes.add(subjectsPane);
+        panes.add(treatmentsPane);
+        panes.add(personsPane);
+        panes.add(animalHousingPane);
 
     }
 
@@ -57,9 +60,14 @@ public class MainViewController {
         this.scrollPane.setContent(null);
         try{
             PersonsView pv = new PersonsView();
+
+            this.scrollPane.setFitToHeight(true);
+            this.scrollPane.setFitToWidth(true);
+            pv.minHeightProperty().bind(this.scrollPane.heightProperty());
+            pv.minWidthProperty().bind(this.scrollPane.widthProperty());
             this.scrollPane.setContent(pv);
-            this.contextButtonBox.getChildren().clear();
-            this.contextButtonBox.getChildren().add(pv.getControls());
+            this.personsPane.setContent(pv.getControls());
+            collapsePanes(personsPane);
         }
         catch(Exception e){
             e.printStackTrace();
@@ -70,36 +78,66 @@ public class MainViewController {
     @FXML
     private void showSubjects() {
         this.scrollPane.setContent(null);
-        this.contextButtonBox.getChildren().clear();
-        try{
+        try {
             FishView fish = new FishView();
-            this.scrollPane.setContent(fish);}
-        catch(Exception e){
+            fish.minHeightProperty().bind(this.scrollPane.heightProperty());
+            fish.minWidthProperty().bind(this.scrollPane.widthProperty());
+            this.scrollPane.setContent(fish);
+            this.subjectsPane.setContent(fish.getControls());
+            collapsePanes(subjectsPane);
+        } catch(Exception e){
             e.printStackTrace();}
     }
 
     @FXML
     private void showTreatments() {
         this.scrollPane.setContent(null);
-        this.contextButtonBox.getChildren().clear();
-        try{
+        try {
             TreatmentsTable treatmentsTable = new TreatmentsTable();
-            this.scrollPane.setContent(treatmentsTable);}
-        catch(Exception e){
-            e.printStackTrace();}
+            treatmentsTable.minHeightProperty().bind(this.scrollPane.heightProperty());
+            treatmentsTable.minWidthProperty().bind(this.scrollPane.widthProperty());
+            this.scrollPane.setContent(treatmentsTable);
+            this.treatmentsPane.setContent(new VBox());
+            collapsePanes(treatmentsPane);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void showInventory() {
         this.scrollPane.setContent(null);
-        this.contextButtonBox.getChildren().clear();
         try {
             InventoryController inventory = new InventoryController();
-            this.scrollPane.setContent(inventory);}
-        catch(Exception e) {
+            inventory.minHeightProperty().bind(this.scrollPane.heightProperty());
+            inventory.minWidthProperty().bind(this.scrollPane.widthProperty());
+            this.scrollPane.setContent(inventory);
+            this.inventoryPane.setContent(inventory.getControls());
+            collapsePanes(inventoryPane);
+        } catch(Exception e) {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void showHousingUnits() {
+        this.scrollPane.setContent(null);
+        this.animalHousingPane.setContent(null);
+        try {
+            HousingView housingView = new HousingView();
+            this.scrollPane.setFitToHeight(true);
+            this.scrollPane.setFitToWidth(true);
+            housingView.minHeightProperty().bind(this.scrollPane.heightProperty());
+            housingView.minWidthProperty().bind(this.scrollPane.widthProperty());
+            this.scrollPane.setContent(housingView);
+            this.animalHousingPane.setContent(housingView.getControls());
+            collapsePanes(animalHousingPane);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     private Long looksLikeId(String text) {
         Long aLong = null;
@@ -170,13 +208,21 @@ public class MainViewController {
 
 
     private void connectedToDatabase() {
-        subjectsBtn.setDisable(false);
-        personsBtn.setDisable(false);
-        subjectsBtn.setDisable(false);
-        inventoryBtn.setDisable(false);
-        treatmentsBtn.setDisable(false);
+        subjectsPane.setDisable(false);
+        personsPane.setDisable(false);
+        inventoryPane.setDisable(false);
+        treatmentsPane.setDisable(false);
         findPane.setDisable(false);
         addUsrBtn.setDisable(false);
+        animalHousingPane.setDisable(false);
         showInventory();
+    }
+
+    private void collapsePanes(TitledPane excludedPane) {
+        for (TitledPane p : panes) {
+            if (p != excludedPane) {
+                p.setExpanded(false);
+            }
+        }
     }
 }

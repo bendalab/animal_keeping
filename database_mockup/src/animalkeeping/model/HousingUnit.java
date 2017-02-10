@@ -129,8 +129,8 @@ public class HousingUnit {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", dimensions='" + dimensions + '\'' +
-                ", housingType=" + housingType.getName() +
-                ", parentUnit=" + ((parentUnit != null) ? parentUnit.getName() : "") +
+                ", housingType=" + (housingType != null ? housingType.getName() : "") +
+                ", parentUnit=" + (parentUnit != null ? parentUnit.getName() : "") +
                 '}';
     }
 }

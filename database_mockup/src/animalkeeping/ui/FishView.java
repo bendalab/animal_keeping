@@ -39,6 +39,8 @@ public class FishView extends VBox implements Initializable {
     private TableColumn<Treatment, Date> startDateCol;
     private TableColumn<Treatment, Date> endDateCol;
     private TableColumn<Treatment, String> aliasCol;
+    private VBox controls;
+
 
     public FishView() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/FishView.fxml"));
@@ -81,6 +83,15 @@ public class FishView extends VBox implements Initializable {
         endDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getEnd()));
         treatmentTable.getColumns().clear();
         treatmentTable.getColumns().addAll(idCol, aliasCol, typeCol, startDateCol, endDateCol);
+
+        controls = new VBox();
+        ControlLabel newSubjectLabel = new ControlLabel("new subject", true);
+        controls.getChildren().add(newSubjectLabel);
+        ControlLabel editSubjectLabel = new ControlLabel("edit subject", true);
+        controls.getChildren().add(editSubjectLabel);
+        ControlLabel deleteSubjectLabel = new ControlLabel("delete subject", true);
+        controls.getChildren().add(deleteSubjectLabel);
+
     }
 
 
@@ -123,4 +134,7 @@ public class FishView extends VBox implements Initializable {
         }
     }
 
+    public VBox getControls() {
+        return controls;
+    }
 }

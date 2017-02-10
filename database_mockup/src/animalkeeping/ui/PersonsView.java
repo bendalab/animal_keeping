@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -22,9 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
-/**
- * Created by grewe on 1/12/17.
- */
 public class PersonsView  extends VBox implements Initializable {
     @FXML private ScrollPane tableScrollPane;
     @FXML private VBox timelineVBox;
@@ -42,7 +40,7 @@ public class PersonsView  extends VBox implements Initializable {
     private TableColumn<Treatment, String> subjectCol;
     private VBox controls;
     private Person selectedPerson;
-    private Button editBtn, deleteBtn;
+    private ControlLabel editLabel, deleteLabel;
 
 
     public PersonsView() {
@@ -86,31 +84,33 @@ public class PersonsView  extends VBox implements Initializable {
         treatmentTable.getColumns().addAll(idCol, subjectCol, typeCol, startDateCol, endDateCol);
 
         controls = new VBox();
-        controls.setAlignment(Pos.CENTER);
+        controls.setAlignment(Pos.TOP_LEFT);
         //controls.setPadding(new Insets(0.0, 0.0, 10.0, 0.0));
         controls.setSpacing(10);
-        Label heading = new Label("Person controls:");
-        heading.setUnderline(true);
-        controls.getChildren().add(heading);
 
-        editBtn = new Button();
-        editBtn.setPrefWidth(100);
-        editBtn.setOnAction(event -> editPerson());
-        editBtn.setText("edit");
-        controls.getChildren().add(editBtn);
+        editLabel = new ControlLabel("edit person", true);
+        editLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                editPerson();
+            }
+        });
+        controls.getChildren().add(editLabel);
 
-        deleteBtn = new Button();
-        deleteBtn.setText("delete");
-        deleteBtn.setPrefWidth(100);
-        deleteBtn.setOnAction(event -> deletePerson());
-        controls.getChildren().add(deleteBtn);
+        deleteLabel = new ControlLabel("delete person", true);
+        deleteLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                deletePerson();
+            }
+        });
+        controls.getChildren().add(deleteLabel);
     }
 
 
     private void personSelected(Person p) {
         selectedPerson = p;
-        editBtn.setDisable(p == null);
-        deleteBtn.setDisable(p == null);
+        editLabel.setDisable(p == null);
+        deleteLabel.setDisable(p == null);
+
         if (p != null) {
             idField.setText(p.getId().toString());
             firstNameField.setText(p.getFirstName());
