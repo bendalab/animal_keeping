@@ -144,7 +144,7 @@ public class MainViewController {
         try {
             aLong = Long.parseLong(text);
         } catch (NumberFormatException e) {
-
+            e.printStackTrace();
         }
         if (aLong!= null && aLong < 0)
             aLong = null;
@@ -165,26 +165,31 @@ public class MainViewController {
             return;
         }
 
-        if (selectedTable.equals("Subject")) {
-            FishView fv = new FishView();
-            if (id != null) {
-                fv.idFilter(id);
-            } else {
-                fv.nameFilter(idField.getText());
-            }
-            this.scrollPane.setContent(fv);
-        } else if (selectedTable.equals("Person")) {
-            PersonsView pv = new PersonsView();
-            if (id != null) {
-                pv.idFilter(id);
-            } else {
-                pv.nameFilter(idField.getText());
-            }
-            this.scrollPane.setContent(pv);
-        } else if (selectedTable.equals("Treatment")) {
-            System.out.println("not yet supported");
-        } else {
-            System.out.println("invalid selection");
+        switch (selectedTable) {
+            case "Subject":
+                FishView fv = new FishView();
+                if (id != null) {
+                    fv.idFilter(id);
+                } else {
+                    fv.nameFilter(idField.getText());
+                }
+                this.scrollPane.setContent(fv);
+                break;
+            case "Person":
+                PersonsView pv = new PersonsView();
+                if (id != null) {
+                    pv.idFilter(id);
+                } else {
+                    pv.nameFilter(idField.getText());
+                }
+                this.scrollPane.setContent(pv);
+                break;
+            case "Treatment":
+                System.out.println("not yet supported");
+                break;
+            default:
+                System.out.println("invalid selection");
+                break;
         }
     }
 
