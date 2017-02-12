@@ -1,11 +1,8 @@
 package animalkeeping.ui.controller;
 
-import animalkeeping.model.Housing;
 import animalkeeping.model.HousingType;
 import animalkeeping.model.HousingUnit;
-import animalkeeping.model.Subject;
 import animalkeeping.ui.*;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
@@ -21,7 +18,9 @@ import org.hibernate.Session;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 
 public class HousingView extends VBox implements Initializable {
@@ -47,7 +46,7 @@ public class HousingView extends VBox implements Initializable {
     private VBox controls;
     private ControlLabel editUnitLabel, deleteUnitLabel;
     private ControlLabel editTypeLabel, deleteTypeLabel;
-    private ControlLabel importSubjectsLabel;
+    private ControlLabel importSubjectsLabel, batchTreatmentLabel;
 
 
     public HousingView () {
@@ -164,6 +163,14 @@ public class HousingView extends VBox implements Initializable {
         });
         controls.getChildren().add(importSubjectsLabel);
 
+        batchTreatmentLabel = new ControlLabel("batch treatment", true);
+        batchTreatmentLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                batchTreatment();
+            }
+        });
+        controls.getChildren().add(batchTreatmentLabel);
+
         refresh();
     }
 
@@ -211,6 +218,7 @@ public class HousingView extends VBox implements Initializable {
         deleteUnitLabel.setDisable(unit == null);
         editUnitLabel.setDisable(unit == null);
         importSubjectsLabel.setDisable(unit == null);
+        batchTreatmentLabel.setDisable(unit == null);
     }
 
 
@@ -286,7 +294,7 @@ public class HousingView extends VBox implements Initializable {
     }
 
 
-    private void showEditTypeDialog(HousingType type) {
+    public static void showEditTypeDialog(HousingType type) {
         HousingTypeDialog htd = new HousingTypeDialog(type);
         Dialog<HousingType> dialog = new Dialog<>();
         dialog.setTitle("Housing type");
@@ -380,6 +388,38 @@ public class HousingView extends VBox implements Initializable {
             showInfo("Something went wrong while creating new subjects!");
         } else {
             showInfo("Successfully created new subjects!");
+        }
+    }
+
+
+    private void batchTreatment() {
+        HousingUnit unit = table.getSelectionModel().getSelectedItem().getValue();
+        BatchTreatmentForm btf = new BatchTreatmentForm(unit);
+        Dialog<Boolean> dialog = new Dialog<>();
+
+
+        dialog.setTitle("Batch Treatment");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(btf);
+        dialog.setWidth(300);
+        btf.prefWidthProperty().bind(dialog.widthProperty());
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return btf.persist();
+            }
+            return null;
+        });
+
+        Optional<Boolean> result = dialog.showAndWait();
+        if (!result.isPresent() || !result.get()) {
+            showInfo("Something went wrong while creating the treatment!");
+        } else {
+            showInfo("Successfully created a batch treatment!");
         }
     }
 
