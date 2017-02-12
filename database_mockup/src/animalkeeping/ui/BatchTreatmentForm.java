@@ -1,8 +1,6 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.*;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -12,11 +10,12 @@ import javafx.scene.text.Font;
 import javafx.util.StringConverter;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -27,7 +26,6 @@ public class BatchTreatmentForm extends VBox {
     private ComboBox<HousingUnit> housingUnitComboBox;
     private ComboBox<TreatmentType> treatmentComboBox;
     private ComboBox<Person> personComboBox;
-    private Button newHousingUnit, newPerson, newTreatmentType;
     private DatePicker treatmentStartDate, treatmentEndDate;
     private TextField startTimeField, endTimeField;
 
@@ -93,22 +91,22 @@ public class BatchTreatmentForm extends VBox {
         endTimeField = new TextField();
         endTimeField.setTooltip(new Tooltip("End time of treatment, use HH:mm:ss format"));
 
-        newHousingUnit = new Button("+");
+        Button newHousingUnit = new Button("+");
         newHousingUnit.setTooltip(new Tooltip("create a new housing unit"));
         newHousingUnit.setOnAction(event -> showEditUnitDialog(null));
 
-        newTreatmentType = new Button("+");
+        Button newTreatmentType = new Button("+");
         newTreatmentType.setTooltip(new Tooltip("create a new type of treatment"));
         newTreatmentType.setDisable(true);
 
-        newPerson = new Button("+");
+        Button newPerson = new Button("+");
         newPerson.setTooltip(new Tooltip("create a new supplier entry"));
         newPerson.setDisable(true);
 
         Session session = Main.sessionFactory.openSession();
-        List<HousingUnit> housingUnits = null;
-        List<Person> persons = null;
-        List<TreatmentType> types = null;
+        List<HousingUnit> housingUnits = new ArrayList<>(0);
+        List<Person> persons = new ArrayList<>(0);
+        List<TreatmentType> types = new ArrayList<>(0);
         try {
             session.beginTransaction();
             housingUnits = session.createQuery("from HousingUnit", HousingUnit.class).list();
@@ -177,12 +175,7 @@ public class BatchTreatmentForm extends VBox {
 
         grid.add(new Label("end date:"), 0, 5);
         grid.add(treatmentEndDate, 1, 5, 2, 1);
-        treatmentEndDate.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                endTimeField.setText(dateFormat.format(date));
-            }
-        });
+        treatmentEndDate.setOnAction(event -> endTimeField.setText(dateFormat.format(date)));
         grid.add(new Label("end time:"), 0, 6);
         grid.add(endTimeField, 1, 6, 1, 1);
 
