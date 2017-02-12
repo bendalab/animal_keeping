@@ -1,9 +1,6 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.*;
-import animalkeeping.ui.controller.HousingView;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -11,20 +8,16 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.StringConverter;
-import org.dom4j.Text;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
-import java.sql.Time;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 
 import static animalkeeping.ui.controller.HousingView.showEditUnitDialog;
 
@@ -33,12 +26,10 @@ public class AddSubjectsForm extends VBox {
     private ComboBox<HousingUnit> housingUnitComboBox;
     private ComboBox<SpeciesType> speciesComboBox;
     private ComboBox<SupplierType> supplierComboBox;
-    private Button newHousingUnit, newSupplier, newSpecies;
     private DatePicker housingDate;
     private Spinner<Integer> startIdSpinner;
     private Spinner<Integer> countSpinner;
     private TextField nameField;
-    private TextField startNumber;
     private TextField timeField;
     private SubjectType st;
 
@@ -101,22 +92,22 @@ public class AddSubjectsForm extends VBox {
         timeField = new TextField();
         timeField.setTooltip(new Tooltip("Import time use HH:mm:ss format"));
 
-        newHousingUnit = new Button("+");
+        Button newHousingUnit = new Button("+");
         newHousingUnit.setTooltip(new Tooltip("create a new housing unit"));
         newHousingUnit.setOnAction(event -> showEditUnitDialog(null));
 
-        newSpecies = new Button("+");
+        Button newSpecies = new Button("+");
         newSpecies.setTooltip(new Tooltip("create a new species entry"));
         newSpecies.setDisable(true);
 
-        newSupplier = new Button("+");
+        Button newSupplier = new Button("+");
         newSupplier.setTooltip(new Tooltip("create a new supplier entry"));
         newSupplier.setDisable(true);
 
         Session session = Main.sessionFactory.openSession();
-        List<HousingUnit> housingUnits = null;
-        List<SupplierType> supplier = null;
-        List<SpeciesType> species = null;
+        List<HousingUnit> housingUnits = new ArrayList<>(0);
+        List<SupplierType> supplier = new ArrayList<>(0);
+        List<SpeciesType> species = new ArrayList<>(0);
         try {
             session.beginTransaction();
             housingUnits = session.createQuery("from HousingUnit", HousingUnit.class).list();
@@ -144,7 +135,6 @@ public class AddSubjectsForm extends VBox {
         supplierComboBox.getItems().addAll(supplier);
         speciesComboBox.getItems().addAll(species);
         nameField = new TextField();
-        startNumber = new TextField();
 
         Label heading = new Label("Add subjects:");
         heading.setFont(new Font(Font.getDefault().getFamily(), 16));
@@ -217,7 +207,7 @@ public class AddSubjectsForm extends VBox {
     private boolean validateTime(String time_str) {
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         try {
-            timeFormat.parse(timeField.getText());
+            timeFormat.parse(time_str);
             return true;
         } catch (Exception e) {
             return  false;
