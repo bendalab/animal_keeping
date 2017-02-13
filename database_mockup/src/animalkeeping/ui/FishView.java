@@ -10,11 +10,8 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.geometry.Orientation;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -92,6 +89,29 @@ public class FishView extends VBox implements Initializable {
         ControlLabel deleteSubjectLabel = new ControlLabel("delete subject", true);
         controls.getChildren().add(deleteSubjectLabel);
 
+        controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
+        ControlLabel addTreatment = new ControlLabel("new treatment", true);
+        addTreatment.setTooltip(new Tooltip("add a treatment entry for the selected subject"));
+        controls.getChildren().add(addTreatment);
+        ControlLabel editTreatment = new ControlLabel("edit treatment", true);
+        controls.getChildren().add(editTreatment);
+
+        controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
+        ControlLabel moveSubject = new ControlLabel("move subject", true);
+        moveSubject.setTooltip(new Tooltip("relocate subject to a different housing unit"));
+        controls.getChildren().add(moveSubject);
+
+        controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
+        ControlLabel newComment = new ControlLabel("add observation", true);
+        controls.getChildren().add(newComment);
+        ControlLabel editComment = new ControlLabel("edit observation", true);
+        controls.getChildren().add(editComment);
+        ControlLabel deleteComment = new ControlLabel("delete observation", true);
+        controls.getChildren().add(deleteComment);
+
+        controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
+        ControlLabel reportDead = new ControlLabel("report dead", true);
+        controls.getChildren().add(reportDead);
     }
 
 
@@ -103,8 +123,8 @@ public class FishView extends VBox implements Initializable {
             supplierField.setText(s.getSupplier().getName());
             aliveField.setText("Possibly");
             treatmentTable.getItems().clear();
-            //treatmentTable.getItems().addAll(s.getTreatments());
-            //timeline.setTreatments(s.getTreatments());
+            treatmentTable.getItems().addAll(s.getTreatments());
+            timeline.setTreatments(s.getTreatments());
         } else {
             idField.setText("");
             aliasField.setText("");
