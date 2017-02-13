@@ -35,7 +35,8 @@ public class FishView extends VBox implements Initializable {
     private TableColumn<Treatment, String> typeCol;
     private TableColumn<Treatment, Date> startDateCol;
     private TableColumn<Treatment, Date> endDateCol;
-    private TableColumn<Treatment, String> aliasCol;
+    private TableColumn<Treatment, String> nameCol;
+    private TableColumn<Treatment, String> personCol;
     private VBox controls;
 
 
@@ -70,16 +71,31 @@ public class FishView extends VBox implements Initializable {
         fishTable.getSelectionModel().getSelectedItems().addListener(new FishTableListChangeListener());
         idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        aliasCol = new TableColumn<>("alias");
-        aliasCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubject().getName()));
+        idCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.08));
+
         typeCol = new TableColumn<>("treatment");
         typeCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getType().getName()));
+        typeCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.18));
+
         startDateCol = new TableColumn<>("start");
         startDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getStart()));
+        startDateCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.18));
+
         endDateCol = new TableColumn<>("end");
         endDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getEnd()));
+        endDateCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.18));
+
+        nameCol = new TableColumn<>("name");
+        nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubject().getName()));
+        nameCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.18));
+
+        personCol = new TableColumn<>("person");
+        personCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getPerson().getLastName() +
+         ", " + data.getValue().getPerson().getFirstName()));
+        personCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.18));
+
         treatmentTable.getColumns().clear();
-        treatmentTable.getColumns().addAll(idCol, aliasCol, typeCol, startDateCol, endDateCol);
+        treatmentTable.getColumns().addAll(idCol, typeCol, startDateCol, endDateCol, nameCol, personCol);
 
         controls = new VBox();
         ControlLabel newSubjectLabel = new ControlLabel("new subject", true);
