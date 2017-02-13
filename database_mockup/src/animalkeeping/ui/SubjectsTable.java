@@ -1,6 +1,6 @@
 package animalkeeping.ui;
 
-import animalkeeping.model.*;
+import animalkeeping.model.Subject;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -11,19 +11,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellEditEvent;
-import javafx.util.Callback;
-import javafx.scene.input.MouseEvent;
-import java.util.List;
-import javafx.event.EventHandler;
-import javafx.scene.Parent;
 
-/**
- * Created by jan on 01.01.17.
- */
+import java.util.List;
+
 public class SubjectsTable extends TableView<Subject> {
     private TableColumn<Subject, Number> idCol;
     private TableColumn<Subject, String> nameCol;
@@ -31,6 +21,7 @@ public class SubjectsTable extends TableView<Subject> {
     private TableColumn<Subject, String> speciesCol;
     private TableColumn<Subject, String> subjectCol;
     private TableColumn<Subject, String> supplierCol;
+    private TableColumn<Subject, String> housingCol;
     private ObservableList<Subject> masterList = FXCollections.observableArrayList();
     private FilteredList<Subject> filteredList;
 
@@ -38,19 +29,34 @@ public class SubjectsTable extends TableView<Subject> {
         super();
         idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
+        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
+
         nameCol = new TableColumn<>("name");
         nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
-        //nameCol.setCellFactory(subjectCellFactory);
-        nameCol.setCellFactory(new CellFactoryProvider(getScene()).c);
+        nameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+
         aliasCol = new TableColumn<>("alias");
         aliasCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAlias()));
+        aliasCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+
         speciesCol = new TableColumn<>("species");
         speciesCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSpeciesType().getName()));
+        speciesCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+
+        housingCol = new TableColumn<>("housing");
+        housingCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getCurrentHousing() != null ?
+                data.getValue().getCurrentHousing().getHousing().getName() : ""));
+        housingCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+
         subjectCol = new TableColumn<>("subject");
         subjectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubjectType().getName()));
+        subjectCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+
         supplierCol = new TableColumn<>("supplier");
         supplierCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSupplier().getName()));
-        this.getColumns().addAll(idCol, nameCol, aliasCol, speciesCol, subjectCol, supplierCol);
+        supplierCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+
+        this.getColumns().addAll(idCol, nameCol, aliasCol, speciesCol, housingCol, subjectCol, supplierCol);
         init();
     }
 
