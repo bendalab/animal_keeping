@@ -41,7 +41,7 @@ public class FishView extends VBox implements Initializable {
     private TableColumn<Treatment, String> nameCol;
     private TableColumn<Treatment, String> personCol;
     private ControlLabel reportDead;
-    private ControlLabel moveSubject;
+    private ControlLabel moveSubjectLabel;
     private ControlLabel editSubjectLabel;
     private ControlLabel deleteSubjectLabel;
     private ControlLabel addTreatmentLabel;
@@ -138,9 +138,14 @@ public class FishView extends VBox implements Initializable {
         controls.getChildren().add(deleteComment);
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
-        moveSubject = new ControlLabel("move subject", true);
-        moveSubject.setTooltip(new Tooltip("relocate subject to a different housing unit"));
-        controls.getChildren().add(moveSubject);
+        moveSubjectLabel = new ControlLabel("move subject", true);
+        moveSubjectLabel.setTooltip(new Tooltip("relocate subject to a different housing unit"));
+        moveSubjectLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                moveSubject(fishTable.getSelectionModel().getSelectedItem());
+            }
+        });
+        controls.getChildren().add(moveSubjectLabel);
 
         reportDead = new ControlLabel("report dead", true);
         controls.getChildren().add(reportDead);
