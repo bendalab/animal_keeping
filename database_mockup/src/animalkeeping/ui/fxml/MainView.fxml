@@ -46,7 +46,7 @@
       <children>
             <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <VBox fx:id="navigationBar" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="369.0" prefWidth="130.0" spacing="15.0" HBox.hgrow="ALWAYS">
+                  <VBox fx:id="navigationBar" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" prefHeight="369.0" prefWidth="130.0" spacing="5.0" HBox.hgrow="ALWAYS">
                      <children>
                         <TitledPane fx:id="inventoryPane" disable="true" expanded="false" onKeyPressed="#showInventory" onMouseClicked="#showInventory" text="Inventory">
                           <content>
@@ -95,7 +95,7 @@
                         <HBox VBox.vgrow="ALWAYS" />
                      </children>
                      <padding>
-                        <Insets top="20.0" />
+                        <Insets top="10.0" />
                      </padding>
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

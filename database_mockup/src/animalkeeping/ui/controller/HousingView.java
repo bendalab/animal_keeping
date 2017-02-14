@@ -10,12 +10,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
@@ -49,6 +46,7 @@ public class HousingView extends VBox implements Initializable {
     private VBox controls;
     private ControlLabel editUnitLabel, deleteUnitLabel;
     private ControlLabel editTypeLabel, deleteTypeLabel;
+    private ControlLabel importSubjectsLabel, batchTreatmentLabel;
 
 
     public HousingView () {
@@ -157,6 +155,21 @@ public class HousingView extends VBox implements Initializable {
         controls.getChildren().add(deleteTypeLabel);
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
 
+        importSubjectsLabel = new ControlLabel("import subjects", true);
+        importSubjectsLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                importSubjects();
+            }
+        });
+        controls.getChildren().add(importSubjectsLabel);
+
+        batchTreatmentLabel = new ControlLabel("batch treatment", true);
+        batchTreatmentLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                batchTreatment();
+            }
+        });
+        controls.getChildren().add(batchTreatmentLabel);
 
         refresh();
     }
@@ -204,6 +217,8 @@ public class HousingView extends VBox implements Initializable {
         populationChart.listPopulation(unit);
         deleteUnitLabel.setDisable(unit == null);
         editUnitLabel.setDisable(unit == null);
+        importSubjectsLabel.setDisable(unit == null);
+        batchTreatmentLabel.setDisable(unit == null);
     }
 
 
@@ -225,7 +240,8 @@ public class HousingView extends VBox implements Initializable {
         fillHousingTree();
     }
 
-    private void showEditUnitDialog(HousingUnit unit) {
+
+    public static void showEditUnitDialog(HousingUnit unit) {
         HousingUnitDialog hud = new HousingUnitDialog(unit);
         Dialog<HousingUnit> dialog = new Dialog<>();
         dialog.setTitle("Housing unit");
@@ -278,7 +294,7 @@ public class HousingView extends VBox implements Initializable {
     }
 
 
-    private void showEditTypeDialog(HousingType type) {
+    public static void showEditTypeDialog(HousingType type) {
         HousingTypeDialog htd = new HousingTypeDialog(type);
         Dialog<HousingType> dialog = new Dialog<>();
         dialog.setTitle("Housing type");
@@ -344,6 +360,69 @@ public class HousingView extends VBox implements Initializable {
         housingTypes.getSelectionModel().select(null);
         housingTypes.refresh();
     }
+
+
+    private void importSubjects() {
+        HousingUnit unit = table.getSelectionModel().getSelectedItem().getValue();
+        AddSubjectsForm htd = new AddSubjectsForm(unit);
+        Dialog<Boolean> dialog = new Dialog<>();
+        dialog.setTitle("Import subjects");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(htd);
+        dialog.setWidth(300);
+        htd.prefWidthProperty().bind(dialog.widthProperty());
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return htd.persistSubjects();
+            }
+            return null;
+        });
+
+        Optional<Boolean> result = dialog.showAndWait();
+        if (!result.isPresent() || !result.get()) {
+            showInfo("Something went wrong while creating new subjects!");
+        } else {
+            showInfo("Successfully created new subjects!");
+        }
+    }
+
+
+    private void batchTreatment() {
+        HousingUnit unit = table.getSelectionModel().getSelectedItem().getValue();
+        BatchTreatmentForm btf = new BatchTreatmentForm(unit);
+        Dialog<Boolean> dialog = new Dialog<>();
+
+
+        dialog.setTitle("Batch Treatment");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(btf);
+        dialog.setWidth(300);
+        btf.prefWidthProperty().bind(dialog.widthProperty());
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return btf.persist();
+            }
+            return null;
+        });
+
+        Optional<Boolean> result = dialog.showAndWait();
+        if (!result.isPresent() || !result.get()) {
+            showInfo("Something went wrong while creating the treatment!");
+        } else {
+            showInfo("Successfully created a batch treatment!");
+        }
+    }
+
 
     VBox getControls() {
         return controls;

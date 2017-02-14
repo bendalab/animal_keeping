@@ -18,6 +18,8 @@ public class Subject implements ChangeLogInterface{
     private SupplierType supplier;
     private Set<Treatment> treatments =
             new HashSet<Treatment>(0);
+    private Set<Housing> housings =
+            new HashSet<Housing>(0);
     public Subject() {}
 
     public Subject(String name, SpeciesType speciesType, SubjectType subjectType) {
@@ -82,6 +84,13 @@ public class Subject implements ChangeLogInterface{
         this.treatments = treatments;
     }
 
+    public Set<Housing> getHousings() {
+        return housings;
+    }
+
+    public void setHousings(Set<Housing> housings) {
+        this.housings = housings;
+    }
 
     @Override
     public String toString() {
