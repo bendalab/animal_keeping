@@ -15,12 +15,16 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.hibernate.Session;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -262,6 +266,36 @@ public class FishView extends VBox implements Initializable {
         alert.show();
     }
 
+    private boolean validateTime(String time_str) {
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        try {
+            timeFormat.parse(time_str);
+            return true;
+        } catch (Exception e) {
+            return  false;
+        }
+    }
+
+    private Date getDateTime(LocalDate ld, String timeStr) {
+        String d = ld.toString();
+        if (!validateTime(timeStr)) {
+            return null;
+        }
+
+        String datetimestr = d + " " + timeStr;
+        DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        Date datetime;
+
+        try {
+            datetime = dateTimeFormat.parse(datetimestr);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return datetime;
+    }
+
+
     private void moveSubject(Subject s) {
         HousingUnit current_hu = s.getCurrentHousing().getHousing();
 
@@ -270,10 +304,24 @@ public class FishView extends VBox implements Initializable {
         dialog.setHeight(200);
         dialog.setWidth(300);
         dialog.setResizable(true);
-
         HousingUnitTable hut = new HousingUnitTable();
-        dialog.getDialogPane().setContent(hut);
-        //TODO add Date
+        VBox box = new VBox();
+        box.setFillWidth(true);
+        HBox dateBox = new HBox();
+        dateBox.getChildren().add(new Label("relocation date"));
+        DatePicker dp = new DatePicker();
+        dateBox.getChildren().add(dp);
+        HBox timeBox = new HBox();
+        timeBox.getChildren().add(new Label("relocation time"));
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        TextField timeField = new TextField(timeFormat.format(new Date()));
+        timeBox.getChildren().add(timeField);
+
+        box.getChildren().add(dateBox);
+        box.getChildren().add(timeBox);
+        box.getChildren().add(hut);
+        dialog.getDialogPane().setContent(box);
+
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
@@ -290,9 +338,16 @@ public class FishView extends VBox implements Initializable {
         });
         Optional<HousingUnit> result = dialog.showAndWait();
         if (result.isPresent() && result.get() != current_hu) {
-            Date currentDate = new Date();
+            LocalDate d = dp.getValue();
+            Date currentDate = getDateTime(d, timeField.getText());
+
             HousingUnit new_hu = result.get();
             Housing current_housing = s.getCurrentHousing();
+            if (currentDate.before(current_housing.getStart())) {
+                showInfo("Error during relocation of subject. Relocation date before start date of current housing!");
+                return;
+            }
+
             Housing new_housing = new Housing();
             new_housing.setStart(currentDate);
             new_housing.setSubject(s);
