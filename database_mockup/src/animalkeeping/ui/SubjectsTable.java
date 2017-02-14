@@ -86,8 +86,12 @@ public class SubjectsTable extends TableView<Subject> {
         }
     }
 
-    public void setAliveFilter() {
-        filteredList.setPredicate(subject -> subject.getCurrentHousing() != null);
+    public void setAliveFilter(Boolean set) {
+        if (set) {
+            filteredList.setPredicate(subject -> subject.getCurrentHousing() != null);
+        } else {
+            filteredList.setPredicate(null);
+        }
     }
 
     public void setNameFilter(String name) {
