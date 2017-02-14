@@ -6,6 +6,8 @@ import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -135,6 +137,11 @@ public class FishView extends VBox implements Initializable {
 
         addTreatmentLabel = new ControlLabel("new treatment", true);
         addTreatmentLabel.setTooltip(new Tooltip("add a treatment entry for the selected subject"));
+        addTreatmentLabel.setOnMouseClicked(event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                addTreatment(fishTable.getSelectionModel().getSelectedItem());
+            }
+        });
         controls.getChildren().add(addTreatmentLabel);
         editTreatmentLabel = new ControlLabel("edit treatment", true);
         controls.getChildren().add(editTreatmentLabel);
@@ -441,5 +448,36 @@ public class FishView extends VBox implements Initializable {
             session.saveOrUpdate(new_housing);
             session.getTransaction().commit();
         }
+    }
+
+
+    private void addTreatment(Subject s) {
+        if (s == null) {
+            return;
+        }
+        Dialog<Treatment> dialog = new Dialog<>();
+        dialog.setTitle("Add treatment...");
+        dialog.setHeight(200);
+        dialog.setWidth(400);
+        dialog.setResizable(true);
+        TreatmentForm tf = new TreatmentForm(s);
+        dialog.getDialogPane().setContent(tf);
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+        dialog.setResultConverter(new Callback<ButtonType, Treatment>() {
+            @Override
+            public Treatment call(ButtonType b) {
+                if (b == buttonTypeOk) {
+                    return tf.persistTreatment();
+                }
+                return null;
+            }
+        });
+        dialog.showAndWait();
+
     }
 }
