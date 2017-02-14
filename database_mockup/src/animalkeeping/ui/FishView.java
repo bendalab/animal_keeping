@@ -1,5 +1,7 @@
 package animalkeeping.ui;
 
+import animalkeeping.model.Housing;
+import animalkeeping.model.HousingUnit;
 import animalkeeping.model.Subject;
 import animalkeeping.model.Treatment;
 import animalkeeping.ui.controller.TimelineController;
@@ -12,11 +14,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
+import org.hibernate.Session;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class FishView extends VBox implements Initializable {
@@ -213,7 +219,90 @@ public class FishView extends VBox implements Initializable {
         }
     }
 
+    @FXML
+    private void showAllOrCurrent() {
+        fishTable.setAliveFilter(deadOrAliveRadioBtn.isSelected());
+    }
+
+    private void deleteSubject() {
+        Subject s = fishTable.getSelectionModel().getSelectedItem();
+        if (!s.getTreatments().isEmpty()) {
+            showInfo("Cannot delete subject " + s.getName() + " since it is referenced by " +
+                    Integer.toString(s.getTreatments().size()) + " treatment entries! Delete them first.");
+        } else {
+            Session session = Main.sessionFactory.openSession();
+            session.beginTransaction();
+            session.delete(s);
+            session.getTransaction().commit();
+            session.close();
+        }
+        fishTable.getSelectionModel().select(null);
+    }
+
+
+    private void deleteTreatment() {
+        Treatment t = treatmentTable.getSelectionModel().getSelectedItem();
+        Session session = Main.sessionFactory.openSession();
+        session.beginTransaction();
+        session.delete(t);
+        session.getTransaction().commit();
+        session.close();
+
+        treatmentTable.getSelectionModel().select(null);
+    }
+
     public VBox getControls() {
         return controls;
+    }
+
+    private void showInfo(String  info) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information");
+        alert.setHeaderText(info);
+        alert.show();
+    }
+
+    private void moveSubject(Subject s) {
+        HousingUnit current_hu = s.getCurrentHousing().getHousing();
+
+        Dialog<HousingUnit> dialog = new Dialog<>();
+        dialog.setTitle("Select a housing unit");
+        dialog.setHeight(200);
+        dialog.setWidth(300);
+        dialog.setResizable(true);
+
+        HousingUnitTable hut = new HousingUnitTable();
+        dialog.getDialogPane().setContent(hut);
+        //TODO add Date
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+        dialog.setResultConverter(new Callback<ButtonType, HousingUnit>() {
+            @Override
+            public HousingUnit call(ButtonType b) {
+                if (b == buttonTypeOk) {
+                    return hut.getSelectedUnit();
+                }
+                return null;
+            }
+        });
+        Optional<HousingUnit> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() != current_hu) {
+            Date currentDate = new Date();
+            HousingUnit new_hu = result.get();
+            Housing current_housing = s.getCurrentHousing();
+            Housing new_housing = new Housing();
+            new_housing.setStart(currentDate);
+            new_housing.setSubject(s);
+            new_housing.setHousing(new_hu);
+            current_housing.setEnd(currentDate);
+            Session session = Main.sessionFactory.openSession();
+            session.beginTransaction();
+            session.saveOrUpdate(current_housing);
+            session.saveOrUpdate(new_housing);
+            session.getTransaction().commit();
+        }
     }
 }
