@@ -1,9 +1,6 @@
 package animalkeeping.ui;
 
-import animalkeeping.model.Housing;
-import animalkeeping.model.HousingUnit;
-import animalkeeping.model.Subject;
-import animalkeeping.model.Treatment;
+import animalkeeping.model.*;
 import animalkeeping.ui.controller.TimelineController;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -25,10 +22,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class FishView extends VBox implements Initializable {
     @FXML private ScrollPane tableScrollPane;
@@ -170,6 +164,11 @@ public class FishView extends VBox implements Initializable {
         controls.getChildren().add(moveSubjectLabel);
 
         reportDead = new ControlLabel("report dead", true);
+        reportDead.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                reportDead(fishTable.getSelectionModel().getSelectedItem());
+            }
+        });
         controls.getChildren().add(reportDead);
     }
 
@@ -298,13 +297,81 @@ public class FishView extends VBox implements Initializable {
     }
 
 
+    private void reportDead(Subject s) {
+        Housing current_housing = s.getCurrentHousing();
+        Dialog<Date> dialog = new Dialog<>();
+        dialog.setTitle("Report subject dead ...");
+        dialog.setHeight(200);
+        dialog.setWidth(300);
+        VBox box = new VBox();
+        box.setFillWidth(true);
+        HBox dateBox = new HBox();
+        dateBox.getChildren().add(new Label("date"));
+        DatePicker dp = new DatePicker();
+        dp.setValue(LocalDate.now());
+        dateBox.getChildren().add(dp);
+        HBox timeBox = new HBox();
+        timeBox.getChildren().add(new Label("time"));
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        TextField timeField = new TextField(timeFormat.format(new Date()));
+        timeBox.getChildren().add(timeField);
+        box.getChildren().add(dateBox);
+        box.getChildren().add(timeBox);
+        ComboBox<Person> personComboBox = new ComboBox<>();
+
+        Session session = Main.sessionFactory.openSession();
+        session.beginTransaction();
+        List<Person> persons = session.createQuery("from Person", Person.class).list();
+        session.getTransaction().commit();
+        personComboBox.getItems().addAll(persons);
+        HBox personBox = new HBox();
+        personBox.getChildren().add(new Label("person"));
+        personBox.getChildren().add(personComboBox);
+        box.getChildren().add(personBox);
+        box.getChildren().add(new Label("comment"));
+        TextArea commentArea = new TextArea();
+        box.getChildren().add(commentArea);
+        dialog.getDialogPane().setContent(box);
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+        dialog.setResultConverter(new Callback<ButtonType, Date>() {
+            @Override
+            public Date call(ButtonType b) {
+                if (b == buttonTypeOk) {
+                    return getDateTime(dp.getValue(), timeField.getText());
+                }
+                return null;
+            }
+        });
+        Optional<Date> result = dialog.showAndWait();
+        if (result.isPresent() && result.get().after(current_housing.getStart())) {
+            current_housing.setEnd(result.get());
+            SubjectNote note = new SubjectNote("reported dead", commentArea.getText(), result.get(), s);
+            note.setPerson(personComboBox.getValue());
+            session.beginTransaction();
+            session.saveOrUpdate(current_housing);
+            session.saveOrUpdate(note);
+            session.getTransaction().commit();
+        } else {
+            showInfo("Error during report subject. Reported date before start date of current housing?!");
+        }
+        if (session.isOpen()) {
+            session.close();
+        }
+    }
+
+
     private void moveSubject(Subject s) {
         HousingUnit current_hu = s.getCurrentHousing().getHousing();
 
         Dialog<HousingUnit> dialog = new Dialog<>();
         dialog.setTitle("Select a housing unit");
         dialog.setHeight(200);
-        dialog.setWidth(300);
+        dialog.setWidth(400);
         dialog.setResizable(true);
         HousingUnitTable hut = new HousingUnitTable();
         VBox box = new VBox();
