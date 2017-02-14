@@ -37,6 +37,13 @@ public class FishView extends VBox implements Initializable {
     private TableColumn<Treatment, Date> endDateCol;
     private TableColumn<Treatment, String> nameCol;
     private TableColumn<Treatment, String> personCol;
+    private ControlLabel reportDead;
+    private ControlLabel moveSubject;
+    private ControlLabel editSubjectLabel;
+    private ControlLabel deleteSubjectLabel;
+    private ControlLabel addTreatmentLabel;
+    private ControlLabel editTreatmentLabel;
+    private ControlLabel deleteTreatmentLabel;
     private VBox controls;
 
 
@@ -98,24 +105,21 @@ public class FishView extends VBox implements Initializable {
         treatmentTable.getColumns().addAll(idCol, typeCol, startDateCol, endDateCol, nameCol, personCol);
 
         controls = new VBox();
-        ControlLabel newSubjectLabel = new ControlLabel("new subject", true);
+        ControlLabel newSubjectLabel = new ControlLabel("new subject", false);
         controls.getChildren().add(newSubjectLabel);
-        ControlLabel editSubjectLabel = new ControlLabel("edit subject", true);
+        editSubjectLabel = new ControlLabel("edit subject", true);
         controls.getChildren().add(editSubjectLabel);
-        ControlLabel deleteSubjectLabel = new ControlLabel("delete subject", true);
+        deleteSubjectLabel = new ControlLabel("delete subject", true);
         controls.getChildren().add(deleteSubjectLabel);
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
-        ControlLabel addTreatment = new ControlLabel("new treatment", true);
-        addTreatment.setTooltip(new Tooltip("add a treatment entry for the selected subject"));
-        controls.getChildren().add(addTreatment);
-        ControlLabel editTreatment = new ControlLabel("edit treatment", true);
-        controls.getChildren().add(editTreatment);
-
-        controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
-        ControlLabel moveSubject = new ControlLabel("move subject", true);
-        moveSubject.setTooltip(new Tooltip("relocate subject to a different housing unit"));
-        controls.getChildren().add(moveSubject);
+        addTreatmentLabel = new ControlLabel("new treatment", true);
+        addTreatmentLabel.setTooltip(new Tooltip("add a treatment entry for the selected subject"));
+        controls.getChildren().add(addTreatmentLabel);
+        editTreatmentLabel = new ControlLabel("edit treatment", true);
+        controls.getChildren().add(editTreatmentLabel);
+        deleteTreatmentLabel = new ControlLabel("remove treatment", true);
+        controls.getChildren().add(deleteTreatmentLabel);
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
         ControlLabel newComment = new ControlLabel("add observation", true);
@@ -126,7 +130,11 @@ public class FishView extends VBox implements Initializable {
         controls.getChildren().add(deleteComment);
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
-        ControlLabel reportDead = new ControlLabel("report dead", true);
+        moveSubject = new ControlLabel("move subject", true);
+        moveSubject.setTooltip(new Tooltip("relocate subject to a different housing unit"));
+        controls.getChildren().add(moveSubject);
+
+        reportDead = new ControlLabel("report dead", true);
         controls.getChildren().add(reportDead);
     }
 
