@@ -25,6 +25,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -311,6 +312,7 @@ public class FishView extends VBox implements Initializable {
         HBox dateBox = new HBox();
         dateBox.getChildren().add(new Label("relocation date"));
         DatePicker dp = new DatePicker();
+        dp.setValue(LocalDate.now());
         dateBox.getChildren().add(dp);
         HBox timeBox = new HBox();
         timeBox.getChildren().add(new Label("relocation time"));
