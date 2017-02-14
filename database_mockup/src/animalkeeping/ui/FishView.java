@@ -28,6 +28,7 @@ public class FishView extends VBox implements Initializable {
     @FXML private Label aliveField;
     @FXML private TableView<Treatment> treatmentTable;
     @FXML private VBox timelineVBox;
+    @FXML private RadioButton deadOrAliveRadioBtn;
 
     private SubjectsTable fishTable;
     private TimelineController timeline;
@@ -61,6 +62,7 @@ public class FishView extends VBox implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         fishTable = new SubjectsTable();
         fishTable.getSelectionModel().getSelectedItems().addListener(new FishTableListChangeListener());
+        fishTable.setAliveFilter(true);
         timeline = new TimelineController();
 
         //personsTable.resize();
