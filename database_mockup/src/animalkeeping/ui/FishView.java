@@ -27,10 +27,12 @@ public class FishView extends VBox implements Initializable {
     @FXML private TextField supplierField;
     @FXML private Label aliveField;
     @FXML private TableView<Treatment> treatmentTable;
+    @FXML private Tab housingHistoryTab;
     @FXML private VBox timelineVBox;
     @FXML private RadioButton deadOrAliveRadioBtn;
 
     private SubjectsTable fishTable;
+    private HousingTable housingTable;
     private TimelineController timeline;
     private TableColumn<Treatment, Number> idCol;
     private TableColumn<Treatment, String> typeCol;
@@ -105,7 +107,10 @@ public class FishView extends VBox implements Initializable {
 
         treatmentTable.getColumns().clear();
         treatmentTable.getColumns().addAll(idCol, typeCol, startDateCol, endDateCol, nameCol, personCol);
-        treatmentTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Treatment>) c -> treatmentSelected(c.getList().get(0)));
+        treatmentTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Treatment>) c -> treatmentSelected(c.getList().size() > 0 ? c.getList().get(0) : null));
+
+        housingTable = new HousingTable();
+        housingHistoryTab.setContent(housingTable);
 
         controls = new VBox();
         ControlLabel newSubjectLabel = new ControlLabel("new subject", false);
@@ -152,6 +157,7 @@ public class FishView extends VBox implements Initializable {
             treatmentTable.getItems().clear();
             treatmentTable.getItems().addAll(s.getTreatments());
             timeline.setTreatments(s.getTreatments());
+            housingTable.setHousings(s.getHousings());
         } else {
             idField.setText("");
             aliasField.setText("");
@@ -160,6 +166,7 @@ public class FishView extends VBox implements Initializable {
             aliveField.setText("");
             treatmentTable.getItems().clear();
             timeline.setTreatments(null);
+            housingTable.setHousings(null);
         }
         moveSubject.setDisable(s == null);
         deleteSubjectLabel.setDisable(s == null);
