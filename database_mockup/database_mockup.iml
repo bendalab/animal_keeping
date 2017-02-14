@@ -25,7 +25,6 @@
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="commons-lang3-3" level="project" />
-    <orderEntry type="library" name="commons-lang-2" level="project" />
+    <orderEntry type="library" name="commons-lang:commons-lang:2.6" level="project" />
   </component>
 </module>
