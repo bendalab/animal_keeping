@@ -85,10 +85,50 @@
             </TabPane>
          </children>
       </AnchorPane>
-      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+      <VBox>
          <children>
-            <ScrollPane fx:id="tableScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="594.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <HBox alignment="BOTTOM_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <RadioButton fx:id="deadOrAliveRadioBtn" mnemonicParsing="false" onAction="#showAllOrCurrent" selected="true" text="show current only">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </RadioButton>
+                  <VBox>
+                     <children>
+                        <Label text="Filter column">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
+                        <ComboBox disable="true" prefWidth="150.0" promptText="id" />
+                     </children>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <Label text="Content">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
+                        <TextField disable="true" />
+                     </children>
+                  </VBox>
+                  <Button disable="true" mnemonicParsing="false" text="go">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="20.0" />
+               </padding>
+            </HBox>
+            <ScrollPane fx:id="tableScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="594.0" prefWidth="598.0" />
          </children>
-      </AnchorPane>
+      </VBox>
    </items>
 </SplitPane>
