@@ -118,6 +118,11 @@ public class FishView extends VBox implements Initializable {
         editSubjectLabel = new ControlLabel("edit subject", true);
         controls.getChildren().add(editSubjectLabel);
         deleteSubjectLabel = new ControlLabel("delete subject", true);
+        deleteSubjectLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                deleteSubject();
+            }
+        });
         controls.getChildren().add(deleteSubjectLabel);
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
@@ -127,6 +132,11 @@ public class FishView extends VBox implements Initializable {
         editTreatmentLabel = new ControlLabel("edit treatment", true);
         controls.getChildren().add(editTreatmentLabel);
         deleteTreatmentLabel = new ControlLabel("remove treatment", true);
+        deleteTreatmentLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                deleteTreatment();
+            }
+        });
         controls.getChildren().add(deleteTreatmentLabel);
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
@@ -173,7 +183,7 @@ public class FishView extends VBox implements Initializable {
             timeline.setTreatments(null);
             housingTable.setHousings(null);
         }
-        moveSubject.setDisable(s == null);
+        moveSubjectLabel.setDisable(s == null);
         deleteSubjectLabel.setDisable(s == null);
         editSubjectLabel.setDisable(s == null);
         reportDead.setDisable(s == null);
