@@ -60,6 +60,7 @@ public class FishView extends VBox implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         fishTable = new SubjectsTable();
+        fishTable.getSelectionModel().getSelectedItems().addListener(new FishTableListChangeListener());
         timeline = new TimelineController();
 
         //personsTable.resize();
@@ -75,7 +76,6 @@ public class FishView extends VBox implements Initializable {
         supplierField.setText("");
         aliveField.setText("");
 
-        fishTable.getSelectionModel().getSelectedItems().addListener(new FishTableListChangeListener());
         idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
         idCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.08));
@@ -158,6 +158,12 @@ public class FishView extends VBox implements Initializable {
             treatmentTable.getItems().clear();
             timeline.setTreatments(null);
         }
+        moveSubject.setDisable(s == null);
+        deleteSubjectLabel.setDisable(s == null);
+        editSubjectLabel.setDisable(s == null);
+        reportDead.setDisable(s == null);
+        addTreatmentLabel.setDisable(s==null);
+    }
     }
 
     public void nameFilter(String name) {
