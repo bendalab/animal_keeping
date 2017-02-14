@@ -15,6 +15,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 import org.hibernate.Session;
 
 import java.io.IOException;
@@ -318,6 +319,17 @@ public class FishView extends VBox implements Initializable {
         box.getChildren().add(dateBox);
         box.getChildren().add(timeBox);
         ComboBox<Person> personComboBox = new ComboBox<>();
+        personComboBox.setConverter(new StringConverter<Person>() {
+            @Override
+            public String toString(Person object) {
+                return object.getFirstName() + ", " + object.getLastName();
+            }
+
+            @Override
+            public Person fromString(String string) {
+                return null;
+            }
+        });
 
         Session session = Main.sessionFactory.openSession();
         session.beginTransaction();
