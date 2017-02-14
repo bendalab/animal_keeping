@@ -1,6 +1,8 @@
 package animalkeeping.model;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by jan on 28.12.16.
@@ -12,7 +14,7 @@ public class Treatment {
     private Subject subject;
     private Person person;
     private TreatmentType type;
-
+    private Set<TreatmentNote> notes = new HashSet<>(0);
     public Treatment() {}
 
     public Treatment(Date start, Subject subject, Person person, TreatmentType type) {
@@ -68,6 +70,14 @@ public class Treatment {
 
     public void setType(TreatmentType type) {
         this.type = type;
+    }
+
+    public Set<TreatmentNote> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(Set<TreatmentNote> notes) {
+        this.notes = notes;
     }
 
     @Override
