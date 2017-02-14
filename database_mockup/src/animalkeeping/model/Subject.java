@@ -18,6 +18,8 @@ public class Subject implements ChangeLogInterface{
     private SupplierType supplier;
     private Set<Treatment> treatments =
             new HashSet<Treatment>(0);
+    private Set<SubjectNote> notes =
+            new HashSet<SubjectNote>(0);
     private Set<Housing> housings =
             new HashSet<Housing>(0);
     private Housing currentHousing;
@@ -103,6 +105,13 @@ public class Subject implements ChangeLogInterface{
         return null;
     }
 
+    public Set<SubjectNote> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(Set<SubjectNote> notes) {
+        this.notes = notes;
+    }
 
     @Override
     public String toString() {

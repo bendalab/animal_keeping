@@ -10,6 +10,7 @@
       <element id="archive" name="JavaFXApp.jar">
         <element id="module-output" name="database_mockup" />
       </element>
+      <element id="library" level="project" name="commons-lang3-3" />
     </root>
   </artifact>
 </component>

@@ -28,6 +28,14 @@
             </key>
             <one-to-many class="Housing" />
         </set>
+        <set name="notes" table="census_subjectnote" cascade="save-update, delete"
+             inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="subject_id" not-null="true" />
+            </key>
+            <one-to-many class="SubjectNote" />
+        </set>
+
 
 
     </class>

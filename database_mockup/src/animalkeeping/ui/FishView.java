@@ -1,5 +1,7 @@
 package animalkeeping.ui;
 
+import animalkeeping.model.Housing;
+import animalkeeping.model.HousingUnit;
 import animalkeeping.model.Subject;
 import animalkeeping.model.Treatment;
 import animalkeeping.ui.controller.TimelineController;
@@ -12,11 +14,19 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
+import org.hibernate.Session;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class FishView extends VBox implements Initializable {
@@ -27,9 +37,12 @@ public class FishView extends VBox implements Initializable {
     @FXML private TextField supplierField;
     @FXML private Label aliveField;
     @FXML private TableView<Treatment> treatmentTable;
+    @FXML private Tab housingHistoryTab;
     @FXML private VBox timelineVBox;
+    @FXML private RadioButton deadOrAliveRadioBtn;
 
     private SubjectsTable fishTable;
+    private HousingTable housingTable;
     private TimelineController timeline;
     private TableColumn<Treatment, Number> idCol;
     private TableColumn<Treatment, String> typeCol;
@@ -37,6 +50,13 @@ public class FishView extends VBox implements Initializable {
     private TableColumn<Treatment, Date> endDateCol;
     private TableColumn<Treatment, String> nameCol;
     private TableColumn<Treatment, String> personCol;
+    private ControlLabel reportDead;
+    private ControlLabel moveSubjectLabel;
+    private ControlLabel editSubjectLabel;
+    private ControlLabel deleteSubjectLabel;
+    private ControlLabel addTreatmentLabel;
+    private ControlLabel editTreatmentLabel;
+    private ControlLabel deleteTreatmentLabel;
     private VBox controls;
 
 
@@ -53,6 +73,8 @@ public class FishView extends VBox implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         fishTable = new SubjectsTable();
+        fishTable.getSelectionModel().getSelectedItems().addListener(new FishTableListChangeListener());
+        fishTable.setAliveFilter(true);
         timeline = new TimelineController();
 
         //personsTable.resize();
@@ -68,7 +90,6 @@ public class FishView extends VBox implements Initializable {
         supplierField.setText("");
         aliveField.setText("");
 
-        fishTable.getSelectionModel().getSelectedItems().addListener(new FishTableListChangeListener());
         idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
         idCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.08));
@@ -96,26 +117,38 @@ public class FishView extends VBox implements Initializable {
 
         treatmentTable.getColumns().clear();
         treatmentTable.getColumns().addAll(idCol, typeCol, startDateCol, endDateCol, nameCol, personCol);
+        treatmentTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Treatment>) c -> treatmentSelected(c.getList().size() > 0 ? c.getList().get(0) : null));
+
+        housingTable = new HousingTable();
+        housingHistoryTab.setContent(housingTable);
 
         controls = new VBox();
-        ControlLabel newSubjectLabel = new ControlLabel("new subject", true);
+        ControlLabel newSubjectLabel = new ControlLabel("new subject", false);
         controls.getChildren().add(newSubjectLabel);
-        ControlLabel editSubjectLabel = new ControlLabel("edit subject", true);
+        editSubjectLabel = new ControlLabel("edit subject", true);
         controls.getChildren().add(editSubjectLabel);
-        ControlLabel deleteSubjectLabel = new ControlLabel("delete subject", true);
+        deleteSubjectLabel = new ControlLabel("delete subject", true);
+        deleteSubjectLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                deleteSubject();
+            }
+        });
         controls.getChildren().add(deleteSubjectLabel);
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
-        ControlLabel addTreatment = new ControlLabel("new treatment", true);
-        addTreatment.setTooltip(new Tooltip("add a treatment entry for the selected subject"));
-        controls.getChildren().add(addTreatment);
-        ControlLabel editTreatment = new ControlLabel("edit treatment", true);
-        controls.getChildren().add(editTreatment);
 
-        controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
-        ControlLabel moveSubject = new ControlLabel("move subject", true);
-        moveSubject.setTooltip(new Tooltip("relocate subject to a different housing unit"));
-        controls.getChildren().add(moveSubject);
+        addTreatmentLabel = new ControlLabel("new treatment", true);
+        addTreatmentLabel.setTooltip(new Tooltip("add a treatment entry for the selected subject"));
+        controls.getChildren().add(addTreatmentLabel);
+        editTreatmentLabel = new ControlLabel("edit treatment", true);
+        controls.getChildren().add(editTreatmentLabel);
+        deleteTreatmentLabel = new ControlLabel("remove treatment", true);
+        deleteTreatmentLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                deleteTreatment();
+            }
+        });
+        controls.getChildren().add(deleteTreatmentLabel);
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
         ControlLabel newComment = new ControlLabel("add observation", true);
@@ -126,7 +159,16 @@ public class FishView extends VBox implements Initializable {
         controls.getChildren().add(deleteComment);
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
-        ControlLabel reportDead = new ControlLabel("report dead", true);
+        moveSubjectLabel = new ControlLabel("move subject", true);
+        moveSubjectLabel.setTooltip(new Tooltip("relocate subject to a different housing unit"));
+        moveSubjectLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                moveSubject(fishTable.getSelectionModel().getSelectedItem());
+            }
+        });
+        controls.getChildren().add(moveSubjectLabel);
+
+        reportDead = new ControlLabel("report dead", true);
         controls.getChildren().add(reportDead);
     }
 
@@ -141,6 +183,7 @@ public class FishView extends VBox implements Initializable {
             treatmentTable.getItems().clear();
             treatmentTable.getItems().addAll(s.getTreatments());
             timeline.setTreatments(s.getTreatments());
+            housingTable.setHousings(s.getHousings());
         } else {
             idField.setText("");
             aliasField.setText("");
@@ -149,7 +192,18 @@ public class FishView extends VBox implements Initializable {
             aliveField.setText("");
             treatmentTable.getItems().clear();
             timeline.setTreatments(null);
+            housingTable.setHousings(null);
         }
+        moveSubjectLabel.setDisable(s == null);
+        deleteSubjectLabel.setDisable(s == null);
+        editSubjectLabel.setDisable(s == null);
+        reportDead.setDisable(s == null);
+        addTreatmentLabel.setDisable(s==null);
+    }
+
+    private void treatmentSelected(Treatment t) {
+        editTreatmentLabel.setDisable(t == null);
+        deleteTreatmentLabel.setDisable(t == null);
     }
 
     public void nameFilter(String name) {
@@ -170,7 +224,141 @@ public class FishView extends VBox implements Initializable {
         }
     }
 
+    @FXML
+    private void showAllOrCurrent() {
+        fishTable.setAliveFilter(deadOrAliveRadioBtn.isSelected());
+    }
+
+    private void deleteSubject() {
+        Subject s = fishTable.getSelectionModel().getSelectedItem();
+        if (!s.getTreatments().isEmpty()) {
+            showInfo("Cannot delete subject " + s.getName() + " since it is referenced by " +
+                    Integer.toString(s.getTreatments().size()) + " treatment entries! Delete them first.");
+        } else {
+            Session session = Main.sessionFactory.openSession();
+            session.beginTransaction();
+            session.delete(s);
+            session.getTransaction().commit();
+            session.close();
+        }
+        fishTable.getSelectionModel().select(null);
+    }
+
+
+    private void deleteTreatment() {
+        Treatment t = treatmentTable.getSelectionModel().getSelectedItem();
+        Session session = Main.sessionFactory.openSession();
+        session.beginTransaction();
+        session.delete(t);
+        session.getTransaction().commit();
+        session.close();
+
+        treatmentTable.getSelectionModel().select(null);
+    }
+
     public VBox getControls() {
         return controls;
+    }
+
+    private void showInfo(String  info) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information");
+        alert.setHeaderText(info);
+        alert.show();
+    }
+
+    private boolean validateTime(String time_str) {
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        try {
+            timeFormat.parse(time_str);
+            return true;
+        } catch (Exception e) {
+            return  false;
+        }
+    }
+
+    private Date getDateTime(LocalDate ld, String timeStr) {
+        String d = ld.toString();
+        if (!validateTime(timeStr)) {
+            return null;
+        }
+
+        String datetimestr = d + " " + timeStr;
+        DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        Date datetime;
+
+        try {
+            datetime = dateTimeFormat.parse(datetimestr);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return datetime;
+    }
+
+
+    private void moveSubject(Subject s) {
+        HousingUnit current_hu = s.getCurrentHousing().getHousing();
+
+        Dialog<HousingUnit> dialog = new Dialog<>();
+        dialog.setTitle("Select a housing unit");
+        dialog.setHeight(200);
+        dialog.setWidth(300);
+        dialog.setResizable(true);
+        HousingUnitTable hut = new HousingUnitTable();
+        VBox box = new VBox();
+        box.setFillWidth(true);
+        HBox dateBox = new HBox();
+        dateBox.getChildren().add(new Label("relocation date"));
+        DatePicker dp = new DatePicker();
+        dateBox.getChildren().add(dp);
+        HBox timeBox = new HBox();
+        timeBox.getChildren().add(new Label("relocation time"));
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        TextField timeField = new TextField(timeFormat.format(new Date()));
+        timeBox.getChildren().add(timeField);
+
+        box.getChildren().add(dateBox);
+        box.getChildren().add(timeBox);
+        box.getChildren().add(hut);
+        dialog.getDialogPane().setContent(box);
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+        dialog.setResultConverter(new Callback<ButtonType, HousingUnit>() {
+            @Override
+            public HousingUnit call(ButtonType b) {
+                if (b == buttonTypeOk) {
+                    return hut.getSelectedUnit();
+                }
+                return null;
+            }
+        });
+        Optional<HousingUnit> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() != current_hu) {
+            LocalDate d = dp.getValue();
+            Date currentDate = getDateTime(d, timeField.getText());
+
+            HousingUnit new_hu = result.get();
+            Housing current_housing = s.getCurrentHousing();
+            if (currentDate.before(current_housing.getStart())) {
+                showInfo("Error during relocation of subject. Relocation date before start date of current housing!");
+                return;
+            }
+
+            Housing new_housing = new Housing();
+            new_housing.setStart(currentDate);
+            new_housing.setSubject(s);
+            new_housing.setHousing(new_hu);
+            current_housing.setEnd(currentDate);
+            Session session = Main.sessionFactory.openSession();
+            session.beginTransaction();
+            session.saveOrUpdate(current_housing);
+            session.saveOrUpdate(new_housing);
+            session.getTransaction().commit();
+        }
     }
 }

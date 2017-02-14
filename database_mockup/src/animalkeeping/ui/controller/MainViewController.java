@@ -80,8 +80,8 @@ public class MainViewController {
         this.scrollPane.setContent(null);
         try {
             FishView fish = new FishView();
-            fish.minHeightProperty().bind(this.scrollPane.heightProperty());
-            fish.minWidthProperty().bind(this.scrollPane.widthProperty());
+            fish.prefHeightProperty().bind(this.scrollPane.heightProperty());
+            fish.prefWidthProperty().bind(this.scrollPane.widthProperty());
             this.scrollPane.setContent(fish);
             this.subjectsPane.setContent(fish.getControls());
             collapsePanes(subjectsPane);
@@ -94,8 +94,8 @@ public class MainViewController {
         this.scrollPane.setContent(null);
         try {
             TreatmentsTable treatmentsTable = new TreatmentsTable();
-            treatmentsTable.minHeightProperty().bind(this.scrollPane.heightProperty());
-            treatmentsTable.minWidthProperty().bind(this.scrollPane.widthProperty());
+            treatmentsTable.prefHeightProperty().bind(this.scrollPane.heightProperty());
+            treatmentsTable.prefWidthProperty().bind(this.scrollPane.widthProperty());
             this.scrollPane.setContent(treatmentsTable);
             this.treatmentsPane.setContent(new VBox());
             collapsePanes(treatmentsPane);
@@ -109,8 +109,8 @@ public class MainViewController {
         this.scrollPane.setContent(null);
         try {
             InventoryController inventory = new InventoryController();
-            inventory.minHeightProperty().bind(this.scrollPane.heightProperty());
-            inventory.minWidthProperty().bind(this.scrollPane.widthProperty());
+            inventory.prefHeightProperty().bind(this.scrollPane.heightProperty());
+            inventory.prefWidthProperty().bind(this.scrollPane.widthProperty());
             this.scrollPane.setContent(inventory);
             this.inventoryPane.setContent(inventory.getControls());
             collapsePanes(inventoryPane);
@@ -127,8 +127,8 @@ public class MainViewController {
             HousingView housingView = new HousingView();
             this.scrollPane.setFitToHeight(true);
             this.scrollPane.setFitToWidth(true);
-            housingView.minHeightProperty().bind(this.scrollPane.heightProperty());
-            housingView.minWidthProperty().bind(this.scrollPane.widthProperty());
+            housingView.prefHeightProperty().bind(this.scrollPane.heightProperty());
+            housingView.prefWidthProperty().bind(this.scrollPane.widthProperty());
             this.scrollPane.setContent(housingView);
             this.animalHousingPane.setContent(housingView.getControls());
             collapsePanes(animalHousingPane);
@@ -156,7 +156,6 @@ public class MainViewController {
     private void goToId(){
         this.scrollPane.setContent(null);
         Long id = looksLikeId(idField.getText());
-        System.out.println(id != null);
         String selectedTable = findBox.getSelectionModel().getSelectedItem();
         if (selectedTable == null) {
             selectedTable = findBox.getItems().get(0);

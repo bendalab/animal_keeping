@@ -24,20 +24,20 @@
 
 package animalkeeping.ui;
 
-        import com.sun.javafx.charts.ChartLayoutAnimator;
-        import javafx.animation.KeyFrame;
-        import javafx.animation.KeyValue;
-        import javafx.beans.property.LongProperty;
-        import javafx.beans.property.ObjectProperty;
-        import javafx.beans.property.ObjectPropertyBase;
-        import javafx.beans.property.SimpleLongProperty;
-        import javafx.scene.chart.Axis;
-        import javafx.util.Duration;
-        import javafx.util.StringConverter;
+import com.sun.javafx.charts.ChartLayoutAnimator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ObjectPropertyBase;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.scene.chart.Axis;
+import javafx.util.Duration;
+import javafx.util.StringConverter;
 
-        import java.text.DateFormat;
-        import java.text.SimpleDateFormat;
-        import java.util.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * An axis that displays date and time values.

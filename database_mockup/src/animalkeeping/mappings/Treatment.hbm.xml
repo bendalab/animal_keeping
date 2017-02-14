@@ -15,6 +15,12 @@
         <many-to-one name="type" column="type_id" class="TreatmentType" not-null="true"/>
         <many-to-one name="person" column="person_id" class="Person" not-null="true"/>
         <many-to-one name="subject" column="subject_id" class="Subject" not-null="true"/>
-
+        <set name="notes" table="census_treatmentnote" cascade="save-update, delete"
+             inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="treatment_id" not-null="true" />
+            </key>
+            <one-to-many class="TreatmentNote" />
+        </set>
     </class>
 </hibernate-mapping>
