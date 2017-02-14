@@ -47,7 +47,6 @@ public class TimelineController extends VBox implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("initialize");
         xAxis = new DateAxis(new Date(0), new Date());
         yAxis = new NumberAxis(0, 10, 5);
         timelineChart = new ScatterChart<Date, Number>(xAxis, yAxis);
