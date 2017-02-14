@@ -34,6 +34,9 @@
         <property name="hibernate.enable_lazy_load_no_trans">
             true
         </property>
+        <property name="hibernate.connection.characterEncoding">
+            utf8
+        </property>
 
 
         <!-- List of XML mapping files -->
