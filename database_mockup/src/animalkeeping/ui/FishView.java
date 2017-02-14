@@ -103,6 +103,7 @@ public class FishView extends VBox implements Initializable {
 
         treatmentTable.getColumns().clear();
         treatmentTable.getColumns().addAll(idCol, typeCol, startDateCol, endDateCol, nameCol, personCol);
+        treatmentTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Treatment>) c -> treatmentSelected(c.getList().get(0)));
 
         controls = new VBox();
         ControlLabel newSubjectLabel = new ControlLabel("new subject", false);
@@ -164,6 +165,10 @@ public class FishView extends VBox implements Initializable {
         reportDead.setDisable(s == null);
         addTreatmentLabel.setDisable(s==null);
     }
+
+    private void treatmentSelected(Treatment t) {
+        editTreatmentLabel.setDisable(t == null);
+        deleteTreatmentLabel.setDisable(t == null);
     }
 
     public void nameFilter(String name) {
