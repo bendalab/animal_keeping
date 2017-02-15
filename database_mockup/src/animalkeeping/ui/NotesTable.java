@@ -40,19 +40,19 @@ public class NotesTable<T extends Note> extends TableView<T>{
 
         nameCol = new TableColumn<>("name");
         nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
-        nameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
+        nameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
         dateCol= new TableColumn<>("from");
         dateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getDate()));
-        dateCol.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
+        dateCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
         personCol = new TableColumn<>("person");
         personCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getPerson() != null ? data.getValue().getPerson().getLastName() + ", " + data.getValue().getPerson().getFirstName() : ""));
-        personCol.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
+        personCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
-        commentCol = new TableColumn<>("last name");
+        commentCol = new TableColumn<>("comment");
         commentCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getComment()));
-        commentCol.prefWidthProperty().bind(this.widthProperty().multiply(0.32));
+        commentCol.prefWidthProperty().bind(this.widthProperty().multiply(0.47));
         this.getColumns().addAll(idCol, nameCol, dateCol, personCol, commentCol);
     }
 
