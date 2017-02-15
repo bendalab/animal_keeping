@@ -124,13 +124,24 @@ public class FishView extends VBox implements Initializable {
 
         controls = new VBox();
         ControlLabel newSubjectLabel = new ControlLabel("new subject", false);
+        newSubjectLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                newSubject();
+            }
+        });
         controls.getChildren().add(newSubjectLabel);
         editSubjectLabel = new ControlLabel("edit subject", true);
+        editSubjectLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                editSubject(fishTable.getSelectionModel().getSelectedItem());
+            }
+        });
         controls.getChildren().add(editSubjectLabel);
         deleteSubjectLabel = new ControlLabel("delete subject", true);
         deleteSubjectLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteSubject();
+                fishTable.refresh(); //TODO check refresh methods!
             }
         });
         controls.getChildren().add(deleteSubjectLabel);
@@ -363,7 +374,6 @@ public class FishView extends VBox implements Initializable {
         }
     }
 
-
     private void moveSubject(Subject s) {
         HousingUnit current_hu = s.getCurrentHousing().getHousing();
 
@@ -430,7 +440,6 @@ public class FishView extends VBox implements Initializable {
         }
     }
 
-
     private void showTreatmentDialog(TreatmentForm tf) {
         if (tf == null) {
             return;
@@ -474,5 +483,43 @@ public class FishView extends VBox implements Initializable {
         TreatmentForm tf = new TreatmentForm(s);
         showTreatmentDialog(tf);
 
+    }
+
+    private void showSubjectDialog(SubjectForm sf) {
+        if (sf == null) {
+            return;
+        }
+        Dialog<Subject> dialog = new Dialog<>();
+        dialog.setTitle("Add/edit subject ...");
+        dialog.setHeight(200);
+        dialog.setWidth(400);
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(sf);
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+        dialog.setResultConverter(new Callback<ButtonType, Subject>() {
+            @Override
+            public Subject call(ButtonType b) {
+                if (b == buttonTypeOk) {
+                    return sf.persistSubject();
+                }
+                return null;
+            }
+        });
+        dialog.showAndWait();
+    }
+
+    private void newSubject() {
+        SubjectForm sf = new SubjectForm();
+        showSubjectDialog(sf);
+    }
+
+    private void editSubject(Subject s) {
+        SubjectForm sf = new SubjectForm(s);
+        showSubjectDialog(sf);
     }
 }
