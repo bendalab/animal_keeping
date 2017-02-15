@@ -250,6 +250,7 @@ public class SubjectForm extends VBox {
             session.close();
         } catch (HibernateException he) {
             showInfo(he.getLocalizedMessage());
+            session.close();
         }
 
         return subject;
