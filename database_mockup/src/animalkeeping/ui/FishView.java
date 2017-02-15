@@ -38,11 +38,13 @@ public class FishView extends VBox implements Initializable {
     @FXML private Label aliveField;
     @FXML private TableView<Treatment> treatmentTable;
     @FXML private Tab housingHistoryTab;
+    @FXML private Tab observationsTab;
     @FXML private VBox timelineVBox;
     @FXML private RadioButton deadOrAliveRadioBtn;
 
     private SubjectsTable fishTable;
     private HousingTable housingTable;
+    private NotesTable<SubjectNote> notesTable;
     private TimelineController timeline;
     private TableColumn<Treatment, Number> idCol;
     private TableColumn<Treatment, String> typeCol;
@@ -57,6 +59,9 @@ public class FishView extends VBox implements Initializable {
     private ControlLabel addTreatmentLabel;
     private ControlLabel editTreatmentLabel;
     private ControlLabel deleteTreatmentLabel;
+    private ControlLabel newComment;
+    private ControlLabel editComment;
+    private ControlLabel deleteComment;
     private VBox controls;
 
 
@@ -122,6 +127,10 @@ public class FishView extends VBox implements Initializable {
         housingTable = new HousingTable();
         housingHistoryTab.setContent(housingTable);
 
+        notesTable = new NotesTable<>();
+        notesTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<SubjectNote>) c -> noteSelected(c.getList().size() > 0 ? c.getList().get(0) : null));
+        observationsTab.setContent(notesTable);
+
         controls = new VBox();
         ControlLabel newSubjectLabel = new ControlLabel("new subject", false);
         newSubjectLabel.setOnMouseClicked(event -> {
@@ -175,11 +184,26 @@ public class FishView extends VBox implements Initializable {
         controls.getChildren().add(deleteTreatmentLabel);
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
-        ControlLabel newComment = new ControlLabel("add observation", true);
+        newComment = new ControlLabel("add observation", true);
+        newComment.setOnMouseClicked(event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                newSubjectObservation(fishTable.getSelectionModel().getSelectedItem());
+            }
+        });
         controls.getChildren().add(newComment);
-        ControlLabel editComment = new ControlLabel("edit observation", true);
+        editComment = new ControlLabel("edit observation", true);
+        editComment.setOnMouseClicked(event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                editSubjectObservation(notesTable.getSelectionModel().getSelectedItem());
+            }
+        });
         controls.getChildren().add(editComment);
-        ControlLabel deleteComment = new ControlLabel("delete observation", true);
+        deleteComment = new ControlLabel("delete observation", true);
+        deleteComment.setOnMouseClicked(event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                deleteObservation(notesTable.getSelectionModel().getSelectedItem());
+            }
+        });
         controls.getChildren().add(deleteComment);
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
@@ -213,6 +237,7 @@ public class FishView extends VBox implements Initializable {
             treatmentTable.getItems().addAll(s.getTreatments());
             timeline.setTreatments(s.getTreatments());
             housingTable.setHousings(s.getHousings());
+            notesTable.setNotes(s.getNotes());
         } else {
             idField.setText("");
             aliasField.setText("");
@@ -222,17 +247,25 @@ public class FishView extends VBox implements Initializable {
             treatmentTable.getItems().clear();
             timeline.setTreatments(null);
             housingTable.setHousings(null);
+            notesTable.setItems(null);
         }
         moveSubjectLabel.setDisable(s == null);
         deleteSubjectLabel.setDisable(s == null);
         editSubjectLabel.setDisable(s == null);
         reportDead.setDisable(s == null);
         addTreatmentLabel.setDisable(s==null);
+        newComment.setDisable(s==null);
     }
 
     private void treatmentSelected(Treatment t) {
         editTreatmentLabel.setDisable(t == null);
         deleteTreatmentLabel.setDisable(t == null);
+    }
+
+    private void noteSelected(SubjectNote n) {
+        newComment.setDisable(n == null);
+        editComment.setDisable(n == null);
+        deleteComment.setDisable(n == null);
     }
 
     public void nameFilter(String name) {
@@ -276,13 +309,23 @@ public class FishView extends VBox implements Initializable {
 
     private void deleteTreatment() {
         Treatment t = treatmentTable.getSelectionModel().getSelectedItem();
+        treatmentTable.getSelectionModel().select(null);
         Session session = Main.sessionFactory.openSession();
         session.beginTransaction();
         session.delete(t);
         session.getTransaction().commit();
         session.close();
+        treatmentTable.getItems().remove(t);
+    }
 
-        treatmentTable.getSelectionModel().select(null);
+    private void deleteObservation(SubjectNote n) {
+        notesTable.getSelectionModel().select(null);
+        Session session = Main.sessionFactory.openSession();
+        session.beginTransaction();
+        session.delete(n);
+        session.getTransaction().commit();
+        session.close();
+        notesTable.getItems().removeAll(n);
     }
 
     public VBox getControls() {
@@ -521,5 +564,43 @@ public class FishView extends VBox implements Initializable {
     private void editSubject(Subject s) {
         SubjectForm sf = new SubjectForm(s);
         showSubjectDialog(sf);
+    }
+
+    private void newSubjectObservation(Subject s) {
+        SubjectNotesForm snf = new SubjectNotesForm(s);
+        showSubjectNotesDialog(snf);
+    }
+
+    private void editSubjectObservation(SubjectNote sn) {
+        SubjectNotesForm snf = new SubjectNotesForm(sn, sn.getSubject());
+        showSubjectNotesDialog(snf);
+    }
+
+    private void showSubjectNotesDialog(SubjectNotesForm snf) {
+        if (snf == null) {
+            return;
+        }
+        Dialog<SubjectNote> dialog = new Dialog<>();
+        dialog.setTitle("Add/edit subject ...");
+        dialog.setHeight(200);
+        dialog.setWidth(400);
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(snf);
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+        dialog.setResultConverter(new Callback<ButtonType, SubjectNote>() {
+            @Override
+            public SubjectNote call(ButtonType b) {
+                if (b == buttonTypeOk) {
+                    return snf.persist();
+                }
+                return null;
+            }
+        });
+        dialog.showAndWait();
     }
 }

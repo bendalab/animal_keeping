@@ -66,7 +66,7 @@
                         </VBox>
                      </content>
                   </Tab>
-                  <Tab text="Treatments">
+                  <Tab closable="false" text="Treatments">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
@@ -80,7 +80,7 @@
                         </AnchorPane>
                      </content>
                   </Tab>
-                  <Tab fx:id="housingHistoryTab" text="Housing history">
+                  <Tab fx:id="housingHistoryTab" closable="false" text="Housing history">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                     </content>
@@ -89,6 +89,11 @@
                      <content>
                         <VBox fx:id="timelineVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" />
                      </content>
+                  </Tab>
+                  <Tab fx:id="observationsTab" closable="false" text="Observations">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </content>
                   </Tab>
                </tabs>
             </TabPane>
