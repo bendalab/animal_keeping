@@ -5,6 +5,7 @@ import animalkeeping.ui.controller.InventoryController;
 import javafx.beans.property.*;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import org.hibernate.Session;
 
 import java.util.Collection;
 import java.util.Date;
