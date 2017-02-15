@@ -10,8 +10,7 @@ import java.util.Set;
  * Created by jan on 27.12.16.
  */
 
-public class Person implements ChangeLogInterface {
-    private Long id;
+public class Person extends Entity implements ChangeLogInterface {
     private String firstName;
     private String lastName;
     private String email;
@@ -27,14 +26,6 @@ public class Person implements ChangeLogInterface {
         this.firstName = first_name;
         this.lastName = last_name;
         this.email = email;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    private void setId(Long id) {
-        this.id = id;
     }
 
     public String getFirstName() {

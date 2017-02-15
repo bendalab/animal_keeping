@@ -9,8 +9,7 @@ import java.util.Set;
 /**
  * Created by jan on 27.12.16.
  */
-public class Subject implements ChangeLogInterface{
-    private Long id;
+public class Subject extends Entity implements ChangeLogInterface {
     private String name;
     private String alias;
     private SpeciesType speciesType;
@@ -30,14 +29,6 @@ public class Subject implements ChangeLogInterface{
         this.name = name;
         this.speciesType = speciesType;
         this.subjectType = subjectType;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -116,7 +107,7 @@ public class Subject implements ChangeLogInterface{
     @Override
     public String toString() {
         return "Subject{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", name='" + name + '\'' +
                 ", alias='" + alias + '\'' +
                 ", speciesType=" + speciesType.getName() +

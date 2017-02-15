@@ -4,11 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Created by jan on 28.12.16.
- */
-public class Treatment {
-    private Long id;
+public class Treatment extends Entity {
     private Date start;
     private Date end;
     private Subject subject;
@@ -22,14 +18,6 @@ public class Treatment {
         this.subject = subject;
         this.person = person;
         this.type = type;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Date getStart() {
@@ -83,12 +71,12 @@ public class Treatment {
     @Override
     public String toString() {
         return "Treatment{" +
-                "id=" + id +
-                ", type=" + type +
-                ", start=" + start +
-                ", end=" + ((end != null) ? end : "") +
-                ", subject=" + subject +
-                ", person=" + person +
+                "id=" + getId() +
+                ", type=" + getType() +
+                ", start=" + getStart() +
+                ", end=" + ((getEnd() != null) ? getEnd() : "") +
+                ", subject=" + getSubject() +
+                ", person=" + getPerson() +
                 '}';
     }
 }
