@@ -50,7 +50,12 @@ public abstract class NotesFrom<T extends Note, E extends Entity> extends VBox {
         commentArea.setText(note_entity.getComment());
         personComboBox.getSelectionModel().select(note_entity.getPerson());
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        LocalDate d = note_entity.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate d = null;
+        if (note_entity.getDate() instanceof java.sql.Date) {
+            d = ((java.sql.Date) note_entity.getDate()).toLocalDate();
+        } else {
+            d = note_entity.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
         datePicker.setValue(d);
         timeField.setText(timeFormat.format(note_entity.getDate()));
     }
@@ -96,7 +101,7 @@ public abstract class NotesFrom<T extends Note, E extends Entity> extends VBox {
         grid.setVgap(5);
         grid.setHgap(2);
         grid.add(new Label("ID:"), 0, 0);
-        grid.add(idLabel, 0, 1);
+        grid.add(idLabel, 0, 0);
 
         grid.add(new Label("name:"), 0,1);
         grid.add(nameField, 1,1, 2, 1);
