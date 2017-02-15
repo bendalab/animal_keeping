@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static animalkeeping.util.Dialogs.showInfo;
+
 
 public class HousingView extends VBox implements Initializable {
     @FXML private TextField dimensionsField;
@@ -429,10 +431,5 @@ public class HousingView extends VBox implements Initializable {
     }
 
 
-    private void showInfo(String  info) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Information");
-        alert.setHeaderText(info);
-        alert.show();
-    }
+
 }

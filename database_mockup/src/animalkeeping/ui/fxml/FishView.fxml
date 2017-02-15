@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
@@ -15,6 +18,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <SplitPane dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="800.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <items>
@@ -62,7 +66,7 @@
                         </VBox>
                      </content>
                   </Tab>
-                  <Tab text="Treatments">
+                  <Tab closable="false" text="Treatments">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
@@ -76,19 +80,69 @@
                         </AnchorPane>
                      </content>
                   </Tab>
+                  <Tab fx:id="housingHistoryTab" closable="false" text="Housing history">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </content>
+                  </Tab>
                   <Tab closable="false" text="Timeline">
                      <content>
                         <VBox fx:id="timelineVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" />
                      </content>
                   </Tab>
+                  <Tab fx:id="observationsTab" closable="false" text="Observations">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </content>
+                  </Tab>
                </tabs>
             </TabPane>
          </children>
       </AnchorPane>
-      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+      <VBox>
          <children>
-            <ScrollPane fx:id="tableScrollPane" fitToHeight="true" fitToWidth="true" layoutX="14.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="594.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="-14.0" AnchorPane.topAnchor="0.0" />
+            <HBox alignment="BOTTOM_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <RadioButton fx:id="deadOrAliveRadioBtn" mnemonicParsing="false" onAction="#showAllOrCurrent" selected="true" text="show current only">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </RadioButton>
+                  <VBox>
+                     <children>
+                        <Label text="Filter column">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
+                        <ComboBox disable="true" prefWidth="150.0" promptText="id" />
+                     </children>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <Label text="Content">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
+                        <TextField disable="true" />
+                     </children>
+                  </VBox>
+                  <Button disable="true" mnemonicParsing="false" text="go">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="20.0" />
+               </padding>
+            </HBox>
+            <ScrollPane fx:id="tableScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="594.0" prefWidth="598.0" />
          </children>
-      </AnchorPane>
+      </VBox>
    </items>
 </SplitPane>

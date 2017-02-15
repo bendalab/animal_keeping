@@ -15,6 +15,5 @@
 
         <many-to-one name="treatment" column="treatment_id" class="Treatment" not-null="true"/>
         <many-to-one name="person" column="person_id" class="Person" not-null="false"/>
-
     </class>
 </hibernate-mapping>

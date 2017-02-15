@@ -9,8 +9,7 @@ import java.util.Set;
 /**
  * Created by jan on 27.12.16.
  */
-public class Subject implements ChangeLogInterface{
-    private Long id;
+public class Subject extends Entity implements ChangeLogInterface {
     private String name;
     private String alias;
     private SpeciesType speciesType;
@@ -18,22 +17,18 @@ public class Subject implements ChangeLogInterface{
     private SupplierType supplier;
     private Set<Treatment> treatments =
             new HashSet<Treatment>(0);
+    private Set<SubjectNote> notes =
+            new HashSet<SubjectNote>(0);
     private Set<Housing> housings =
             new HashSet<Housing>(0);
+    private Housing currentHousing;
+
     public Subject() {}
 
     public Subject(String name, SpeciesType speciesType, SubjectType subjectType) {
         this.name = name;
         this.speciesType = speciesType;
         this.subjectType = subjectType;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -92,10 +87,27 @@ public class Subject implements ChangeLogInterface{
         this.housings = housings;
     }
 
+    public Housing getCurrentHousing() {
+        for (Housing h : getHousings()) {
+            if (h.getEnd() == null) {
+                return h;
+            }
+        }
+        return null;
+    }
+
+    public Set<SubjectNote> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(Set<SubjectNote> notes) {
+        this.notes = notes;
+    }
+
     @Override
     public String toString() {
         return "Subject{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", name='" + name + '\'' +
                 ", alias='" + alias + '\'' +
                 ", speciesType=" + speciesType.getName() +

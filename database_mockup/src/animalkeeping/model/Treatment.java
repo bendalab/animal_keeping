@@ -1,18 +1,16 @@
 package animalkeeping.model;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * Created by jan on 28.12.16.
- */
-public class Treatment {
-    private Long id;
+public class Treatment extends Entity {
     private Date start;
     private Date end;
     private Subject subject;
     private Person person;
     private TreatmentType type;
-
+    private Set<TreatmentNote> notes = new HashSet<>(0);
     public Treatment() {}
 
     public Treatment(Date start, Subject subject, Person person, TreatmentType type) {
@@ -20,14 +18,6 @@ public class Treatment {
         this.subject = subject;
         this.person = person;
         this.type = type;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Date getStart() {
@@ -70,15 +60,23 @@ public class Treatment {
         this.type = type;
     }
 
+    public Set<TreatmentNote> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(Set<TreatmentNote> notes) {
+        this.notes = notes;
+    }
+
     @Override
     public String toString() {
         return "Treatment{" +
-                "id=" + id +
-                ", type=" + type +
-                ", start=" + start +
-                ", end=" + ((end != null) ? end : "") +
-                ", subject=" + subject +
-                ", person=" + person +
+                "id=" + getId() +
+                ", type=" + getType() +
+                ", start=" + getStart() +
+                ", end=" + ((getEnd() != null) ? getEnd() : "") +
+                ", subject=" + getSubject() +
+                ", person=" + getPerson() +
                 '}';
     }
 }

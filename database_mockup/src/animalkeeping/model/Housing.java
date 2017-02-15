@@ -5,8 +5,7 @@ import java.util.Date;
 /**
  * Created by jan on 28.12.16.
  */
-public class Housing {
-    private Long id;
+public class Housing extends Entity {
     private String comment;
     private java.util.Date start;
     private java.util.Date end;
@@ -19,14 +18,6 @@ public class Housing {
         this.start = start;
         this.housing = housing;
         this.subject = subject;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getComment() {
@@ -72,11 +63,11 @@ public class Housing {
     @Override
     public String toString() {
         return "Housing{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", subject=" + subject.getName() +
                 "in housing=" + housing.getName() +
-                "from start=" + start +
-                "till end=" + ((end != null) ? end : "") +
+                "from start=" + getStart() +
+                "until end=" + ((getEnd() != null) ? getEnd(): "") +
                 '}';
     }
 }
