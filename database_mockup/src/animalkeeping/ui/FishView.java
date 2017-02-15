@@ -27,6 +27,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
+import static animalkeeping.util.DateTimeHelper.getDateTime;
+
 public class FishView extends VBox implements Initializable {
     @FXML private ScrollPane tableScrollPane;
     @FXML private TextField idField;
@@ -98,20 +100,20 @@ public class FishView extends VBox implements Initializable {
 
         startDateCol = new TableColumn<>("start");
         startDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getStart()));
-        startDateCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.18));
+        startDateCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.20));
 
         endDateCol = new TableColumn<>("end");
         endDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getEnd()));
-        endDateCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.18));
+        endDateCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.20));
 
         nameCol = new TableColumn<>("name");
         nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubject().getName()));
-        nameCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.18));
+        nameCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.16));
 
         personCol = new TableColumn<>("person");
         personCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getPerson().getLastName() +
          ", " + data.getValue().getPerson().getFirstName()));
-        personCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.18));
+        personCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.16));
 
         treatmentTable.getColumns().clear();
         treatmentTable.getColumns().addAll(idCol, typeCol, startDateCol, endDateCol, nameCol, personCol);
@@ -140,15 +142,23 @@ public class FishView extends VBox implements Initializable {
         addTreatmentLabel.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 addTreatment(fishTable.getSelectionModel().getSelectedItem());
+                treatmentTable.refresh();
             }
         });
         controls.getChildren().add(addTreatmentLabel);
         editTreatmentLabel = new ControlLabel("edit treatment", true);
+        editTreatmentLabel.setOnMouseClicked(event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                editTreatment(treatmentTable.getSelectionModel().getSelectedItem());
+                treatmentTable.refresh();
+            }
+        });
         controls.getChildren().add(editTreatmentLabel);
         deleteTreatmentLabel = new ControlLabel("remove treatment", true);
         deleteTreatmentLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteTreatment();
+                treatmentTable.refresh();
             }
         });
         controls.getChildren().add(deleteTreatmentLabel);
@@ -274,36 +284,6 @@ public class FishView extends VBox implements Initializable {
         alert.setHeaderText(info);
         alert.show();
     }
-
-    private boolean validateTime(String time_str) {
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        try {
-            timeFormat.parse(time_str);
-            return true;
-        } catch (Exception e) {
-            return  false;
-        }
-    }
-
-    private Date getDateTime(LocalDate ld, String timeStr) {
-        String d = ld.toString();
-        if (!validateTime(timeStr)) {
-            return null;
-        }
-
-        String datetimestr = d + " " + timeStr;
-        DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        Date datetime;
-
-        try {
-            datetime = dateTimeFormat.parse(datetimestr);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        return datetime;
-    }
-
 
     private void reportDead(Subject s) {
         Housing current_housing = s.getCurrentHousing();
@@ -451,8 +431,8 @@ public class FishView extends VBox implements Initializable {
     }
 
 
-    private void addTreatment(Subject s) {
-        if (s == null) {
+    private void showTreatmentDialog(TreatmentForm tf) {
+        if (tf == null) {
             return;
         }
         Dialog<Treatment> dialog = new Dialog<>();
@@ -460,7 +440,6 @@ public class FishView extends VBox implements Initializable {
         dialog.setHeight(200);
         dialog.setWidth(400);
         dialog.setResizable(true);
-        TreatmentForm tf = new TreatmentForm(s);
         dialog.getDialogPane().setContent(tf);
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -478,6 +457,22 @@ public class FishView extends VBox implements Initializable {
             }
         });
         dialog.showAndWait();
+    }
+
+    private void editTreatment(Treatment t) {
+        if (t == null) {
+            return;
+        }
+        TreatmentForm tf = new TreatmentForm(t);
+        showTreatmentDialog(tf);
+    }
+
+    private void addTreatment(Subject s) {
+        if (s == null) {
+            return;
+        }
+        TreatmentForm tf = new TreatmentForm(s);
+        showTreatmentDialog(tf);
 
     }
 }
