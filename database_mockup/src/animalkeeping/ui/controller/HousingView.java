@@ -19,7 +19,6 @@ import org.hibernate.Session;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static animalkeeping.util.Dialogs.*;
@@ -245,7 +244,8 @@ public class HousingView extends VBox implements Initializable {
 
 
     private void newHousingUnit() {
-        editHousingUnitDialog(null);
+        HousingUnit unit = table.getSelectionModel().getSelectedItem().getValue();
+        editHousingUnitDialog(null, unit);
         fillHousingTree();
     }
 

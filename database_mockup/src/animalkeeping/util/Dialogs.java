@@ -114,8 +114,14 @@ public class Dialogs {
     }
 
 
-    public static void editHousingUnitDialog(HousingUnit unit) {
+    public static HousingUnit editHousingUnitDialog(HousingUnit unit) {
+        return editHousingUnitDialog(unit, null);
+    }
+
+
+    public static HousingUnit editHousingUnitDialog(HousingUnit unit, HousingUnit parent) {
         HousingUnitDialog hud = new HousingUnitDialog(unit);
+        hud.setParentUnit(parent);
         Dialog<HousingUnit> dialog = new Dialog<>();
         dialog.setTitle("Housing unit");
         dialog.setResizable(true);
@@ -141,10 +147,12 @@ public class Dialogs {
                 session.saveOrUpdate(result.get());
                 session.getTransaction().commit();
                 session.close();
+                return result.get();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        return null;
     }
 }
 

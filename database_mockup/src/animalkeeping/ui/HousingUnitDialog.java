@@ -168,6 +168,11 @@ public class HousingUnitDialog extends VBox implements Initializable {
     }
 
 
+    public void setParentUnit(HousingUnit parent) {
+        this.parentUnitComboBox.getSelectionModel().select(parent);
+    }
+
+
     public HousingUnit getHousingUnit() {
         if (nameField.getText().isEmpty() || typeComboBox.getSelectionModel().isEmpty()) {
             return null;
