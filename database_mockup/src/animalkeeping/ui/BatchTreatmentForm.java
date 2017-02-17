@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import static animalkeeping.ui.controller.HousingView.showEditUnitDialog;
+import static animalkeeping.util.Dialogs.editHousingUnitDialog;
 
 
 public class BatchTreatmentForm extends VBox {
@@ -93,7 +93,7 @@ public class BatchTreatmentForm extends VBox {
 
         Button newHousingUnit = new Button("+");
         newHousingUnit.setTooltip(new Tooltip("create a new housing unit"));
-        newHousingUnit.setOnAction(event -> showEditUnitDialog(null));
+        newHousingUnit.setOnAction(event -> editHousingUnitDialog(null));
 
         Button newTreatmentType = new Button("+");
         newTreatmentType.setTooltip(new Tooltip("create a new type of treatment"));
