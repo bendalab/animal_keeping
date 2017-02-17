@@ -40,7 +40,7 @@ public class PersonsView  extends VBox implements Initializable {
     private TableColumn<Treatment, String> subjectCol;
     private VBox controls;
     private Person selectedPerson;
-    private ControlLabel editLabel, deleteLabel;
+    private ControlLabel editLabel, deleteLabel, asUserLabel;
 
 
     public PersonsView() {
@@ -103,6 +103,14 @@ public class PersonsView  extends VBox implements Initializable {
             }
         });
         controls.getChildren().add(deleteLabel);
+
+        asUserLabel = new ControlLabel("add as database user", true);
+        deleteLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                addUser();
+            }
+        });
+        controls.getChildren().add(deleteLabel);
     }
 
 
@@ -130,6 +138,9 @@ public class PersonsView  extends VBox implements Initializable {
         }
     }
 
+    private void addUser(){
+
+    }
 
     private void editPerson() {
         System.out.println("edit person: " + (selectedPerson != null ? selectedPerson.toString() : ""));

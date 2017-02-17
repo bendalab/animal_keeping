@@ -138,6 +138,12 @@ public class MainViewController {
 
     }
 
+    @FXML
+    private void showDatabaseUserAddView(){
+
+
+    }
+
 
     private Long looksLikeId(String text) {
         Long aLong = null;
