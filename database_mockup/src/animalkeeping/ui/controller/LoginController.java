@@ -25,7 +25,7 @@ import java.util.prefs.Preferences;
  */
 
 public class LoginController extends FlowPane implements Initializable{
-
+    @FXML private TextField databaseField;
     @FXML private TextField userField;
     @FXML private TextField hostField;
     @FXML private PasswordField passwordField;
@@ -49,8 +49,11 @@ public class LoginController extends FlowPane implements Initializable{
         prefs = Preferences.userRoot().node(Main.class.getName());
         String ID1 = "db_user";
         String ID2 = "db_host";
+        String ID3 = "db_name";
+        String db_name = prefs.get(ID3, "animal_keeping");
         String user = prefs.get(ID1, "");
-        String host = prefs.get(ID2, "jdbc:mysql://localhost/animal_keeping");
+        String host = prefs.get(ID2, "localhost");
+        this.databaseField.setText(db_name);
         this.hostField.setText(host);
         this.userField.setText(user);
         this.connectBtn.setDisable(true);
@@ -58,9 +61,11 @@ public class LoginController extends FlowPane implements Initializable{
 
     @FXML
     private void connect() {
+        String host = "jdbc:mysql://" + hostField.getText() + "/" + databaseField.getText();
         Main.ConnectionDetails credentials = new Main.ConnectionDetails(userField.getText(), passwordField.getText(),
-                hostField.getText());
+                host);
         if (Main.connectToDatabase(credentials)) {
+            prefs.put("db_name", databaseField.getText());
             prefs.put("db_user", userField.getText());
             prefs.put("db_host", hostField.getText());
             fireEvent(new DatabaseEvent());
