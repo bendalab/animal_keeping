@@ -155,7 +155,7 @@ public class SubjectForm extends VBox {
         grid.setVgap(5);
         grid.setHgap(2);
         grid.add(new Label("ID:"), 0, 0);
-        grid.add(idLabel, 0, 1);
+        grid.add(idLabel, 0, 0);
 
         grid.add(new Label("species:"), 0, 1);
         grid.add(speciesComboBox, 1, 1, 1, 1);
@@ -169,7 +169,7 @@ public class SubjectForm extends VBox {
         grid.add(supplierComboBox, 1, 3, 1, 1 );
         grid.add(newSupplierButton, 2, 3, 1, 1);
 
-        grid.add(new Label("supplier:"), 0, 4);
+        grid.add(new Label("housing unit:"), 0, 4);
         grid.add(housingUnitComboBox, 1, 4, 1, 1 );
         grid.add(newHousingUnitButton, 2, 4, 1, 1);
 
