@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import static animalkeeping.ui.controller.HousingView.showEditUnitDialog;
+import static animalkeeping.util.Dialogs.editHousingUnitDialog;
 
 
 public class AddSubjectsForm extends VBox {
@@ -94,7 +94,7 @@ public class AddSubjectsForm extends VBox {
 
         Button newHousingUnit = new Button("+");
         newHousingUnit.setTooltip(new Tooltip("create a new housing unit"));
-        newHousingUnit.setOnAction(event -> showEditUnitDialog(null));
+        newHousingUnit.setOnAction(event -> createNewHousingButton());
 
         Button newSpecies = new Button("+");
         newSpecies.setTooltip(new Tooltip("create a new species entry"));
@@ -214,6 +214,7 @@ public class AddSubjectsForm extends VBox {
         }
     }
 
+
     public Boolean persistSubjects() {
         LocalDate hdate = housingDate.getValue();
         String d = hdate.toString();
@@ -254,10 +255,39 @@ public class AddSubjectsForm extends VBox {
                 session.getTransaction().commit();
             } catch (Exception e) {
                 e.printStackTrace();
+                return false;
             }
         }
         session.close();
         return true;
+    }
+
+
+    private void fillHousingUnitsCombo() { //TODO maybe move all such methods to yet another util class?
+        List<HousingUnit> housingUnits = new ArrayList<>(0);
+        Session session = Main.sessionFactory.openSession();
+        try {
+            session.beginTransaction();
+            housingUnits = session.createQuery("from HousingUnit", HousingUnit.class).list();
+            session.getTransaction().commit();
+            session.close();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (session.isOpen()) {
+                session.close();
+            }
+        }
+        this.housingUnitComboBox.getItems().clear();
+        this.housingUnitComboBox.getItems().addAll(housingUnits);
+    }
+
+
+    private void createNewHousingButton() {
+        HousingUnit u = editHousingUnitDialog(null, this.housingUnitComboBox.getValue());
+        if (u != null) {
+            fillHousingUnitsCombo();
+            this.housingUnitComboBox.getSelectionModel().select(u);
+        }
     }
 
 }
