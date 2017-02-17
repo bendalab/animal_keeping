@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static animalkeeping.util.Dialogs.showInfo;
+import static animalkeeping.util.Dialogs.*;
 
 
 public class HousingView extends VBox implements Initializable {
@@ -238,95 +238,28 @@ public class HousingView extends VBox implements Initializable {
 
     private void editHousingUnit() {
         HousingUnit unit = table.getSelectionModel().getSelectedItem().getValue();
-        showEditUnitDialog(unit);
+        editHousingUnitDialog(unit);
         fillHousingTree();
     }
 
 
-    public static void showEditUnitDialog(HousingUnit unit) {
-        HousingUnitDialog hud = new HousingUnitDialog(unit);
-        Dialog<HousingUnit> dialog = new Dialog<>();
-        dialog.setTitle("Housing unit");
-        dialog.setResizable(true);
-        dialog.getDialogPane().setContent(hud);
-        hud.prefWidthProperty().bind(dialog.widthProperty());
-        dialog.setWidth(200);
 
-        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
-        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
-        dialog.setResultConverter(b -> {
-            if (b == buttonTypeOk) {
-                return hud.getHousingUnit();
-            }
-            return null;
-        });
-        Optional<HousingUnit> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    private void newHousingUnit() {
+        editHousingUnitDialog(null);
+        fillHousingTree();
     }
 
 
     private void editHousingType() {
         HousingType ht = housingTypes.getSelectionModel().getSelectedItem();
-        showEditTypeDialog(ht);
+        editHousingTypeDialog(ht);
         housingTypes.refresh();
-    }
-
-
-    private void newHousingUnit() {
-        showEditUnitDialog(null);
-        fillHousingTree();
     }
 
 
     private void newHousingType() {
-        showEditTypeDialog(null);
+        editHousingTypeDialog(null);
         housingTypes.refresh();
-    }
-
-
-    public static void showEditTypeDialog(HousingType type) {
-        HousingTypeDialog htd = new HousingTypeDialog(type);
-        Dialog<HousingType> dialog = new Dialog<>();
-        dialog.setTitle("Housing type");
-        dialog.setResizable(true);
-        dialog.getDialogPane().setContent(htd);
-        dialog.setWidth(200);
-        htd.prefWidthProperty().bind(dialog.widthProperty());
-
-        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
-        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
-        dialog.setResultConverter(b -> {
-            if (b == buttonTypeOk) {
-                return htd.getHousingType();
-            }
-            return null;
-        });
-        Optional<HousingType> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
 
@@ -366,63 +299,13 @@ public class HousingView extends VBox implements Initializable {
 
     private void importSubjects() {
         HousingUnit unit = table.getSelectionModel().getSelectedItem().getValue();
-        AddSubjectsForm htd = new AddSubjectsForm(unit);
-        Dialog<Boolean> dialog = new Dialog<>();
-        dialog.setTitle("Import subjects");
-        dialog.setResizable(true);
-        dialog.getDialogPane().setContent(htd);
-        dialog.setWidth(300);
-        htd.prefWidthProperty().bind(dialog.widthProperty());
-
-        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
-        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
-        dialog.setResultConverter(b -> {
-            if (b == buttonTypeOk) {
-                return htd.persistSubjects();
-            }
-            return null;
-        });
-
-        Optional<Boolean> result = dialog.showAndWait();
-        if (!result.isPresent() || !result.get()) {
-            showInfo("Something went wrong while creating new subjects!");
-        } else {
-            showInfo("Successfully created new subjects!");
-        }
+        importSubjectsDialog(unit);
     }
 
 
     private void batchTreatment() {
         HousingUnit unit = table.getSelectionModel().getSelectedItem().getValue();
-        BatchTreatmentForm btf = new BatchTreatmentForm(unit);
-        Dialog<Boolean> dialog = new Dialog<>();
-
-
-        dialog.setTitle("Batch Treatment");
-        dialog.setResizable(true);
-        dialog.getDialogPane().setContent(btf);
-        dialog.setWidth(300);
-        btf.prefWidthProperty().bind(dialog.widthProperty());
-
-        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
-        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
-        dialog.setResultConverter(b -> {
-            if (b == buttonTypeOk) {
-                return btf.persist();
-            }
-            return null;
-        });
-
-        Optional<Boolean> result = dialog.showAndWait();
-        if (!result.isPresent() || !result.get()) {
-            showInfo("Something went wrong while creating the treatment!");
-        } else {
-            showInfo("Successfully created a batch treatment!");
-        }
+        batchTreatmentDialog(unit);
     }
 
 
