@@ -13,7 +13,7 @@ public class License {
     private String number;
     private Date startDate;
     private Date endDate;
-    private Set<Quota> quota =
+    private Set<Quota> quotas =
             new HashSet<>(0);
     public License() { }
 
@@ -63,12 +63,12 @@ public class License {
         this.endDate = endDate;
     }
 
-    public Set<Quota> getQuota() {
-        return quota;
+    public Set<Quota> getQuotas() {
+        return quotas;
     }
 
-    public void setQuota(Set<Quota> quota) {
-        this.quota = quota;
+    public void setQuotas(Set<Quota> quota) {
+        this.quotas = quota;
     }
 
     @Override

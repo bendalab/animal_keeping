@@ -13,12 +13,12 @@
         <property name="number" type="string" column="number" not-null="true"/>
         <property name="startDate" type="date" column="start_date" not-null="false"/>
         <property name="endDate" type="date" column="end_date" not-null="false"/>
-        <set name="quota" table="census_quota"
+        <set name="quotas" table="census_quota"
              inverse="true" lazy="true" fetch="select">
             <key>
-                <column name="license_id" not-null="false" />
+                <column name="license_id" not-null="true" />
             </key>
-            <one-to-many class="License" />
+            <one-to-many class="Quota" />
         </set>
     </class>
 
