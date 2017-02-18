@@ -8,6 +8,7 @@ public class Quota {
     private Long number;
     private SpeciesType speciesType;
     private License license;
+    private Long used;
 
     public Quota() {}
 
@@ -47,6 +48,14 @@ public class Quota {
 
     public void setLicense(License license) {
         this.license = license;
+    }
+
+    public Long getUsed() {
+        return used;
+    }
+
+    public void setUsed(Long used) {
+        this.used = used;
     }
 
     @Override
