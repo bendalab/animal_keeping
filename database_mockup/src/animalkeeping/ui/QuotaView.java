@@ -55,8 +55,7 @@ public class QuotaView extends VBox implements Initializable {
             @Override
             public ObservableValue<Double> call(TableColumn.CellDataFeatures<Quota, Double> param) {
                 if (param.getValue() == null || param.getValue().getNumber() == null || param.getValue().getNumber() <= 0) {
-                    System.out.println("return null prpgressbar");
-                    return  null;
+                    return  new ReadOnlyObjectWrapper<>(0.0);
                 }
                 return new ReadOnlyObjectWrapper<>(param.getValue().getAvailableFraction());
             }
