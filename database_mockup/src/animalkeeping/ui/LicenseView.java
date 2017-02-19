@@ -34,9 +34,11 @@ public class LicenseView extends VBox implements Initializable {
     @FXML private Label endDateLabel;
     @FXML private VBox timelineVBox;
     @FXML private VBox quotaBox;
+    @FXML private VBox typesBox;
     @FXML private TabPane tabPane;
 
     private LicenseTable licenseTable;
+    private TreatmentTypeTable typeTable;
     private QuotaView qv;
     private TimelineController timeline;
     private ControlLabel addLicenseLabel;
@@ -55,6 +57,7 @@ public class LicenseView extends VBox implements Initializable {
         }
     }
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         tabPane.prefWidthProperty().bind(prefWidthProperty());
@@ -64,6 +67,9 @@ public class LicenseView extends VBox implements Initializable {
                 licenseSelected(c.getList().get(0));
             }
         });
+        typeTable = new TreatmentTypeTable();
+        typeTable.prefWidthProperty().bind(prefWidthProperty());
+        typesBox.getChildren().add(typeTable);
 
         timeline = new TimelineController();
         this.tableScrollPane.setContent(licenseTable);
@@ -116,6 +122,7 @@ public class LicenseView extends VBox implements Initializable {
     private void licenseSelected(License l) {
         setInfo(l);
         qv.setQuota(l.getQuotas());
+        typeTable.setTreatmentTypes(l.getTreatmentTypes());
     }
 
     public VBox getControls() {
