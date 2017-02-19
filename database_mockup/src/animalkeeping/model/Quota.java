@@ -58,6 +58,13 @@ public class Quota {
         this.used = used;
     }
 
+    public double getAvailableFraction() {
+        if (getNumber() == null || getNumber() == 0 || getUsed() == null) {
+            return 0.0;
+        }
+        return 1.0 - ((double)getUsed()/(double)getNumber());
+    }
+
     @Override
     public String toString() {
         return "Quota{" +
