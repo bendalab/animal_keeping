@@ -2,21 +2,22 @@ package animalkeeping.ui;
 
 import animalkeeping.model.License;
 import animalkeeping.model.Quota;
+import animalkeeping.model.Treatment;
+import animalkeeping.model.TreatmentType;
 import animalkeeping.ui.controller.TimelineController;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.geometry.Orientation;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 
 /**
@@ -35,15 +36,20 @@ public class LicenseView extends VBox implements Initializable {
     @FXML private VBox timelineVBox;
     @FXML private VBox quotaBox;
     @FXML private VBox typesBox;
+    @FXML private VBox treatmentsBox;
     @FXML private TabPane tabPane;
 
     private LicenseTable licenseTable;
     private TreatmentTypeTable typeTable;
+    private TreatmentsTable treatmentsTable;
     private QuotaView qv;
     private TimelineController timeline;
     private ControlLabel addLicenseLabel;
     private ControlLabel editLicenseLabel;
     private ControlLabel deleteLicenseLabel;
+    private ControlLabel addQuota;
+    private ControlLabel editQuota;
+    private ControlLabel deleteQuota;
     private VBox controls;
 
 
@@ -70,6 +76,10 @@ public class LicenseView extends VBox implements Initializable {
         typeTable = new TreatmentTypeTable();
         typeTable.prefWidthProperty().bind(prefWidthProperty());
         typesBox.getChildren().add(typeTable);
+
+        treatmentsTable = new TreatmentsTable();
+        treatmentsTable.prefWidthProperty().bind(prefWidthProperty());
+        treatmentsBox.getChildren().add(treatmentsTable);
 
         timeline = new TimelineController();
         this.tableScrollPane.setContent(licenseTable);
@@ -104,6 +114,31 @@ public class LicenseView extends VBox implements Initializable {
             }
         });
         controls.getChildren().add(deleteLicenseLabel);
+        controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
+
+        addQuota = new ControlLabel("add quota", true);
+        addQuota.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                System.out.print("add Quota");
+            }
+        });
+        controls.getChildren().add(addQuota);
+
+        editQuota = new ControlLabel("edit quota", true);
+        editQuota.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                System.out.print("edit Quota");
+            }
+        });
+        controls.getChildren().add(editQuota);
+
+        deleteQuota = new ControlLabel("delete quota", true);
+        deleteQuota.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                System.out.print("delete Quota");
+            }
+        });
+        controls.getChildren().add(deleteQuota);
     }
 
 
@@ -119,11 +154,19 @@ public class LicenseView extends VBox implements Initializable {
         agencyLabel.setText("n.a.");
     }
 
+
     private void licenseSelected(License l) {
         setInfo(l);
         qv.setQuota(l.getQuotas());
         typeTable.setTreatmentTypes(l.getTreatmentTypes());
+        HashSet<Treatment> ts = new HashSet<>(0);
+        for (TreatmentType t : l.getTreatmentTypes()) {
+            ts.addAll(t.getTreatments());
+        }
+        treatmentsTable.setTreatments(ts);
+        timeline.setTreatments(ts);
     }
+
 
     public VBox getControls() {
         return controls;
