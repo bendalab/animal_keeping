@@ -14,6 +14,7 @@ import org.hibernate.Session;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class TreatmentsTable extends TableView<Treatment>{
     private TableColumn<Treatment, Number> idCol;
@@ -68,5 +69,10 @@ public class TreatmentsTable extends TableView<Treatment>{
                 session.close();
             }
         }
+    }
+
+    public void setTreatments(Set<Treatment> treatments) {
+        this.getItems().clear();
+        this.getItems().addAll(treatments);
     }
 }
