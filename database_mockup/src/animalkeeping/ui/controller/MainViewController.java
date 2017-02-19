@@ -43,6 +43,10 @@ public class MainViewController {
                 e.printStackTrace();
             }
         }
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+        scrollPane.prefWidthProperty().bind(masterBox.prefWidthProperty());
+        scrollPane.prefHeightProperty().bind(masterBox.prefWidthProperty());
         panes = new Vector<>();
         panes.add(inventoryPane);
         panes.add(subjectsPane);
@@ -123,8 +127,6 @@ public class MainViewController {
         this.licensesPane.setContent(null);
         try {
             HousingView housingView = new HousingView();
-            this.scrollPane.setFitToHeight(true);
-            this.scrollPane.setFitToWidth(true);
             housingView.prefHeightProperty().bind(this.scrollPane.heightProperty());
             housingView.prefWidthProperty().bind(this.scrollPane.widthProperty());
             this.scrollPane.setContent(housingView);
@@ -138,21 +140,21 @@ public class MainViewController {
 
     @FXML
     private void showLicenseView() {
-        this.scrollPane.setContent(null);
-        this.licensesPane.setContent(null);
-        try {
-            LicenseView licenseView = new LicenseView();
-            //this.scrollPane.setFitToHeight(true);
-            //this.scrollPane.setFitToWidth(true);
-            licenseView.prefHeightProperty().bind(this.scrollPane.heightProperty());
-            licenseView.prefWidthProperty().bind(this.scrollPane.widthProperty());
-            this.scrollPane.setContent(licenseView);
-            this.licensesPane.setContent(licenseView.getControls());
-            //collapsePanes(licensesPane);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (!licensesPane.isExpanded()) {
+            showInventory();
+        } else {
+            this.licensesPane.setContent(null);
+            try {
+                LicenseView licenseView = new LicenseView();
+                licenseView.prefHeightProperty().bind(this.scrollPane.heightProperty());
+                licenseView.prefWidthProperty().bind(this.scrollPane.widthProperty());
+                this.scrollPane.setContent(licenseView);
+                this.licensesPane.setContent(licenseView.getControls());
+                collapsePanes(licensesPane);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     private Long looksLikeId(String text) {
