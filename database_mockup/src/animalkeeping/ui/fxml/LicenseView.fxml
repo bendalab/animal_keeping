@@ -6,16 +6,15 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="800.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<SplitPane dividerPositions="0.35" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="800.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <items>
       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="150.0" prefWidth="160.0">
          <children>
@@ -25,6 +24,11 @@
                      <content>
                         <VBox maxHeight="-Infinity" prefHeight="200.0">
                            <children>
+                              <Label text="License Information">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
                               <GridPane alignment="CENTER_LEFT" hgap="5.0" maxHeight="-Infinity" minHeight="-Infinity" vgap="5.0" VBox.vgrow="ALWAYS">
                                  <columnConstraints>
                                     <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="1.7976931348623157E308" minWidth="80.0" />
@@ -56,7 +60,7 @@
                                     <Label fx:id="endDateLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                                     <Label fx:id="respPersonLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                                     <Label fx:id="deputyPersonLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                    <Label text="Agency:" GridPane.rowIndex="4" />
+                                    <Label text="Filing agency:" GridPane.rowIndex="4" />
                                     <Label fx:id="agencyLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                  </children>
                               </GridPane>
@@ -70,16 +74,7 @@
                   </Tab>
                   <Tab closable="false" text="TreatmentTypes">
                      <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <TableView layoutX="41.0" layoutY="-36.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <columns>
-                                    <TableColumn prefWidth="75.0" text="C1" />
-                                    <TableColumn prefWidth="75.0" text="C2" />
-                                 </columns>
-                              </TableView>
-                           </children>
-                        </AnchorPane>
+                        <VBox fx:id="typesBox" prefHeight="200.0" prefWidth="100.0" />
                      </content>
                   </Tab>
                   <Tab closable="false" text="Quota">
@@ -89,16 +84,7 @@
                   </Tab>
                   <Tab closable="false" text="Treatments">
                      <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <TableView layoutX="41.0" layoutY="-36.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <columns>
-                                    <TableColumn prefWidth="75.0" text="C1" />
-                                    <TableColumn prefWidth="75.0" text="C2" />
-                                 </columns>
-                              </TableView>
-                           </children>
-                        </AnchorPane>
+                        <VBox fx:id="treatmentsBox" prefHeight="200.0" prefWidth="100.0" />
                      </content>
                   </Tab>
                   <Tab closable="false" text="Timeline">
