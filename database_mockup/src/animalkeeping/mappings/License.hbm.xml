@@ -20,6 +20,13 @@
             </key>
             <one-to-many class="Quota" />
         </set>
+        <set name="treatmentTypes" table="census_treatmenttype"
+             inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="license_id" not-null="true" />
+            </key>
+            <one-to-many class="TreatmentType" />
+        </set>
     </class>
 
 </hibernate-mapping>
