@@ -42,21 +42,21 @@ public class LicenseTable extends TableView<License> {
     private void init() {
         idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
+        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.09));
 
         nameCol = new TableColumn<>("name");
         nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
-        nameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+        nameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.45));
 
         startDateCol= new TableColumn<>("from");
         startDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getStartDate()));
         startDateCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
-        endDateCol= new TableColumn<>("from");
+        endDateCol= new TableColumn<>("until");
         endDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getEndDate()));
         endDateCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
-        fileNumberCol = new TableColumn<>("person");
+        fileNumberCol = new TableColumn<>("file number");
         fileNumberCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getNumber()));
         fileNumberCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
