@@ -73,6 +73,11 @@
                               <VBox prefHeight="200.0" prefWidth="100.0" />
                            </content>
                         </TitledPane>
+                        <TitledPane fx:id="licensesPane" animated="false" disable="true" expanded="false" layoutX="10.0" layoutY="148.0" onKeyPressed="#showLicenseView" onMouseClicked="#showLicenseView" text="Licenses">
+                           <content>
+                              <VBox prefHeight="200.0" prefWidth="100.0" />
+                           </content>
+                        </TitledPane>
                         <Separator prefWidth="200.0" />
                         <Separator prefWidth="200.0" />
                         <Button fx:id="addUsrBtn" disable="true" mnemonicParsing="false" onAction="#showUserAddInterface" prefWidth="95.0" text="Add User" />
