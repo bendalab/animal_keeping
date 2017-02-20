@@ -5,6 +5,7 @@ import animalkeeping.model.Quota;
 import animalkeeping.model.Treatment;
 import animalkeeping.model.TreatmentType;
 import animalkeeping.ui.controller.TimelineController;
+import animalkeeping.util.Dialogs;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +14,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
+import org.hibernate.Session;
 
 import java.io.IOException;
 import java.net.URL;
@@ -44,12 +46,11 @@ public class LicenseView extends VBox implements Initializable {
     private TreatmentsTable treatmentsTable;
     private QuotaView qv;
     private TimelineController timeline;
-    private ControlLabel addLicenseLabel;
     private ControlLabel editLicenseLabel;
     private ControlLabel deleteLicenseLabel;
     private ControlLabel addQuota;
-    private ControlLabel editQuota;
-    private ControlLabel deleteQuota;
+    private ControlLabel editQuotaLabel;
+    private ControlLabel deleteQuotaLabel;
     private VBox controls;
 
 
@@ -88,13 +89,18 @@ public class LicenseView extends VBox implements Initializable {
         qv = new QuotaView();
         quotaBox.prefWidthProperty().bind(this.prefWidthProperty());
         qv.prefWidthProperty().bind(quotaBox.prefWidthProperty());
+        qv.quotaTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Quota>) c -> {
+            if (c.getList().size() > 0) {
+                quotaSelected(c.getList().get(0));
+            }
+        });
         quotaBox.getChildren().add(qv);
 
         controls = new VBox();
-        addLicenseLabel = new ControlLabel("new license", false);
+        ControlLabel addLicenseLabel = new ControlLabel("new license", false);
         addLicenseLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
-                System.out.println("new License");
+                editLicense(null);
             }
         });
         controls.getChildren().add(addLicenseLabel);
@@ -102,7 +108,7 @@ public class LicenseView extends VBox implements Initializable {
         editLicenseLabel = new ControlLabel("edit license", true);
         editLicenseLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
-                System.out.println("edit License");
+                editLicense(licenseTable.getSelectionModel().getSelectedItem());
             }
         });
         controls.getChildren().add(editLicenseLabel);
@@ -110,7 +116,7 @@ public class LicenseView extends VBox implements Initializable {
         deleteLicenseLabel = new ControlLabel("delete license", true);
         deleteLicenseLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
-              System.out.print("delete License");
+              deleteLicense(licenseTable.getSelectionModel().getSelectedItem());
             }
         });
         controls.getChildren().add(deleteLicenseLabel);
@@ -119,26 +125,26 @@ public class LicenseView extends VBox implements Initializable {
         addQuota = new ControlLabel("add quota", true);
         addQuota.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
-                System.out.print("add Quota");
+                Dialogs.editQuotaDialog(licenseTable.getSelectionModel().getSelectedItem());
             }
         });
         controls.getChildren().add(addQuota);
 
-        editQuota = new ControlLabel("edit quota", true);
-        editQuota.setOnMouseClicked(event -> {
+        editQuotaLabel = new ControlLabel("edit quota", true);
+        editQuotaLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
-                System.out.print("edit Quota");
+                Dialogs.editQuotaDialog(qv.getSelectedItem());
             }
         });
-        controls.getChildren().add(editQuota);
+        controls.getChildren().add(editQuotaLabel);
 
-        deleteQuota = new ControlLabel("delete quota", true);
-        deleteQuota.setOnMouseClicked(event -> {
+        deleteQuotaLabel = new ControlLabel("delete quota", true);
+        deleteQuotaLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
-                System.out.print("delete Quota");
+                deleteQuota(qv.getSelectedItem());
             }
         });
-        controls.getChildren().add(deleteQuota);
+        controls.getChildren().add(deleteQuotaLabel);
     }
 
 
@@ -157,7 +163,15 @@ public class LicenseView extends VBox implements Initializable {
 
     private void licenseSelected(License l) {
         setInfo(l);
-        qv.setQuota(l.getQuotas());
+        editLicenseLabel.setDisable(l == null);
+        deleteLicenseLabel.setDisable(l == null);
+        addQuota.setDisable(l == null);
+
+        if (l != null) {
+            qv.setQuota(l.getQuotas());
+        } else {
+            qv.quotaTable.getItems().clear();
+        }
         typeTable.setTreatmentTypes(l.getTreatmentTypes());
         HashSet<Treatment> ts = new HashSet<>(0);
         for (TreatmentType t : l.getTreatmentTypes()) {
@@ -167,6 +181,40 @@ public class LicenseView extends VBox implements Initializable {
         timeline.setTreatments(ts);
     }
 
+    private void quotaSelected(Quota q) {
+        editQuotaLabel.setDisable(q == null);
+        deleteQuotaLabel.setDisable(q == null);
+    }
+
+    private void editLicense(License l) {
+        Dialogs.editLicenseDialog(l);
+    }
+
+
+    private void deleteLicense(License l) {
+        if (l.getTreatmentTypes().size() != 0) {
+            Dialogs.showInfo("Cannot delete License " + l.getName().substring(0, 20) + " since it is referenced by treatment types!");
+            return;
+        }
+        Session session = Main.sessionFactory.openSession();
+        session.beginTransaction();
+        session.delete(l);
+        session.getTransaction().commit();
+        session.close();
+        licenseTable.getItems().remove(l);
+    }
+
+
+    private void deleteQuota(Quota q) {
+        Session session = Main.sessionFactory.openSession();
+        session.beginTransaction();
+        session.delete(q);
+        session.getTransaction().commit();
+        session.close();
+        if (!qv.removeItem(q)) {
+            Dialogs.showInfo("Could not delete Quota entry (insufficient rights?): " + q.getSpeciesType().getName());
+        }
+    }
 
     public VBox getControls() {
         return controls;
