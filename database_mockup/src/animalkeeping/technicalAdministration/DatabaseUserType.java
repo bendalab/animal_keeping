@@ -10,7 +10,9 @@ public class DatabaseUserType {
     private String name;
     private String privileges;
 
-    DatabaseUserType(String name, String privileges)
+    public DatabaseUserType(){}
+
+    public DatabaseUserType(String name, String privileges)
     {
         this.name = name;
         this.privileges = privileges;
@@ -30,7 +32,7 @@ public class DatabaseUserType {
 
     public String getPrivileges(){ return privileges; }
 
-    public String setPrivileges(String privileges){ this.privileges = privileges;
+    public void setPrivileges(String privileges){ this.privileges = privileges; }
 
 
     }
