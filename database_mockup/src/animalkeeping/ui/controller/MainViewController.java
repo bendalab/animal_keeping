@@ -1,9 +1,7 @@
 package animalkeeping.ui.controller;
 
-import animalkeeping.ui.FishView;
-import animalkeeping.ui.Main;
-import animalkeeping.ui.PersonsView;
-import animalkeeping.ui.TreatmentsTable;
+import animalkeeping.ui.*;
+import animalkeeping.util.AddDatabaseUserDialog;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -140,8 +138,7 @@ public class MainViewController {
 
     @FXML
     private void showDatabaseUserAddView(){
-
-
+        AddDatabaseUserDialog.addDatabaseUser();
     }
 
 
@@ -197,6 +194,8 @@ public class MainViewController {
                 break;
         }
     }
+
+
 
     @FXML
     private void showUserAddInterface() throws Exception{

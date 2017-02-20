@@ -8,9 +8,9 @@ import java.util.List;
 public class DatabaseUserType {
     private Long id;
     private String name;
-    private List<String> privileges;
+    private String privileges;
 
-    DatabaseUserType(String name, List<String> privileges)
+    DatabaseUserType(String name, String privileges)
     {
         this.name = name;
         this.privileges = privileges;
@@ -20,12 +20,17 @@ public class DatabaseUserType {
         return id;
     }
 
+    public void setId(Long id){ this.id = id; }
+
     public String getName(){
         return name;
     }
 
-    public List<String> getPrivileges(){
-        return privileges;
-    }
+    public void setName(String name){ this.name = name; }
 
-}
+    public String getPrivileges(){ return privileges; }
+
+    public String setPrivileges(String privileges){ this.privileges = privileges;
+
+
+    }

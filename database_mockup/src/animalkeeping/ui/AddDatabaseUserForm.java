@@ -25,6 +25,10 @@ public class AddDatabaseUserForm extends VBox {
     PasswordField pwConfirmField;
     private ComboBox<DatabaseUserType> userClassComboBox;
 
+    public AddDatabaseUserForm(){
+        init();
+    }
+
     private void init() {
         userClassComboBox = new ComboBox<DatabaseUserType>();
 
@@ -86,12 +90,16 @@ public class AddDatabaseUserForm extends VBox {
 
     }
 
-    private void addUser(){
-        if (pwField == pwConfirmField) {
+    //TODO add buttons (confirm and cancel)
+
+    public boolean addUser(){
+        if (pwField.getText() == pwConfirmField.getText()) {
             DatabaseUser newUser = new DatabaseUser(usernameField.getText(), pwField.getText(), userClassComboBox.getValue());
+            return true;
         }
         else{
             System.out.println("Passwords do not match!");
+            return false;
         }
 
 
