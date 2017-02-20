@@ -13,6 +13,9 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,7 +96,7 @@ public class AddDatabaseUserForm extends VBox {
 
     }
 
-    //TODO add buttons (confirm and cancel)
+
 
     public boolean addUser(){
         if (pwField.getText().equals(pwConfirmField.getText())) {
