@@ -1,9 +1,6 @@
 package animalkeeping.ui;
 
-import animalkeeping.model.Subject;
 import animalkeeping.model.TreatmentType;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import com.sun.tools.corba.se.idl.constExpr.BooleanNot;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
