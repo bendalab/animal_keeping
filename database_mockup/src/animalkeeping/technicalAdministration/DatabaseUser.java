@@ -23,12 +23,12 @@ public class DatabaseUser {
         String url = "jdbc:mysql://localhost:3306/animal_keeping";
 
         try {
-            Connection connection = DriverManager.getConnection(url, userid, password);
+            Connection connection = DriverManager.getConnection(url, name, password);
             Statement stmt = connection.createStatement();
             String createUser = "CREATE USER " + name + "@localhost IDENTIFIED BY \"" + password + "\"";
-            String grantPrivilege = "GRANT" + type.getPrivileges() + " ON * . * TO '" + name + "'@'localhost'";
-            stmt.executeQuery(createUser);
-            stmt.executeQuery(grantPrivilege);
+            String grantPrivilege = "GRANT " + type.getPrivileges() + " ON * . * TO '" + name + "'@'localhost'";
+            stmt.executeUpdate(createUser);
+            stmt.executeUpdate(grantPrivilege);
 
         }
         catch (SQLException e)
