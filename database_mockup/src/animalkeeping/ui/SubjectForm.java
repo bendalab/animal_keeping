@@ -1,18 +1,19 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.*;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import animalkeeping.util.DateTimeHelper;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.Font;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,7 +53,7 @@ public class SubjectForm extends VBox {
         speciesComboBox.getSelectionModel().select(s.getSpeciesType());
         subjectTypeComboBox.getSelectionModel().select(s.getSubjectType());
         Housing h = s.getHousings().iterator().next();
-        LocalDate sd = h.getStart().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate sd = DateTimeHelper.toLocalDate(h.getStart());
         importDate.setValue(sd);
         importTimeField.setText(timeFormat.format(h.getStart()));
         nameField.setText(s.getName());
@@ -155,7 +156,7 @@ public class SubjectForm extends VBox {
         grid.setVgap(5);
         grid.setHgap(2);
         grid.add(new Label("ID:"), 0, 0);
-        grid.add(idLabel, 0, 0);
+        grid.add(idLabel, 1, 0);
 
         grid.add(new Label("species:"), 0, 1);
         grid.add(speciesComboBox, 1, 1, 1, 1);
