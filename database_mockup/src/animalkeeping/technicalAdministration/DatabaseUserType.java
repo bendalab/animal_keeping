@@ -18,7 +18,7 @@ public class DatabaseUserType {
         this.privileges = privileges;
             }
 
-    public long getId(){
+    public Long getId(){
         return id;
     }
 

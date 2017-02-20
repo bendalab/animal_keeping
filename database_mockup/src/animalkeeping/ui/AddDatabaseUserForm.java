@@ -31,6 +31,9 @@ public class AddDatabaseUserForm extends VBox {
 
     private void init() {
         userClassComboBox = new ComboBox<DatabaseUserType>();
+        usernameField = new TextField();
+        pwField = new PasswordField();
+        pwConfirmField = new PasswordField();
 
         userClassComboBox.setConverter(new StringConverter<DatabaseUserType>() {
             @Override
@@ -93,7 +96,7 @@ public class AddDatabaseUserForm extends VBox {
     //TODO add buttons (confirm and cancel)
 
     public boolean addUser(){
-        if (pwField.getText() == pwConfirmField.getText()) {
+        if (pwField.getText().equals(pwConfirmField.getText())) {
             DatabaseUser newUser = new DatabaseUser(usernameField.getText(), pwField.getText(), userClassComboBox.getValue());
             return true;
         }

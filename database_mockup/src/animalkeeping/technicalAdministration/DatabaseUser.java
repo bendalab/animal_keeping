@@ -22,7 +22,7 @@ public class DatabaseUser {
         Session session = Main.sessionFactory.openSession();
         try {
             session.beginTransaction();
-            session.createQuery("CREATE USER " + name + "'@'localhost' IDENTIFIED BY " + password);
+            session.createQuery("CREATE USER " + name + "'@'localhost IDENTIFIED BY " + password);
             session.getTransaction().commit();
             session.createQuery("GRANT" + type.getPrivileges() + " ON * . * TO '" + name + "'@'localhost';");
             session.getTransaction().commit();
