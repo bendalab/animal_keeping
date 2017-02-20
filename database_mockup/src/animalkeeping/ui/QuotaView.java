@@ -17,11 +17,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-/**
- * Created by jan on 18.02.17.
- */
 public class QuotaView extends VBox implements Initializable {
-    @FXML private TableView<Quota> quotaTable;
+    @FXML TableView<Quota> quotaTable;
     @FXML private TableColumn<Quota, String> idCol, speciesCol;
     @FXML private TableColumn<Quota, Number> numberCol;
     @FXML private TableColumn<Quota, Number> usedCol;
@@ -68,5 +65,17 @@ public class QuotaView extends VBox implements Initializable {
     public void setQuota(Set<Quota> quota) {
         quotaTable.getItems().clear();
         quotaTable.getItems().addAll(quota);
+    }
+
+    public Boolean removeItem(Quota q) {
+        return quotaTable.getItems().remove(q);
+    }
+
+    public Quota getSelectedItem() {
+        Quota q = null;
+        if (!quotaTable.getSelectionModel().isEmpty()) {
+            return  quotaTable.getSelectionModel().getSelectedItem();
+        }
+        return q;
     }
 }
