@@ -72,68 +72,11 @@ public class MainViewController {
         }
     }
 
-    @FXML
-    private void showPersons() throws Exception{
-        this.scrollPane.setContent(null);
-        try{
-            PersonsView pv;
-            if (viewIsCached("persons")) {
-                pv = (PersonsView) views.get("persons");
-            } else {
-                pv = new PersonsView();
-                cacheView("persons", pv);
-            }
-            this.scrollPane.setFitToHeight(true);
-            this.scrollPane.setFitToWidth(true);
-            pv.minHeightProperty().bind(this.scrollPane.heightProperty());
-            pv.minWidthProperty().bind(this.scrollPane.widthProperty());
-            this.scrollPane.setContent(pv);
-            this.personsPane.setContent(pv.getControls());
-            collapsePanes(personsPane);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-    }
-
-
-    @FXML
-    private void showSubjects() {
-        this.scrollPane.setContent(null);
-        try {
-            FishView fv;
-            if (viewIsCached("subjects")) {
-                fv = (FishView) views.get("subjects");
-            } else {
-                fv = new FishView();
-                cacheView("subjects", fv);
-            }
-            fv.prefHeightProperty().bind(this.scrollPane.heightProperty());
-            fv.prefWidthProperty().bind(this.scrollPane.widthProperty());
-            this.scrollPane.setContent(fv);
-            collapsePanes(subjectsPane);
-        } catch(Exception e){
-            e.printStackTrace();}
-    }
-
-    @FXML
-    private void showTreatments() {
-        this.scrollPane.setContent(null);
-        try {
-            TreatmentsTable treatmentsTable = new TreatmentsTable();
-            treatmentsTable.prefHeightProperty().bind(this.scrollPane.heightProperty());
-            treatmentsTable.prefWidthProperty().bind(this.scrollPane.widthProperty());
-            this.scrollPane.setContent(treatmentsTable);
-            this.treatmentsPane.setContent(new VBox());
-            collapsePanes(treatmentsPane);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @FXML
     private void showInventory() {
         this.scrollPane.setContent(null);
+        inventoryPane.setExpanded(true);
         try {
             InventoryController inventory;
             if (viewIsCached("inventory")) {
@@ -152,31 +95,109 @@ public class MainViewController {
         }
     }
 
+
+    @FXML
+    private void showPersons() throws Exception{
+        this.scrollPane.setContent(null);
+        if (!personsPane.isExpanded()) {
+            showInventory();
+        } else {
+            try{
+                PersonsView pv;
+                if (viewIsCached("persons")) {
+                    pv = (PersonsView) views.get("persons");
+                } else {
+                    pv = new PersonsView();
+                    cacheView("persons", pv);
+                }
+                this.scrollPane.setFitToHeight(true);
+                this.scrollPane.setFitToWidth(true);
+                pv.minHeightProperty().bind(this.scrollPane.heightProperty());
+                pv.minWidthProperty().bind(this.scrollPane.widthProperty());
+                this.scrollPane.setContent(pv);
+                this.personsPane.setContent(pv.getControls());
+                collapsePanes(personsPane);
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    @FXML
+    private void showSubjects() {
+        this.scrollPane.setContent(null);
+        if (!subjectsPane.isExpanded()) {
+            showInventory();
+        } else {
+            try {
+                FishView fv;
+                if (viewIsCached("subjects")) {
+                    fv = (FishView) views.get("subjects");
+                } else {
+                    fv = new FishView();
+                    cacheView("subjects", fv);
+                }
+                fv.prefHeightProperty().bind(this.scrollPane.heightProperty());
+                fv.prefWidthProperty().bind(this.scrollPane.widthProperty());
+                this.scrollPane.setContent(fv);
+                collapsePanes(subjectsPane);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
+    private void showTreatments() {
+        this.scrollPane.setContent(null);
+        if (!treatmentsPane.isExpanded()) {
+            showInventory();
+        } else {
+            try {
+                TreatmentsTable treatmentsTable = new TreatmentsTable();
+                treatmentsTable.prefHeightProperty().bind(this.scrollPane.heightProperty());
+                treatmentsTable.prefWidthProperty().bind(this.scrollPane.widthProperty());
+                this.scrollPane.setContent(treatmentsTable);
+                this.treatmentsPane.setContent(new VBox());
+                collapsePanes(treatmentsPane);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
     @FXML
     private void showHousingUnits() {
         this.scrollPane.setContent(null);
-        this.licensesPane.setContent(null);
-        try {
-            HousingView housingView;
-            if (viewIsCached("housing")) {
-                housingView = (HousingView) views.get("housing");
-            } else {
-                housingView = new HousingView();
-                cacheView("housing", housingView);
+        if (!animalHousingPane.isExpanded()) {
+            showInventory();
+        } else {
+            try {
+                HousingView housingView;
+                if (viewIsCached("housing")) {
+                    housingView = (HousingView) views.get("housing");
+                } else {
+                    housingView = new HousingView();
+                    cacheView("housing", housingView);
+                }
+                housingView.prefHeightProperty().bind(this.scrollPane.heightProperty());
+                housingView.prefWidthProperty().bind(this.scrollPane.widthProperty());
+                this.scrollPane.setContent(housingView);
+                this.animalHousingPane.setContent(housingView.getControls());
+                collapsePanes(animalHousingPane);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            housingView.prefHeightProperty().bind(this.scrollPane.heightProperty());
-            housingView.prefWidthProperty().bind(this.scrollPane.widthProperty());
-            this.scrollPane.setContent(housingView);
-            this.animalHousingPane.setContent(housingView.getControls());
-            collapsePanes(animalHousingPane);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
 
     @FXML
     private void showLicenseView() {
+        this.scrollPane.setContent(null);
         if (!licensesPane.isExpanded()) {
             showInventory();
         } else {
