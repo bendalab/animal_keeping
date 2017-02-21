@@ -229,7 +229,8 @@ public class HousingView extends VBox implements Initializable, View {
     }
 
 
-    private void refresh() {
+    @Override
+    public void refresh() {
         fillHousingTree();
         housingTypes.refresh();
     }
@@ -313,7 +314,4 @@ public class HousingView extends VBox implements Initializable, View {
     public VBox getControls() {
         return controls;
     }
-
-
-
 }

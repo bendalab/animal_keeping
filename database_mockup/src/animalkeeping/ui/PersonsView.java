@@ -197,6 +197,12 @@ public class PersonsView  extends VBox implements Initializable, View {
     }
 
 
+    @Override
+    public void refresh() {
+        //TODO refresh
+    }
+
+
     private class PersonTableListChangeListener implements ListChangeListener<Person> {
 
         @Override

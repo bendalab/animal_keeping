@@ -220,4 +220,10 @@ public class LicenseView extends VBox implements Initializable, View {
     public VBox getControls() {
         return controls;
     }
+
+
+    @Override
+    public void refresh() {
+        //TODO refresh
+    }
 }

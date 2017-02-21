@@ -9,4 +9,5 @@ public interface View {
 
     VBox getControls();
 
+    void refresh();
 }

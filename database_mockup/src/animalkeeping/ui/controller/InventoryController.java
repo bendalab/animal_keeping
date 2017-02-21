@@ -157,6 +157,11 @@ public class InventoryController extends VBox implements Initializable, View {
         return controls;
     }
 
+    @Override
+    public void refresh() {
+        //TODO refresh
+    }
+
     private void collectSubjects(Set<Subject> subjects, HousingUnit h) {
         collectSubjects(subjects, h, true);
     }

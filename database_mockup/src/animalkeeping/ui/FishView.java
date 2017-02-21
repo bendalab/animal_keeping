@@ -602,4 +602,9 @@ public class FishView extends VBox implements Initializable, View {
         });
         dialog.showAndWait();
     }
+
+    @Override
+    public void refresh() {
+        //TODO refresh
+    }
 }
