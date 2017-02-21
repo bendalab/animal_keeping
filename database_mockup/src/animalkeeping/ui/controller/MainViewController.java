@@ -1,12 +1,14 @@
 package animalkeeping.ui.controller;
 
 import animalkeeping.ui.*;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 
@@ -24,6 +26,7 @@ public class MainViewController {
     @FXML private ComboBox<String> findBox;
     @FXML private TitledPane findPane;
     private Vector<TitledPane> panes;
+    private HashMap<String, View> views;
 
     @FXML
     private void initialize() {
@@ -54,15 +57,32 @@ public class MainViewController {
         panes.add(personsPane);
         panes.add(animalHousingPane);
         panes.add(licensesPane);
+
+        views = new HashMap<>();
     }
 
+
+    private Boolean viewIsCached(String name) {
+        return views.containsKey(name);
+    }
+
+    private void cacheView(String name, View view) {
+        if (!views.containsKey(name)) {
+            views.put(name, view);
+        }
+    }
 
     @FXML
     private void showPersons() throws Exception{
         this.scrollPane.setContent(null);
         try{
-            PersonsView pv = new PersonsView();
-
+            PersonsView pv;
+            if (viewIsCached("persons")) {
+                pv = (PersonsView) views.get("persons");
+            } else {
+                pv = new PersonsView();
+                cacheView("persons", pv);
+            }
             this.scrollPane.setFitToHeight(true);
             this.scrollPane.setFitToWidth(true);
             pv.minHeightProperty().bind(this.scrollPane.heightProperty());
@@ -81,11 +101,16 @@ public class MainViewController {
     private void showSubjects() {
         this.scrollPane.setContent(null);
         try {
-            FishView fish = new FishView();
-            fish.prefHeightProperty().bind(this.scrollPane.heightProperty());
-            fish.prefWidthProperty().bind(this.scrollPane.widthProperty());
-            this.scrollPane.setContent(fish);
-            this.subjectsPane.setContent(fish.getControls());
+            FishView fv;
+            if (viewIsCached("subjects")) {
+                fv = (FishView) views.get("subjects");
+            } else {
+                fv = new FishView();
+                cacheView("subjects", fv);
+            }
+            fv.prefHeightProperty().bind(this.scrollPane.heightProperty());
+            fv.prefWidthProperty().bind(this.scrollPane.widthProperty());
+            this.scrollPane.setContent(fv);
             collapsePanes(subjectsPane);
         } catch(Exception e){
             e.printStackTrace();}
@@ -110,7 +135,13 @@ public class MainViewController {
     private void showInventory() {
         this.scrollPane.setContent(null);
         try {
-            InventoryController inventory = new InventoryController();
+            InventoryController inventory;
+            if (viewIsCached("inventory")) {
+                inventory = (InventoryController) views.get("inventory");
+            } else {
+                inventory = new InventoryController();
+                cacheView("inventory", inventory);
+            }
             inventory.prefHeightProperty().bind(this.scrollPane.heightProperty());
             inventory.prefWidthProperty().bind(this.scrollPane.widthProperty());
             this.scrollPane.setContent(inventory);
@@ -126,7 +157,13 @@ public class MainViewController {
         this.scrollPane.setContent(null);
         this.licensesPane.setContent(null);
         try {
-            HousingView housingView = new HousingView();
+            HousingView housingView;
+            if (viewIsCached("housing")) {
+                housingView = (HousingView) views.get("housing");
+            } else {
+                housingView = new HousingView();
+                cacheView("housing", housingView);
+            }
             housingView.prefHeightProperty().bind(this.scrollPane.heightProperty());
             housingView.prefWidthProperty().bind(this.scrollPane.widthProperty());
             this.scrollPane.setContent(housingView);
@@ -145,7 +182,13 @@ public class MainViewController {
         } else {
             this.licensesPane.setContent(null);
             try {
-                LicenseView licenseView = new LicenseView();
+                LicenseView licenseView;
+                if (viewIsCached("license")) {
+                    licenseView = (LicenseView) views.get("license");
+                } else {
+                    licenseView = new LicenseView();
+                    cacheView("license", licenseView);
+                }
                 licenseView.prefHeightProperty().bind(this.scrollPane.heightProperty());
                 licenseView.prefWidthProperty().bind(this.scrollPane.widthProperty());
                 this.scrollPane.setContent(licenseView);
