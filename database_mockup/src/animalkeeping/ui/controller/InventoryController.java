@@ -1,10 +1,7 @@
 package animalkeeping.ui.controller;
 
 import animalkeeping.model.*;
-import animalkeeping.ui.ControlLabel;
-import animalkeeping.ui.HousingTable;
-import animalkeeping.ui.InventoryTable;
-import animalkeeping.ui.Main;
+import animalkeeping.ui.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -27,7 +24,7 @@ import java.util.*;
 /**
  * Created by jan on 14.01.17.
  */
-public class InventoryController extends VBox implements Initializable {
+public class InventoryController extends VBox implements Initializable, View {
     @FXML private PieChart populationChart;
     @FXML private VBox unitsBox;
     @FXML private VBox chartVbox;
@@ -155,6 +152,7 @@ public class InventoryController extends VBox implements Initializable {
         tableScrollPane.setContent(table);
     }
 
+    @Override
     public  VBox getControls() {
         return controls;
     }

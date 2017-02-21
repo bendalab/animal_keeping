@@ -6,8 +6,6 @@ import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -29,7 +27,7 @@ import java.util.*;
 
 import static animalkeeping.util.DateTimeHelper.getDateTime;
 
-public class FishView extends VBox implements Initializable {
+public class FishView extends VBox implements Initializable, View {
     @FXML private ScrollPane tableScrollPane;
     @FXML private TextField idField;
     @FXML private TextField aliasField;
@@ -328,6 +326,7 @@ public class FishView extends VBox implements Initializable {
         notesTable.getItems().removeAll(n);
     }
 
+    @Override
     public VBox getControls() {
         return controls;
     }

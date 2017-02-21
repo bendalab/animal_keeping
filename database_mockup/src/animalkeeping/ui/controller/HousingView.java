@@ -24,7 +24,7 @@ import java.util.ResourceBundle;
 import static animalkeeping.util.Dialogs.*;
 
 
-public class HousingView extends VBox implements Initializable {
+public class HousingView extends VBox implements Initializable, View {
     @FXML private TextField dimensionsField;
     @FXML private TextField typeField;
     @FXML private TextField populationField;
@@ -309,7 +309,8 @@ public class HousingView extends VBox implements Initializable {
     }
 
 
-    VBox getControls() {
+    @Override
+    public VBox getControls() {
         return controls;
     }
 
