@@ -1,5 +1,8 @@
-package animalkeeping.model;
+package animalkeeping.ui;
 
+import animalkeeping.model.Entity;
+import animalkeeping.model.Note;
+import animalkeeping.model.Person;
 import animalkeeping.ui.Main;
 import animalkeeping.util.DateTimeHelper;
 import javafx.scene.control.*;
