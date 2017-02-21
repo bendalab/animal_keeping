@@ -32,8 +32,10 @@
                            <children>
                               <GridPane alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="130.0" prefWidth="174.0" vgap="5.0">
                                  <columnConstraints>
-                                    <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="275.0" />
+                                    <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="173.0" minWidth="55.0" prefWidth="111.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="171.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="95.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="247.0" />
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints />
@@ -44,24 +46,24 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
                                  </rowConstraints>
                                  <children>
-                                    <Label text="Name" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="NEVER" />
-                                    <Label text="Species" GridPane.rowIndex="3" />
-                                    <Label text="Supplier" GridPane.rowIndex="4" />
-                                    <Label text="Fish ID" GridPane.rowIndex="1" />
-                                    <TextField fx:id="idField" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="idTextField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-                                    <TextField fx:id="aliasField" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Alias textField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-                                    <TextField fx:id="speciesField" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Species name textField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
-                                    <TextField fx:id="supplierField" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Supplier textField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
-                                    <Label text="Alive" GridPane.rowIndex="5" />
-                                    <Label fx:id="aliveField" text="Alive??" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <Label text="In lab since" GridPane.rowIndex="3" />
+                                    <Label text="Origin" GridPane.rowIndex="4" />
+                                    <Label text="ID" GridPane.rowIndex="1" />
+                                    <Label text="Current status" GridPane.rowIndex="5" />
+                                    <Label fx:id="aliveField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <Label fx:id="idLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label text="Name" GridPane.rowIndex="2" />
+                                    <Label fx:id="housingStartLabel" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+                                    <Label fx:id="nameLabel" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                                    <Label fx:id="idLabel" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                                    <Label text="Until" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
+                                    <Label fx:id="housingEndLabel" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
+                                    <Label fx:id="originLabel" prefHeight="16.0" prefWidth="72.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+                                    <Label fx:id="statusLabel" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.rowSpan="2147483647" />
+                                    <Label text="Species" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                                    <Label fx:id="speciesLabel" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
                                  </children>
                               </GridPane>
-                              <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="29.0" prefWidth="598.0" spacing="5.0">
-                                 <children>
-                                    <Button mnemonicParsing="false" text="edit" />
-                                    <Button mnemonicParsing="false" text="delete" />
-                                 </children>
-                              </HBox>
                            </children>
                         </VBox>
                      </content>
