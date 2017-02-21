@@ -142,12 +142,14 @@ public class MainViewController {
                 fv.prefHeightProperty().bind(this.scrollPane.heightProperty());
                 fv.prefWidthProperty().bind(this.scrollPane.widthProperty());
                 this.scrollPane.setContent(fv);
+                subjectsPane.setContent(fv.getControls());
                 collapsePanes(subjectsPane);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
 
     @FXML
     private void showTreatments() {
@@ -290,6 +292,14 @@ public class MainViewController {
     @FXML
     private void disconnectFromDatabase() {
         Main.sessionFactory.close();
+    }
+
+
+    @FXML
+    private void refreshView() {
+        if (this.scrollPane.getContent() instanceof View) {
+            ((View) this.scrollPane.getContent()).refresh();
+        }
     }
 
 
