@@ -50,7 +50,6 @@
                                     <Label text="Origin" GridPane.rowIndex="4" />
                                     <Label text="ID" GridPane.rowIndex="1" />
                                     <Label text="Current status" GridPane.rowIndex="5" />
-                                    <Label fx:id="aliveField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                                     <Label fx:id="idLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                     <Label text="Name" GridPane.rowIndex="2" />
                                     <Label fx:id="housingStartLabel" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
@@ -58,7 +57,7 @@
                                     <Label fx:id="idLabel" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
                                     <Label text="Until" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
                                     <Label fx:id="housingEndLabel" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
-                                    <Label fx:id="originLabel" prefHeight="16.0" prefWidth="72.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+                                    <Label fx:id="originLabel" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
                                     <Label fx:id="statusLabel" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.rowSpan="2147483647" />
                                     <Label text="Species" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
                                     <Label fx:id="speciesLabel" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
