@@ -53,15 +53,15 @@
                                     <Label text="End date:" GridPane.rowIndex="6" />
                                     <Label text="Responsible person:" GridPane.rowIndex="7" />
                                     <Label text="Deputy:" GridPane.rowIndex="8" />
-                                    <Label fx:id="idLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <Label fx:id="nameLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <Label fx:id="permitNoLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                    <Label fx:id="startDateLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                    <Label fx:id="endDateLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                    <Label fx:id="respPersonLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                                    <Label fx:id="deputyPersonLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                    <Label fx:id="idLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label fx:id="nameLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label fx:id="permitNoLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <Label fx:id="startDateLabel" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <Label fx:id="endDateLabel" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                    <Label fx:id="respPersonLabel" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                    <Label fx:id="deputyPersonLabel" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                                     <Label text="Filing agency:" GridPane.rowIndex="4" />
-                                    <Label fx:id="agencyLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    <Label fx:id="agencyLabel" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                  </children>
                               </GridPane>
                               <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="29.0" prefWidth="598.0" spacing="5.0" />
