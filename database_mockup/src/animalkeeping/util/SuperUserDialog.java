@@ -47,10 +47,6 @@ public class SuperUserDialog extends Dialogs {
         });
 
         Optional<Boolean> result = dialog.showAndWait();
-        if (!result.isPresent() && !result.get()) {
-            showInfo("Something went wrong while adding a new user to the database!");
-        } else {
-            showInfo("Successfully added user to database!");
-        }
+
     }
 }

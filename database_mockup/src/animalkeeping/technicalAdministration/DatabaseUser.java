@@ -37,7 +37,7 @@ public class DatabaseUser {
 
         }
         catch (SQLException e) {
-            System.out.println("Something went wrong. Did you input the correct password?");
+
             System.out.println( e.getMessage() );
         }
             Session session = Main.sessionFactory.openSession();
