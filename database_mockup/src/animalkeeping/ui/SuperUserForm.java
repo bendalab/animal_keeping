@@ -20,6 +20,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static animalkeeping.util.Dialogs.showInfo;
+
 /**
  * Created by huben on 22.02.17.
  */
@@ -60,11 +62,13 @@ public class SuperUserForm extends VBox{
         String url = "jdbc:mysql://localhost:3306/animal_keeping";
     try {
         Connection connection = DriverManager.getConnection(url, rootName, rootPassword);
-        AddDatabaseUserDialog.addDatabaseUser(connection);
+
         return connection;
     }
     catch (SQLException e){
         e.printStackTrace();
+        System.out.println("Access denied!");
+        showInfo("Access denied!");
     }
     return null;
 

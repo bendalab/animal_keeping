@@ -34,8 +34,14 @@ public class SuperUserDialog extends Dialogs {
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 Connection connection = suf.openDatabaseUserDialog(suf.getSuperUserName(), suf.getSuperUserPassword());
+            if (connection!= null){
                 AddDatabaseUserDialog.addDatabaseUser(connection);
                 return true;
+            }
+            else {
+                return false;
+            }
+
             }
             return false;
         });
