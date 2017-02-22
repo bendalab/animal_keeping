@@ -20,6 +20,7 @@ public class MainViewController {
     @FXML private TitledPane subjectsPane;
     @FXML private TitledPane treatmentsPane;
     @FXML private Button addUsrBtn;
+    @FXML private Button databaseUserAddBtn;
     @FXML private TextField idField;
     @FXML private ScrollPane scrollPane;
     @FXML private VBox masterBox;
@@ -248,6 +249,8 @@ public class MainViewController {
         addUsrBtn.setDisable(false);
         animalHousingPane.setDisable(false);
         licensesPane.setDisable(false);
+        databaseUserAddBtn.setDisable(false);
+
         showInventory();
     }
 
