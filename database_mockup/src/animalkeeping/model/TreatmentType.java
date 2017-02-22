@@ -1,5 +1,8 @@
 package animalkeeping.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by jan on 28.12.16.
  */
@@ -9,6 +12,9 @@ public class TreatmentType {
     private String description;
     private Boolean invasive;
     private License license;
+    private Set<Treatment> treatments =
+            new HashSet<>(0);
+
 
     public TreatmentType() {}
 
@@ -56,6 +62,14 @@ public class TreatmentType {
 
     public void setLicense(License license) {
         this.license = license;
+    }
+
+    public Set<Treatment> getTreatments() {
+        return treatments;
+    }
+
+    public void setTreatments(Set<Treatment> treatments) {
+        this.treatments = treatments;
     }
 
     @Override

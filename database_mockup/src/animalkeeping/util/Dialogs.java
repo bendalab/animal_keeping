@@ -2,6 +2,8 @@ package animalkeeping.util;
 
 import animalkeeping.model.HousingType;
 import animalkeeping.model.HousingUnit;
+import animalkeeping.model.License;
+import animalkeeping.model.Quota;
 import animalkeeping.ui.*;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
@@ -153,6 +155,73 @@ public class Dialogs {
             }
         }
         return null;
+    }
+
+
+    public static void editLicenseDialog(License l) {
+        LicenseForm lf = new LicenseForm(l);
+        Dialog<License> dialog = new Dialog<>();
+        dialog.setTitle("Add/Edit licence... ");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(lf);
+        dialog.setWidth(200);
+        lf.prefWidthProperty().bind(dialog.widthProperty());
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return lf.persistLicense();
+            }
+            return null;
+        });
+
+        Optional<License> result = dialog.showAndWait();
+        if (!result.isPresent()) {
+            showInfo("Something went wrong while creating the License!");
+        }
+    }
+
+    public static void editQuotaDialog(Quota q) {
+        editQuotaDialog(q, null);
+    }
+
+    public static void editQuotaDialog(License l) {
+        editQuotaDialog(null, l);
+    }
+
+    private static void editQuotaDialog(Quota q, License l) {
+        QuotaForm qf;
+        if (q != null)
+            qf = new QuotaForm(q);
+        else if (l != null)
+            qf = new QuotaForm(l);
+        else
+            qf = new QuotaForm();
+        Dialog<Quota> dialog = new Dialog<>();
+        dialog.setTitle("Add/Edit quota ... ");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(qf);
+        dialog.setWidth(200);
+        qf.prefWidthProperty().bind(dialog.widthProperty());
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return qf.persistQuota();
+            }
+            return null;
+        });
+
+        Optional<Quota> result = dialog.showAndWait();
+        if (!result.isPresent()) {
+            showInfo("Something went wrong while creating the quota!");
+        }
     }
 }
 

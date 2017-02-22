@@ -1,7 +1,7 @@
 package animalkeeping.ui.controller;
 
 import animalkeeping.ui.*;
-import animalkeeping.util.AddDatabaseUserDialog;
+
 import animalkeeping.util.SuperUserDialog;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +15,7 @@ import java.util.Vector;
 public class MainViewController {
     @FXML private TitledPane animalHousingPane;
     @FXML private TitledPane personsPane;
+    @FXML private TitledPane licensesPane;
     @FXML private TitledPane inventoryPane;
     @FXML private TitledPane subjectsPane;
     @FXML private TitledPane treatmentsPane;
@@ -44,13 +45,17 @@ public class MainViewController {
                 e.printStackTrace();
             }
         }
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+        scrollPane.prefWidthProperty().bind(masterBox.prefWidthProperty());
+        scrollPane.prefHeightProperty().bind(masterBox.prefWidthProperty());
         panes = new Vector<>();
         panes.add(inventoryPane);
         panes.add(subjectsPane);
         panes.add(treatmentsPane);
         panes.add(personsPane);
         panes.add(animalHousingPane);
-
+        panes.add(licensesPane);
     }
 
 
@@ -121,11 +126,9 @@ public class MainViewController {
     @FXML
     private void showHousingUnits() {
         this.scrollPane.setContent(null);
-        this.animalHousingPane.setContent(null);
+        this.licensesPane.setContent(null);
         try {
             HousingView housingView = new HousingView();
-            this.scrollPane.setFitToHeight(true);
-            this.scrollPane.setFitToWidth(true);
             housingView.prefHeightProperty().bind(this.scrollPane.heightProperty());
             housingView.prefWidthProperty().bind(this.scrollPane.widthProperty());
             this.scrollPane.setContent(housingView);
@@ -134,7 +137,6 @@ public class MainViewController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @FXML
@@ -143,6 +145,25 @@ public class MainViewController {
         //AddDatabaseUserDialog.addDatabaseUser();
     }
 
+
+    @FXML
+    private void showLicenseView() {
+        if (!licensesPane.isExpanded()) {
+            showInventory();
+        } else {
+            this.licensesPane.setContent(null);
+            try {
+                LicenseView licenseView = new LicenseView();
+                licenseView.prefHeightProperty().bind(this.scrollPane.heightProperty());
+                licenseView.prefWidthProperty().bind(this.scrollPane.widthProperty());
+                this.scrollPane.setContent(licenseView);
+                this.licensesPane.setContent(licenseView.getControls());
+                collapsePanes(licensesPane);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     private Long looksLikeId(String text) {
         Long aLong = null;
@@ -226,6 +247,7 @@ public class MainViewController {
         findPane.setDisable(false);
         addUsrBtn.setDisable(false);
         animalHousingPane.setDisable(false);
+        licensesPane.setDisable(false);
         showInventory();
     }
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+
+<TableView fx:id="quotaTable" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111">
+  <columns>
+      <TableColumn fx:id="idCol" prefWidth="75.0" text="Id" />
+    <TableColumn fx:id="speciesCol" prefWidth="75.0" text="species" />
+    <TableColumn fx:id="numberCol" prefWidth="75.0" text="max. count" />
+      <TableColumn fx:id="usedCol" prefWidth="75.0" text="used" />
+      <TableColumn fx:id="progressCol" prefWidth="75.0" text="available" />
+  </columns>
+</TableView>

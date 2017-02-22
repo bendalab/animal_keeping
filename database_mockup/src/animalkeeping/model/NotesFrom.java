@@ -1,6 +1,7 @@
 package animalkeeping.model;
 
 import animalkeeping.ui.Main;
+import animalkeeping.util.DateTimeHelper;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -13,14 +14,11 @@ import org.hibernate.Session;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by grewe on 2/15/17.
- */
+
 public abstract class NotesFrom<T extends Note, E extends Entity> extends VBox {
     protected E entity;
     protected T note_entity;
@@ -50,12 +48,7 @@ public abstract class NotesFrom<T extends Note, E extends Entity> extends VBox {
         commentArea.setText(note_entity.getComment());
         personComboBox.getSelectionModel().select(note_entity.getPerson());
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        LocalDate d = null;
-        if (note_entity.getDate() instanceof java.sql.Date) {
-            d = ((java.sql.Date) note_entity.getDate()).toLocalDate();
-        } else {
-            d = note_entity.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        }
+        LocalDate d = DateTimeHelper.toLocalDate(note_entity.getDate());
         datePicker.setValue(d);
         timeField.setText(timeFormat.format(note_entity.getDate()));
     }

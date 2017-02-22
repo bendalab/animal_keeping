@@ -4,6 +4,8 @@ package animalkeeping.model;
  * Created by jan on 27.12.16.
  */
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class License {
     private Long id;
@@ -11,6 +13,11 @@ public class License {
     private String number;
     private Date startDate;
     private Date endDate;
+    private Set<Quota> quotas =
+            new HashSet<>(0);
+    private Set<TreatmentType> treatmentTypes =
+            new HashSet<>(0);
+
 
     public License() { }
 
@@ -58,6 +65,22 @@ public class License {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public Set<Quota> getQuotas() {
+        return quotas;
+    }
+
+    public void setQuotas(Set<Quota> quota) {
+        this.quotas = quota;
+    }
+
+    public Set<TreatmentType> getTreatmentTypes() {
+        return treatmentTypes;
+    }
+
+    public void setTreatmentTypes(Set<TreatmentType> treatmentTypes) {
+        this.treatmentTypes = treatmentTypes;
     }
 
     @Override

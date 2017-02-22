@@ -14,6 +14,12 @@
         <property name="invasive"  type="boolean" column="invasive" not-null="true"/>
 
         <many-to-one name="license" column="license_id" class="License" not-null="false"/>
-
+        <set name="treatments" table="census_treatment"
+             inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="type_id" not-null="true" />
+            </key>
+            <one-to-many class="Treatment" />
+        </set>
     </class>
 </hibernate-mapping>
