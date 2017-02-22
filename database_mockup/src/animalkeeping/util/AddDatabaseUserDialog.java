@@ -35,7 +35,7 @@ public class AddDatabaseUserDialog extends Dialogs {
 
         Optional<Boolean> result = dialog.showAndWait();
         if (result.isPresent() && result.get()) {
-            showInfo("Successfully added user to database!");
+            //showInfo("Successfully added user to database!");
         }
     }
 }
