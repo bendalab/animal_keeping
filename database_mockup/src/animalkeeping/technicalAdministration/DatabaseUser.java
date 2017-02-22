@@ -2,10 +2,13 @@ package animalkeeping.technicalAdministration;
 
 import animalkeeping.model.Subject;
 import animalkeeping.ui.Main;
+import animalkeeping.ui.SuperUserForm;
+import animalkeeping.util.SuperUserDialog;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,13 +20,15 @@ public class DatabaseUser {
     String password;
 
 
-    public DatabaseUser(String name, String password, DatabaseUserType type){
+    public DatabaseUser(String name, String password, DatabaseUserType type, Connection connection){
         this.name = name;
         this.password = password;
-        String url = "jdbc:mysql://localhost:3306/animal_keeping";
+
+        SuperUserDialog superDialog = new SuperUserDialog();
+
+
 
         try {
-            Connection connection = DriverManager.getConnection(url, name, password);
             Statement stmt = connection.createStatement();
             String createUser = "CREATE USER " + name + "@localhost IDENTIFIED BY \"" + password + "\"";
             String grantPrivilege = "GRANT " + type.getPrivileges() + " ON * . * TO '" + name + "'@'localhost'";
@@ -31,8 +36,8 @@ public class DatabaseUser {
             stmt.executeUpdate(grantPrivilege);
 
         }
-        catch (SQLException e)
-        {
+        catch (SQLException e) {
+            System.out.println("Something went wrong. Did you input the correct password?");
             System.out.println( e.getMessage() );
         }
             Session session = Main.sessionFactory.openSession();

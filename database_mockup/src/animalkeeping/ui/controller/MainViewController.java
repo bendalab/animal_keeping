@@ -2,6 +2,7 @@ package animalkeeping.ui.controller;
 
 import animalkeeping.ui.*;
 import animalkeeping.util.AddDatabaseUserDialog;
+import animalkeeping.util.SuperUserDialog;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -138,7 +139,8 @@ public class MainViewController {
 
     @FXML
     private void showDatabaseUserAddView(){
-        AddDatabaseUserDialog.addDatabaseUser();
+        SuperUserDialog.openConnection();
+        //AddDatabaseUserDialog.addDatabaseUser();
     }
 
 

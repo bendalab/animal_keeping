@@ -1,26 +1,31 @@
 package animalkeeping.util;
 
 import animalkeeping.ui.AddDatabaseUserForm;
+import animalkeeping.ui.SuperUserForm;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Optional;
 
 /**
- * Created by huben on 20.02.17.
+ * Created by huben on 22.02.17.
  */
-public class AddDatabaseUserDialog extends Dialogs {
+public class SuperUserDialog extends Dialogs {
+    static String[] output;
 
-    public static void addDatabaseUser(Connection connection) {
-        AddDatabaseUserForm aduf = new AddDatabaseUserForm();
+    public static void openConnection() {
+        SuperUserForm suf = new SuperUserForm();
+        output = new String[2];
         Dialog<Boolean> dialog = new Dialog<>();
-        dialog.setTitle("Create new Database User");
+        dialog.setTitle("Please input username and password of user with create user privilege");
         dialog.setResizable(true);
-        dialog.getDialogPane().setContent(aduf);
+        dialog.getDialogPane().setContent(suf);
         dialog.setWidth(300);
-        aduf.prefWidthProperty().bind(dialog.widthProperty());
+        suf.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -28,9 +33,11 @@ public class AddDatabaseUserDialog extends Dialogs {
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
-                return aduf.addUser(connection);
+                Connection connection = suf.openDatabaseUserDialog(suf.getSuperUserName(), suf.getSuperUserPassword());
+                AddDatabaseUserDialog.addDatabaseUser(connection);
+                return true;
             }
-            return null;
+            return false;
         });
 
         Optional<Boolean> result = dialog.showAndWait();
