@@ -37,7 +37,6 @@ public class QuotaForm extends VBox {
 
     public QuotaForm(License l) {
         this();
-        init();
         licenseCombo.getSelectionModel().select(l);
     }
 
