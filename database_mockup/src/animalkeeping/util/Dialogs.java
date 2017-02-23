@@ -5,12 +5,13 @@ import animalkeeping.model.HousingUnit;
 import animalkeeping.model.License;
 import animalkeeping.model.Quota;
 import animalkeeping.ui.*;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.util.Pair;
 import org.hibernate.Session;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Optional;
 
 public class Dialogs {
@@ -222,6 +223,59 @@ public class Dialogs {
         if (!result.isPresent()) {
             showInfo("Something went wrong while creating the quota!");
         }
+    }
+
+
+    public  static Pair<Date, Date> getDateInterval() {
+        Label startLabel = new Label("Start date:");
+        DatePicker sdp = new DatePicker(LocalDate.now().minusYears(1));
+
+        DatePicker edp = new DatePicker(LocalDate.now());
+        Label endLabel = new Label("End date:");
+
+        GridPane grid = new GridPane();
+        ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
+        column1.setHgrow(Priority.NEVER);
+        ColumnConstraints column2 = new ColumnConstraints(100, 150, Double.MAX_VALUE);
+        column2.setHgrow(Priority.ALWAYS);
+
+        grid.getColumnConstraints().addAll(column1, column2);
+        edp.prefWidthProperty().bind(column2.maxWidthProperty());
+        sdp.prefWidthProperty().bind(column2.maxWidthProperty());
+
+        grid.setVgap(5);
+        grid.setHgap(2);
+        grid.add(startLabel, 0, 0);
+        grid.add(sdp, 1, 0);
+        grid.add(endLabel, 0, 1);
+        grid.add(edp, 1, 1);
+
+        Dialog<Pair<Date, Date>> dialog = new Dialog<>();
+        dialog.setTitle("Specify a time interval ... ");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(grid);
+        dialog.setWidth(100);
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                Date start = DateTimeHelper.localDateToUtilDate(sdp.getValue());
+                Date end = DateTimeHelper.localDateToUtilDate(edp.getValue());
+                Pair<Date, Date> interval = new Pair<>(start, end);
+                return interval;
+            }
+            return null;
+        });
+
+        Optional<Pair<Date, Date>> result = dialog.showAndWait();
+        if (!result.isPresent()) {
+            showInfo("Something went wrong while creating the quota!");
+            return  null;
+        }
+        return result.get();
     }
 }
 
