@@ -20,6 +20,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -49,7 +50,6 @@ public class InventoryController extends VBox implements Initializable, View {
     private VBox controls;
     private HashMap<String, HousingUnit> unitsHashMap;
     private ControlLabel animalUseLabel;
-    private ControlLabel exportLabel;
     private ControlLabel exportStock;
 
 
@@ -67,9 +67,9 @@ public class InventoryController extends VBox implements Initializable, View {
     public void initialize(URL location, ResourceBundle resources) {
         unitsHashMap = new HashMap<>();
         controls = new VBox();
-        animalUseLabel = new ControlLabel("animal use", true);
-        exportLabel = new ControlLabel("export register", true);
-        exportStock = new ControlLabel("export stock", false);
+        animalUseLabel = new ControlLabel("export animal use", true);
+        animalUseLabel.setTooltip(new Tooltip("export excel sheet containing the animal use per license"));
+        exportStock = new ControlLabel("export stock list", false);
         exportStock.setTooltip(new Tooltip("Export current stock list to excel sheet."));
         exportStock.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
@@ -77,7 +77,6 @@ public class InventoryController extends VBox implements Initializable, View {
             }
         });
         controls.getChildren().add(animalUseLabel);
-        controls.getChildren().add(exportLabel);
         controls.getChildren().add(exportStock);
         this.fillList();
         listAllPopulation();
@@ -290,14 +289,21 @@ public class InventoryController extends VBox implements Initializable, View {
             }
         }
 
-
-        //Write the workbook in file system
-        try {
-            FileOutputStream out = new FileOutputStream(new File("Writesheet.xlsx"));
-            workbook.write(out);
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Select output file");
+        //chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("xlsx"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel doc(*.xlsx)", "*.xlsx"));
+        chooser.setInitialFileName("*.xlsx");
+        File f = chooser.showSaveDialog(Main.getPrimaryStage());
+        if (f != null) {
+            //Write the workbook in file system
+            try {
+                FileOutputStream out = new FileOutputStream(f);
+                workbook.write(out);
+                out.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
