@@ -3,6 +3,9 @@ package animalkeeping.model;
 /**
  * Created by jan on 27.12.16.
  */
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -81,6 +84,32 @@ public class License {
 
     public void setTreatmentTypes(Set<TreatmentType> treatmentTypes) {
         this.treatmentTypes = treatmentTypes;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof License))
+            return false;
+        if (obj == this)
+            return true;
+
+        License rhs = (License) obj;
+        return new EqualsBuilder().
+                        append(getName(), rhs.getName()).
+                        append(getNumber(), rhs.getNumber()).
+                        append(getId(), rhs.getId()).
+                        isEquals();
+    }
+
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).
+                append(getId()).
+                append(getName()).
+                append(getNumber()).
+                toHashCode();
     }
 
     @Override

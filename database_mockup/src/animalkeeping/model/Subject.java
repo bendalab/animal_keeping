@@ -2,6 +2,8 @@ package animalkeeping.model;
 
 import animalkeeping.logging.ChangeLogInterface;
 import animalkeeping.logging.ChangeLogUtil;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -103,6 +105,31 @@ public class Subject extends Entity implements ChangeLogInterface {
     public void setNotes(Set<SubjectNote> notes) {
         this.notes = notes;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Subject))
+            return false;
+        if (obj == this)
+            return true;
+
+        Subject rhs = (Subject) obj;
+        return new EqualsBuilder().
+                append(getName(), rhs.getName()).
+                append(getSpeciesType().getName(), rhs.getSpeciesType().getName()).
+                append(getId(), rhs.getId()).
+                isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).
+                append(getId()).
+                append(getName()).
+                append(getSpeciesType().getName()).
+                toHashCode();
+    }
+
 
     @Override
     public String toString() {
