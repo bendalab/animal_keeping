@@ -28,8 +28,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-
-import javax.persistence.criteria.CriteriaBuilder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -44,12 +42,12 @@ public class InventoryController extends VBox implements Initializable, View {
     @FXML private PieChart populationChart;
     @FXML private VBox unitsBox;
     @FXML private VBox chartVbox;
-    @FXML private Label allLabel;
     @FXML private ScrollPane tableScrollPane;
     private VBox controls;
     private HashMap<String, HousingUnit> unitsHashMap;
     private ControlLabel animalUseLabel;
     private ControlLabel exportStock;
+    private ControlLabel allLabel;
 
 
     public InventoryController() {
@@ -64,6 +62,12 @@ public class InventoryController extends VBox implements Initializable, View {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        allLabel = new ControlLabel("All", false);
+        allLabel.setOnMouseClicked(event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                listAllPopulation();
+            }
+        });
         unitsHashMap = new HashMap<>();
         controls = new VBox();
         animalUseLabel = new ControlLabel("export animal use", false);
@@ -82,11 +86,13 @@ public class InventoryController extends VBox implements Initializable, View {
         });
         controls.getChildren().add(animalUseLabel);
         controls.getChildren().add(exportStock);
-        this.fillList();
-        listAllPopulation();
+        refresh();
     }
 
     private void fillList() {
+        unitsBox.getChildren().clear();
+        unitsBox.getChildren().add(allLabel);
+        unitsBox.setMargin(allLabel, new Insets(0., 0., 5., 5.0 ));
         List<HousingUnit> result = null;
         Session session = Main.sessionFactory.openSession();
         try {
@@ -104,8 +110,7 @@ public class InventoryController extends VBox implements Initializable, View {
         if (result != null) {
             for (HousingUnit h : result) {
                 unitsHashMap.put(h.getName(), h);
-                Label label = new Label(h.getName());
-                label.setUnderline(true);
+                ControlLabel label = new ControlLabel(h.getName(), false);
                 label.setTextFill(allLabel.getTextFill());
                 label.setOnMouseClicked(event -> listPopulation(unitsHashMap.get(h.getName())));
                 unitsBox.getChildren().add(label);
@@ -119,7 +124,6 @@ public class InventoryController extends VBox implements Initializable, View {
     @FXML
     private void listAllPopulation() {
         List<SpeciesType> result = null;
-
         List<Housing> housings = null;
         Session session = Main.sessionFactory.openSession();
         try {
@@ -152,7 +156,6 @@ public class InventoryController extends VBox implements Initializable, View {
 
     private void listPopulation(HousingUnit housingUnit) {
         Set<Housing> housings = housingUnit.getAllHousings(true);
-
         Set<Subject> subjects = new HashSet<>();
         collectSubjects(subjects, housingUnit, true);
 
@@ -186,7 +189,8 @@ public class InventoryController extends VBox implements Initializable, View {
 
     @Override
     public void refresh() {
-        //TODO refresh
+        fillList();
+        listAllPopulation();
     }
 
     private void collectSubjects(Set<Subject> subjects, HousingUnit h) {
