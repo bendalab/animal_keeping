@@ -19,6 +19,7 @@ import org.hibernate.Session;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 
@@ -126,6 +127,10 @@ public class LicenseView extends VBox implements Initializable, View {
         addQuota.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 Dialogs.editQuotaDialog(licenseTable.getSelectionModel().getSelectedItem());
+                if (!licenseTable.getSelectionModel().isEmpty()) {
+                    refreshLicense(licenseTable.getSelectionModel().getSelectedItem());
+                    qv.setQuota(licenseTable.getSelectionModel().getSelectedItem().getQuotas());
+                }
             }
         });
         controls.getChildren().add(addQuota);
@@ -134,6 +139,10 @@ public class LicenseView extends VBox implements Initializable, View {
         editQuotaLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 Dialogs.editQuotaDialog(qv.getSelectedItem());
+                if (!licenseTable.getSelectionModel().isEmpty()) {
+                    refreshLicense(licenseTable.getSelectionModel().getSelectedItem());
+                    qv.setQuota(licenseTable.getSelectionModel().getSelectedItem().getQuotas());
+                }
             }
         });
         controls.getChildren().add(editQuotaLabel);
@@ -150,18 +159,19 @@ public class LicenseView extends VBox implements Initializable, View {
 
     private void setInfo(License l) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        idLabel.setText(l.getId().toString());
-        nameLabel.setText(l.getName());
-        permitNoLabel.setText(l.getNumber());
-        startDateLabel.setText(l.getStartDate() != null ? sdf.format(l.getStartDate()) : "");
-        endDateLabel.setText(l.getEndDate() != null ? sdf.format(l.getEndDate()) : "");
-        respPersonLabel.setText("n.a.");
-        deputyPersonLabel.setText("n.a.");
-        agencyLabel.setText("n.a.");
+        idLabel.setText(l != null ? l.getId().toString() : "");
+        nameLabel.setText(l != null ? l.getName() : "");
+        permitNoLabel.setText(l !=  null ? l.getNumber() : "");
+        startDateLabel.setText(l !=null ? l.getStartDate() != null ? sdf.format(l.getStartDate()) : "" : "");
+        endDateLabel.setText(l != null ? l.getEndDate() != null ? sdf.format(l.getEndDate()) : "" : "");
+        respPersonLabel.setText(l != null ? "n.a." : "");
+        deputyPersonLabel.setText(l != null ? "n.a." : "");
+        agencyLabel.setText(l != null ? "n.a." : "");
     }
 
 
     private void licenseSelected(License l) {
+        HashSet<Treatment> ts = new HashSet<>(0);
         setInfo(l);
         editLicenseLabel.setDisable(l == null);
         deleteLicenseLabel.setDisable(l == null);
@@ -169,13 +179,13 @@ public class LicenseView extends VBox implements Initializable, View {
 
         if (l != null) {
             qv.setQuota(l.getQuotas());
+            typeTable.setTreatmentTypes(l.getTreatmentTypes());
+            for (TreatmentType t : l.getTreatmentTypes()) {
+                ts.addAll(t.getTreatments());
+            }
         } else {
             qv.quotaTable.getItems().clear();
-        }
-        typeTable.setTreatmentTypes(l.getTreatmentTypes());
-        HashSet<Treatment> ts = new HashSet<>(0);
-        for (TreatmentType t : l.getTreatmentTypes()) {
-            ts.addAll(t.getTreatments());
+            typeTable.setTreatmentTypes(new ArrayList<>());
         }
         treatmentsTable.setTreatments(ts);
         timeline.setTreatments(ts);
@@ -188,6 +198,7 @@ public class LicenseView extends VBox implements Initializable, View {
 
     private void editLicense(License l) {
         Dialogs.editLicenseDialog(l);
+        licenseTable.refresh();
     }
 
 
@@ -201,7 +212,8 @@ public class LicenseView extends VBox implements Initializable, View {
         session.delete(l);
         session.getTransaction().commit();
         session.close();
-        licenseTable.getItems().remove(l);
+        licenseSelected(null);
+        licenseTable.remove(l);
     }
 
 
@@ -209,6 +221,7 @@ public class LicenseView extends VBox implements Initializable, View {
         Session session = Main.sessionFactory.openSession();
         session.beginTransaction();
         session.delete(q);
+        session.refresh(licenseTable.getSelectionModel().getSelectedItem());
         session.getTransaction().commit();
         session.close();
         if (!qv.removeItem(q)) {
@@ -224,6 +237,16 @@ public class LicenseView extends VBox implements Initializable, View {
 
     @Override
     public void refresh() {
-        //TODO refresh
+        licenseTable.getSelectionModel().clearSelection();
+        licenseSelected(null);
+        licenseTable.refresh();
+    }
+
+    private void refreshLicense(License l) {
+        Session session = Main.sessionFactory.openSession();
+        session.beginTransaction();
+        session.refresh(l);
+        session.getTransaction().commit();
+        session.close();
     }
 }
