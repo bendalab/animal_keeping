@@ -1,9 +1,6 @@
 package animalkeeping.util;
 
-import animalkeeping.model.HousingType;
-import animalkeeping.model.HousingUnit;
-import animalkeeping.model.License;
-import animalkeeping.model.Quota;
+import animalkeeping.model.*;
 import animalkeeping.ui.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -277,5 +274,40 @@ public class Dialogs {
         }
         return result.get();
     }
+
+
+    public static void editSubjectTypeDialog(SubjectType type) {
+        SubjectTypeForm std = new SubjectTypeForm(type);
+        Dialog<SubjectType> dialog = new Dialog<>();
+        dialog.setTitle("Subject type");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(std);
+        dialog.setWidth(200);
+        std.prefWidthProperty().bind(dialog.widthProperty());
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return std.persistSubjectType();
+            }
+            return null;
+        });
+        Optional<SubjectType> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            try {
+                Session session = Main.sessionFactory.openSession();
+                session.beginTransaction();
+                session.saveOrUpdate(result.get());
+                session.getTransaction().commit();
+                session.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
 
