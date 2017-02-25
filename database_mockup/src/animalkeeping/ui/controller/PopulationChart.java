@@ -36,6 +36,7 @@ public class PopulationChart extends VBox implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        this.setFillWidth(true);
     }
 
     @Override
@@ -44,11 +45,10 @@ public class PopulationChart extends VBox implements Initializable {
         label.setVisible(true);
         populationChart = new PieChart();
         populationChart.setLegendSide(Side.RIGHT);
-        populationChart.prefHeightProperty().bind(this.heightProperty());
-        populationChart.prefWidthProperty().bind(this.widthProperty());
-        chartBox.getChildren().clear();
-        //chartBox.getChildren().add(populationChart);
-        chartBox.getChildren().add(label);
+        populationChart.prefHeightProperty().bind(this.prefHeightProperty());
+        populationChart.prefWidthProperty().bind(this.prefWidthProperty());
+        this.getChildren().clear();
+        this.getChildren().add(label);
     }
 
 
@@ -64,9 +64,7 @@ public class PopulationChart extends VBox implements Initializable {
         HashMap<String, Integer> counts = new HashMap<>();
         for (Subject s : subjects) {
             if (counts.containsKey(s.getSpeciesType().getName())) {
-                Integer c = counts.get(s.getSpeciesType().getName());
-                c += 1;
-                counts.put(s.getSpeciesType().getName(), c);
+                counts.put(s.getSpeciesType().getName(), counts.get(s.getSpeciesType().getName()) + 1);
             } else {
                 counts.put(s.getSpeciesType().getName(), 1);
             }
@@ -77,11 +75,11 @@ public class PopulationChart extends VBox implements Initializable {
         }
         populationChart.setTitle(housingUnit.getName() + ": " + subjects.size());
         populationChart.setData(pieChartData);
-        chartBox.getChildren().clear();
+        this.getChildren().clear();
         if (pieChartData.isEmpty()) {
-            chartBox.getChildren().add(label);
+            this.getChildren().add(label);
         } else {
-            chartBox.getChildren().add(populationChart);
+            this.getChildren().add(populationChart);
         }
     }
 
