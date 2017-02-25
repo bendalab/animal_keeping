@@ -25,11 +25,6 @@ import static animalkeeping.util.Dialogs.*;
 
 
 public class HousingView extends VBox implements Initializable, View {
-    @FXML private TextField dimensionsField;
-    @FXML private TextField typeField;
-    @FXML private TextField populationField;
-    @FXML private TextField idField;
-    @FXML private Label nameLabel;
     @FXML private TreeTableView<HousingUnit> table;
     @FXML private TreeTableColumn<HousingUnit, String> unitsColumn;
     @FXML private TreeTableColumn<HousingUnit, String> typeColumn;
@@ -79,24 +74,24 @@ public class HousingView extends VBox implements Initializable, View {
         populationColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<HousingUnit, Number> hu) ->
                 new ReadOnlyIntegerWrapper(hu.getValue().getValue() != null ? hu.getValue().getValue().getAllHousings(true).size() : 0));
         populationColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.15));
+
+        tabVBox.prefHeightProperty().bind(unitsSplit.prefHeightProperty().subtract(unitsSplit.getDividers().get(0).positionProperty().multiply(unitsSplit.getPrefHeight())));
         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> setSelectedUnit(newSelection != null ? newSelection.getValue() : null));
-
-        plotTabPane.prefWidthProperty().bind(this.widthProperty());
-        plotTabPane.prefHeightProperty().bind(tabVBox.heightProperty());
+        table.prefWidthProperty().bind(this.prefWidthProperty().multiply(0.95));
+        plotTabPane.prefWidthProperty().bind(this.prefWidthProperty().multiply(0.95));
+        plotTabPane.prefHeightProperty().bind(tabVBox.prefHeightProperty());
         populationChart = new PopulationChart();
-        populationChart.prefHeightProperty().bind(plotTabPane.heightProperty());
-        populationChart.minWidthProperty().bind(plotTabPane.prefWidthProperty().multiply(0.95));
+        populationChart.prefHeightProperty().bind(plotTabPane.prefHeightProperty().multiply(0.8));
+        populationChart.prefWidthProperty().bind(this.prefWidthProperty().multiply(0.95));
         populationTab.setContent(populationChart);
-        unitsSplit.prefHeightProperty().bind(this.heightProperty().multiply(0.66));
-        unitsSplit.prefWidthProperty().bind(this.widthProperty());
-        typesScrollPane.prefHeightProperty().bind(this.heightProperty().multiply(0.33));
-        typesScrollPane.prefWidthProperty().bind(this.widthProperty());
+        unitsSplit.prefHeightProperty().bind(this.prefHeightProperty().multiply(0.6));
+        unitsSplit.prefWidthProperty().bind(this.prefWidthProperty());
 
         typesScrollPane.setContent(null);
+        typesScrollPane.prefHeightProperty().bind(this.prefHeightProperty().multiply(0.3));
         housingTypes = new HousingTypeTable();
-        housingTypes.prefWidthProperty().bind(typesScrollPane.widthProperty());
-        housingTypes.prefHeightProperty().bind(typesScrollPane.heightProperty());
+        housingTypes.prefWidthProperty().bind(this.prefWidthProperty());
         housingTypes.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         housingTypes.getSelectionModel().selectedItemProperty().addListener((ov, old_val, new_val) -> setSelectedType(ov != null ? ov.getValue() : null));
         typesScrollPane.setContent(housingTypes);
@@ -245,7 +240,10 @@ public class HousingView extends VBox implements Initializable, View {
 
 
     private void newHousingUnit() {
-        HousingUnit unit = table.getSelectionModel().getSelectedItem().getValue();
+        HousingUnit unit = null;
+        if(!table.getSelectionModel().isEmpty()) {
+            unit = table.getSelectionModel().getSelectedItem().getValue();
+        }
         editHousingUnitDialog(null, unit);
         fillHousingTree();
     }
