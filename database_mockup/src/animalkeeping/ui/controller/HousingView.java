@@ -142,7 +142,7 @@ public class HousingView extends VBox implements Initializable, View {
         });
         controls.getChildren().add(editTypeLabel);
 
-        deleteTypeLabel = new ControlLabel("delete housing unit", true);
+        deleteTypeLabel = new ControlLabel("delete housing type", true);
         deleteTypeLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteHousingType();
@@ -264,9 +264,8 @@ public class HousingView extends VBox implements Initializable, View {
 
     private void deleteHousingUnit() {
         HousingUnit h = table.getSelectionModel().getSelectedItem().getValue();
-        if (!h.getHousings().isEmpty()) {
-            showInfo("Cannot delete housing unit " + h.getName() + " since it is referenced by " +
-                    Integer.toString(h.getHousings().size()) + " housing entries!");
+        if (!h.getHousings().isEmpty() || !h.getChildHousingUnits().isEmpty()) {
+            showInfo("Cannot delete housing unit " + h.getName() + " since there are referring housing entries or child housing units!");
         } else {
             Session session = Main.sessionFactory.openSession();
             session.beginTransaction();
@@ -297,8 +296,11 @@ public class HousingView extends VBox implements Initializable, View {
 
 
     private void importSubjects() {
-        HousingUnit unit = table.getSelectionModel().getSelectedItem().getValue();
+        TreeItem<HousingUnit> item = table.getSelectionModel().getSelectedItem();
+        HousingUnit unit = item.getValue();
         importSubjectsDialog(unit);
+        fillHousingTree();
+        table.getSelectionModel().select(item);
     }
 
 
