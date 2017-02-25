@@ -31,6 +31,7 @@ public class FishView extends VBox implements Initializable, View {
     @FXML private ScrollPane tableScrollPane;
     @FXML private Label idLabel;
     @FXML private Label nameLabel;
+    @FXML private Label aliasLabel;
     @FXML private Label housingStartLabel;
     @FXML private Label housingEndLabel;
     @FXML private Label statusLabel;
@@ -82,7 +83,6 @@ public class FishView extends VBox implements Initializable, View {
         fishTable.setAliveFilter(true);
         timeline = new TimelineController();
 
-        //personsTable.resize();
         this.tableScrollPane.setContent(fishTable);
         this.timelineVBox.getChildren().add(timeline);
         idLabel.setText("");
@@ -228,6 +228,7 @@ public class FishView extends VBox implements Initializable, View {
         if (s != null) {
             idLabel.setText(s.getId().toString());
             nameLabel.setText(s.getName());
+            aliasLabel.setText(s.getAlias() != null ? s.getAlias() : "");
             speciesLabel.setText(s.getSpeciesType().getName());
             originLabel.setText(s.getSupplier().getName());
             Iterator<Housing> iter = s.getHousings().iterator();
@@ -267,6 +268,7 @@ public class FishView extends VBox implements Initializable, View {
         } else {
             idLabel.setText("");
             nameLabel.setText("");
+            aliasLabel.setText("");
             originLabel.setText("");
             speciesLabel.setText("");
             statusLabel.setText("");
@@ -635,6 +637,13 @@ public class FishView extends VBox implements Initializable, View {
 
     @Override
     public void refresh() {
-        //TODO refresh
+        Subject s = fishTable.getSelectionModel().getSelectedItem();
+        fishTable.getSelectionModel().select(null);
+        fishTable.refresh();
+        if (fishTable.getItems().contains(s)) {
+            subjectSelected(s);
+        } else {
+            subjectSelected(null);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.Subject;
+import animalkeeping.util.EntityHelper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -66,24 +67,12 @@ public class SubjectsTable extends TableView<Subject> {
     }
 
     private void init() {
-
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            List<Subject> result = session.createQuery("from Subject", Subject.class).list();
-            masterList.addAll(result);
-            filteredList = new FilteredList<>(masterList, p -> true);
-            SortedList<Subject> sortedList = new SortedList<>(filteredList);
-            sortedList.comparatorProperty().bind(this.comparatorProperty());
-            this.setItems(sortedList);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
+        List<Subject> subjects = EntityHelper.getEntityList("from Subject", Subject.class);
+        masterList.addAll(subjects);
+        filteredList = new FilteredList<>(masterList, p -> true);
+        SortedList<Subject> sortedList = new SortedList<>(filteredList);
+        sortedList.comparatorProperty().bind(this.comparatorProperty());
+        this.setItems(sortedList);
     }
 
 
@@ -108,6 +97,11 @@ public class SubjectsTable extends TableView<Subject> {
             }
             return false;
         });
+    }
+
+
+    public void refresh() {
+        init();
     }
 
 
