@@ -59,10 +59,10 @@ public class SpeciesTypeForm extends VBox {
         grid.add(new Label("ID:"), 0, 0);
         grid.add(idLabel, 1, 0);
 
-        grid.add(new Label("name:"), 0, 1);
+        grid.add(new Label("species name:"), 0, 1);
         grid.add(nameField, 1, 1, 1, 1);
 
-        grid.add(new Label("description:"), 0, 2);
+        grid.add(new Label("trivial name:"), 0, 2);
         grid.add(trivialField, 1, 2, 1, 1 );
         this.getChildren().add(grid);
     }

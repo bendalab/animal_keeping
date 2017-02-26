@@ -1,18 +1,17 @@
 package animalkeeping.ui;
 
-        import animalkeeping.model.SpeciesType;
-        import animalkeeping.model.SupplierType;
-        import javafx.scene.control.Label;
-        import javafx.scene.control.TextArea;
-        import javafx.scene.control.TextField;
-        import javafx.scene.layout.ColumnConstraints;
-        import javafx.scene.layout.GridPane;
-        import javafx.scene.layout.Priority;
-        import javafx.scene.layout.VBox;
-        import org.hibernate.HibernateException;
-        import org.hibernate.Session;
+import animalkeeping.model.SupplierType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 
-        import static animalkeeping.util.Dialogs.showInfo;
+import static animalkeeping.util.Dialogs.showInfo;
 
 
 public class SupplierTypeForm extends VBox {
@@ -64,7 +63,7 @@ public class SupplierTypeForm extends VBox {
         grid.add(new Label("name:"), 0, 1);
         grid.add(nameField, 1, 1, 1, 1);
 
-        grid.add(new Label("description:"), 0, 2);
+        grid.add(new Label("address:"), 0, 2);
         grid.add(addressArea, 0, 3, 2, 1 );
         this.getChildren().add(grid);
     }

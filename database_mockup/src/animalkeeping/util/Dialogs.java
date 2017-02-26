@@ -348,5 +348,42 @@ public class Dialogs {
         }
         return null;
     }
+
+
+    public static SupplierType editSupplierTypeDialog(SupplierType type) {
+        SupplierTypeForm std = new SupplierTypeForm(type);
+        Dialog<SupplierType> dialog = new Dialog<>();
+        dialog.setTitle("Supplier type");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(std);
+        dialog.setWidth(200);
+        std.prefWidthProperty().bind(dialog.widthProperty());
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return std.persistSupplierType();
+            }
+            return null;
+        });
+        Optional<SupplierType> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            try {
+                Session session = Main.sessionFactory.openSession();
+                session.beginTransaction();
+                session.saveOrUpdate(result.get());
+                session.getTransaction().commit();
+                session.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+            return result.get();
+        }
+        return null;
+    }
 }
 
