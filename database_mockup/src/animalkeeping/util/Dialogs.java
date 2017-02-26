@@ -276,7 +276,7 @@ public class Dialogs {
     }
 
 
-    public static void editSubjectTypeDialog(SubjectType type) {
+    public static SubjectType editSubjectTypeDialog(SubjectType type) {
         SubjectTypeForm std = new SubjectTypeForm(type);
         Dialog<SubjectType> dialog = new Dialog<>();
         dialog.setTitle("Subject type");
@@ -305,9 +305,48 @@ public class Dialogs {
                 session.close();
             } catch (Exception e) {
                 e.printStackTrace();
+                return null;
             }
+            return result.get();
         }
+        return null;
     }
 
+
+    public static SpeciesType editSpeciesTypeDialog(SpeciesType type) {
+        SpeciesTypeForm std = new SpeciesTypeForm(type);
+        Dialog<SpeciesType> dialog = new Dialog<>();
+        dialog.setTitle("Species type");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(std);
+        dialog.setWidth(200);
+        std.prefWidthProperty().bind(dialog.widthProperty());
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return std.persistSpeceisType();
+            }
+            return null;
+        });
+        Optional<SpeciesType> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            try {
+                Session session = Main.sessionFactory.openSession();
+                session.beginTransaction();
+                session.saveOrUpdate(result.get());
+                session.getTransaction().commit();
+                session.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+            return result.get();
+        }
+        return null;
+    }
 }
 
