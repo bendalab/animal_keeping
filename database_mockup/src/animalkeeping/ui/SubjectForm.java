@@ -2,6 +2,9 @@ package animalkeeping.ui;
 
 import animalkeeping.model.*;
 import animalkeeping.util.DateTimeHelper;
+import animalkeeping.util.Dialogs;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -30,7 +33,7 @@ public class SubjectForm extends VBox {
     private DatePicker importDate;
     private TextField importTimeField, nameField, aliasField;
     private Label idLabel;
-    private Subject subject;
+    private Subject subject = null;
 
     public SubjectForm() {
         this.setFillWidth(true);
@@ -124,13 +127,31 @@ public class SubjectForm extends VBox {
 
         Button newSpeciesButton = new Button("+");
         newSpeciesButton.setTooltip(new Tooltip("create a new species entry"));
-        newSpeciesButton.setDisable(true);
+        newSpeciesButton.setOnAction(event -> {
+            SpeciesType st = Dialogs.editSpeciesTypeDialog(null);
+            if (st != null) {
+                speciesComboBox.getItems().add(st);
+                speciesComboBox.getSelectionModel().select(st);
+            }
+        });
         Button newSupplierButton = new Button("+");
         newSupplierButton.setTooltip(new Tooltip("create a new supplier entry"));
-        newSupplierButton.setDisable(true);
+        newSupplierButton.setOnAction(event -> {
+            SupplierType st = Dialogs.editSupplierTypeDialog(null);
+            if (st != null) {
+                supplierComboBox.getItems().add(st);
+                supplierComboBox.getSelectionModel().select(st);
+            }
+        });
         Button newSubjectTypeButton = new Button("+");
         newSubjectTypeButton.setTooltip(new Tooltip("create a new subject type entry"));
-        newSubjectTypeButton.setDisable(true);
+        newSubjectTypeButton.setOnAction(event -> {
+            SubjectType st = Dialogs.editSubjectTypeDialog(null);
+            if (st != null) {
+                subjectTypeComboBox.getItems().add(st);
+                subjectTypeComboBox.getSelectionModel().select(st);
+            }
+        });
         Button newHousingUnitButton = new Button("+");
         newHousingUnitButton.setTooltip(new Tooltip("create a new housing unit entry"));
         newHousingUnitButton.setDisable(true);
