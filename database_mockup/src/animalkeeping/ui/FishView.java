@@ -277,7 +277,7 @@ public class FishView extends VBox implements Initializable, View {
             treatmentTable.getItems().clear();
             timeline.setTreatments(null);
             housingTable.setHousings(null);
-            notesTable.setItems(null);
+            notesTable.setNotes(null);
         }
         moveSubjectLabel.setDisable(s == null);
         deleteSubjectLabel.setDisable(s == null);
@@ -639,6 +639,7 @@ public class FishView extends VBox implements Initializable, View {
     public void refresh() {
         Subject s = fishTable.getSelectionModel().getSelectedItem();
         fishTable.getSelectionModel().select(null);
+        subjectSelected(null);
         fishTable.refresh();
         if (fishTable.getItems().contains(s)) {
             subjectSelected(s);
