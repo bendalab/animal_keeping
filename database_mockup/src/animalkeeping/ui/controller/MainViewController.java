@@ -340,11 +340,18 @@ public class MainViewController {
         newSubjectItem.setOnAction(event -> newSubjectType());
         subjectTypeMenu.getItems().add(newSubjectItem);
         subjectTypeMenu.getItems().add(new SeparatorMenuItem());
+
         for (SubjectType t : subjectTypeList) {
-            MenuItem item = new MenuItem(t.getName());
-            item.setUserData(t);
-            item.setOnAction(event -> editSubjectType((SubjectType) item.getUserData()));
-            subjectTypeMenu.getItems().add(item);
+            Menu submenu = new Menu(t.getName());
+            subjectTypeMenu.getItems().add(submenu);
+            MenuItem editItem = new MenuItem("edit");
+            editItem.setUserData(t);
+            editItem.setOnAction(event -> editSubjectType((SubjectType) editItem.getUserData()));
+            MenuItem deleteItem = new MenuItem("delete");
+            deleteItem.setUserData(t);
+            deleteItem.setOnAction(event -> deleteSubjectType((SubjectType) editItem.getUserData()));
+            submenu.getItems().add(editItem);
+            submenu.getItems().add(deleteItem);
         }
     }
 
@@ -352,15 +359,23 @@ public class MainViewController {
     private void fillSpeciesTypeMenu() {
         speciesTypeMenu.getItems().clear();
         List<SpeciesType> speciesTypeList = EntityHelper.getEntityList("From SpeciesType", SpeciesType.class);
+
         MenuItem newSpeciesItem = new MenuItem("new");
         newSpeciesItem.setOnAction(event -> newSpeciesType());
         speciesTypeMenu.getItems().add(newSpeciesItem);
         speciesTypeMenu.getItems().add(new SeparatorMenuItem());
+
         for (SpeciesType t : speciesTypeList) {
-            MenuItem item = new MenuItem(t.getName());
-            item.setUserData(t);
-            item.setOnAction(event -> editSpeciesType((SpeciesType) item.getUserData()));
-            speciesTypeMenu.getItems().add(item);
+            Menu submenu = new Menu(t.getName());
+            speciesTypeMenu.getItems().add(submenu);
+            MenuItem editItem = new MenuItem("edit");
+            editItem.setUserData(t);
+            editItem.setOnAction(event -> editSpeciesType((SpeciesType) editItem.getUserData()));
+            MenuItem deleteItem = new MenuItem("delete");
+            deleteItem.setUserData(t);
+            deleteItem.setOnAction(event -> deleteSpeciesType((SpeciesType) editItem.getUserData()));
+            submenu.getItems().add(editItem);
+            submenu.getItems().add(deleteItem);
         }
     }
 
@@ -372,11 +387,18 @@ public class MainViewController {
         newSupplierItem.setOnAction(event -> newSupplierType());
         supplierMenu.getItems().add(newSupplierItem);
         supplierMenu.getItems().add(new SeparatorMenuItem());
+
         for (SupplierType t : supplier) {
-            MenuItem item = new MenuItem(t.getName());
-            item.setUserData(t);
-            item.setOnAction(event -> editSupplierType((SupplierType) item.getUserData()));
-            supplierMenu.getItems().add(item);
+            Menu submenu = new Menu(t.getName());
+            supplierMenu.getItems().add(submenu);
+            MenuItem editItem = new MenuItem("edit");
+            editItem.setUserData(t);
+            editItem.setOnAction(event -> editSupplierType((SupplierType) editItem.getUserData()));
+            MenuItem deleteItem = new MenuItem("delete");
+            deleteItem.setUserData(t);
+            deleteItem.setOnAction(event -> deleteSupplierType((SupplierType) editItem.getUserData()));
+            submenu.getItems().add(editItem);
+            submenu.getItems().add(deleteItem);
         }
     }
 
@@ -414,12 +436,36 @@ public class MainViewController {
         Dialogs.editSubjectTypeDialog(t);
     }
 
+    private void deleteSubjectType(SubjectType t) {
+        if (!EntityHelper.deleteEntity(t)) {
+            Dialogs.showInfo("Subject type " + t.getName() + " could not be deleted. Probably referenced by other entries.");
+            return;
+        }
+        fillSubjectTypeMenu();
+    }
+
     private void editSpeciesType(SpeciesType t) {
         Dialogs.editSpeciesTypeDialog(t);
+    }
+
+    private void deleteSpeciesType(SpeciesType t) {
+        if (!EntityHelper.deleteEntity(t)) {
+            Dialogs.showInfo("Species " + t.getName() + " could not be deleted. Probably referenced by other entries.");
+            return;
+        }
+        fillSpeciesTypeMenu();
     }
 
 
     private void editSupplierType(SupplierType t) {
         Dialogs.editSupplierTypeDialog(t);
+    }
+
+    private void deleteSupplierType(SupplierType t) {
+        if (!EntityHelper.deleteEntity(t)) {
+            Dialogs.showInfo("Supplier " + t.getName() + " could not be deleted. Probably referenced by other entries.");
+            return;
+        }
+        fillSupplierTypeMenu();
     }
 }
