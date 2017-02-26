@@ -67,12 +67,14 @@ public class SubjectsTable extends TableView<Subject> {
     }
 
     private void init() {
+        masterList.clear();
         List<Subject> subjects = EntityHelper.getEntityList("from Subject", Subject.class);
         masterList.addAll(subjects);
         filteredList = new FilteredList<>(masterList, p -> true);
         SortedList<Subject> sortedList = new SortedList<>(filteredList);
         sortedList.comparatorProperty().bind(this.comparatorProperty());
         this.setItems(sortedList);
+        setAliveFilter(true);
     }
 
 
