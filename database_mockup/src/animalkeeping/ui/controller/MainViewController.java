@@ -1,8 +1,13 @@
 package animalkeeping.ui.controller;
 
+import animalkeeping.model.SpeciesType;
+import animalkeeping.model.SubjectType;
+import animalkeeping.model.SupplierType;
 import animalkeeping.ui.*;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import animalkeeping.util.SuperUserDialog;
+import animalkeeping.util.Dialogs;
+import animalkeeping.util.EntityHelper;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -10,6 +15,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 
@@ -25,6 +31,9 @@ public class MainViewController {
     @FXML private VBox masterBox;
     @FXML private ComboBox<String> findBox;
     @FXML private TitledPane findPane;
+    @FXML private Menu speciesTypeMenu;
+    @FXML private Menu subjectTypeMenu;
+    @FXML private Menu supplierMenu;
     private Vector<TitledPane> panes;
     private HashMap<String, View> views;
 
@@ -297,10 +306,85 @@ public class MainViewController {
 
 
     @FXML
+    private void newSubjectType() {
+        Dialogs.editSubjectTypeDialog(null);
+        fillSubjectTypeMenu();
+    }
+
+
+    @FXML
+    private void newSpeciesType() {
+        Dialogs.editSpeciesTypeDialog(null);
+        fillSpeciesTypeMenu();
+    }
+
+
+    @FXML
+    private void newSupplierType() {
+        Dialogs.editSupplierTypeDialog(null);
+        fillSupplierTypeMenu();
+    }
+
+    @FXML
     private void refreshView() {
         if (this.scrollPane.getContent() instanceof View) {
             ((View) this.scrollPane.getContent()).refresh();
         }
+    }
+
+
+    private void fillSubjectTypeMenu() {
+        subjectTypeMenu.getItems().clear();
+        List<SubjectType> subjectTypeList = EntityHelper.getEntityList("From SubjectType", SubjectType.class);
+        MenuItem newSubjectItem = new MenuItem("new");
+        newSubjectItem.setOnAction(event -> newSubjectType());
+        subjectTypeMenu.getItems().add(newSubjectItem);
+        subjectTypeMenu.getItems().add(new SeparatorMenuItem());
+        for (SubjectType t : subjectTypeList) {
+            MenuItem item = new MenuItem(t.getName());
+            item.setUserData(t);
+            item.setOnAction(event -> editSubjectType((SubjectType) item.getUserData()));
+            subjectTypeMenu.getItems().add(item);
+        }
+    }
+
+
+    private void fillSpeciesTypeMenu() {
+        speciesTypeMenu.getItems().clear();
+        List<SpeciesType> speciesTypeList = EntityHelper.getEntityList("From SpeciesType", SpeciesType.class);
+        MenuItem newSpeciesItem = new MenuItem("new");
+        newSpeciesItem.setOnAction(event -> newSpeciesType());
+        speciesTypeMenu.getItems().add(newSpeciesItem);
+        speciesTypeMenu.getItems().add(new SeparatorMenuItem());
+        for (SpeciesType t : speciesTypeList) {
+            MenuItem item = new MenuItem(t.getName());
+            item.setUserData(t);
+            item.setOnAction(event -> editSpeciesType((SpeciesType) item.getUserData()));
+            speciesTypeMenu.getItems().add(item);
+        }
+    }
+
+
+    private void fillSupplierTypeMenu() {
+        supplierMenu.getItems().clear();
+        List<SupplierType> supplier = EntityHelper.getEntityList("From SupplierType", SupplierType.class);
+        MenuItem newSupplierItem = new MenuItem("new");
+        newSupplierItem.setOnAction(event -> newSupplierType());
+        supplierMenu.getItems().add(newSupplierItem);
+        supplierMenu.getItems().add(new SeparatorMenuItem());
+        for (SupplierType t : supplier) {
+            MenuItem item = new MenuItem(t.getName());
+            item.setUserData(t);
+            item.setOnAction(event -> editSupplierType((SupplierType) item.getUserData()));
+            supplierMenu.getItems().add(item);
+        }
+    }
+
+
+    private void fillMenus() {
+        fillSubjectTypeMenu();
+        fillSpeciesTypeMenu();
+        fillSupplierTypeMenu();
     }
 
 
@@ -312,7 +396,9 @@ public class MainViewController {
         findPane.setDisable(false);
         animalHousingPane.setDisable(false);
         licensesPane.setDisable(false);
-
+        subjectTypeMenu.setDisable(false);
+        speciesTypeMenu.setDisable(false);
+        fillMenus();
         showInventory();
     }
 
@@ -322,5 +408,18 @@ public class MainViewController {
                 p.setExpanded(false);
             }
         }
+    }
+
+    private void editSubjectType(SubjectType t) {
+        Dialogs.editSubjectTypeDialog(t);
+    }
+
+    private void editSpeciesType(SpeciesType t) {
+        Dialogs.editSpeciesTypeDialog(t);
+    }
+
+
+    private void editSupplierType(SupplierType t) {
+        Dialogs.editSupplierTypeDialog(t);
     }
 }
