@@ -1,9 +1,11 @@
 package animalkeeping.util;
 
 import animalkeeping.ui.Main;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import javax.persistence.PersistenceException;
 import java.util.List;
 
 /**
@@ -29,6 +31,18 @@ public class EntityHelper {
         return list;
     }
 
-
+    public static <T> boolean deleteEntity(T entity) {
+        Session session = Main.sessionFactory.openSession();
+        try {
+            session.beginTransaction();
+            session.delete(entity);
+            session.getTransaction().commit();
+        } catch (PersistenceException e) {
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 
 }
