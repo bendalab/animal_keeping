@@ -33,7 +33,7 @@ public class DatabaseUser {
         try {
             Statement stmt = connection.createStatement();
             String createUser = "CREATE USER " + name + "@localhost IDENTIFIED BY \"" + password + "\"";
-            String grantPrivilege = "GRANT " + type.getPrivileges() + " ON * . * TO '" + name + "'@'localhost'";
+            String grantPrivilege = "GRANT " + type.getPrivileges() + " ON * . * TO '" + name + "'@'%'";
             stmt.executeUpdate(createUser);
             stmt.executeUpdate(grantPrivilege);
             showInfo("Successfully added user to database!");
