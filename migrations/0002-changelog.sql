@@ -1,5 +1,5 @@
 -- -----------------------------------------------------
--- Table `animalkeeping`.`changelog`
+-- Table `animal_keeping`.`changelog`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `animal_keeping`.`changelog` (
   `id` INT NOT NULL AUTO_INCREMENT,

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<TitledPane animated="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" text="untitled" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111">
+  <content>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+         <children>
+            <TextField fx:id="usernameField" layoutX="143.0" layoutY="30.0" />
+            <PasswordField fx:id="pwField" layoutX="143.0" layoutY="66.0" />
+            <PasswordField fx:id="pwConfirmField" layoutX="143.0" layoutY="106.0" />
+            <Button fx:id="addButton" layoutX="198.0" layoutY="193.0" mnemonicParsing="false" onAction="#adddatabaseUser" text="Add" />
+            <Label layoutX="56.0" layoutY="35.0" text="User name" />
+            <Label layoutX="65.0" layoutY="71.0" text="Password" />
+            <Label layoutX="18.0" layoutY="111.0" prefHeight="16.0" prefWidth="156.0" text="repeat Password" />
+            <ChoiceBox layoutX="143.0" layoutY="142.0" prefWidth="150.0">
+               <contextMenu>
+                  <ContextMenu>
+                    <items>
+                      <MenuItem fx:id="adminItem" mnemonicParsing="false" text="Admin" />
+                        <MenuItem fx:id="normalUserItem" mnemonicParsing="false" text="NormalUser" />
+                    </items>
+                  </ContextMenu>
+               </contextMenu>
+            </ChoiceBox>
+         </children></AnchorPane>
+  </content>
+</TitledPane>

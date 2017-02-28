@@ -5,6 +5,7 @@
       <root url="jar://$MAVEN_REPOSITORY$/mysql/mysql-connector-java/6.0.4/mysql-connector-java-6.0.4.jar!/" />
       <root url="file://$PROJECT_DIR$/lib/commons-lang3-3.5" />
       <root url="file://$PROJECT_DIR$/lib/commons-lang3-3.5" />
+      <root url="jar://$USER_HOME$/file:/home/huben/Documents/Animal_Keeping_Database/database_mockup/lib/mysql-connector-java-6.0.4.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="file://$PROJECT_DIR$/lib/commons-lang3-3.5/apidocs" />
@@ -12,6 +13,7 @@
     <SOURCES>
       <root url="file://$PROJECT_DIR$/lib/commons-lang3-3.5" />
       <root url="file://$PROJECT_DIR$/lib/commons-lang3-3.5" />
+      <root url="jar://$USER_HOME$/file:/home/huben/Documents/Animal_Keeping_Database/database_mockup/lib/mysql-connector-java-6.0.4-sources.jar!/" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/lib/commons-lang3-3.5" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/lib/commons-lang3-3.5" recursive="false" />

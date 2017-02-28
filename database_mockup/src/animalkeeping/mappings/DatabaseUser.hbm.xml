@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="animalkeeping.model">
+
+    <class name="DatabaseUser" table="databaseuser">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="foreign">
+                <param name="property">person</param>
+            </generator>
+        </id>
+        <property name="name" type="string" column="name" not-null="true" unique="true"/>
+        <one-to-one name="person"/>
+        <many-to-one name="type" column="type_id" class="animalkeeping.model.DatabaseUserType" not-null="true"/>
+    </class>
+
+</hibernate-mapping>
