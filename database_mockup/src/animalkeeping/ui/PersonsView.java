@@ -123,8 +123,7 @@ public class PersonsView  extends VBox implements Initializable {
     private void personSelected(Person p) {
         selectedPerson = p;
         editLabel.setDisable(p == null);
-        deleteLabel.setDisable(p == null);
-        addUserLabel.setDisable(p == null);
+        deleteLabel.setDisable(p.getDatabaseUser() == null);
 
         if (p != null) {
             idField.setText(p.getId().toString());
