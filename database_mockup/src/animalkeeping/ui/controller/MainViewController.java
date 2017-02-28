@@ -19,8 +19,6 @@ public class MainViewController {
     @FXML private TitledPane inventoryPane;
     @FXML private TitledPane subjectsPane;
     @FXML private TitledPane treatmentsPane;
-    @FXML private Button addUsrBtn;
-    @FXML private Button databaseUserAddBtn;
     @FXML private TextField idField;
     @FXML private ScrollPane scrollPane;
     @FXML private VBox masterBox;
@@ -141,13 +139,6 @@ public class MainViewController {
     }
 
     @FXML
-    private void showDatabaseUserAddView(){
-        SuperUserDialog.openConnection();
-        //AddDatabaseUserDialog.addDatabaseUser();
-    }
-
-
-    @FXML
     private void showLicenseView() {
         if (!licensesPane.isExpanded()) {
             showInventory();
@@ -246,10 +237,8 @@ public class MainViewController {
         inventoryPane.setDisable(false);
         treatmentsPane.setDisable(false);
         findPane.setDisable(false);
-        addUsrBtn.setDisable(false);
         animalHousingPane.setDisable(false);
         licensesPane.setDisable(false);
-        databaseUserAddBtn.setDisable(false);
 
         showInventory();
     }

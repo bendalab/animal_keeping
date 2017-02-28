@@ -17,10 +17,10 @@ import java.util.Optional;
 public class SuperUserDialog extends Dialogs {
     static String[] output;
 
-    public static void openConnection() {
+    public static Connection openConnection() {
         SuperUserForm suf = new SuperUserForm();
         output = new String[2];
-        Dialog<Boolean> dialog = new Dialog<>();
+        Dialog<Connection> dialog = new Dialog<>();
         dialog.setTitle("Please input username and password of user with create user privilege");
         dialog.setResizable(true);
         dialog.getDialogPane().setContent(suf);
@@ -34,19 +34,18 @@ public class SuperUserDialog extends Dialogs {
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 Connection connection = suf.openDatabaseUserDialog(suf.getSuperUserName(), suf.getSuperUserPassword());
-            if (connection!= null){
-                AddDatabaseUserDialog.addDatabaseUser(connection);
-                return true;
-            }
-            else {
-                return false;
-            }
+                if (connection!= null){
+                    return connection;
+                }
+                else {
+                    return null;
+                }
 
             }
-            return false;
+            return null;
         });
 
-        Optional<Boolean> result = dialog.showAndWait();
-
+        Optional<Connection> result = dialog.showAndWait();
+        return result.isPresent() ? result.get(): null;
     }
 }

@@ -1,5 +1,6 @@
 package animalkeeping.ui;
 
+import animalkeeping.model.Person;
 import animalkeeping.technicalAdministration.DatabaseUser;
 import animalkeeping.technicalAdministration.DatabaseUserType;
 import javafx.scene.control.ComboBox;
@@ -27,8 +28,10 @@ public class AddDatabaseUserForm extends VBox {
     PasswordField pwField;
     PasswordField pwConfirmField;
     private ComboBox<DatabaseUserType> userClassComboBox;
+    private Person person;
 
-    public AddDatabaseUserForm(){
+    public AddDatabaseUserForm(Person p){
+        this.person = p;
         init();
     }
 
@@ -101,6 +104,7 @@ public class AddDatabaseUserForm extends VBox {
     public boolean addUser(Connection connection){
         if (pwField.getText().equals(pwConfirmField.getText())) {
             DatabaseUser newUser = new DatabaseUser(usernameField.getText(), pwField.getText(), userClassComboBox.getValue(), connection);
+            //TODO p user namen setzen
             return true;
         }
         else{

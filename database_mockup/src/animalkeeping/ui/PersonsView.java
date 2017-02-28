@@ -3,6 +3,8 @@ package animalkeeping.ui;
 import animalkeeping.model.Person;
 import animalkeeping.model.Treatment;
 import animalkeeping.ui.controller.TimelineController;
+import animalkeeping.util.AddDatabaseUserDialog;
+import animalkeeping.util.SuperUserDialog;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -19,6 +21,7 @@ import org.hibernate.Session;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -40,7 +43,7 @@ public class PersonsView  extends VBox implements Initializable {
     private TableColumn<Treatment, String> subjectCol;
     private VBox controls;
     private Person selectedPerson;
-    private ControlLabel editLabel, deleteLabel, asUserLabel;
+    private ControlLabel editLabel, deleteLabel, addUserLabel;
 
 
     public PersonsView() {
@@ -104,13 +107,13 @@ public class PersonsView  extends VBox implements Initializable {
         });
         controls.getChildren().add(deleteLabel);
 
-        asUserLabel = new ControlLabel("add as database user", true);
-        deleteLabel.setOnMouseClicked(event -> {
+        addUserLabel = new ControlLabel("add as database user", true);
+        addUserLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 addUser();
             }
         });
-        controls.getChildren().add(deleteLabel);
+        controls.getChildren().add(addUserLabel);
     }
 
 
@@ -118,6 +121,7 @@ public class PersonsView  extends VBox implements Initializable {
         selectedPerson = p;
         editLabel.setDisable(p == null);
         deleteLabel.setDisable(p == null);
+        addUserLabel.setDisable(p == null);
 
         if (p != null) {
             idField.setText(p.getId().toString());
@@ -139,7 +143,9 @@ public class PersonsView  extends VBox implements Initializable {
     }
 
     private void addUser(){
-
+        Person p = personsTable.getSelectionModel().getSelectedItem();
+        Connection c = SuperUserDialog.openConnection();
+        AddDatabaseUserDialog.addDatabaseUser(c, p);
     }
 
     private void editPerson() {

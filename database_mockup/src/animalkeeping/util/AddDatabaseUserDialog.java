@@ -1,6 +1,7 @@
 package animalkeeping.util;
 
 import animalkeeping.ui.AddDatabaseUserForm;
+import animalkeeping.model.Person;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -13,8 +14,12 @@ import java.util.Optional;
  */
 public class AddDatabaseUserDialog extends Dialogs {
 
-    public static void addDatabaseUser(Connection connection) {
-        AddDatabaseUserForm aduf = new AddDatabaseUserForm();
+    public static void addDatabaseUser(Connection connection, Person p) {
+        if(connection == null || p == null) {
+            return;
+        }
+
+        AddDatabaseUserForm aduf = new AddDatabaseUserForm(p);
         Dialog<Boolean> dialog = new Dialog<>();
         dialog.setTitle("Create new Database User");
         dialog.setResizable(true);
