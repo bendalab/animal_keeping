@@ -124,15 +124,14 @@ public class PersonsView  extends VBox implements Initializable {
         selectedPerson = p;
         editLabel.setDisable(p == null);
         deleteLabel.setDisable(p == null);
-        addUserLabel.setDisable(p.getDatabaseUser() != null);
+        addUserLabel.setDisable(p.getUser() != null);
 
         if (p != null) {
             idField.setText(p.getId().toString());
             firstNameField.setText(p.getFirstName());
             lastNameField.setText(p.getLastName());
             emailField.setText(p.getEmail());
-            databaseUserField.setText(p.getDatabaseUser());
-            System.out.println(p.getTreatments().size());
+            databaseUserField.setText(p.getUser() != null ? p.getUser().getName() : "");
             treatmentTable.getItems().clear();
             treatmentTable.getItems().addAll(p.getTreatments());
             timeline.setTreatments(p.getTreatments());

@@ -57,6 +57,6 @@
         <mapping resource="animalkeeping/mappings/TreatmentNote.hbm.xml"/>
         <mapping resource="animalkeeping/mappings/ChangeLog.hbm.xml"/>
         <mapping resource="animalkeeping/mappings/DatabaseUserType.hbm.xml"/>
-
+        <mapping resource="animalkeeping/mappings/DatabaseUser.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

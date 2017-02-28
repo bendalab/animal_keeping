@@ -1,6 +1,4 @@
-package animalkeeping.technicalAdministration;
-
-import java.util.List;
+package animalkeeping.model;
 
 /**
  * Created by huben on 17.02.17.

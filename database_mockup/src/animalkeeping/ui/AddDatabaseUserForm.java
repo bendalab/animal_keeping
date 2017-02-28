@@ -2,9 +2,7 @@ package animalkeeping.ui;
 
 import animalkeeping.logging.ChangeLogInterceptor;
 import animalkeeping.model.Person;
-import animalkeeping.technicalAdministration.DatabaseUser;
-import animalkeeping.technicalAdministration.DatabaseUserType;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import animalkeeping.model.DatabaseUserType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -18,7 +16,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;

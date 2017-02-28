@@ -1,7 +1,5 @@
 package animalkeeping.model;
 
-import animalkeeping.technicalAdministration.DatabaseUserType;
-
 public class DatabaseUser {
     private long id;
     private String name;
