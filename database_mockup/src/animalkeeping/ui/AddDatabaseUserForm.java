@@ -1,5 +1,6 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.ChangeLogInterceptor;
 import animalkeeping.model.Person;
 import animalkeeping.technicalAdministration.DatabaseUser;
 import animalkeeping.technicalAdministration.DatabaseUserType;
@@ -19,6 +20,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
+
+import static animalkeeping.util.Dialogs.showInfo;
 
 /**
  * Created by huben on 17.02.17.
@@ -105,6 +108,18 @@ public class AddDatabaseUserForm extends VBox {
         if (pwField.getText().equals(pwConfirmField.getText())) {
             DatabaseUser newUser = new DatabaseUser(usernameField.getText(), pwField.getText(), userClassComboBox.getValue(), connection);
             person.setDatabaseUser(usernameField.getText());
+            ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
+            Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
+            interceptorX.setSession(session);
+            try {
+                session.beginTransaction();
+                session.saveOrUpdate(person);
+                session.getTransaction().commit();
+                session.close();
+            } catch (HibernateException he) {
+                showInfo(he.getLocalizedMessage());
+                session.close();
+            }
             return true;
         }
         else{
