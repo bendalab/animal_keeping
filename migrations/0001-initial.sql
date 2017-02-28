@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_person` (
   `first` VARCHAR(200) NOT NULL,
   `last` VARCHAR(200) NOT NULL,
   `email` VARCHAR(200) NULL,
+  `databaseUser` VARCHAR(200) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 

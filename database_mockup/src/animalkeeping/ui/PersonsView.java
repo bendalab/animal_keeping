@@ -33,6 +33,7 @@ public class PersonsView  extends VBox implements Initializable {
     @FXML private TextField lastNameField;
     @FXML private TextField emailField;
     @FXML private TextField idField;
+    @FXML private TextField databaseUserField;
     @FXML private TableView<Treatment> treatmentTable;
     private PersonsTable personsTable;
     private TimelineController timeline;
@@ -71,6 +72,8 @@ public class PersonsView  extends VBox implements Initializable {
         lastNameField.setText("");
         emailField.setEditable(false);
         emailField.setText("");
+        databaseUserField.setEditable(false);
+        databaseUserField.setText("");
 
         personsTable.getSelectionModel().getSelectedItems().addListener(new PersonTableListChangeListener());
         idCol = new TableColumn<>("id");
@@ -128,6 +131,7 @@ public class PersonsView  extends VBox implements Initializable {
             firstNameField.setText(p.getFirstName());
             lastNameField.setText(p.getLastName());
             emailField.setText(p.getEmail());
+            databaseUserField.setText(p.getDatabaseUser());
             System.out.println(p.getTreatments().size());
             treatmentTable.getItems().clear();
             treatmentTable.getItems().addAll(p.getTreatments());
@@ -137,6 +141,7 @@ public class PersonsView  extends VBox implements Initializable {
             firstNameField.setText("");
             lastNameField.setText("");
             emailField.setText("");
+            databaseUserField.setText("");
             treatmentTable.getItems().clear();
             timeline.setTreatments(null);
         }

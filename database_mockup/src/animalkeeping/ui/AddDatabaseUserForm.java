@@ -104,7 +104,7 @@ public class AddDatabaseUserForm extends VBox {
     public boolean addUser(Connection connection){
         if (pwField.getText().equals(pwConfirmField.getText())) {
             DatabaseUser newUser = new DatabaseUser(usernameField.getText(), pwField.getText(), userClassComboBox.getValue(), connection);
-            //TODO p user namen setzen
+            person.setDatabaseUser(usernameField.getText());
             return true;
         }
         else{

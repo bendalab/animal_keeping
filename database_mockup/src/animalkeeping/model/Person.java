@@ -14,6 +14,7 @@ public class Person extends Entity implements ChangeLogInterface {
     private String firstName;
     private String lastName;
     private String email;
+    private String databaseUser;
     private Set<Treatment> treatments =
             new HashSet<>(0);
 
@@ -52,6 +53,9 @@ public class Person extends Entity implements ChangeLogInterface {
         this.email = email;
     }
 
+    public String getDatabaseUser() {return databaseUser;}
+
+    public void setDatabaseUser(String userName) { this.databaseUser = userName;}
 
     public Set<Treatment> getTreatments() {
         return treatments;
