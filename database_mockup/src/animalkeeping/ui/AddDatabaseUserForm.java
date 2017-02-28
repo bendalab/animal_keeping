@@ -4,6 +4,7 @@ import animalkeeping.logging.ChangeLogInterceptor;
 import animalkeeping.model.Person;
 import animalkeeping.technicalAdministration.DatabaseUser;
 import animalkeeping.technicalAdministration.DatabaseUserType;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -18,6 +19,8 @@ import org.hibernate.Session;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,8 +109,12 @@ public class AddDatabaseUserForm extends VBox {
 
     public boolean addUser(Connection connection){
         if (pwField.getText().equals(pwConfirmField.getText())) {
-            DatabaseUser newUser = new DatabaseUser(usernameField.getText(), pwField.getText(), userClassComboBox.getValue(), connection);
-            person.setDatabaseUser(usernameField.getText());
+            animalkeeping.model.DatabaseUser user = new animalkeeping.model.DatabaseUser();
+            user.setName(usernameField.getText());
+            user.setType(userClassComboBox.getValue());
+            user.setPerson(person);
+            createUser(connection, user, pwField.getText());
+            person.setUser(user);
             ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
             Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
             interceptorX.setSession(session);
@@ -126,7 +133,26 @@ public class AddDatabaseUserForm extends VBox {
             System.out.println("Passwords do not match!");
             return false;
         }
+    }
 
-
+    private Boolean createUser(Connection connection, animalkeeping.model.DatabaseUser user, String password) {
+        try {
+            Statement stmt = connection.createStatement();
+            String createUser = "CREATE USER " + user.getName() + "@localhost IDENTIFIED BY \"" + password + "\"";
+            String grantPrivilege = "GRANT " + user.getType().getPrivileges() + " ON * . * TO '" + user.getName() + "'@'%'";
+            stmt.executeUpdate(createUser);
+            stmt.executeUpdate(grantPrivilege);
+            showInfo("Successfully added user to database!");
+        } catch (SQLException e) {
+            showInfo(e.getMessage());
+            System.out.println(e.getMessage());
+            return false;
+        }
+        Session session = Main.sessionFactory.openSession();
+        session.beginTransaction();
+        session.saveOrUpdate(user);
+        session.getTransaction().commit();
+        session.close();
+        return true;
     }
 }
