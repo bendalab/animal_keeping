@@ -8,32 +8,31 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
--- Schema animalkeeping
+-- Schema animal_keeping
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema animalkeeping
+-- Schema animal_keeping
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `animalkeeping` DEFAULT CHARACTER SET utf8 ;
-USE `animalkeeping` ;
+CREATE SCHEMA IF NOT EXISTS `animal_keeping` DEFAULT CHARACTER SET utf8 ;
+USE `animal_keeping` ;
 
 -- -----------------------------------------------------
--- Table `animalkeeping`.`census_person`
+-- Table `animal_keeping`.`census_person`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_person` (
+CREATE TABLE IF NOT EXISTS `animal_keeping`.`census_person` (
   `id` INT NOT NULL,
   `first` VARCHAR(200) NOT NULL,
   `last` VARCHAR(200) NOT NULL,
   `email` VARCHAR(200) NULL,
-  `databaseUser` VARCHAR(200) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `animalkeeping`.`census_license`
+-- Table `animal_keeping`.`census_license`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_license` (
+CREATE TABLE IF NOT EXISTS `animal_keeping`.`census_license` (
   `id` INT NOT NULL,
   `name` VARCHAR(200) NOT NULL,
   `number` VARCHAR(200) NOT NULL,
@@ -44,9 +43,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `animalkeeping`.`census_speciestype`
+-- Table `animal_keeping`.`census_speciestype`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_speciestype` (
+CREATE TABLE IF NOT EXISTS `animal_keeping`.`census_speciestype` (
   `id` INT NOT NULL,
   `name` VARCHAR(200) NOT NULL,
   `trivial` VARCHAR(200) NULL,
@@ -55,9 +54,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `animalkeeping`.`census_quota`
+-- Table `animal_keeping`.`census_quota`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_quota` (
+CREATE TABLE IF NOT EXISTS `animal_keeping`.`census_quota` (
   `id` INT NOT NULL,
   `species_id` INT NOT NULL,
   `licence_id` INT NOT NULL,
@@ -67,21 +66,21 @@ CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_quota` (
   INDEX `license_id_idx` (`licence_id` ASC),
   CONSTRAINT `species_id`
     FOREIGN KEY (`species_id`)
-    REFERENCES `animalkeeping`.`census_speciestype` (`id`)
+    REFERENCES `animal_keeping`.`census_speciestype` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `license_id`
     FOREIGN KEY (`licence_id`)
-    REFERENCES `animalkeeping`.`census_license` (`id`)
+    REFERENCES `animal_keeping`.`census_license` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `animalkeeping`.`supplier_type`
+-- Table `animal_keeping`.`supplier_type`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animalkeeping`.`supplier_type` (
+CREATE TABLE IF NOT EXISTS `animal_keeping`.`supplier_type` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(200) NOT NULL,
   `address` LONGTEXT NOT NULL,
@@ -90,9 +89,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `animalkeeping`.`census_subjecttype`
+-- Table `animal_keeping`.`census_subjecttype`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_subjecttype` (
+CREATE TABLE IF NOT EXISTS `animal_keeping`.`census_subjecttype` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(500) NOT NULL,
   `description` LONGTEXT NULL,
@@ -101,9 +100,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `animalkeeping`.`census_subject`
+-- Table `animal_keeping`.`census_subject`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_subject` (
+CREATE TABLE IF NOT EXISTS `animal_keeping`.`census_subject` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(200) NOT NULL,
   `type_id` INT NOT NULL,
@@ -116,26 +115,26 @@ CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_subject` (
   INDEX `type_id_idx` (`type_id` ASC),
   CONSTRAINT `species_id`
     FOREIGN KEY (`species_id`)
-    REFERENCES `animalkeeping`.`census_speciestype` (`id`)
+    REFERENCES `animal_keeping`.`census_speciestype` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `source_id`
     FOREIGN KEY (`source_id`)
-    REFERENCES `animalkeeping`.`supplier_type` (`id`)
+    REFERENCES `animal_keeping`.`supplier_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `type_id`
     FOREIGN KEY (`type_id`)
-    REFERENCES `animalkeeping`.`census_subjecttype` (`id`)
+    REFERENCES `animal_keeping`.`census_subjecttype` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `animalkeeping`.`census_subjectnote`
+-- Table `animal_keeping`.`census_subjectnote`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_subjectnote` (
+CREATE TABLE IF NOT EXISTS `animal_keeping`.`census_subjectnote` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(200) NOT NULL,
   `content` LONGTEXT NOT NULL,
@@ -147,21 +146,21 @@ CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_subjectnote` (
   INDEX `person_id_idx` (`person_id` ASC),
   CONSTRAINT `subject_id`
     FOREIGN KEY (`subject_id`)
-    REFERENCES `animalkeeping`.`census_subject` (`id`)
+    REFERENCES `animal_keeping`.`census_subject` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `person_id`
     FOREIGN KEY (`person_id`)
-    REFERENCES `animalkeeping`.`census_person` (`id`)
+    REFERENCES `animal_keeping`.`census_person` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `animalkeeping`.`census_treatmenttype`
+-- Table `animal_keeping`.`census_treatmenttype`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_treatmenttype` (
+CREATE TABLE IF NOT EXISTS `animal_keeping`.`census_treatmenttype` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(200) NOT NULL,
   `description` LONGTEXT NULL,
@@ -171,16 +170,16 @@ CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_treatmenttype` (
   INDEX `license_id_idx` (`license_id` ASC),
   CONSTRAINT `license_id`
     FOREIGN KEY (`license_id`)
-    REFERENCES `animalkeeping`.`census_license` (`id`)
+    REFERENCES `animal_keeping`.`census_license` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `animalkeeping`.`census_treatment`
+-- Table `animal_keeping`.`census_treatment`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_treatment` (
+CREATE TABLE IF NOT EXISTS `animal_keeping`.`census_treatment` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(200) NOT NULL,
   `type_id` INT NOT NULL,
@@ -194,26 +193,26 @@ CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_treatment` (
   INDEX `type_id_idx` (`type_id` ASC),
   CONSTRAINT `subject_id`
     FOREIGN KEY (`subject_id`)
-    REFERENCES `animalkeeping`.`census_subject` (`id`)
+    REFERENCES `animal_keeping`.`census_subject` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `person_id`
     FOREIGN KEY (`person_id`)
-    REFERENCES `animalkeeping`.`census_person` (`id`)
+    REFERENCES `animal_keeping`.`census_person` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `type_id`
     FOREIGN KEY (`type_id`)
-    REFERENCES `animalkeeping`.`census_treatmenttype` (`id`)
+    REFERENCES `animal_keeping`.`census_treatmenttype` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `animalkeeping`.`census_treatmentnote`
+-- Table `animal_keeping`.`census_treatmentnote`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_treatmentnote` (
+CREATE TABLE IF NOT EXISTS `animal_keeping`.`census_treatmentnote` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(200) NOT NULL,
   `content` LONGTEXT NULL,
@@ -225,21 +224,21 @@ CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_treatmentnote` (
   INDEX `treatment_id_idx` (`treatment_id` ASC),
   CONSTRAINT `person_id`
     FOREIGN KEY (`person_id`)
-    REFERENCES `animalkeeping`.`census_person` (`id`)
+    REFERENCES `animal_keeping`.`census_person` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `treatment_id`
     FOREIGN KEY (`treatment_id`)
-    REFERENCES `animalkeeping`.`census_treatment` (`id`)
+    REFERENCES `animal_keeping`.`census_treatment` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `animalkeeping`.`census_housingtype`
+-- Table `animal_keeping`.`census_housingtype`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_housingtype` (
+CREATE TABLE IF NOT EXISTS `animal_keeping`.`census_housingtype` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(200) NOT NULL,
   `description` LONGTEXT NULL,
@@ -248,9 +247,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `animalkeeping`.`census_housingunit`
+-- Table `animal_keeping`.`census_housingunit`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_housingunit` (
+CREATE TABLE IF NOT EXISTS `animal_keeping`.`census_housingunit` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(200) NOT NULL,
   `type_id` INT NOT NULL,
@@ -262,21 +261,21 @@ CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_housingunit` (
   INDEX `type_id_idx` (`type_id` ASC),
   CONSTRAINT `parent_unit_id`
     FOREIGN KEY (`parent_unit_id`)
-    REFERENCES `animalkeeping`.`census_housingunit` (`id`)
+    REFERENCES `animal_keeping`.`census_housingunit` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `type_id`
     FOREIGN KEY (`type_id`)
-    REFERENCES `animalkeeping`.`census_housingtype` (`id`)
+    REFERENCES `animal_keeping`.`census_housingtype` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `animalkeeping`.`census_housing`
+-- Table `animal_keeping`.`census_housing`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_housing` (
+CREATE TABLE IF NOT EXISTS `animal_keeping`.`census_housing` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `start_datetime` DATETIME NOT NULL,
   `end_datetime` DATETIME NULL,
@@ -287,21 +286,21 @@ CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_housing` (
   INDEX `subject_id_idx` (`subject_id` ASC),
   CONSTRAINT `subject_id`
     FOREIGN KEY (`subject_id`)
-    REFERENCES `animalkeeping`.`census_subject` (`id`)
+    REFERENCES `animal_keeping`.`census_subject` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `type_id`
     FOREIGN KEY ()
-    REFERENCES `animalkeeping`.`census_housingunit` ()
+    REFERENCES `animal_keeping`.`census_housingunit` ()
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `animalkeeping`.`census_housingnote`
+-- Table `animal_keeping`.`census_housingnote`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_housingnote` (
+CREATE TABLE IF NOT EXISTS `animal_keeping`.`census_housingnote` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `person_id` INT NULL,
   `housing_id` INT NOT NULL,
@@ -313,12 +312,12 @@ CREATE TABLE IF NOT EXISTS `animalkeeping`.`census_housingnote` (
   INDEX `housing_id_idx` (`housing_id` ASC),
   CONSTRAINT `housing_id`
     FOREIGN KEY (`housing_id`)
-    REFERENCES `animalkeeping`.`census_housing` (`id`)
+    REFERENCES `animal_keeping`.`census_housing` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `person_id`
     FOREIGN KEY (`person_id`)
-    REFERENCES `animalkeeping`.`census_person` (`id`)
+    REFERENCES `animal_keeping`.`census_person` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
