@@ -6,8 +6,6 @@ import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -29,13 +27,15 @@ import java.util.*;
 
 import static animalkeeping.util.DateTimeHelper.getDateTime;
 
-public class FishView extends VBox implements Initializable {
+public class FishView extends VBox implements Initializable, View {
     @FXML private ScrollPane tableScrollPane;
-    @FXML private TextField idField;
-    @FXML private TextField aliasField;
-    @FXML private TextField speciesField;
-    @FXML private TextField supplierField;
-    @FXML private Label aliveField;
+    @FXML private Label idLabel;
+    @FXML private Label nameLabel;
+    @FXML private Label housingStartLabel;
+    @FXML private Label housingEndLabel;
+    @FXML private Label statusLabel;
+    @FXML private Label originLabel;
+    @FXML private Label speciesLabel;
     @FXML private TableView<Treatment> treatmentTable;
     @FXML private Tab housingHistoryTab;
     @FXML private Tab observationsTab;
@@ -85,15 +85,13 @@ public class FishView extends VBox implements Initializable {
         //personsTable.resize();
         this.tableScrollPane.setContent(fishTable);
         this.timelineVBox.getChildren().add(timeline);
-        idField.setEditable(false);
-        idField.setText("");
-        aliasField.setText("");
-        aliasField.setEditable(false);
-        speciesField.setEditable(false);
-        speciesField.setText("");
-        supplierField.setEditable(false);
-        supplierField.setText("");
-        aliveField.setText("");
+        idLabel.setText("");
+        nameLabel.setText("");
+        speciesLabel.setText("");
+        originLabel.setText("");
+        statusLabel.setText("");
+        housingEndLabel.setText("");
+        housingStartLabel.setText("");
 
         idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
@@ -228,22 +226,52 @@ public class FishView extends VBox implements Initializable {
 
     private void subjectSelected(Subject s) {
         if (s != null) {
-            idField.setText(s.getId().toString());
-            aliasField.setText(s.getName());
-            speciesField.setText(s.getSpeciesType().getName());
-            supplierField.setText(s.getSupplier().getName());
-            aliveField.setText("Possibly");
+            idLabel.setText(s.getId().toString());
+            nameLabel.setText(s.getName());
+            speciesLabel.setText(s.getSpeciesType().getName());
+            originLabel.setText(s.getSupplier().getName());
+            Iterator<Housing> iter = s.getHousings().iterator();
+            Housing firstHousing = null;
+            Housing lastHousing = null;
+            if (iter.hasNext()) {
+                firstHousing = iter.next();
+            }
+            while (iter.hasNext()) {
+                lastHousing = iter.next();
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            housingStartLabel.setText(firstHousing != null ? sdf.format(firstHousing.getStart()) : "");
+            if (lastHousing != null) {
+                housingEndLabel.setText(lastHousing.getEnd() != null ? sdf.format(lastHousing.getEnd()) : "");
+            } else {
+                housingEndLabel.setText(firstHousing.getEnd() != null ? sdf.format(firstHousing.getEnd()) : "");
+            }
+            Iterator<Treatment> titer = s.getTreatments().iterator();
+            Treatment t = null;
+            while (titer.hasNext()) {
+                t = titer.next();
+            }
+            if (t != null && t.getEnd() == null) {
+                statusLabel.setText("In treatment: " + t.getType().getName());
+            } else if (s.getCurrentHousing() != null) {
+                statusLabel.setText("In housing unit: " + s.getCurrentHousing().getHousing().getName());
+            } else {
+                statusLabel.setText("none");
+            }
+
             treatmentTable.getItems().clear();
             treatmentTable.getItems().addAll(s.getTreatments());
             timeline.setTreatments(s.getTreatments());
             housingTable.setHousings(s.getHousings());
             notesTable.setNotes(s.getNotes());
         } else {
-            idField.setText("");
-            aliasField.setText("");
-            supplierField.setText("");
-            speciesField.setText("");
-            aliveField.setText("");
+            idLabel.setText("");
+            nameLabel.setText("");
+            originLabel.setText("");
+            speciesLabel.setText("");
+            statusLabel.setText("");
+            housingEndLabel.setText("");
+            housingStartLabel.setText("");
             treatmentTable.getItems().clear();
             timeline.setTreatments(null);
             housingTable.setHousings(null);
@@ -328,6 +356,7 @@ public class FishView extends VBox implements Initializable {
         notesTable.getItems().removeAll(n);
     }
 
+    @Override
     public VBox getControls() {
         return controls;
     }
@@ -602,5 +631,10 @@ public class FishView extends VBox implements Initializable {
             }
         });
         dialog.showAndWait();
+    }
+
+    @Override
+    public void refresh() {
+        //TODO refresh
     }
 }

@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class PersonsView  extends VBox implements Initializable {
+public class PersonsView  extends VBox implements Initializable, View {
     @FXML private ScrollPane tableScrollPane;
     @FXML private VBox timelineVBox;
     @FXML private TextField firstNameField;
@@ -162,6 +162,7 @@ public class PersonsView  extends VBox implements Initializable {
     }
 
 
+    @Override
     public VBox getControls() {
         return controls;
     }
@@ -214,6 +215,12 @@ public class PersonsView  extends VBox implements Initializable {
         if (persons != null && persons.size() > 0) {
             personsTable.getSelectionModel().select(persons.get(0));
         }
+    }
+
+
+    @Override
+    public void refresh() {
+        //TODO refresh
     }
 
 

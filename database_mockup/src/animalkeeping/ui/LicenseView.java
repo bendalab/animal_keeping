@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 /**
  * Created by jan on 18.02.17.
  */
-public class LicenseView extends VBox implements Initializable {
+public class LicenseView extends VBox implements Initializable, View {
     @FXML private ScrollPane tableScrollPane;
     @FXML private Label idLabel;
     @FXML private Label nameLabel;
@@ -216,7 +216,14 @@ public class LicenseView extends VBox implements Initializable {
         }
     }
 
+    @Override
     public VBox getControls() {
         return controls;
+    }
+
+
+    @Override
+    public void refresh() {
+        //TODO refresh
     }
 }
