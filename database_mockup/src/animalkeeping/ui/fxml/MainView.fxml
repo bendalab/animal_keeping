@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="masterBox" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="animalkeeping.ui.controller.MainViewController">
+<VBox fx:id="masterBox" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="animalkeeping.ui.controller.MainViewController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -78,9 +78,6 @@
                               <VBox prefHeight="200.0" prefWidth="100.0" />
                            </content>
                         </TitledPane>
-                        <Separator prefWidth="200.0" />
-                        <Separator prefWidth="200.0" />
-                        <Button fx:id="addUsrBtn" disable="true" mnemonicParsing="false" onAction="#showUserAddInterface" prefWidth="95.0" text="Add User" />
                         <Separator prefWidth="200.0" />
                         <TitledPane fx:id="findPane" animated="false" disable="true" text="find">
                           <content>

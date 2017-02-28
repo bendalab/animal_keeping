@@ -1,6 +1,8 @@
 package animalkeeping.ui.controller;
 
 import animalkeeping.ui.*;
+
+import animalkeeping.util.SuperUserDialog;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,7 +19,6 @@ public class MainViewController {
     @FXML private TitledPane inventoryPane;
     @FXML private TitledPane subjectsPane;
     @FXML private TitledPane treatmentsPane;
-    @FXML private Button addUsrBtn;
     @FXML private TextField idField;
     @FXML private ScrollPane scrollPane;
     @FXML private VBox masterBox;
@@ -137,7 +138,6 @@ public class MainViewController {
         }
     }
 
-
     @FXML
     private void showLicenseView() {
         if (!licensesPane.isExpanded()) {
@@ -210,6 +210,8 @@ public class MainViewController {
         }
     }
 
+
+
     @FXML
     private void showUserAddInterface() throws Exception{
         Main.getPrimaryStage().setScene(new Scene(FXMLLoader.load(Main.class.getResource("fxml/UserAddView.fxml"))));
@@ -235,9 +237,9 @@ public class MainViewController {
         inventoryPane.setDisable(false);
         treatmentsPane.setDisable(false);
         findPane.setDisable(false);
-        addUsrBtn.setDisable(false);
         animalHousingPane.setDisable(false);
         licensesPane.setDisable(false);
+
         showInventory();
     }
 
