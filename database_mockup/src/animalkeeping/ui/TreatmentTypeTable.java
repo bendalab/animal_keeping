@@ -13,8 +13,8 @@ import javafx.scene.control.TableView;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by jan on 19.02.17.
@@ -83,7 +83,7 @@ public class TreatmentTypeTable extends TableView<TreatmentType> {
         }
     }
 
-    public void setTreatmentTypes(Set<TreatmentType> types) {
+    public void setTreatmentTypes(Collection<TreatmentType> types) {
         this.masterList.clear();
         this.masterList.addAll(types);
     }

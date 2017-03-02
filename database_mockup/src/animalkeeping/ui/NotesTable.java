@@ -56,8 +56,16 @@ public class NotesTable<T extends Note> extends TableView<T>{
         this.getColumns().addAll(idCol, nameCol, dateCol, personCol, commentCol);
     }
 
+
     public void setNotes(Set<T> notes) {
-        this.getItems().clear();
-        this.getItems().addAll(notes);
+        if (getItems() != null) {
+            getItems().clear();
+            if (notes != null) {
+                getItems().addAll(notes);
+            }
+        } else if (notes != null) {
+            getItems().addAll(notes);
+        }
+
     }
 }

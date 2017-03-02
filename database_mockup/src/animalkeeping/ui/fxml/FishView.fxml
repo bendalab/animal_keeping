@@ -24,11 +24,11 @@
    <items>
       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="150.0" prefWidth="160.0">
          <children>
-            <TabPane prefHeight="259.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <TabPane minHeight="200.0" prefHeight="259.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <tabs>
                   <Tab text="Subject Info">
                      <content>
-                        <VBox maxHeight="-Infinity" prefHeight="200.0">
+                        <VBox maxHeight="-Infinity">
                            <children>
                               <GridPane alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="130.0" prefWidth="174.0" vgap="5.0">
                                  <columnConstraints>
@@ -51,9 +51,9 @@
                                     <Label text="ID" GridPane.rowIndex="1" />
                                     <Label text="Current status" GridPane.rowIndex="5" />
                                     <Label fx:id="idLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <Label text="Name" GridPane.rowIndex="2" />
+                                    <Label text="Name" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
                                     <Label fx:id="housingStartLabel" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
-                                    <Label fx:id="nameLabel" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                                    <Label fx:id="nameLabel" GridPane.columnIndex="3" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
                                     <Label fx:id="idLabel" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
                                     <Label text="Until" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
                                     <Label fx:id="housingEndLabel" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
@@ -61,15 +61,20 @@
                                     <Label fx:id="statusLabel" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.rowSpan="2147483647" />
                                     <Label text="Species" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
                                     <Label fx:id="speciesLabel" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                                    <Label fx:id="aliasLabel" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                                    <Label text="Alias" GridPane.rowIndex="2" />
                                  </children>
                               </GridPane>
                            </children>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
                         </VBox>
                      </content>
                   </Tab>
                   <Tab closable="false" text="Treatments">
                      <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                        <AnchorPane minHeight="-Infinity" minWidth="-Infinity">
                            <children>
                               <TableView fx:id="treatmentTable" layoutX="41.0" layoutY="-36.0" prefHeight="155.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <columns>

@@ -1,5 +1,8 @@
 package animalkeeping.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import java.util.Date;
 
 public class Note {
@@ -56,5 +59,27 @@ public class Note {
 
     public void setPerson(Person person) {
         this.person = person;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof HousingNote))
+            return false;
+        if (obj == this)
+            return true;
+
+        HousingNote rhs = (HousingNote) obj;
+        return new EqualsBuilder().
+                append(getName(), rhs.getName()).
+                append(getId(), rhs.getId()).
+                isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).
+                append(getId()).
+                append(getName()).
+                toHashCode();
     }
 }

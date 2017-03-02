@@ -1,5 +1,8 @@
 package animalkeeping.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -120,6 +123,30 @@ public class HousingUnit {
 
     public void setChildHousingUnits(Set<HousingUnit> childHousingUnits) {
         this.childHousingUnits = childHousingUnits;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof HousingUnit))
+            return false;
+        if (obj == this)
+            return true;
+
+        HousingUnit rhs = (HousingUnit) obj;
+        return new EqualsBuilder().
+                append(getName(), rhs.getName()).
+                append(getHousingType().getName(), rhs.getHousingType().getName()).
+                append(getId(), rhs.getId()).
+                isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).
+                append(getId()).
+                append(getName()).
+                append(getHousingType().getName()).
+                toHashCode();
     }
 
     @Override

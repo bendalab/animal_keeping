@@ -1,5 +1,8 @@
 package animalkeeping.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Created by jan on 27.12.16.
  */
@@ -37,6 +40,28 @@ public class SubjectType {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof SubjectType))
+            return false;
+        if (obj == this)
+            return true;
+
+        SubjectType rhs = (SubjectType) obj;
+        return new EqualsBuilder().
+                append(getName(), rhs.getName()).
+                append(getId(), rhs.getId()).
+                isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).
+                append(getId()).
+                append(getName()).
+                toHashCode();
     }
 
     @Override

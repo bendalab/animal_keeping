@@ -29,7 +29,7 @@
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="preferences…" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" onAction="#closeApplication" text="Quit">
+            <MenuItem mnemonicParsing="false" onAction="#closeApplication" text="quit">
                      <accelerator>
                         <KeyCodeCombination alt="DOWN" code="Q" control="UP" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
@@ -37,11 +37,18 @@
         </Menu>
             <Menu mnemonicParsing="false" text="View">
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#refreshView" text="Refresh">
+                <MenuItem mnemonicParsing="false" onAction="#refreshView" text="refresh">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Misc. entities">
+              <items>
+                  <Menu fx:id="subjectTypeMenu" disable="true" mnemonicParsing="false" text="subject types" />
+                  <Menu fx:id="speciesTypeMenu" disable="true" mnemonicParsing="false" text="species" />
+                  <Menu fx:id="supplierMenu" mnemonicParsing="false" text="supplier" />
               </items>
             </Menu>
         <Menu mnemonicParsing="false" text="Help">

@@ -1,5 +1,8 @@
 package animalkeeping.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Created by jan on 28.12.16.
  */
@@ -63,6 +66,30 @@ public class Quota {
             return 0.0;
         }
         return 1.0 - ((double)getUsed()/(double)getNumber());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Quota))
+            return false;
+        if (obj == this)
+            return true;
+
+        Quota rhs = (Quota) obj;
+        return new EqualsBuilder().
+                append(getSpeciesType().getName(), rhs.getSpeciesType().getName()).
+                append(getLicense().getName(), rhs.getLicense().getName()).
+                append(getId(), rhs.getId()).
+                isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).
+                append(getId()).
+                append(getSpeciesType().getName()).
+                append(getLicense().getName()).
+                toHashCode();
     }
 
     @Override
