@@ -1,6 +1,7 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.Person;
+import animalkeeping.util.EntityHelper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -9,8 +10,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
+
 
 import java.util.List;
 
@@ -26,12 +26,20 @@ public class PersonsTable extends TableView<Person> {
         super();
         idCol = new TableColumn<Person, Number>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
+        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.09));
+
         firstNameCol = new TableColumn<Person, String>("first name");
         firstNameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getFirstName()));
+        firstNameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.20));
+
         lastNameCol = new TableColumn<Person, String>("last name");
         lastNameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getLastName()));
+        lastNameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.20));
+
         emailCol= new TableColumn<Person, String>("email");
         emailCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getEmail()));
+        emailCol.prefWidthProperty().bind(this.widthProperty().multiply(0.50));
+
         this.getColumns().addAll(idCol, firstNameCol, lastNameCol, emailCol);
         init();
     }
@@ -42,23 +50,12 @@ public class PersonsTable extends TableView<Person> {
     }*/
 
     private void init() {
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            List<Person> result = session.createQuery("from Person", Person.class).list();
-            session.getTransaction().commit();
-            session.close();
-            masterList.addAll(result);
-            filteredList = new FilteredList<>(masterList, p -> true);
-            SortedList<Person> sortedList = new SortedList<>(filteredList);
-            sortedList.comparatorProperty().bind(this.comparatorProperty());
-            this.setItems(sortedList);
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
+        List<Person> result = EntityHelper.getEntityList("from Person", Person.class);
+        masterList.addAll(result);
+        filteredList = new FilteredList<>(masterList, p -> true);
+        SortedList<Person> sortedList = new SortedList<>(filteredList);
+        sortedList.comparatorProperty().bind(this.comparatorProperty());
+        this.setItems(sortedList);
     }
 
     public void setNameFilter(String name) {
@@ -81,7 +78,16 @@ public class PersonsTable extends TableView<Person> {
     }
 
 
+    public void refresh() {
+        masterList.addAll(EntityHelper.getEntityList("from Person", Person.class));
+        super.refresh();
+    }
+
     public void setIdFilter(Long id) {
         filteredList.setPredicate(person -> id == null || id.equals(person.getId()));
+    }
+
+    public void setSelectedPerson(Person p) {
+        this.getSelectionModel().select(p);
     }
 }
