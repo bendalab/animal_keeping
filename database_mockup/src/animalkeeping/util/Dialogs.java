@@ -385,5 +385,41 @@ public class Dialogs {
         }
         return null;
     }
+
+    public static Person editPersonDialog(Person person) {
+        PersonForm pf = new PersonForm(person);
+        Dialog<Person> dialog = new Dialog<>();
+        dialog.setTitle("Create/edit person...");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(pf);
+        dialog.setWidth(300);
+        pf.prefWidthProperty().bind(dialog.widthProperty());
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return pf.persistPerson();
+            }
+            return null;
+        });
+        Optional<Person> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            try {
+                Session session = Main.sessionFactory.openSession();
+                session.beginTransaction();
+                session.saveOrUpdate(result.get());
+                session.getTransaction().commit();
+                session.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+            return result.get();
+        }
+        return null;
+    }
 }
 
