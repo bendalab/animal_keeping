@@ -1,22 +1,22 @@
 package animalkeeping.ui.controller;
 
 import animalkeeping.model.*;
-import animalkeeping.ui.ControlLabel;
-import animalkeeping.ui.HousingTable;
-import animalkeeping.ui.Main;
-import animalkeeping.ui.View;
+import animalkeeping.ui.*;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
@@ -42,12 +42,16 @@ public class InventoryController extends VBox implements Initializable, View {
     @FXML private PieChart populationChart;
     @FXML private VBox unitsBox;
     @FXML private VBox chartVbox;
+    @FXML private VBox currentHousingsBox;
     @FXML private ScrollPane tableScrollPane;
+    private HousingTable housingTable;
+    private TreatmentsTable treatmentsTable;
     private VBox controls;
     private HashMap<String, HousingUnit> unitsHashMap;
     private ControlLabel animalUseLabel;
     private ControlLabel exportStock;
     private ControlLabel allLabel;
+    private ControlLabel endTreatmentLabel;
 
 
     public InventoryController() {
@@ -69,6 +73,17 @@ public class InventoryController extends VBox implements Initializable, View {
             }
         });
         unitsHashMap = new HashMap<>();
+
+        housingTable = new HousingTable();
+        treatmentsTable = new TreatmentsTable();
+        treatmentsTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Treatment>) c -> {
+            if (c.getList().size() > 0) {
+                treatmentSelected(c.getList().get(0));
+            }
+        });
+        currentHousingsBox.getChildren().add(housingTable);
+        tableScrollPane.setContent(treatmentsTable);
+
         controls = new VBox();
         animalUseLabel = new ControlLabel("export animal use", false);
         animalUseLabel.setTooltip(new Tooltip("export excel sheet containing the animal use per license"));
@@ -84,8 +99,18 @@ public class InventoryController extends VBox implements Initializable, View {
                 exportStockList();
             }
         });
+
+        endTreatmentLabel  = new ControlLabel("end treatment", true);
+        endTreatmentLabel.setTooltip(new Tooltip("end an open treatment"));
+        endTreatmentLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                endTreatment();
+            }
+        });
         controls.getChildren().add(animalUseLabel);
         controls.getChildren().add(exportStock);
+        controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
+        controls.getChildren().add(endTreatmentLabel);
         refresh();
     }
 
@@ -94,7 +119,8 @@ public class InventoryController extends VBox implements Initializable, View {
         unitsBox.getChildren().add(allLabel);
         unitsBox.setMargin(allLabel, new Insets(0., 0., 5., 5.0 ));
         List<HousingUnit> result = EntityHelper.getEntityList("from HousingUnit where parent_unit_id is NULL", HousingUnit.class);
-
+        List<Treatment> treatments = EntityHelper.getEntityList("from Treatment where end_datetime is NULL", Treatment.class);
+        treatmentsTable.setTreatments(treatments);
         if (result != null) {
             for (HousingUnit h : result) {
                 unitsHashMap.put(h.getName(), h);
@@ -104,8 +130,6 @@ public class InventoryController extends VBox implements Initializable, View {
                 unitsBox.getChildren().add(label);
                 unitsBox.setMargin(label, new Insets(0., 0., 5., 5.0 ));
               }
-        } else {
-            System.out.println("mist");
         }
     }
 
@@ -123,9 +147,10 @@ public class InventoryController extends VBox implements Initializable, View {
         }
         populationChart.setTitle("Total population: " + count.toString());
         populationChart.setData(pieChartData);
-        tableScrollPane.setContent(null);
-        HousingTable table = new HousingTable(housings);
-        tableScrollPane.setContent(table);
+        //tableScrollPane.setContent(null);
+        //HousingTable table = new HousingTable(housings);
+        //tableScrollPane.setContent(table);
+        housingTable.setHousings(housings);
     }
 
 
@@ -152,9 +177,10 @@ public class InventoryController extends VBox implements Initializable, View {
 
         populationChart.setTitle(housingUnit.getName() + ": " + subjects.size());
         populationChart.setData(pieChartData);
-        tableScrollPane.setContent(null);
-        HousingTable table = new HousingTable(housings);
-        tableScrollPane.setContent(table);
+        housingTable.setHousings(housings);
+        //tableScrollPane.setContent(null);
+        //HousingTable table = new HousingTable(housings);
+        //tableScrollPane.setContent(table);
     }
 
     @Override
@@ -417,6 +443,15 @@ public class InventoryController extends VBox implements Initializable, View {
             row = sheet.createRow(rowid++);
         }
         return rowid;
+    }
+
+    private void endTreatment() {
+        Treatment t = treatmentsTable.getSelectionModel().getSelectedItem();
+
+    }
+
+    private void treatmentSelected(Treatment t) {
+        endTreatmentLabel.setDisable(t == null);
     }
 }
 
