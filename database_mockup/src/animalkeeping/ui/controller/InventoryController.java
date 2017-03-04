@@ -119,8 +119,6 @@ public class InventoryController extends VBox implements Initializable, View {
         unitsBox.getChildren().add(allLabel);
         unitsBox.setMargin(allLabel, new Insets(0., 0., 5., 5.0 ));
         List<HousingUnit> result = EntityHelper.getEntityList("from HousingUnit where parent_unit_id is NULL", HousingUnit.class);
-        List<Treatment> treatments = EntityHelper.getEntityList("from Treatment where end_datetime is NULL", Treatment.class);
-        treatmentsTable.setTreatments(treatments);
         if (result != null) {
             for (HousingUnit h : result) {
                 unitsHashMap.put(h.getName(), h);
@@ -131,6 +129,12 @@ public class InventoryController extends VBox implements Initializable, View {
                 unitsBox.setMargin(label, new Insets(0., 0., 5., 5.0 ));
               }
         }
+    }
+
+    private void refreshOpenTreatments() {
+        treatmentsTable.getSelectionModel().select(null);
+        List<Treatment> treatments = EntityHelper.getEntityList("from Treatment where end_datetime is NULL", Treatment.class);
+        treatmentsTable.setTreatments(treatments);
     }
 
     @FXML
@@ -147,9 +151,6 @@ public class InventoryController extends VBox implements Initializable, View {
         }
         populationChart.setTitle("Total population: " + count.toString());
         populationChart.setData(pieChartData);
-        //tableScrollPane.setContent(null);
-        //HousingTable table = new HousingTable(housings);
-        //tableScrollPane.setContent(table);
         housingTable.setHousings(housings);
     }
 
@@ -178,9 +179,6 @@ public class InventoryController extends VBox implements Initializable, View {
         populationChart.setTitle(housingUnit.getName() + ": " + subjects.size());
         populationChart.setData(pieChartData);
         housingTable.setHousings(housings);
-        //tableScrollPane.setContent(null);
-        //HousingTable table = new HousingTable(housings);
-        //tableScrollPane.setContent(table);
     }
 
     @Override
@@ -191,6 +189,7 @@ public class InventoryController extends VBox implements Initializable, View {
     @Override
     public void refresh() {
         fillList();
+        refreshOpenTreatments();
         listAllPopulation();
     }
 
@@ -207,6 +206,11 @@ public class InventoryController extends VBox implements Initializable, View {
 
 
     private void exportStockList() {
+        Pair<Date, Date> interval = Dialogs.getDateInterval();
+        if (interval == null) {
+            return;
+        }
+
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFRow row;
         XSSFSheet overviewsheet = workbook.createSheet("Stock overview");
@@ -238,7 +242,6 @@ public class InventoryController extends VBox implements Initializable, View {
         row.createCell(1).setCellValue(currentHousings.size());
 
         // write a detailed stocklist
-        Pair<Date, Date> interval = Dialogs.getDateInterval();
         try {
             Session session = Main.sessionFactory.openSession();
             String q = "From Housing where end_datetime is NULL OR " +
@@ -338,6 +341,9 @@ public class InventoryController extends VBox implements Initializable, View {
 
     private void exportAnimalUse() {
         Pair<Date, Date> interval = Dialogs.getDateInterval();
+        if (interval == null) {
+            return;
+        }
         XSSFWorkbook workbook = new XSSFWorkbook();
         List<License> licenses = getLicenseList(interval.getKey(), interval.getValue());
         for (License l : licenses) {
@@ -447,7 +453,22 @@ public class InventoryController extends VBox implements Initializable, View {
 
     private void endTreatment() {
         Treatment t = treatmentsTable.getSelectionModel().getSelectedItem();
-
+        Pair<Date, Date> interval = Dialogs.getDateTimeInterval(t.getStart(), new Date());
+        if (interval != null) {
+            t.setStart(interval.getKey());
+            t.setEnd(interval.getValue());
+            Session session = Main.sessionFactory.openSession();
+            session.beginTransaction();
+            session.saveOrUpdate(t);
+            if (t.getType().isInvasive()) {
+                Housing h = t.getSubject().getCurrentHousing();
+                h.setEnd(interval.getValue());
+                session.saveOrUpdate(h);
+            }
+            session.getTransaction().commit();
+            session.close();
+        }
+        refreshOpenTreatments();
     }
 
     private void treatmentSelected(Treatment t) {
