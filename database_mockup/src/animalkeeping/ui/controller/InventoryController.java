@@ -93,19 +93,7 @@ public class InventoryController extends VBox implements Initializable, View {
         unitsBox.getChildren().clear();
         unitsBox.getChildren().add(allLabel);
         unitsBox.setMargin(allLabel, new Insets(0., 0., 5., 5.0 ));
-        List<HousingUnit> result = null;
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            result = session.createQuery("from HousingUnit where parent_unit_id is NULL").list();
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
+        List<HousingUnit> result = EntityHelper.getEntityList("from HousingUnit where parent_unit_id is NULL", HousingUnit.class);
 
         if (result != null) {
             for (HousingUnit h : result) {
@@ -123,21 +111,8 @@ public class InventoryController extends VBox implements Initializable, View {
 
     @FXML
     private void listAllPopulation() {
-        List<SpeciesType> result = null;
-        List<Housing> housings = null;
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            result = session.createQuery("from SpeciesType").list();
-            housings = session.createQuery("from Housing where end_datetime is null").list();
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
+        List<SpeciesType> result = EntityHelper.getEntityList("from SpeciesType", SpeciesType.class);
+        List<Housing> housings = EntityHelper.getEntityList("from Housing where end_datetime is null", Housing.class);
         Integer count = 0;
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         if (result != null) {
