@@ -13,7 +13,6 @@ import javafx.scene.control.TableView;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class TreatmentsTable extends TableView<Treatment>{
     private TableColumn<Treatment, Number> idCol;
@@ -29,7 +28,7 @@ public class TreatmentsTable extends TableView<Treatment>{
         super();
         idCol = new TableColumn<Treatment, Number>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.09));
+        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
 
         subjectCol = new TableColumn<Treatment, String>("subject");
         subjectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubject().getName()));
@@ -52,9 +51,9 @@ public class TreatmentsTable extends TableView<Treatment>{
         endCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getEnd()));
         endCol.prefWidthProperty().bind(this.widthProperty().multiply(0.19));
 
-        finalCol = new TableColumn<Treatment, Boolean>("is final");
+        finalCol = new TableColumn<Treatment, Boolean>("invasive/final");
         finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Boolean>(data.getValue().getType().isInvasive()));
-        finalCol.prefWidthProperty().bind(this.widthProperty().multiply(0.8));
+        finalCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
 
 
         this.getColumns().addAll(idCol, subjectCol, personCol, treatmentCol, startCol, endCol, finalCol);
