@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -67,7 +68,7 @@ public class TreatmentsTable extends TableView<Treatment>{
         this.setItems(masterList);
     }
 
-    public void setTreatments(Set<Treatment> treatments) {
+    public void setTreatments(Collection<Treatment> treatments) {
         masterList.clear();
         if (treatments != null) {
             masterList.addAll(treatments);
