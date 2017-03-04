@@ -140,7 +140,7 @@ public class TreatmentForm extends VBox {
         grid.setVgap(5);
         grid.setHgap(2);
         grid.add(new Label("ID:"), 0, 0);
-        grid.add(idLabel, 0, 1);
+        grid.add(idLabel, 1, 0);
 
         grid.add(new Label("type:"), 0, 1);
         grid.add(typeComboBox, 1, 1, 1, 1);

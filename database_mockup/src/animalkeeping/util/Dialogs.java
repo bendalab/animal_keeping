@@ -492,5 +492,41 @@ public class Dialogs {
         }
         return null;
     }
+
+    public static TreatmentType editTreatmentTypeDialog(TreatmentType type) {
+        TreatmentTypeForm ttf = new TreatmentTypeForm(type);
+        Dialog<TreatmentType> dialog = new Dialog<>();
+        dialog.setTitle("Create/edit treatment type...");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(ttf);
+        dialog.setWidth(300);
+        ttf.prefWidthProperty().bind(dialog.widthProperty());
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return ttf.persistType();
+            }
+            return null;
+        });
+        Optional<TreatmentType> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            try {
+                Session session = Main.sessionFactory.openSession();
+                session.beginTransaction();
+                session.saveOrUpdate(result.get());
+                session.getTransaction().commit();
+                session.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+            return result.get();
+        }
+        return null;
+    }
 }
 
