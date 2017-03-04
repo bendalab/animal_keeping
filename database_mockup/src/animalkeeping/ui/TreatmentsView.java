@@ -2,6 +2,7 @@ package animalkeeping.ui;
 
 import animalkeeping.model.TreatmentType;
 import animalkeeping.ui.controller.TimelineController;
+import animalkeeping.util.Dialogs;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,6 +12,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
+import org.hibernate.Session;
 
 import java.io.IOException;
 import java.net.URL;
@@ -79,7 +81,7 @@ public class TreatmentsView extends VBox implements Initializable, View{
         });
         controls.getChildren().add(newTreatmentTypeLabel);
 
-        editTreatmentTypeLabel = new ControlLabel("edit license", true);
+        editTreatmentTypeLabel = new ControlLabel("edit type", true);
         editTreatmentTypeLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 editTreatmentType(typeTable.getSelectionModel().getSelectedItem());
@@ -87,7 +89,7 @@ public class TreatmentsView extends VBox implements Initializable, View{
         });
         controls.getChildren().add(editTreatmentTypeLabel);
 
-        deleteTreatmentTypeLabel = new ControlLabel("delete license", true);
+        deleteTreatmentTypeLabel = new ControlLabel("delete type", true);
         deleteTreatmentTypeLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteType(typeTable.getSelectionModel().getSelectedItem());
@@ -114,11 +116,21 @@ public class TreatmentsView extends VBox implements Initializable, View{
     }
 
     private void editTreatmentType(TreatmentType type) {
-
+        Dialogs.editTreatmentTypeDialog(type);
+        refresh();
     }
 
     private void deleteType(TreatmentType type) {
-
+        if (type.getTreatments().size() > 0) {
+            Dialogs.showInfo("Can not delete treatement type since it is referenced by treatment entries!");
+            return;
+        }
+        Session session = Main.sessionFactory.openSession();
+        session.beginTransaction();
+        session.delete(type);
+        session.getTransaction().commit();
+        session.close();
+        refresh();
     }
 
     public VBox getControls() {
@@ -127,6 +139,8 @@ public class TreatmentsView extends VBox implements Initializable, View{
 
     @Override
     public void refresh() {
-
+        typeTable.getSelectionModel().clearSelection();
+        typeSelected(null);
+        typeTable.refresh();
     }
 }
