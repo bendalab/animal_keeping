@@ -5,6 +5,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -13,7 +15,7 @@
    <children>
       <Label onMouseClicked="#listAllPopulation" text="Inventory">
          <font>
-            <Font name="System Bold" size="18.0" />
+            <Font name="System Bold" size="16.0" />
          </font>
          <padding>
             <Insets bottom="10.0" />
@@ -21,11 +23,29 @@
       </Label>
       <VBox fx:id="unitsBox" />
       <Separator maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
-      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-         <children>
-            <PieChart fx:id="populationChart" blendMode="DARKEN" labelLineLength="10.0" VBox.vgrow="ALWAYS" />
-         </children>
-      </VBox>
+      <TabPane>
+         <tabs>
+            <Tab text="Population chart">
+               <content>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                     <children>
+                        <PieChart fx:id="populationChart" blendMode="DARKEN" labelLineLength="10.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab text="Current population">
+               <content>
+                  <VBox fx:id="currentHousingsBox" prefHeight="200.0" prefWidth="100.0" />
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+      <Label text="Open Treatments">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Label>
       <ScrollPane fx:id="tableScrollPane" fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
         <content>
           <AnchorPane />
