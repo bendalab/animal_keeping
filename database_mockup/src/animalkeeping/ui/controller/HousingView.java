@@ -46,7 +46,7 @@ public class HousingView extends VBox implements Initializable, View {
 
 
     public HousingView () {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/HousingView.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/HousingView.fxml"));
         loader.setController(this);
         try {
             this.getChildren().add(loader.load());

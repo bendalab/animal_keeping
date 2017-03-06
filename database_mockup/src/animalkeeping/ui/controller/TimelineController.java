@@ -29,7 +29,7 @@ public class TimelineController extends VBox implements Initializable {
     private NumberAxis yAxis;
 
     public TimelineController() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/TimelinePlot.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/animalkeeping/ui/fxml/TimelinePlot.fxml"));
         loader.setController(this);
         try {
             this.getChildren().add(loader.load());

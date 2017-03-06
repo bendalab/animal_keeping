@@ -35,7 +35,7 @@ public class LoginController extends FlowPane implements Initializable{
 
     public LoginController() {
         this.setAlignment(Pos.CENTER);
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Login.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/Login.fxml"));
         loader.setController(this);
         try {
             this.getChildren().add(loader.load());

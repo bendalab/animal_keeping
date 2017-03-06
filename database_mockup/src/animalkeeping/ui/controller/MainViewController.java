@@ -8,16 +8,20 @@ import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Vector;
 
 
-public class MainViewController {
+public class MainViewController extends VBox implements Initializable{
     @FXML private TitledPane animalHousingPane;
     @FXML private TitledPane personsPane;
     @FXML private TitledPane licensesPane;
@@ -35,8 +39,22 @@ public class MainViewController {
     private Vector<TitledPane> panes;
     private HashMap<String, View> views;
 
-    @FXML
-    private void initialize() {
+
+    public MainViewController() {
+        URL url = Main.class.getResource("/animalkeeping/ui/fxml/MainView.fxml");
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(url);
+        loader.setController(this);
+        try {
+            this.getChildren().add(loader.load());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         findBox.getItems().clear();
         findBox.getItems().addAll("Person", "Subject", "Housing unit", "Treatment");
         findBox.getSelectionModel().select("Subject");
@@ -64,7 +82,6 @@ public class MainViewController {
         panes.add(personsPane);
         panes.add(animalHousingPane);
         panes.add(licensesPane);
-
         views = new HashMap<>();
     }
 
@@ -472,4 +489,6 @@ public class MainViewController {
         }
         fillSupplierTypeMenu();
     }
+
+
 }

@@ -55,7 +55,7 @@ public class InventoryController extends VBox implements Initializable, View {
 
 
     public InventoryController() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Inventory.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/Inventory.fxml"));
         loader.setController(this);
         try {
             this.getChildren().add(loader.load());

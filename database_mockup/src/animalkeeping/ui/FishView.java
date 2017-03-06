@@ -68,7 +68,7 @@ public class FishView extends VBox implements Initializable, View {
 
 
     public FishView() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/FishView.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/FishView.fxml"));
         loader.setController(this);
         try {
             this.getChildren().add(loader.load());

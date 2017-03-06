@@ -41,7 +41,7 @@ public class TreatmentsView extends VBox implements Initializable, View{
 
 
     public TreatmentsView() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TreatmentsView.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/TreatmentsView.fxml"));
         loader.setController(this);
         try {
             this.getChildren().add(loader.load());
