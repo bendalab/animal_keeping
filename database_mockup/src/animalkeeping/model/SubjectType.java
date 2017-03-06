@@ -1,12 +1,13 @@
 package animalkeeping.model;
 
+import animalkeeping.logging.ChangeLogInterface;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Created by jan on 27.12.16.
  */
-public class SubjectType {
+public class SubjectType implements ChangeLogInterface{
     private Long id;
     private String name;
     private String description;
@@ -41,6 +42,11 @@ public class SubjectType {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public String getType(){
+        return this.getClass().toString();
+    }
+
 
     @Override
     public boolean equals(Object obj) {

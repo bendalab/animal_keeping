@@ -1,5 +1,6 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.Subject;
 import animalkeeping.model.SubjectNote;
 import animalkeeping.ui.Main;
@@ -38,16 +39,7 @@ public class SubjectNotesForm extends NotesFrom<SubjectNote, Subject> {
         note_entity.setDate(d);
         note_entity.setSubject(entity);
 
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.saveOrUpdate(note_entity);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException he) {
-            showInfo(he.getLocalizedMessage());
-            session.close();
-        }
+        Communicator.pushSaveOrUpdate(note_entity);
         return null;
     }
 }

@@ -1,5 +1,6 @@
     package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -50,7 +51,7 @@ public class TreatmentForm extends VBox {
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         idLabel.setText(t.getId().toString());
         personComboBox.getSelectionModel().select(t.getPerson());
-        typeComboBox.getSelectionModel().select(t.getType());
+        typeComboBox.getSelectionModel().select(t.getTreatmentType());
         LocalDate sd = t.getStart().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         startDate.setValue(sd);
         startTimeField.setText(timeFormat.format(t.getStart()));
@@ -202,16 +203,10 @@ public class TreatmentForm extends VBox {
         treatment.setEnd(ed);
         treatment.setSubject(subject);
         treatment.setPerson(personComboBox.getValue());
-        treatment.setType(typeComboBox.getValue());
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.saveOrUpdate(treatment);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException he) {
-            showInfo(he.getLocalizedMessage());
-        }
+        treatment.setTreatmentType(typeComboBox.getValue());
+
+        Communicator.pushSaveOrUpdate(treatment);
+
         return treatment;
     }
 

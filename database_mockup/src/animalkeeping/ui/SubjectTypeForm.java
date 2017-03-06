@@ -1,5 +1,6 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.SubjectType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -76,16 +77,8 @@ public class SubjectTypeForm extends VBox {
         subjectType.setName(nameField.getText());
         subjectType.setDescription(descriptionArea.getText());
 
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.saveOrUpdate(subjectType);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException he) {
-            showInfo(he.getLocalizedMessage());
-            session.close();
-        }
+        Communicator.pushSaveOrUpdate(subjectType);
+
 
         return subjectType;
     }

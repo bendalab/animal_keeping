@@ -1,5 +1,6 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.Dialogs;
@@ -263,17 +264,7 @@ public class SubjectForm extends VBox {
         h.setHousing(housingUnitComboBox.getValue());
         h.setSubject(subject);
 
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.saveOrUpdate(subject);
-            session.saveOrUpdate(h);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException he) {
-            showInfo(he.getLocalizedMessage());
-            session.close();
-        }
+        Communicator.pushSaveOrUpdate(subject);
 
         return subject;
     }

@@ -1,5 +1,6 @@
 package animalkeeping.model;
 
+import animalkeeping.logging.ChangeLogInterface;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -8,7 +9,7 @@ import java.util.Date;
 /**
  * Created by jan on 28.12.16.
  */
-public class SubjectNote extends Note {
+public class SubjectNote extends Note implements ChangeLogInterface{
     private Subject subject;
 
     public SubjectNote() {

@@ -33,13 +33,13 @@ public class TreatmentsTable extends TableView<Treatment>{
         personCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getPerson().getFirstName() +
         " " + data.getValue().getPerson().getLastName()));
         treatmentCol = new TableColumn<Treatment, String>("treatment");
-        treatmentCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getType().getName()));
+        treatmentCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTreatmentType().getName()));
         startCol = new TableColumn<Treatment, Date>("start");
         startCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getStart()));
         endCol = new TableColumn<Treatment, Date>("end");
         endCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getEnd()));
         finalCol = new TableColumn<Treatment, Boolean>("is final");
-        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Boolean>(data.getValue().getType().isInvasive()));
+        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Boolean>(data.getValue().getTreatmentType().isInvasive()));
 
 
         this.getColumns().addAll(idCol, subectCol, personCol, treatmentCol, startCol, endCol, finalCol);

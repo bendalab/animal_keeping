@@ -10,7 +10,7 @@ import org.hibernate.Session;
  * Created by huben on 06.03.17.
  */
 public abstract class Communicator {
-    public static void pushSaveOrUpdate(Entity E){
+    public static void pushSaveOrUpdate(ChangeLogInterface E){
         ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
         Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
         interceptorX.setSession(session);
