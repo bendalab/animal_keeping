@@ -82,7 +82,7 @@ public class PersonsView  extends VBox implements Initializable, View {
         subjectCol = new TableColumn<>("subject");
         subjectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubject().getName()));
         typeCol = new TableColumn<>("treatment");
-        typeCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getType().getName()));
+        typeCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTreatmentType().getName()));
         startDateCol = new TableColumn<>("start");
         startDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getStart()));
         endDateCol = new TableColumn<>("end");

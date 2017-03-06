@@ -49,7 +49,7 @@ private Set deletes = new HashSet();
 
     System.out.println("onFlushDirty");
 
-    if (entity instanceof ChangeLog){
+    if (entity instanceof ChangeLogInterface){
         updates.add(entity);
     }
     return false;
@@ -62,7 +62,7 @@ public void onDelete(Object entity, Serializable id,
 
     System.out.println("onDelete");
 
-    if (entity instanceof ChangeLog){
+    if (entity instanceof ChangeLogInterface){
         deletes.add(entity);
     }
 }

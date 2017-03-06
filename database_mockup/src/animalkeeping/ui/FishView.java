@@ -99,7 +99,7 @@ public class FishView extends VBox implements Initializable, View {
         idCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.08));
 
         typeCol = new TableColumn<>("treatment");
-        typeCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getType().getName()));
+        typeCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTreatmentType().getName()));
         typeCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.18));
 
         startDateCol = new TableColumn<>("start");
@@ -254,7 +254,7 @@ public class FishView extends VBox implements Initializable, View {
                 t = titer.next();
             }
             if (t != null && t.getEnd() == null) {
-                statusLabel.setText("In treatment: " + t.getType().getName());
+                statusLabel.setText("In treatment: " + t.getTreatmentType().getName());
             } else if (s.getCurrentHousing() != null) {
                 statusLabel.setText("In housing unit: " + s.getCurrentHousing().getHousing().getName());
             } else {

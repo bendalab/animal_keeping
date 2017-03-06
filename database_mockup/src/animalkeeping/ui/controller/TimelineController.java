@@ -69,14 +69,14 @@ public class TimelineController extends VBox implements Initializable {
         HashMap<String, ObservableList<XYChart.Data<Date, Number>>> series = new HashMap<>();
         HashMap<String, Integer> seriesNumber = new HashMap<>();
         for (Treatment t : treatments) {
-            if (!series.containsKey(t.getType().getName())) {
+            if (!series.containsKey(t.getTreatmentType().getName())) {
                 ObservableList<XYChart.Data<Date, Number>> temp = FXCollections.observableArrayList();
-                seriesNumber.put(t.getType().getName(), seriesNumber.size() + 1);
-                temp.add(new XYChart.Data<Date, Number>(t.getStart(), seriesNumber.get(t.getType().getName())));
-                series.put(t.getType().getName(), temp);
+                seriesNumber.put(t.getTreatmentType().getName(), seriesNumber.size() + 1);
+                temp.add(new XYChart.Data<Date, Number>(t.getStart(), seriesNumber.get(t.getTreatmentType().getName())));
+                series.put(t.getTreatmentType().getName(), temp);
             } else {
-                ObservableList<XYChart.Data<Date, Number>> temp = series.get(t.getType().getName());
-                temp.add(new XYChart.Data<Date, Number>(t.getStart(), seriesNumber.get(t.getType().getName())));
+                ObservableList<XYChart.Data<Date, Number>> temp = series.get(t.getTreatmentType().getName());
+                temp.add(new XYChart.Data<Date, Number>(t.getStart(), seriesNumber.get(t.getTreatmentType().getName())));
             }
         }
         for (String s : series.keySet()) {

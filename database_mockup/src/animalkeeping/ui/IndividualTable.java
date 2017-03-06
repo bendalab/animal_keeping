@@ -39,13 +39,13 @@ public class IndividualTable extends javafx.scene.control.TableView<Treatment> {
         personCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getPerson().getFirstName() +
                 " " + data.getValue().getPerson().getLastName()));
         treatmentCol = new TableColumn<>("treatment");
-        treatmentCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getType().getName()));
+        treatmentCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTreatmentType().getName()));
         startCol = new TableColumn<>("start");
         startCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getStart()));
         endCol = new TableColumn<>("end");
         endCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getEnd()));
         finalCol = new TableColumn<>("is final");
-        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getType().isInvasive()));
+        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getTreatmentType().isInvasive()));
 
 
         this.getColumns().addAll(idCol, subectCol, personCol, treatmentCol, startCol, endCol, finalCol);
@@ -62,13 +62,13 @@ public class IndividualTable extends javafx.scene.control.TableView<Treatment> {
         personCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getPerson().getFirstName() +
                 " " + data.getValue().getPerson().getLastName()));
         treatmentCol = new TableColumn<>("treatment");
-        treatmentCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getType().getName()));
+        treatmentCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTreatmentType().getName()));
         startCol = new TableColumn<>("start");
         startCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getStart()));
         endCol = new TableColumn<>("end");
         endCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getEnd()));
         finalCol = new TableColumn<>("is final");
-        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getType().isInvasive()));
+        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getTreatmentType().isInvasive()));
 
 
         this.getColumns().addAll(idCol, subectCol, personCol, treatmentCol, startCol, endCol, finalCol);

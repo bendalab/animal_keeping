@@ -69,7 +69,7 @@ public class ChangeLog {
         return who;
     }
 
-    private void setWhoe(String who) {
+    private void setWho(String who) {
         this.who = who;
     }
 }

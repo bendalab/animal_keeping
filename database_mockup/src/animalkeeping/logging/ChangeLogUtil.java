@@ -17,7 +17,7 @@ public static void LogIt(String action,
  ChangeLogInterface entity ){
 
 Session tempSession = Main.sessionFactory.openSession();
-String activeUser = tempSession.createQuery("CURRENT_USER()").list().get(0).toString();
+String activeUser = tempSession.createSQLQuery("SELECT CURRENT_USER()").list().get(0).toString();
  try {
 
 ChangeLog auditRecord = new ChangeLog(action, entity.getType(),entity.getId(), activeUser);

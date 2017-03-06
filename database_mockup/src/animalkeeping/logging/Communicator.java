@@ -17,8 +17,8 @@ public abstract class Communicator {
         try {
             session.beginTransaction();
             session.saveOrUpdate(E);
-
             session.getTransaction().commit();
+
             session.close();
         } catch (HibernateException e) {
             e.printStackTrace();
