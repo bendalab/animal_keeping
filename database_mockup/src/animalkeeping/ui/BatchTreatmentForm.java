@@ -234,11 +234,15 @@ public class BatchTreatmentForm extends VBox {
                                                 treatmentComboBox.getValue());
             if (endDate != null) {
                 treatment.setEnd(endDate);
+                if (treatment.getType().isInvasive()) {
+                    h.setEnd(endDate);
+                }
             }
 
             try {
                 session.beginTransaction();
-                session.save(treatment);
+                session.saveOrUpdate(treatment);
+                session.saveOrUpdate(h);
                 session.getTransaction().commit();
             } catch (HibernateException e) {
                 e.printStackTrace();
