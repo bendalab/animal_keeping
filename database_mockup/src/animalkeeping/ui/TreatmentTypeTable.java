@@ -1,6 +1,7 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.TreatmentType;
+import animalkeeping.util.EntityHelper;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -43,7 +44,7 @@ public class TreatmentTypeTable extends TableView<TreatmentType> {
         licenseCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getLicense() != null ? data.getValue().getLicense().getName() : ""));
         licenseCol.prefWidthProperty().bind(this.widthProperty().multiply(0.20));
 
-        invasiveCol = new TableColumn<>("is invasive");
+        invasiveCol = new TableColumn<>("invasive/final");
         invasiveCol.setCellValueFactory(data -> new ReadOnlyBooleanWrapper(data.getValue().isInvasive()));
         invasiveCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
 
@@ -64,28 +65,24 @@ public class TreatmentTypeTable extends TableView<TreatmentType> {
 
 
     private void init() {
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            List<TreatmentType> result = session.createQuery("from TreatmentType", TreatmentType.class).list();
-            masterList.addAll(result);
-            filteredList = new FilteredList<>(masterList, p -> true);
-            SortedList<TreatmentType> sortedList = new SortedList<>(filteredList);
-            sortedList.comparatorProperty().bind(this.comparatorProperty());
-            this.setItems(sortedList);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
+        List<TreatmentType> result = EntityHelper.getEntityList("from TreatmentType", TreatmentType.class);
+        masterList.addAll(result);
+        filteredList = new FilteredList<>(masterList, p -> true);
+        SortedList<TreatmentType> sortedList = new SortedList<>(filteredList);
+        sortedList.comparatorProperty().bind(this.comparatorProperty());
+        this.setItems(sortedList);
     }
 
     public void setTreatmentTypes(Collection<TreatmentType> types) {
         this.masterList.clear();
         this.masterList.addAll(types);
+    }
+
+    @Override
+    public void refresh() {
+        masterList.clear();
+        init();
+        super.refresh();
     }
 
 }
