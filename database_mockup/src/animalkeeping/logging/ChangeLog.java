@@ -14,13 +14,15 @@ public class ChangeLog {
     public java.util.Date actionTime;
     public String targetType;
     public Long targetId;
+    public String who;
 
-    ChangeLog(String action,String type,Long targetId)
+    ChangeLog(String action,String type,Long targetId, String who)
     {
         this.typeOfAction = action;
         this.actionTime = Timestamp.from(Instant.now());
         this.targetType = type;
         this.targetId = targetId;
+        this.who = who;
     }
 
     public Long getId() {
@@ -61,5 +63,13 @@ public class ChangeLog {
 
     private void setTargetId(Long targetId) {
         this.targetId = targetId;
+    }
+
+    public String getWho() {
+        return who;
+    }
+
+    private void setWhoe(String who) {
+        this.who = who;
     }
 }
