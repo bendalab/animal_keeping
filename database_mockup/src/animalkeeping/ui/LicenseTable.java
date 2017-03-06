@@ -1,6 +1,7 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.License;
+import animalkeeping.util.EntityHelper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -10,12 +11,10 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by jan on 18.02.17.
@@ -27,11 +26,13 @@ public class LicenseTable extends TableView<License> {
     private TableColumn<License, Date> startDateCol;
     private TableColumn<License, Date> endDateCol;
     private ObservableList<License> masterList = FXCollections.observableArrayList();
+    SortedList<License> sortedList;
     private FilteredList<License> filteredList;
 
     public LicenseTable() {
         super();
         init();
+        refresh();
     }
 
     public LicenseTable(ObservableList<License> items) {
@@ -40,6 +41,11 @@ public class LicenseTable extends TableView<License> {
     }
 
     private void init() {
+        filteredList = new FilteredList<>(masterList, p -> true);
+        sortedList = new SortedList<>(filteredList);
+        sortedList.comparatorProperty().bind(this.comparatorProperty());
+        setItems(sortedList);
+
         idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
         idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.09));
@@ -61,29 +67,27 @@ public class LicenseTable extends TableView<License> {
         fileNumberCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
         this.getColumns().addAll(idCol, nameCol, fileNumberCol, startDateCol, endDateCol);
-
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            List<License> result = session.createQuery("from License", License.class).list();
-            masterList.addAll(result);
-            filteredList = new FilteredList<>(masterList, p -> true);
-            SortedList<License> sortedList = new SortedList<>(filteredList);
-            sortedList.comparatorProperty().bind(this.comparatorProperty());
-            setItems(sortedList);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
     }
 
 
-    public void setLicenses(Set<License> licenses) {
-        this.getItems().clear();
-        this.getItems().addAll(licenses);
+    @Override
+    public void refresh() {
+        List<License> result = EntityHelper.getEntityList("from License", License.class);
+        setLicenses(result);
+        super.refresh();
+    }
+
+    public void remove(License l) {
+        if (masterList.contains(l)) {
+            this.getSelectionModel().clearSelection();
+            masterList.remove(l);
+        }
+    }
+
+    public void setLicenses(Collection<License> licenses) {
+        masterList.clear();
+        if (licenses != null) {
+            masterList.addAll(licenses);
+        }
     }
 }

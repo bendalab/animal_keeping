@@ -26,5 +26,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="commons-lang:commons-lang:2.6" level="project" />
+    <orderEntry type="library" name="org.apache.poi:poi:3.15" level="project" />
+    <orderEntry type="library" name="org.apache.poi:poi-ooxml:3.15" level="project" />
   </component>
 </module>

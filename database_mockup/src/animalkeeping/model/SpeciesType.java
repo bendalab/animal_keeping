@@ -1,6 +1,8 @@
 package animalkeeping.model;
 
 import animalkeeping.ui.Main;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
@@ -63,6 +65,29 @@ public class SpeciesType {
     public void setAllTimeCount(Integer allTimeCount) {
         this.allTimeCount = allTimeCount;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof SpeciesType))
+            return false;
+        if (obj == this)
+            return true;
+
+        SpeciesType rhs = (SpeciesType) obj;
+        return new EqualsBuilder().
+                        append(getName(), rhs.getName()).
+                        append(getId(), rhs.getId()).
+                        isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).
+                append(getId()).
+                append(getName()).
+                toHashCode();
+    }
+
 
     @Override
     public String toString() {

@@ -46,10 +46,13 @@
                                           <Label text="Last name" GridPane.rowIndex="3" />
                                           <Label text="email" GridPane.rowIndex="4" />
                                           <Label text="Person ID" GridPane.rowIndex="1" />
-                                          <TextField fx:id="idField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="idTextField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                                          <Label text="Database User Name" GridPane.rowIndex="5" />
+
+                                           <TextField fx:id="idField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="idTextField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
                                           <TextField fx:id="firstNameField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="first name textField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
                                           <TextField fx:id="lastNameField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="last name textField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
                                           <TextField fx:id="emailField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="email textField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+                                          <TextField fx:id="databaseUserField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="databaseUser textField" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" />
                                        </children>
                                        <VBox.margin>
                                           <Insets />

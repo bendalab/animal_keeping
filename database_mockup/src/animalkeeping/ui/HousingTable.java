@@ -1,21 +1,21 @@
 package animalkeeping.ui;
 
-import animalkeeping.model.*;
-import animalkeeping.ui.controller.InventoryController;
-import javafx.beans.property.*;
+import animalkeeping.model.Housing;
+import animalkeeping.model.HousingUnit;
+import javafx.beans.property.ReadOnlyLongWrapper;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import org.hibernate.Session;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created by jan on 01.01.17.
  */
-public class HousingTable extends TableView{
+public class HousingTable extends TableView<Housing>{
     private TableColumn<Housing, Number> idCol;
     private TableColumn<Housing, String> housingUnitNameCol;
     private TableColumn<Housing, String> subjectNameCol;
@@ -82,8 +82,11 @@ public class HousingTable extends TableView{
         initTableContent(housings);
     }
 
+
     public void setHousings(Collection<Housing> housings) {
         this.getItems().clear();
-        this.getItems().addAll(housings);
+        if (housings != null) {
+            this.getItems().addAll(housings);
+        }
     }
 }

@@ -1,6 +1,9 @@
-package animalkeeping.model;
+package animalkeeping.ui;
 
+import animalkeeping.model.Subject;
+import animalkeeping.model.SubjectNote;
 import animalkeeping.ui.Main;
+import animalkeeping.ui.NotesFrom;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 

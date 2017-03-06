@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="masterBox" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="animalkeeping.ui.controller.MainViewController">
+<VBox fx:id="masterBox" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="animalkeeping.ui.controller.MainViewController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -29,12 +29,28 @@
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="preferences…" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" onAction="#closeApplication" text="Quit">
+            <MenuItem mnemonicParsing="false" onAction="#closeApplication" text="quit">
                      <accelerator>
                         <KeyCodeCombination alt="DOWN" code="Q" control="UP" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
           </items>
         </Menu>
+            <Menu mnemonicParsing="false" text="View">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#refreshView" text="refresh">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Misc. entities">
+              <items>
+                  <Menu fx:id="subjectTypeMenu" disable="true" mnemonicParsing="false" text="subject types" />
+                  <Menu fx:id="speciesTypeMenu" disable="true" mnemonicParsing="false" text="species" />
+                  <Menu fx:id="supplierMenu" mnemonicParsing="false" text="supplier" />
+              </items>
+            </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
             <MenuItem mnemonicParsing="false" text="about" />
@@ -78,9 +94,6 @@
                               <VBox prefHeight="200.0" prefWidth="100.0" />
                            </content>
                         </TitledPane>
-                        <Separator prefWidth="200.0" />
-                        <Separator prefWidth="200.0" />
-                        <Button fx:id="addUsrBtn" disable="true" mnemonicParsing="false" onAction="#showUserAddInterface" prefWidth="95.0" text="Add User" />
                         <Separator prefWidth="200.0" />
                         <TitledPane fx:id="findPane" animated="false" disable="true" text="find">
                           <content>

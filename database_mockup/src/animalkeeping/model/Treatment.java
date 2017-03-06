@@ -1,5 +1,8 @@
 package animalkeeping.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -66,6 +69,30 @@ public class Treatment extends Entity {
 
     public void setNotes(Set<TreatmentNote> notes) {
         this.notes = notes;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Treatment))
+            return false;
+        if (obj == this)
+            return true;
+
+        Treatment rhs = (Treatment) obj;
+        return new EqualsBuilder().
+                append(getSubject().getName(), rhs.getSubject().getName()).
+                append(getStart(), rhs.getStart()).
+                append(getId(), rhs.getId()).
+                isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).
+                append(getId()).
+                append(getStart()).
+                append(getSubject().getName()).
+                toHashCode();
     }
 
     @Override

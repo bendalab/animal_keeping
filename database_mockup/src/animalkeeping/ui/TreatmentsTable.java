@@ -1,12 +1,9 @@
 package animalkeeping.ui;
 
-import animalkeeping.model.Person;
 import animalkeeping.model.Treatment;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.hibernate.HibernateException;

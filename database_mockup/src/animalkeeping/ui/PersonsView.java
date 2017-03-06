@@ -4,6 +4,8 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.Person;
 import animalkeeping.model.Treatment;
 import animalkeeping.ui.controller.TimelineController;
+import animalkeeping.util.AddDatabaseUserDialog;
+import animalkeeping.util.SuperUserDialog;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -20,17 +22,19 @@ import org.hibernate.Session;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class PersonsView  extends VBox implements Initializable {
+public class PersonsView  extends VBox implements Initializable, View {
     @FXML private ScrollPane tableScrollPane;
     @FXML private VBox timelineVBox;
     @FXML private TextField firstNameField;
     @FXML private TextField lastNameField;
     @FXML private TextField emailField;
     @FXML private TextField idField;
+    @FXML private TextField databaseUserField;
     @FXML private TableView<Treatment> treatmentTable;
     private PersonsTable personsTable;
     private TimelineController timeline;
@@ -41,7 +45,7 @@ public class PersonsView  extends VBox implements Initializable {
     private TableColumn<Treatment, String> subjectCol;
     private VBox controls;
     private Person selectedPerson;
-    private ControlLabel editLabel, deleteLabel;
+    private ControlLabel editLabel, deleteLabel, addUserLabel;
 
 
     public PersonsView() {
@@ -69,6 +73,8 @@ public class PersonsView  extends VBox implements Initializable {
         lastNameField.setText("");
         emailField.setEditable(false);
         emailField.setText("");
+        databaseUserField.setEditable(false);
+        databaseUserField.setText("");
 
         personsTable.getSelectionModel().getSelectedItems().addListener(new PersonTableListChangeListener());
         idCol = new TableColumn<>("id");
@@ -104,6 +110,14 @@ public class PersonsView  extends VBox implements Initializable {
             }
         });
         controls.getChildren().add(deleteLabel);
+
+        addUserLabel = new ControlLabel("add as database user", true);
+        addUserLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                addUser();
+            }
+        });
+        controls.getChildren().add(addUserLabel);
     }
 
 
@@ -111,13 +125,14 @@ public class PersonsView  extends VBox implements Initializable {
         selectedPerson = p;
         editLabel.setDisable(p == null);
         deleteLabel.setDisable(p == null);
+        addUserLabel.setDisable(p.getUser() != null);
 
         if (p != null) {
             idField.setText(p.getId().toString());
             firstNameField.setText(p.getFirstName());
             lastNameField.setText(p.getLastName());
             emailField.setText(p.getEmail());
-            System.out.println(p.getTreatments().size());
+            databaseUserField.setText(p.getUser() != null ? p.getUser().getName() : "");
             treatmentTable.getItems().clear();
             treatmentTable.getItems().addAll(p.getTreatments());
             timeline.setTreatments(p.getTreatments());
@@ -126,11 +141,17 @@ public class PersonsView  extends VBox implements Initializable {
             firstNameField.setText("");
             lastNameField.setText("");
             emailField.setText("");
+            databaseUserField.setText("");
             treatmentTable.getItems().clear();
             timeline.setTreatments(null);
         }
     }
 
+    private void addUser(){
+        Person p = personsTable.getSelectionModel().getSelectedItem();
+        Connection c = SuperUserDialog.openConnection();
+        AddDatabaseUserDialog.addDatabaseUser(c, p);
+    }
 
     private void editPerson() {
         System.out.println("edit person: " + (selectedPerson != null ? selectedPerson.toString() : ""));
@@ -149,6 +170,7 @@ public class PersonsView  extends VBox implements Initializable {
     }
 
 
+    @Override
     public VBox getControls() {
         return controls;
     }
@@ -201,6 +223,12 @@ public class PersonsView  extends VBox implements Initializable {
         if (persons != null && persons.size() > 0) {
             personsTable.getSelectionModel().select(persons.get(0));
         }
+    }
+
+
+    @Override
+    public void refresh() {
+        //TODO refresh
     }
 
 

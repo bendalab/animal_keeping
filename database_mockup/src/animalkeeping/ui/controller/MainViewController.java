@@ -1,12 +1,21 @@
 package animalkeeping.ui.controller;
 
+import animalkeeping.model.SpeciesType;
+import animalkeeping.model.SubjectType;
+import animalkeeping.model.SupplierType;
 import animalkeeping.ui.*;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import animalkeeping.util.SuperUserDialog;
+import animalkeeping.util.Dialogs;
+import animalkeeping.util.EntityHelper;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 
@@ -17,13 +26,16 @@ public class MainViewController {
     @FXML private TitledPane inventoryPane;
     @FXML private TitledPane subjectsPane;
     @FXML private TitledPane treatmentsPane;
-    @FXML private Button addUsrBtn;
     @FXML private TextField idField;
     @FXML private ScrollPane scrollPane;
     @FXML private VBox masterBox;
     @FXML private ComboBox<String> findBox;
     @FXML private TitledPane findPane;
+    @FXML private Menu speciesTypeMenu;
+    @FXML private Menu subjectTypeMenu;
+    @FXML private Menu supplierMenu;
     private Vector<TitledPane> panes;
+    private HashMap<String, View> views;
 
     @FXML
     private void initialize() {
@@ -54,63 +66,34 @@ public class MainViewController {
         panes.add(personsPane);
         panes.add(animalHousingPane);
         panes.add(licensesPane);
+
+        views = new HashMap<>();
     }
 
 
-    @FXML
-    private void showPersons() throws Exception{
-        this.scrollPane.setContent(null);
-        try{
-            PersonsView pv = new PersonsView();
+    private Boolean viewIsCached(String name) {
+        return views.containsKey(name);
+    }
 
-            this.scrollPane.setFitToHeight(true);
-            this.scrollPane.setFitToWidth(true);
-            pv.minHeightProperty().bind(this.scrollPane.heightProperty());
-            pv.minWidthProperty().bind(this.scrollPane.widthProperty());
-            this.scrollPane.setContent(pv);
-            this.personsPane.setContent(pv.getControls());
-            collapsePanes(personsPane);
-        }
-        catch(Exception e){
-            e.printStackTrace();
+    private void cacheView(String name, View view) {
+        if (!views.containsKey(name)) {
+            views.put(name, view);
         }
     }
 
-
-    @FXML
-    private void showSubjects() {
-        this.scrollPane.setContent(null);
-        try {
-            FishView fish = new FishView();
-            fish.prefHeightProperty().bind(this.scrollPane.heightProperty());
-            fish.prefWidthProperty().bind(this.scrollPane.widthProperty());
-            this.scrollPane.setContent(fish);
-            this.subjectsPane.setContent(fish.getControls());
-            collapsePanes(subjectsPane);
-        } catch(Exception e){
-            e.printStackTrace();}
-    }
-
-    @FXML
-    private void showTreatments() {
-        this.scrollPane.setContent(null);
-        try {
-            TreatmentsTable treatmentsTable = new TreatmentsTable();
-            treatmentsTable.prefHeightProperty().bind(this.scrollPane.heightProperty());
-            treatmentsTable.prefWidthProperty().bind(this.scrollPane.widthProperty());
-            this.scrollPane.setContent(treatmentsTable);
-            this.treatmentsPane.setContent(new VBox());
-            collapsePanes(treatmentsPane);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @FXML
     private void showInventory() {
         this.scrollPane.setContent(null);
+        inventoryPane.setExpanded(true);
         try {
-            InventoryController inventory = new InventoryController();
+            InventoryController inventory;
+            if (viewIsCached("inventory")) {
+                inventory = (InventoryController) views.get("inventory");
+            } else {
+                inventory = new InventoryController();
+                cacheView("inventory", inventory);
+            }
             inventory.prefHeightProperty().bind(this.scrollPane.heightProperty());
             inventory.prefWidthProperty().bind(this.scrollPane.widthProperty());
             this.scrollPane.setContent(inventory);
@@ -121,31 +104,122 @@ public class MainViewController {
         }
     }
 
+
     @FXML
-    private void showHousingUnits() {
+    private void showPersons() throws Exception{
         this.scrollPane.setContent(null);
-        this.licensesPane.setContent(null);
-        try {
-            HousingView housingView = new HousingView();
-            housingView.prefHeightProperty().bind(this.scrollPane.heightProperty());
-            housingView.prefWidthProperty().bind(this.scrollPane.widthProperty());
-            this.scrollPane.setContent(housingView);
-            this.animalHousingPane.setContent(housingView.getControls());
-            collapsePanes(animalHousingPane);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (!personsPane.isExpanded()) {
+            showInventory();
+        } else {
+            try{
+                PersonsView pv;
+                if (viewIsCached("persons")) {
+                    pv = (PersonsView) views.get("persons");
+                } else {
+                    pv = new PersonsView();
+                    cacheView("persons", pv);
+                }
+                this.scrollPane.setFitToHeight(true);
+                this.scrollPane.setFitToWidth(true);
+                pv.minHeightProperty().bind(this.scrollPane.heightProperty());
+                pv.minWidthProperty().bind(this.scrollPane.widthProperty());
+                this.scrollPane.setContent(pv);
+                this.personsPane.setContent(pv.getControls());
+                collapsePanes(personsPane);
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
         }
     }
 
 
     @FXML
+    private void showSubjects() {
+        this.scrollPane.setContent(null);
+        if (!subjectsPane.isExpanded()) {
+            showInventory();
+        } else {
+            try {
+                FishView fv;
+                if (viewIsCached("subjects")) {
+                    fv = (FishView) views.get("subjects");
+                } else {
+                    fv = new FishView();
+                    cacheView("subjects", fv);
+                }
+                fv.prefHeightProperty().bind(this.scrollPane.heightProperty());
+                fv.prefWidthProperty().bind(this.scrollPane.widthProperty());
+                this.scrollPane.setContent(fv);
+                subjectsPane.setContent(fv.getControls());
+                collapsePanes(subjectsPane);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    @FXML
+    private void showTreatments() {
+        this.scrollPane.setContent(null);
+        if (!treatmentsPane.isExpanded()) {
+            showInventory();
+        } else {
+            try {
+                TreatmentsTable treatmentsTable = new TreatmentsTable();
+                treatmentsTable.prefHeightProperty().bind(this.scrollPane.heightProperty());
+                treatmentsTable.prefWidthProperty().bind(this.scrollPane.widthProperty());
+                this.scrollPane.setContent(treatmentsTable);
+                this.treatmentsPane.setContent(new VBox());
+                collapsePanes(treatmentsPane);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    @FXML
+    private void showHousingUnits() {
+        this.scrollPane.setContent(null);
+        if (!animalHousingPane.isExpanded()) {
+            showInventory();
+        } else {
+            try {
+                HousingView housingView;
+                if (viewIsCached("housing")) {
+                    housingView = (HousingView) views.get("housing");
+                } else {
+                    housingView = new HousingView();
+                    cacheView("housing", housingView);
+                }
+                housingView.prefHeightProperty().bind(this.scrollPane.heightProperty());
+                housingView.prefWidthProperty().bind(this.scrollPane.widthProperty());
+                this.scrollPane.setContent(housingView);
+                this.animalHousingPane.setContent(housingView.getControls());
+                collapsePanes(animalHousingPane);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
     private void showLicenseView() {
+        this.scrollPane.setContent(null);
         if (!licensesPane.isExpanded()) {
             showInventory();
         } else {
             this.licensesPane.setContent(null);
             try {
-                LicenseView licenseView = new LicenseView();
+                LicenseView licenseView;
+                if (viewIsCached("license")) {
+                    licenseView = (LicenseView) views.get("license");
+                } else {
+                    licenseView = new LicenseView();
+                    cacheView("license", licenseView);
+                }
                 licenseView.prefHeightProperty().bind(this.scrollPane.heightProperty());
                 licenseView.prefWidthProperty().bind(this.scrollPane.widthProperty());
                 this.scrollPane.setContent(licenseView);
@@ -210,6 +284,8 @@ public class MainViewController {
         }
     }
 
+
+
     @FXML
     private void showUserAddInterface() throws Exception{
         Main.getPrimaryStage().setScene(new Scene(FXMLLoader.load(Main.class.getResource("fxml/UserAddView.fxml"))));
@@ -229,15 +305,122 @@ public class MainViewController {
     }
 
 
+    @FXML
+    private void newSubjectType() {
+        Dialogs.editSubjectTypeDialog(null);
+        fillSubjectTypeMenu();
+    }
+
+
+    @FXML
+    private void newSpeciesType() {
+        Dialogs.editSpeciesTypeDialog(null);
+        fillSpeciesTypeMenu();
+    }
+
+
+    @FXML
+    private void newSupplierType() {
+        Dialogs.editSupplierTypeDialog(null);
+        fillSupplierTypeMenu();
+    }
+
+    @FXML
+    private void refreshView() {
+        if (this.scrollPane.getContent() instanceof View) {
+            ((View) this.scrollPane.getContent()).refresh();
+        }
+    }
+
+
+    private void fillSubjectTypeMenu() {
+        subjectTypeMenu.getItems().clear();
+        List<SubjectType> subjectTypeList = EntityHelper.getEntityList("From SubjectType", SubjectType.class);
+        MenuItem newSubjectItem = new MenuItem("new");
+        newSubjectItem.setOnAction(event -> newSubjectType());
+        subjectTypeMenu.getItems().add(newSubjectItem);
+        subjectTypeMenu.getItems().add(new SeparatorMenuItem());
+
+        for (SubjectType t : subjectTypeList) {
+            Menu submenu = new Menu(t.getName());
+            subjectTypeMenu.getItems().add(submenu);
+            MenuItem editItem = new MenuItem("edit");
+            editItem.setUserData(t);
+            editItem.setOnAction(event -> editSubjectType((SubjectType) editItem.getUserData()));
+            MenuItem deleteItem = new MenuItem("delete");
+            deleteItem.setUserData(t);
+            deleteItem.setOnAction(event -> deleteSubjectType((SubjectType) editItem.getUserData()));
+            submenu.getItems().add(editItem);
+            submenu.getItems().add(deleteItem);
+        }
+    }
+
+
+    private void fillSpeciesTypeMenu() {
+        speciesTypeMenu.getItems().clear();
+        List<SpeciesType> speciesTypeList = EntityHelper.getEntityList("From SpeciesType", SpeciesType.class);
+
+        MenuItem newSpeciesItem = new MenuItem("new");
+        newSpeciesItem.setOnAction(event -> newSpeciesType());
+        speciesTypeMenu.getItems().add(newSpeciesItem);
+        speciesTypeMenu.getItems().add(new SeparatorMenuItem());
+
+        for (SpeciesType t : speciesTypeList) {
+            Menu submenu = new Menu(t.getName());
+            speciesTypeMenu.getItems().add(submenu);
+            MenuItem editItem = new MenuItem("edit");
+            editItem.setUserData(t);
+            editItem.setOnAction(event -> editSpeciesType((SpeciesType) editItem.getUserData()));
+            MenuItem deleteItem = new MenuItem("delete");
+            deleteItem.setUserData(t);
+            deleteItem.setOnAction(event -> deleteSpeciesType((SpeciesType) editItem.getUserData()));
+            submenu.getItems().add(editItem);
+            submenu.getItems().add(deleteItem);
+        }
+    }
+
+
+    private void fillSupplierTypeMenu() {
+        supplierMenu.getItems().clear();
+        List<SupplierType> supplier = EntityHelper.getEntityList("From SupplierType", SupplierType.class);
+        MenuItem newSupplierItem = new MenuItem("new");
+        newSupplierItem.setOnAction(event -> newSupplierType());
+        supplierMenu.getItems().add(newSupplierItem);
+        supplierMenu.getItems().add(new SeparatorMenuItem());
+
+        for (SupplierType t : supplier) {
+            Menu submenu = new Menu(t.getName());
+            supplierMenu.getItems().add(submenu);
+            MenuItem editItem = new MenuItem("edit");
+            editItem.setUserData(t);
+            editItem.setOnAction(event -> editSupplierType((SupplierType) editItem.getUserData()));
+            MenuItem deleteItem = new MenuItem("delete");
+            deleteItem.setUserData(t);
+            deleteItem.setOnAction(event -> deleteSupplierType((SupplierType) editItem.getUserData()));
+            submenu.getItems().add(editItem);
+            submenu.getItems().add(deleteItem);
+        }
+    }
+
+
+    private void fillMenus() {
+        fillSubjectTypeMenu();
+        fillSpeciesTypeMenu();
+        fillSupplierTypeMenu();
+    }
+
+
     private void connectedToDatabase() {
         subjectsPane.setDisable(false);
         personsPane.setDisable(false);
         inventoryPane.setDisable(false);
         treatmentsPane.setDisable(false);
         findPane.setDisable(false);
-        addUsrBtn.setDisable(false);
         animalHousingPane.setDisable(false);
         licensesPane.setDisable(false);
+        subjectTypeMenu.setDisable(false);
+        speciesTypeMenu.setDisable(false);
+        fillMenus();
         showInventory();
     }
 
@@ -247,5 +430,42 @@ public class MainViewController {
                 p.setExpanded(false);
             }
         }
+    }
+
+    private void editSubjectType(SubjectType t) {
+        Dialogs.editSubjectTypeDialog(t);
+    }
+
+    private void deleteSubjectType(SubjectType t) {
+        if (!EntityHelper.deleteEntity(t)) {
+            Dialogs.showInfo("Subject type " + t.getName() + " could not be deleted. Probably referenced by other entries.");
+            return;
+        }
+        fillSubjectTypeMenu();
+    }
+
+    private void editSpeciesType(SpeciesType t) {
+        Dialogs.editSpeciesTypeDialog(t);
+    }
+
+    private void deleteSpeciesType(SpeciesType t) {
+        if (!EntityHelper.deleteEntity(t)) {
+            Dialogs.showInfo("Species " + t.getName() + " could not be deleted. Probably referenced by other entries.");
+            return;
+        }
+        fillSpeciesTypeMenu();
+    }
+
+
+    private void editSupplierType(SupplierType t) {
+        Dialogs.editSupplierTypeDialog(t);
+    }
+
+    private void deleteSupplierType(SupplierType t) {
+        if (!EntityHelper.deleteEntity(t)) {
+            Dialogs.showInfo("Supplier " + t.getName() + " could not be deleted. Probably referenced by other entries.");
+            return;
+        }
+        fillSupplierTypeMenu();
     }
 }
