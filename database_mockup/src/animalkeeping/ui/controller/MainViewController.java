@@ -4,8 +4,6 @@ import animalkeeping.model.SpeciesType;
 import animalkeeping.model.SubjectType;
 import animalkeeping.model.SupplierType;
 import animalkeeping.ui.*;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import animalkeeping.util.SuperUserDialog;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.fxml.FXML;
@@ -167,11 +165,17 @@ public class MainViewController {
             showInventory();
         } else {
             try {
-                TreatmentsTable treatmentsTable = new TreatmentsTable();
-                treatmentsTable.prefHeightProperty().bind(this.scrollPane.heightProperty());
-                treatmentsTable.prefWidthProperty().bind(this.scrollPane.widthProperty());
-                this.scrollPane.setContent(treatmentsTable);
-                this.treatmentsPane.setContent(new VBox());
+                TreatmentsView treatmentsView;
+                if (viewIsCached("treatment")) {
+                    treatmentsView = (TreatmentsView) views.get("treatment");
+                } else {
+                    treatmentsView = new TreatmentsView();
+                    cacheView("treatment", treatmentsView);
+                }
+                treatmentsView.prefHeightProperty().bind(this.scrollPane.heightProperty());
+                treatmentsView.prefWidthProperty().bind(this.scrollPane.widthProperty());
+                this.scrollPane.setContent(treatmentsView);
+                this.treatmentsPane.setContent(treatmentsView.getControls());
                 collapsePanes(treatmentsPane);
             } catch (Exception e) {
                 e.printStackTrace();
