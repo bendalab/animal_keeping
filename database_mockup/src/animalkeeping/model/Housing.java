@@ -1,5 +1,6 @@
 package animalkeeping.model;
 
+import animalkeeping.logging.ChangeLogInterface;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -8,7 +9,7 @@ import java.util.Date;
 /**
  * Created by jan on 28.12.16.
  */
-public class Housing extends Entity {
+public class Housing extends Entity implements ChangeLogInterface {
     private String comment;
     private java.util.Date start;
     private java.util.Date end;
@@ -61,6 +62,10 @@ public class Housing extends Entity {
 
     public void setSubject(Subject subject) {
         this.subject = subject;
+    }
+
+    public String getType(){
+        return this.getClass().toString();
     }
 
     @Override

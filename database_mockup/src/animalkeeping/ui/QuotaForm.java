@@ -1,5 +1,6 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.License;
 import animalkeeping.model.Quota;
 import animalkeeping.model.SpeciesType;
@@ -135,24 +136,14 @@ public class QuotaForm extends VBox {
 
 
     public Quota persistQuota() {
-        if (quota== null) {
+        if (quota == null) {
             quota = new Quota();
         }
         quota.setNumber(Long.valueOf(numberField.getText()));
         quota.setLicense(licenseCombo.getValue());
         quota.setSpeciesType(speciesCombo.getValue());
-
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.saveOrUpdate(quota);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException he) {
-            showInfo(he.getLocalizedMessage());
-            session.close();
-        }
+        Communicator.pushSaveOrUpdate(quota);
         return quota;
-    }
 
+    }
 }

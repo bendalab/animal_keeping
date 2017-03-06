@@ -1,6 +1,7 @@
 package animalkeeping.ui;
 
 import animalkeeping.logging.ChangeLogInterceptor;
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.Person;
 import animalkeeping.model.DatabaseUserType;
 import javafx.scene.control.ComboBox;
@@ -112,18 +113,9 @@ public class AddDatabaseUserForm extends VBox {
             user.setPerson(person);
             createUser(connection, user, pwField.getText());
             person.setUser(user);
-            ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
-            Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
-            interceptorX.setSession(session);
-            try {
-                session.beginTransaction();
-                session.saveOrUpdate(person);
-                session.getTransaction().commit();
-                session.close();
-            } catch (HibernateException he) {
-                showInfo(he.getLocalizedMessage());
-                session.close();
-            }
+
+            Communicator.pushSaveOrUpdate(person);
+
             return true;
         }
         else{

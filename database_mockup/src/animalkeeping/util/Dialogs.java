@@ -328,7 +328,7 @@ public class Dialogs {
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
-                return std.persistSpeceisType();
+                return std.persistSpeciesType();
             }
             return null;
         });

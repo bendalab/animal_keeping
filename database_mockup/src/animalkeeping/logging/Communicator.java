@@ -1,6 +1,7 @@
 package animalkeeping.logging;
 
 import animalkeeping.model.Entity;
+import animalkeeping.model.Mutable;
 import animalkeeping.ui.Main;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -28,7 +29,7 @@ public abstract class Communicator {
 
     }
 
-    public static void pushDelete(Entity E){
+    public static void pushDelete(ChangeLogInterface E){
         ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
         Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
         interceptorX.setSession(session);

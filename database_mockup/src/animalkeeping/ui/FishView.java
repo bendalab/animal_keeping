@@ -1,5 +1,6 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.controller.TimelineController;
 import javafx.beans.property.ReadOnlyLongWrapper;
@@ -327,34 +328,21 @@ public class FishView extends VBox implements Initializable, View {
             showInfo("Cannot delete subject " + s.getName() + " since it is referenced by " +
                     Integer.toString(s.getTreatments().size()) + " treatment entries! Delete them first.");
         } else {
-            Session session = Main.sessionFactory.openSession();
-            session.beginTransaction();
-            session.delete(s);
-            session.getTransaction().commit();
-            session.close();
+            Communicator.pushDelete(s);
         }
-        fishTable.getSelectionModel().select(null);
+        fishTable.getSelectionModel().select(null); //this is below the other stuff; see vvvvvvv
     }
 
 
     private void deleteTreatment() {
         Treatment t = treatmentTable.getSelectionModel().getSelectedItem();
-        treatmentTable.getSelectionModel().select(null);
-        Session session = Main.sessionFactory.openSession();
-        session.beginTransaction();
-        session.delete(t);
-        session.getTransaction().commit();
-        session.close();
-        treatmentTable.getItems().remove(t);
+        treatmentTable.getSelectionModel().select(null);                    //here it is above
+        Communicator.pushDelete(t);
     }
 
     private void deleteObservation(SubjectNote n) {
         notesTable.getSelectionModel().select(null);
-        Session session = Main.sessionFactory.openSession();
-        session.beginTransaction();
-        session.delete(n);
-        session.getTransaction().commit();
-        session.close();
+        Communicator.pushDelete(n);
         notesTable.getItems().removeAll(n);
     }
 

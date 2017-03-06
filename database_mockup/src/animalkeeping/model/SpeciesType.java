@@ -1,5 +1,6 @@
 package animalkeeping.model;
 
+import animalkeeping.logging.ChangeLogInterface;
 import animalkeeping.ui.Main;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * Created by jan on 27.12.16.
  */
-public class SpeciesType {
+public class SpeciesType extends Entity implements ChangeLogInterface {
     private Long id;
     private String name;
     private String trivial;
@@ -64,6 +65,10 @@ public class SpeciesType {
 
     public void setAllTimeCount(Integer allTimeCount) {
         this.allTimeCount = allTimeCount;
+    }
+
+    public String getType(){
+        return this.getClass().toString();
     }
 
     @Override

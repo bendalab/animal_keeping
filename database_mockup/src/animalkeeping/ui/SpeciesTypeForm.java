@@ -1,5 +1,6 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.SpeciesType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -68,7 +69,7 @@ public class SpeciesTypeForm extends VBox {
     }
 
 
-    public SpeciesType persistSpeceisType() {
+    public SpeciesType persistSpeciesType() {
         if (speciesType == null) {
             speciesType = new SpeciesType();
         }
@@ -76,15 +77,7 @@ public class SpeciesTypeForm extends VBox {
         speciesType.setTrivial(trivialField.getText());
 
         Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.saveOrUpdate(speciesType);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException he) {
-            showInfo(he.getLocalizedMessage());
-            session.close();
-        }
+        Communicator.pushSaveOrUpdate(speciesType);
         return speciesType;
     }
 }

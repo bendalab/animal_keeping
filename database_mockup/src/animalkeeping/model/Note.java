@@ -1,11 +1,12 @@
 package animalkeeping.model;
 
+import animalkeeping.logging.ChangeLogInterface;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import java.util.Date;
 
-public class Note {
+public class Note implements ChangeLogInterface {
     private Long id;
     private String name;
     private String comment;
@@ -59,6 +60,10 @@ public class Note {
 
     public void setPerson(Person person) {
         this.person = person;
+    }
+
+    public String getType(){
+        return this.getClass().toString();
     }
 
     @Override
