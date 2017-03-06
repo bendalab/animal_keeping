@@ -12,7 +12,6 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 import java.util.HashMap;
 
-
 public class Main extends Application {
     public static SessionFactory sessionFactory;
     private static Boolean connected = false;
