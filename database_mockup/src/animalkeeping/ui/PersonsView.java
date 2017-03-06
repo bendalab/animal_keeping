@@ -1,5 +1,6 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.Person;
 import animalkeeping.model.Treatment;
 import animalkeeping.ui.controller.TimelineController;
@@ -137,7 +138,14 @@ public class PersonsView  extends VBox implements Initializable {
 
 
     private void deletePerson() {
-        System.out.println("delete person: " + (selectedPerson != null ? selectedPerson.toString() : ""));
+         if (selectedPerson != null) {
+             Communicator.pushDelete(selectedPerson);
+             System.out.println("deleted person: " + selectedPerson);
+         }
+         else{
+             System.out.println("No person selected");
+         }
+
     }
 
 
