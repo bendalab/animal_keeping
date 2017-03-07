@@ -17,10 +17,10 @@ public static void LogIt(String action,
  ChangeLogInterface entity ){
 
 Session tempSession = Main.sessionFactory.openSession();
-
+String activeUser = tempSession.createSQLQuery("SELECT CURRENT_USER()").list().get(0).toString();
  try {
 
-ChangeLog auditRecord = new ChangeLog(action, entity.getType(),entity.getId());
+ChangeLog auditRecord = new ChangeLog(action, entity.getType(),entity.getId(), activeUser);
 tempSession.beginTransaction();
 tempSession.save(auditRecord);
 tempSession.getTransaction().commit();

@@ -40,7 +40,7 @@ public class TreatmentsTable extends TableView<Treatment>{
         personCol.prefWidthProperty().bind(this.widthProperty().multiply(0.13));
 
         treatmentCol = new TableColumn<Treatment, String>("treatment");
-        treatmentCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getType().getName()));
+        treatmentCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTreatmentType().getName()));
         treatmentCol.prefWidthProperty().bind(this.widthProperty().multiply(0.17));
 
         startCol = new TableColumn<Treatment, Date>("start");
@@ -49,10 +49,13 @@ public class TreatmentsTable extends TableView<Treatment>{
 
         endCol = new TableColumn<Treatment, Date>("end");
         endCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getEnd()));
+        finalCol = new TableColumn<Treatment, Boolean>("is final");
+       
+
         endCol.prefWidthProperty().bind(this.widthProperty().multiply(0.19));
 
         finalCol = new TableColumn<Treatment, Boolean>("invasive/final");
-        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Boolean>(data.getValue().getType().isInvasive()));
+        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Boolean>(data.getValue().getTreatmentType().isInvasive()));
         finalCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
 
 

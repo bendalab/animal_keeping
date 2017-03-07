@@ -26,6 +26,7 @@ public class Main extends Application {
     private static Boolean connected = false;
     private static Stage primaryStage;
 
+
     @Override
     public void start(Stage primaryStage) throws Exception{
         Main.primaryStage = primaryStage;

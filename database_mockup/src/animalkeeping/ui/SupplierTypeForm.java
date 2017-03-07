@@ -1,5 +1,6 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.SupplierType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -76,16 +77,8 @@ public class SupplierTypeForm extends VBox {
         supplierType.setName(nameField.getText());
         supplierType.setAddress(addressArea.getText());
 
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.saveOrUpdate(supplierType);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException he) {
-            showInfo(he.getLocalizedMessage());
-            session.close();
-        }
+        Communicator.pushSaveOrUpdate(supplierType);
+
         return supplierType;
     }
 }

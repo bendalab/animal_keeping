@@ -1,12 +1,13 @@
 package animalkeeping.model;
 
+import animalkeeping.logging.ChangeLogInterface;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Created by jan on 27.12.16.
  */
-public class SupplierType {
+public class SupplierType extends Entity implements ChangeLogInterface {
     private Long id;
     private String name;
     private String address;
@@ -40,6 +41,10 @@ public class SupplierType {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getType(){
+        return this.getClass().toString();
     }
 
     @Override

@@ -1,12 +1,13 @@
 package animalkeeping.model;
 
+import animalkeeping.logging.ChangeLogInterface;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Created by jan on 28.12.16.
  */
-public class Quota {
+public class Quota extends Entity implements ChangeLogInterface{
     private Long id;
     private Long number;
     private SpeciesType speciesType;
@@ -59,6 +60,10 @@ public class Quota {
 
     public void setUsed(Long used) {
         this.used = used;
+    }
+
+    public String getType(){
+        return this.getClass().toString();
     }
 
     public double getAvailableFraction() {

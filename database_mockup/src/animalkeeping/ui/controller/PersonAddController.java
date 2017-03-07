@@ -2,6 +2,7 @@ package animalkeeping.ui.controller;
 
 import animalkeeping.logging.ChangeLogInterceptor;
 import animalkeeping.logging.ChangeLogInterface;
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.*;
 import javafx.fxml.FXML;
@@ -69,29 +70,7 @@ public class PersonAddController {
         nP.setLastName(lastFld.getText());
         nP.setEmail(emailFld.getText());
 
-        ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
-        Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
-        interceptorX.setSession(session);
-
-        try {
-
-            session.beginTransaction();
-
-            System.out.println(nP);
-
-            session.saveOrUpdate(nP);
-
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
-
-
-        //database add new person, give id
+        Communicator.pushSaveOrUpdate(nP);
     }
 
     @FXML

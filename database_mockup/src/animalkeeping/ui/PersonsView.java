@@ -69,6 +69,8 @@ public class PersonsView  extends VBox implements Initializable, View {
         userroleLabel.setText("");
         personsTable.getSelectionModel().getSelectedItems().addListener(new PersonTableListChangeListener());
 
+
+
         controls = new VBox();
         controls.setAlignment(Pos.TOP_LEFT);
         controls.setSpacing(10);

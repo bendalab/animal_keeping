@@ -7,5 +7,6 @@ CREATE TABLE IF NOT EXISTS `animal_keeping`.`changelog` (
   `created_time` DATETIME NOT NULL,
   `target_type` VARCHAR(200) NOT NULL,
   `target_id` INT NOT NULL, 
+  `who` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`id`)) 
 ENGINE = InnoDB;

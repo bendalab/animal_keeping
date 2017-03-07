@@ -12,7 +12,7 @@
         <property name="start"  type="timestamp" column="start_datetime" not-null="true"/>
         <property name="end"  type="timestamp" column="end_datetime" not-null="false"/>
 
-        <many-to-one name="type" column="type_id" class="TreatmentType" not-null="true"/>
+        <many-to-one name="treatmentType" column="type_id" class="TreatmentType" not-null="true"/>
         <many-to-one name="person" column="person_id" class="Person" not-null="true"/>
         <many-to-one name="subject" column="subject_id" class="Subject" not-null="true"/>
         <set name="notes" table="census_treatmentnote" cascade="save-update, delete"
