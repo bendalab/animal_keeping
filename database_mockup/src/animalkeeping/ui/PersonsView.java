@@ -68,18 +68,7 @@ public class PersonsView  extends VBox implements Initializable, View {
         usernameLabel.setText("");
         userroleLabel.setText("");
         personsTable.getSelectionModel().getSelectedItems().addListener(new PersonTableListChangeListener());
-        idCol = new TableColumn<>("id");
-        idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        subjectCol = new TableColumn<>("subject");
-        subjectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubject().getName()));
-        typeCol = new TableColumn<>("treatment");
-        typeCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTreatmentType().getName()));
-        startDateCol = new TableColumn<>("start");
-        startDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getStart()));
-        endDateCol = new TableColumn<>("end");
-        endDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getEnd()));
-        treatmentTable.getColumns().clear();
-        treatmentTable.getColumns().addAll(idCol, subjectCol, typeCol, startDateCol, endDateCol);
+
 
 
         controls = new VBox();
