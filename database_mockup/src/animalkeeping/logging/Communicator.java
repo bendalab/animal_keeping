@@ -1,7 +1,5 @@
 package animalkeeping.logging;
 
-import animalkeeping.model.Entity;
-import animalkeeping.model.Mutable;
 import animalkeeping.ui.Main;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
