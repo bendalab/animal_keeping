@@ -2,13 +2,10 @@ package animalkeeping.ui;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.Person;
-import animalkeeping.model.Treatment;
 import animalkeeping.ui.controller.TimelineController;
 import animalkeeping.util.AddDatabaseUserDialog;
+import animalkeeping.util.Dialogs;
 import animalkeeping.util.SuperUserDialog;
-import javafx.beans.property.ReadOnlyLongWrapper;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,29 +20,26 @@ import org.hibernate.Session;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class PersonsView  extends VBox implements Initializable, View {
     @FXML private ScrollPane tableScrollPane;
     @FXML private VBox timelineVBox;
-    @FXML private TextField firstNameField;
-    @FXML private TextField lastNameField;
-    @FXML private TextField emailField;
-    @FXML private TextField idField;
-    @FXML private TextField databaseUserField;
-    @FXML private TableView<Treatment> treatmentTable;
+    @FXML private Label firstnameLabel;
+    @FXML private Label lastnameLabel;
+    @FXML private Label emailLabel;
+    @FXML private Label idLabel;
+    @FXML private Label usernameLabel;
+    @FXML private Label userroleLabel;
+    @FXML private VBox treatmentTableBox;
+
     private PersonsTable personsTable;
+    private TreatmentsTable treatmentsTable;
     private TimelineController timeline;
-    private TableColumn<Treatment, Number> idCol;
-    private TableColumn<Treatment, String> typeCol;
-    private TableColumn<Treatment, Date> startDateCol;
-    private TableColumn<Treatment, Date> endDateCol;
-    private TableColumn<Treatment, String> subjectCol;
     private VBox controls;
     private Person selectedPerson;
-    private ControlLabel editLabel, deleteLabel, addUserLabel;
+    private ControlLabel newLabel, editLabel, deleteLabel, addUserLabel;
 
 
     public PersonsView() {
@@ -61,21 +55,18 @@ public class PersonsView  extends VBox implements Initializable, View {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         personsTable = new PersonsTable();
+        treatmentsTable = new TreatmentsTable();
+        if (treatmentTableBox != null)
+            treatmentTableBox.getChildren().add(treatmentsTable);
         timeline = new TimelineController();
-        //personsTable.resize();
         this.tableScrollPane.setContent(personsTable);
         this.timelineVBox.getChildren().add(timeline);
-        idField.setEditable(false);
-        idField.setText("");
-        firstNameField.setText("");
-        firstNameField.setEditable(false);
-        lastNameField.setEditable(false);
-        lastNameField.setText("");
-        emailField.setEditable(false);
-        emailField.setText("");
-        databaseUserField.setEditable(false);
-        databaseUserField.setText("");
-
+        idLabel.setText("");
+        firstnameLabel.setText("");
+        lastnameLabel.setText("");
+        emailLabel.setText("");
+        usernameLabel.setText("");
+        userroleLabel.setText("");
         personsTable.getSelectionModel().getSelectedItems().addListener(new PersonTableListChangeListener());
         idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
@@ -90,10 +81,18 @@ public class PersonsView  extends VBox implements Initializable, View {
         treatmentTable.getColumns().clear();
         treatmentTable.getColumns().addAll(idCol, subjectCol, typeCol, startDateCol, endDateCol);
 
+
         controls = new VBox();
         controls.setAlignment(Pos.TOP_LEFT);
-        //controls.setPadding(new Insets(0.0, 0.0, 10.0, 0.0));
         controls.setSpacing(10);
+
+        newLabel = new ControlLabel("new person", false);
+        newLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                newPerson();
+            }
+        });
+        controls.getChildren().add(newLabel);
 
         editLabel = new ControlLabel("edit person", true);
         editLabel.setOnMouseClicked(event -> {
@@ -128,21 +127,22 @@ public class PersonsView  extends VBox implements Initializable, View {
         addUserLabel.setDisable(p.getUser() != null);
 
         if (p != null) {
-            idField.setText(p.getId().toString());
-            firstNameField.setText(p.getFirstName());
-            lastNameField.setText(p.getLastName());
-            emailField.setText(p.getEmail());
-            databaseUserField.setText(p.getUser() != null ? p.getUser().getName() : "");
-            treatmentTable.getItems().clear();
-            treatmentTable.getItems().addAll(p.getTreatments());
+            idLabel.setText(p.getId().toString());
+            firstnameLabel.setText(p.getFirstName());
+            lastnameLabel.setText(p.getLastName());
+            emailLabel.setText(p.getEmail());
+            usernameLabel.setText(p.getUser() != null ? p.getUser().getName() : "");
+            userroleLabel.setText(p.getUser() != null ? p.getUser().getType().getName() : "");
+            treatmentsTable.setTreatments(p.getTreatments());
             timeline.setTreatments(p.getTreatments());
         } else {
-            idField.setText("");
-            firstNameField.setText("");
-            lastNameField.setText("");
-            emailField.setText("");
-            databaseUserField.setText("");
-            treatmentTable.getItems().clear();
+            idLabel.setText("");
+            firstnameLabel.setText("");
+            lastnameLabel.setText("");
+            emailLabel.setText("");
+            usernameLabel.setText("");
+            treatmentsTable.setTreatments(null);
+            userroleLabel.setText("");
             timeline.setTreatments(null);
         }
     }
@@ -151,10 +151,21 @@ public class PersonsView  extends VBox implements Initializable, View {
         Person p = personsTable.getSelectionModel().getSelectedItem();
         Connection c = SuperUserDialog.openConnection();
         AddDatabaseUserDialog.addDatabaseUser(c, p);
+        personsTable.refresh();
     }
 
+
+    private void newPerson() {
+        Person p = Dialogs.editPersonDialog(null);
+        personsTable.refresh();
+        personsTable.setSelectedPerson(p);
+    }
+
+
     private void editPerson() {
-        System.out.println("edit person: " + (selectedPerson != null ? selectedPerson.toString() : ""));
+        Dialogs.editPersonDialog(selectedPerson);
+        personsTable.refresh();
+
     }
 
 
@@ -166,7 +177,6 @@ public class PersonsView  extends VBox implements Initializable, View {
          else{
              System.out.println("No person selected");
          }
-
     }
 
 
@@ -228,7 +238,10 @@ public class PersonsView  extends VBox implements Initializable, View {
 
     @Override
     public void refresh() {
-        //TODO refresh
+        personSelected(null);
+        Person p = personsTable.getSelectionModel().getSelectedItem();
+        personsTable.refresh();
+        personsTable.setSelectedPerson(p);
     }
 
 
