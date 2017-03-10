@@ -460,7 +460,7 @@ public class InventoryController extends VBox implements Initializable, View {
             Session session = Main.sessionFactory.openSession();
             session.beginTransaction();
             session.saveOrUpdate(t);
-            if (t.getType().isInvasive()) {
+            if (t.getTreatmentType().isInvasive()) {
                 Housing h = t.getSubject().getCurrentHousing();
                 h.setEnd(interval.getValue());
                 session.saveOrUpdate(h);
