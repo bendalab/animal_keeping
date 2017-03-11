@@ -41,6 +41,8 @@ public class MainViewController extends VBox implements Initializable{
     @FXML private Menu supplierMenu;
     @FXML private MenuItem refreshItem;
     @FXML private HBox hBox;
+    @FXML private MenuItem quitMenuItem;
+    @FXML private MenuItem aboutMenuItem;
     @FXML private MenuBar menuBar;
 
     private Vector<TitledPane> panes;
@@ -65,8 +67,17 @@ public class MainViewController extends VBox implements Initializable{
         this.setPrefWidth(1024);
         this.setPrefHeight(768);
         menuBar.setUseSystemMenuBar(true);
-        Application.getApplication().setQuitHandler((quitEvent, quitResponse) -> closeApplication());
-        Application.getApplication().setQuitStrategy(QuitStrategy.CLOSE_ALL_WINDOWS);
+
+        if (System.getProperty("os.name").startsWith("Mac OS X")) {
+            System.setProperty("bendalab.animalkeeping", "Animal Keeping");
+            System.out.println(System.getProperty("os.name"));
+            Application.getApplication().setQuitHandler((quitEvent, quitResponse) -> closeApplication());
+            Application.getApplication().setQuitStrategy(QuitStrategy.CLOSE_ALL_WINDOWS);
+            Application.getApplication().setAboutHandler(new myAboutHandler());
+            aboutMenuItem.setVisible(false);
+            quitMenuItem.setVisible(false);
+        }
+
         findBox.getItems().clear();
         findBox.getItems().addAll("Person", "Subject", "Housing unit", "Treatment");
         findBox.getSelectionModel().select("Subject");
@@ -324,25 +335,26 @@ public class MainViewController extends VBox implements Initializable{
     }
 
 
-
+    /*
     @FXML
     private void showUserAddInterface() throws Exception{
         Main.getPrimaryStage().setScene(new Scene(FXMLLoader.load(Main.class.getResource("fxml/UserAddView.fxml"))));
-        /*this.scrollPane.setContent(null);
+        this.scrollPane.setContent(null);
         PersonsTable personTable = new PersonsTable();
-        this.scrollPane.setContent(personTable);*/
+        this.scrollPane.setContent(personTable);
     }
-
+    */
     @FXML
     private  void closeApplication() {
         Main.getPrimaryStage().close();
     }
 
+    /*
     @FXML
     private void disconnectFromDatabase() {
         Main.sessionFactory.close();
     }
-
+    */
 
     @FXML
     private void newSubjectType() {
@@ -459,6 +471,7 @@ public class MainViewController extends VBox implements Initializable{
         licensesPane.setDisable(false);
         subjectTypeMenu.setDisable(false);
         speciesTypeMenu.setDisable(false);
+        supplierMenu.setDisable(false);
         fillMenus();
         showInventory();
     }
@@ -508,5 +521,15 @@ public class MainViewController extends VBox implements Initializable{
         fillSupplierTypeMenu();
     }
 
+    private void showAbout() {
+        System.out.println("Show about");
+    }
 
+
+    class myAboutHandler implements AboutHandler {
+        @Override
+        public void handleAbout(AppEvent.AboutEvent aboutEvent) {
+            showAbout();
+        }
+    }
 }
