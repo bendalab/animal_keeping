@@ -3,14 +3,10 @@
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.util.EntityHelper;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.util.StringConverter;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -20,7 +16,6 @@ import java.util.Date;
 import java.util.List;
 
 import static animalkeeping.util.DateTimeHelper.getDateTime;
-import static animalkeeping.util.Dialogs.showInfo;
 
 
 public class TreatmentForm extends VBox {
@@ -59,6 +54,7 @@ public class TreatmentForm extends VBox {
     }
 
     private  void setTreatment(Treatment t) {
+        this.treatment = t;
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         idLabel.setText(t.getId().toString());
         personComboBox.getSelectionModel().select(t.getPerson());
