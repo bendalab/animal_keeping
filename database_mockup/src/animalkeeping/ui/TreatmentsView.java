@@ -1,5 +1,7 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
+import animalkeeping.model.Treatment;
 import animalkeeping.model.TreatmentType;
 import animalkeeping.ui.controller.TimelineController;
 import animalkeeping.util.Dialogs;
@@ -7,9 +9,8 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TabPane;
+import javafx.geometry.Orientation;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import org.hibernate.Session;
@@ -37,7 +38,11 @@ public class TreatmentsView extends VBox implements Initializable, View{
     private TimelineController timeline;
     private ControlLabel editTreatmentTypeLabel;
     private ControlLabel deleteTreatmentTypeLabel;
+    private ControlLabel editTreatmentLabel;
+    private ControlLabel deleteTreatmentLabel;
+    private ControlLabel batchTreatmentLabel;
     private VBox controls;
+    private TreatmentType selectedType;
 
 
     public TreatmentsView() {
@@ -61,11 +66,20 @@ public class TreatmentsView extends VBox implements Initializable, View{
         typeTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<TreatmentType>) c -> {
             if (c.getList().size() > 0) {
                 typeSelected(c.getList().get(0));
+            } else {
+                typeSelected(null);
             }
         });
         tableScrollPane.setContent(typeTable);
 
         treatmentsTable = new TreatmentsTable();
+        treatmentsTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Treatment>) c -> {
+            if (c.getList().size() > 0) {
+                treatmentSelected(c.getList().get(0));
+            } else {
+                treatmentSelected(null);
+            }
+        });
         treatmentsTable.prefWidthProperty().bind(prefWidthProperty());
         treatmentsBox.getChildren().add(treatmentsTable);
 
@@ -96,7 +110,40 @@ public class TreatmentsView extends VBox implements Initializable, View{
             }
         });
         controls.getChildren().add(deleteTreatmentTypeLabel);
+        controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
 
+        ControlLabel newTreatmentLabel = new ControlLabel("new treatment", false);
+        newTreatmentLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                newTreatment();
+            }
+        });
+        controls.getChildren().add(newTreatmentLabel);
+
+        editTreatmentLabel = new ControlLabel("edit treatment", true);
+        editTreatmentLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                editTreatment(treatmentsTable.getSelectionModel().getSelectedItem());
+            }
+        });
+        controls.getChildren().add(editTreatmentLabel);
+
+        deleteTreatmentLabel = new ControlLabel("delete treatment", true);
+        deleteTreatmentLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                deleteTreatment(treatmentsTable.getSelectionModel().getSelectedItem());
+            }
+        });
+        controls.getChildren().add(deleteTreatmentLabel);
+
+        batchTreatmentLabel = new ControlLabel("new batch treatment", false);
+        batchTreatmentLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                Dialogs.batchTreatmentDialog(null);
+            }
+        });
+        controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
+        controls.getChildren().add(batchTreatmentLabel);
     }
 
 
@@ -112,7 +159,12 @@ public class TreatmentsView extends VBox implements Initializable, View{
 
         treatmentsTable.setTreatments(type != null ? type.getTreatments() : null);
         timeline.setTreatments(type != null ? type.getTreatments() : null);
+    }
 
+
+    private void treatmentSelected(Treatment t) {
+        editTreatmentLabel.setDisable(t == null);
+        deleteTreatmentLabel.setDisable(t == null);
     }
 
     private void editTreatmentType(TreatmentType type) {
@@ -133,14 +185,36 @@ public class TreatmentsView extends VBox implements Initializable, View{
         refresh();
     }
 
+
+    private void newTreatment() {
+        Dialogs.editTreatmentDialog(selectedType);
+        refresh();
+    }
+
+
+    private void editTreatment(Treatment t) {
+        Dialogs.editTreatmentDialog(t);
+        refresh();
+        treatmentsTable.getSelectionModel().select(t);
+    }
+
+
+    private void deleteTreatment(Treatment t) {
+        Communicator.pushDelete(t);
+        refresh();
+    }
+
+
     public VBox getControls() {
         return  controls;
     }
 
     @Override
     public void refresh() {
+        selectedType = typeTable.getSelectionModel().getSelectedItem();
         typeTable.getSelectionModel().clearSelection();
         typeSelected(null);
         typeTable.refresh();
+        typeTable.getSelectionModel().select(selectedType);
     }
 }
