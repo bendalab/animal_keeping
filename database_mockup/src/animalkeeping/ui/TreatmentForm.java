@@ -146,10 +146,10 @@ public class TreatmentForm extends VBox {
         typeComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         personComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         subjectComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
-        startTimeField.prefWidthProperty().bind(column2.maxWidthProperty());
-        startDate.prefWidthProperty().bind(column2.maxWidthProperty());
-        endTimeField.prefWidthProperty().bind(column2.maxWidthProperty());
-        endDate.prefWidthProperty().bind(column2.maxWidthProperty());
+        startTimeField.prefWidthProperty().bind(column2.prefWidthProperty().add(column3.prefWidthProperty()));
+        startDate.prefWidthProperty().bind(column2.prefWidthProperty().add(column3.prefWidthProperty()));
+        endTimeField.prefWidthProperty().bind(column2.prefWidthProperty().add(column3.prefWidthProperty()));
+        endDate.prefWidthProperty().bind(column2.prefWidthProperty().add(column3.prefWidthProperty()));
         immediateEnd.prefWidthProperty().bind(column2.maxWidthProperty());
         immediateEnd.setFont(new Font(Font.getDefault().getFamily(), 9));
 
@@ -188,14 +188,7 @@ public class TreatmentForm extends VBox {
 
         List<Person> persons = EntityHelper.getEntityList("from Person", Person.class);
         List<TreatmentType> types = EntityHelper.getEntityList("from TreatmentType", TreatmentType.class);
-        List<Subject> subjects = EntityHelper.getEntityList("from Subject", Subject.class);
-        List<Subject> currentSubjects = new ArrayList<>(0);
-        for (Subject s : subjects) {
-            if (s.getCurrentHousing() != null) {
-                currentSubjects.add(s);
-            }
-        }
-
+        List<Subject> currentSubjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL", Subject.class);
         typeComboBox.getItems().addAll(types);
         personComboBox.getItems().addAll(persons);
         subjectComboBox.getItems().addAll(currentSubjects);
