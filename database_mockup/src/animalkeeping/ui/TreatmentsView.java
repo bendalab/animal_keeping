@@ -5,6 +5,7 @@ import animalkeeping.model.Treatment;
 import animalkeeping.model.TreatmentType;
 import animalkeeping.ui.controller.TimelineController;
 import animalkeeping.util.Dialogs;
+import animalkeeping.util.EntityHelper;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -188,20 +189,24 @@ public class TreatmentsView extends VBox implements Initializable, View{
 
     private void newTreatment() {
         Dialogs.editTreatmentDialog(selectedType);
-        refresh();
+        EntityHelper.refreshEntity(selectedType);
+        treatmentsTable.setTreatments(selectedType.getTreatments());
     }
 
 
     private void editTreatment(Treatment t) {
         Dialogs.editTreatmentDialog(t);
-        refresh();
+        EntityHelper.refreshEntity(t);
+        treatmentsTable.getItems().remove(t);
+        treatmentsTable.getItems().add(t);
         treatmentsTable.getSelectionModel().select(t);
     }
 
 
     private void deleteTreatment(Treatment t) {
         Communicator.pushDelete(t);
-        refresh();
+        EntityHelper.refreshEntity(selectedType);
+        treatmentsTable.setTreatments(selectedType.getTreatments());
     }
 
 
