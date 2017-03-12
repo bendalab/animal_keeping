@@ -4,6 +4,7 @@ import animalkeeping.model.*;
 import animalkeeping.ui.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.util.Callback;
 import javafx.util.Pair;
 import org.hibernate.Session;
 
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 public class Dialogs {
 
-    public static void showInfo(String  info) {
+    public static void showInfo(String info) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information");
         alert.setHeaderText(info);
@@ -224,7 +225,7 @@ public class Dialogs {
     }
 
 
-    public  static Pair<Date, Date> getDateInterval() {
+    public static Pair<Date, Date> getDateInterval() {
         Label startLabel = new Label("Start date:");
         DatePicker sdp = new DatePicker(LocalDate.now().minusYears(1));
 
@@ -232,7 +233,7 @@ public class Dialogs {
         Label endLabel = new Label("End date:");
 
         GridPane grid = new GridPane();
-        ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
+        ColumnConstraints column1 = new ColumnConstraints(100, 100, Double.MAX_VALUE);
         column1.setHgrow(Priority.NEVER);
         ColumnConstraints column2 = new ColumnConstraints(100, 150, Double.MAX_VALUE);
         column2.setHgrow(Priority.ALWAYS);
@@ -274,15 +275,15 @@ public class Dialogs {
 
         Optional<Pair<Date, Date>> result = dialog.showAndWait();
         if (!result.isPresent()) {
-            return  null;
+            return null;
         }
         return result.get();
     }
 
-    public  static Pair<Date, Date> getDateTimeInterval(Date start, Date end) {
+    public static Pair<Date, Date> getDateTimeInterval(Date start, Date end) {
         SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
-        LocalDate sd = start != null ? DateTimeHelper.toLocalDate(start) :  LocalDate.now().minusYears(1);
-        LocalDate ed = end != null ? DateTimeHelper.toLocalDate(end) :  LocalDate.now();
+        LocalDate sd = start != null ? DateTimeHelper.toLocalDate(start) : LocalDate.now().minusYears(1);
+        LocalDate ed = end != null ? DateTimeHelper.toLocalDate(end) : LocalDate.now();
         String st = start != null ? timeFormat.format(start) : timeFormat.format(new Date());
         String et = end != null ? timeFormat.format(end) : timeFormat.format(new Date());
 
@@ -292,7 +293,7 @@ public class Dialogs {
         TextField edf = new TextField(et);
 
         GridPane grid = new GridPane();
-        ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
+        ColumnConstraints column1 = new ColumnConstraints(100, 100, Double.MAX_VALUE);
         column1.setHgrow(Priority.NEVER);
         ColumnConstraints column2 = new ColumnConstraints(100, 150, Double.MAX_VALUE);
         column2.setHgrow(Priority.ALWAYS);
@@ -342,7 +343,7 @@ public class Dialogs {
 
         Optional<Pair<Date, Date>> result = dialog.showAndWait();
         if (!result.isPresent()) {
-            return  null;
+            return null;
         }
         return result.get();
     }
@@ -513,6 +514,64 @@ public class Dialogs {
             return null;
         });
         Optional<TreatmentType> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            try {
+                Session session = Main.sessionFactory.openSession();
+                session.beginTransaction();
+                session.saveOrUpdate(result.get());
+                session.getTransaction().commit();
+                session.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+            return result.get();
+        }
+        return null;
+    }
+
+    public static Treatment editTreatmentDialog() {
+        TreatmentForm tf = new TreatmentForm();
+        return editTreatmentDialog(tf);
+    }
+
+    public static Treatment editTreatmentDialog(Treatment treatment) {
+        TreatmentForm tf = new TreatmentForm(treatment);
+        return editTreatmentDialog(tf);
+    }
+
+
+    public static Treatment editTreatmentDialog(Subject subject) {
+        TreatmentForm tf = new TreatmentForm(subject);
+        return editTreatmentDialog(tf);
+    }
+
+
+    public static Treatment editTreatmentDialog(TreatmentType type) {
+        TreatmentForm tf = new TreatmentForm(type);
+        return editTreatmentDialog(tf);
+    }
+
+
+    public static Treatment editTreatmentDialog(TreatmentForm form) {
+        Dialog<Treatment> dialog = new Dialog<>();
+        dialog.setTitle("Create/edit treatment ...");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(form);
+        dialog.setWidth(300);
+        form.prefWidthProperty().bind(dialog.widthProperty());
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return form.persistTreatment();
+            }
+            return null;
+        });
+        Optional<Treatment> result = dialog.showAndWait();
         if (result.isPresent()) {
             try {
                 Session session = Main.sessionFactory.openSession();
