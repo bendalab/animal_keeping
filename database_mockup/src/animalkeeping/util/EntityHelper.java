@@ -1,7 +1,6 @@
 package animalkeeping.util;
 
 import animalkeeping.ui.Main;
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
@@ -46,6 +45,8 @@ public class EntityHelper {
     }
 
     public static <T> void refreshEntity(T entity) {
+        if (entity == null)
+            return;
         Session session = Main.sessionFactory.openSession();
         try {
             session.beginTransaction();
