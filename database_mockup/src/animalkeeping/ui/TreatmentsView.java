@@ -190,7 +190,7 @@ public class TreatmentsView extends VBox implements Initializable, View{
     private void newTreatment() {
         Dialogs.editTreatmentDialog(selectedType);
         EntityHelper.refreshEntity(selectedType);
-        treatmentsTable.setTreatments(selectedType.getTreatments());
+        treatmentsTable.setTreatments(selectedType == null ? null : selectedType.getTreatments());
     }
 
 
