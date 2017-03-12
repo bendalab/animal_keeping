@@ -3,6 +3,7 @@
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.util.EntityHelper;
+import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
@@ -11,7 +12,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +23,8 @@ public class TreatmentForm extends VBox {
     private ComboBox<Person> personComboBox;
     private ComboBox<Subject> subjectComboBox;
     private DatePicker startDate, endDate;
-    private TextField startTimeField, endTimeField;
+    private TextField startTimeField, endTimeField, commentNameField;
+    private TextArea commentArea;
     private Subject subject;
     private Treatment treatment;
     private TreatmentType type;
@@ -115,6 +116,9 @@ public class TreatmentForm extends VBox {
         endDate = new DatePicker();
         endTimeField = new TextField();
         endDate.setOnAction(event -> endTimeField.setText(timeFormat.format(new Date())));
+        commentArea = new TextArea();
+        commentArea.setWrapText(true);
+        commentNameField = new TextField();
 
         CheckBox immediateEnd = new CheckBox("treatment ends immediately");
         immediateEnd.setSelected(false);
@@ -147,11 +151,12 @@ public class TreatmentForm extends VBox {
         personComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         subjectComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         startTimeField.prefWidthProperty().bind(column2.prefWidthProperty().add(column3.prefWidthProperty()));
-        startDate.prefWidthProperty().bind(column2.prefWidthProperty().add(column3.prefWidthProperty()));
+        startDate.prefWidthProperty().bind(column2.maxWidthProperty().add(column3.prefWidthProperty()));
         endTimeField.prefWidthProperty().bind(column2.prefWidthProperty().add(column3.prefWidthProperty()));
-        endDate.prefWidthProperty().bind(column2.prefWidthProperty().add(column3.prefWidthProperty()));
+        endDate.prefWidthProperty().bind(column2.maxWidthProperty().add(column3.prefWidthProperty()));
         immediateEnd.prefWidthProperty().bind(column2.maxWidthProperty());
         immediateEnd.setFont(new Font(Font.getDefault().getFamily(), 9));
+        commentNameField.prefWidthProperty().bind(column2.prefWidthProperty().add(column3.prefWidthProperty()));
 
         grid.setVgap(5);
         grid.setHgap(2);
@@ -183,6 +188,13 @@ public class TreatmentForm extends VBox {
 
         grid.add(new Label("end time:"), 0, 8);
         grid.add(endTimeField, 1, 8, 2, 1);
+
+        grid.add(new Separator(Orientation.HORIZONTAL), 0, 9, 3, 1);
+
+        grid.add(new Label("comment title:"), 0, 10);
+        grid.add(commentNameField, 1, 10, 2, 1);
+        grid.add(new Label("comment:"), 0,11);
+        grid.add(commentArea, 0, 12, 3, 3);
 
         this.getChildren().add(grid);
 
@@ -223,6 +235,16 @@ public class TreatmentForm extends VBox {
         treatment.setPerson(personComboBox.getValue());
         treatment.setTreatmentType(typeComboBox.getValue());
         Communicator.pushSaveOrUpdate(treatment);
+
+        if (!commentArea.getText().isEmpty()) {
+            TreatmentNote note = new TreatmentNote();
+            note.setName(commentNameField.getText());
+            note.setComment(commentArea.getText());
+            note.setPerson(personComboBox.getValue());
+            note.setDate(sd);
+            note.setTreatment(treatment);
+            Communicator.pushSaveOrUpdate(note);
+        }
         return treatment;
     }
 
