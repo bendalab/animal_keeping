@@ -6,6 +6,7 @@ import animalkeeping.model.Treatment;
 import animalkeeping.model.TreatmentType;
 import animalkeeping.ui.controller.TimelineController;
 import animalkeeping.util.Dialogs;
+import animalkeeping.util.EntityHelper;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -243,10 +244,6 @@ public class LicenseView extends VBox implements Initializable, View {
     }
 
     private void refreshLicense(License l) {
-        Session session = Main.sessionFactory.openSession();
-        session.beginTransaction();
-        session.refresh(l);
-        session.getTransaction().commit();
-        session.close();
+        EntityHelper.refreshEntity(l);
     }
 }
