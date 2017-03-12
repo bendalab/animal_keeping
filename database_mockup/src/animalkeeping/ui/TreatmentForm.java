@@ -2,6 +2,7 @@
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
+import animalkeeping.util.EntityHelper;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
@@ -25,32 +26,43 @@ import static animalkeeping.util.Dialogs.showInfo;
 public class TreatmentForm extends VBox {
     private ComboBox<TreatmentType> typeComboBox;
     private ComboBox<Person> personComboBox;
+    private ComboBox<Subject> subjectComboBox;
     private DatePicker startDate, endDate;
     private TextField startTimeField, endTimeField;
     private Subject subject;
     private Treatment treatment;
+    private TreatmentType type;
     private Label idLabel;
 
 
-    public TreatmentForm(Subject s) {
+    public TreatmentForm() {
         this.setFillWidth(true);
-        this.subject = s;
+        this.subject = null;
         this.treatment = null;
+        this.type = null;
         this.init();
     }
 
-    public TreatmentForm(Treatment t) {
-        this.setFillWidth(true);
-        this.treatment = t;
-        this.subject = t.getSubject();
-        this.init(t);
+    public TreatmentForm(Subject s) {
+        this();
+        setSubject(s);
     }
 
-    private  void init(Treatment t) {
-        init();
+    public TreatmentForm(Treatment t) {
+        this();
+        this.setTreatment(t);
+    }
+
+    public TreatmentForm(TreatmentType type) {
+        this();
+        setTreatmentType(type);
+    }
+
+    private  void setTreatment(Treatment t) {
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         idLabel.setText(t.getId().toString());
         personComboBox.getSelectionModel().select(t.getPerson());
+        subjectComboBox.getSelectionModel().select(t.getSubject());
         typeComboBox.getSelectionModel().select(t.getTreatmentType());
         LocalDate sd = t.getStart().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         startDate.setValue(sd);
@@ -89,29 +101,32 @@ public class TreatmentForm extends VBox {
                 return null;
             }
         });
+        subjectComboBox = new ComboBox<>();
+        subjectComboBox.setConverter(new StringConverter<Subject>() {
+            @Override
+            public String toString(Subject object) {
+                return object.getName();
+            }
 
+            @Override
+            public Subject fromString(String string) {
+                return null;
+            }
+        });
         startDate = new DatePicker();
         startDate.setValue(LocalDate.now());
         startTimeField = new TextField(timeFormat.format(new Date()));
         endDate = new DatePicker();
         endTimeField = new TextField();
-        endDate.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                endTimeField.setText(timeFormat.format(new Date()));
-            }
-        });
+        endDate.setOnAction(event -> endTimeField.setText(timeFormat.format(new Date())));
 
         CheckBox immediateEnd = new CheckBox("treatment ends immediately");
         immediateEnd.setSelected(false);
-        immediateEnd.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                endDate.setDisable(immediateEnd.isSelected());
-                endTimeField.setDisable(immediateEnd.isSelected());
-                endDate.setValue(startDate.getValue());
-                endTimeField.setText(startTimeField.getText());
-            }
+        immediateEnd.setOnAction(event -> {
+            endDate.setDisable(immediateEnd.isSelected());
+            endTimeField.setDisable(immediateEnd.isSelected());
+            endDate.setValue(startDate.getValue());
+            endTimeField.setText(startTimeField.getText());
         });
 
         Button newTypeButton = new Button("+");
@@ -120,6 +135,9 @@ public class TreatmentForm extends VBox {
         Button newPersonButton = new Button("+");
         newPersonButton.setTooltip(new Tooltip("create a new person entry"));
         newPersonButton.setDisable(true);
+        Button newSubjectButton = new Button("+");
+        newSubjectButton.setTooltip(new Tooltip("create a new subject entry"));
+        newSubjectButton.setDisable(true);
 
         GridPane grid = new GridPane();
         ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
@@ -131,6 +149,7 @@ public class TreatmentForm extends VBox {
         grid.getColumnConstraints().addAll(column1, column2, column3);
         typeComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         personComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
+        subjectComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         startTimeField.prefWidthProperty().bind(column2.maxWidthProperty());
         startDate.prefWidthProperty().bind(column2.maxWidthProperty());
         endTimeField.prefWidthProperty().bind(column2.maxWidthProperty());
@@ -147,46 +166,56 @@ public class TreatmentForm extends VBox {
         grid.add(typeComboBox, 1, 1, 1, 1);
         grid.add(newTypeButton, 2, 1, 1, 1);
 
-        grid.add(new Label("person:"), 0, 2);
-        grid.add(personComboBox, 1, 2, 1, 1 );
-        grid.add(newPersonButton, 2, 2, 1, 1);
+        grid.add(new Label("subject:"), 0, 2);
+        grid.add(subjectComboBox, 1, 2, 1, 1);
+        grid.add(newSubjectButton, 2, 2, 1, 1);
 
-        grid.add(new Label("start date:"), 0, 3);
-        grid.add(startDate, 1, 3, 2,1);
+        grid.add(new Label("person:"), 0, 3);
+        grid.add(personComboBox, 1, 3, 1, 1 );
+        grid.add(newPersonButton, 2, 3, 1, 1);
 
-        grid.add(new Label("start time:"), 0,4);
-        grid.add(startTimeField, 1,4, 2, 1);
+        grid.add(new Label("start date:"), 0, 4);
+        grid.add(startDate, 1, 4, 2,1);
 
-        grid.add(immediateEnd, 1, 5);
+        grid.add(new Label("start time:"), 0,5);
+        grid.add(startTimeField, 1,5, 2, 1);
 
-        grid.add(new Label("end date:"), 0, 6);
-        grid.add(endDate, 1, 6, 2, 1);
+        grid.add(immediateEnd, 1, 6);
 
-        grid.add(new Label("end time:"), 0, 7);
-        grid.add(endTimeField, 1, 7, 2, 1);
+        grid.add(new Label("end date:"), 0, 7);
+        grid.add(endDate, 1, 7, 2, 1);
+
+        grid.add(new Label("end time:"), 0, 8);
+        grid.add(endTimeField, 1, 8, 2, 1);
 
         this.getChildren().add(grid);
 
-        Session session = Main.sessionFactory.openSession();
-        List<Person> persons = new ArrayList<>(0);
-        List<TreatmentType> types = new ArrayList<>(0);
-        try {
-            session.beginTransaction();
-            persons = session.createQuery("from Person", Person.class).list();
-            session.getTransaction().commit();
-            session.beginTransaction();
-            types = session.createQuery("from TreatmentType", TreatmentType.class).list();
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
+        List<Person> persons = EntityHelper.getEntityList("from Person", Person.class);
+        List<TreatmentType> types = EntityHelper.getEntityList("from TreatmentType", TreatmentType.class);
+        List<Subject> subjects = EntityHelper.getEntityList("from Subject", Subject.class);
+        List<Subject> currentSubjects = new ArrayList<>(0);
+        for (Subject s : subjects) {
+            if (s.getCurrentHousing() != null) {
+                currentSubjects.add(s);
             }
         }
+
         typeComboBox.getItems().addAll(types);
         personComboBox.getItems().addAll(persons);
+        subjectComboBox.getItems().addAll(currentSubjects);
+    }
 
+
+    public void setSubject(Subject s) {
+        this.subject = s;
+        subjectComboBox.getSelectionModel().select(s);
+        subjectComboBox.setDisable(true);
+    }
+
+
+    public void setTreatmentType(TreatmentType type) {
+        this.type = type;
+        this.typeComboBox.getSelectionModel().select(type);
     }
 
 
@@ -201,12 +230,10 @@ public class TreatmentForm extends VBox {
         }
         treatment.setStart(sd);
         treatment.setEnd(ed);
-        treatment.setSubject(subject);
+        treatment.setSubject(subjectComboBox.getValue());
         treatment.setPerson(personComboBox.getValue());
         treatment.setTreatmentType(typeComboBox.getValue());
-
         Communicator.pushSaveOrUpdate(treatment);
-
         return treatment;
     }
 
