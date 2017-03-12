@@ -45,4 +45,15 @@ public class EntityHelper {
         return true;
     }
 
+    public static <T> void refreshEntity(T entity) {
+        Session session = Main.sessionFactory.openSession();
+        try {
+            session.beginTransaction();
+            session.refresh(entity);
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
