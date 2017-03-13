@@ -56,7 +56,7 @@ public class LicenseView extends VBox implements Initializable, View {
 
 
     public LicenseView() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/LicenseView.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/LicenseView.fxml"));
         loader.setController(this);
         try {
             this.getChildren().add(loader.load());

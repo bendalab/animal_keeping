@@ -234,7 +234,7 @@ public class BatchTreatmentForm extends VBox {
                                                 treatmentComboBox.getValue());
             if (endDate != null) {
                 treatment.setEnd(endDate);
-                if (treatment.getType().isInvasive()) {
+                if (treatment.getTreatmentType().isInvasive()) {
                     h.setEnd(endDate);
                 }
             }

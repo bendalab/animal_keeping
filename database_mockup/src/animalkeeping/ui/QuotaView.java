@@ -25,7 +25,7 @@ public class QuotaView extends VBox implements Initializable {
     @FXML private TableColumn<Quota, Double> progressCol;
 
     public QuotaView() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/QuotaTable.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/QuotaTable.fxml"));
         loader.setController(this);
         try {
             this.getChildren().add(loader.load());

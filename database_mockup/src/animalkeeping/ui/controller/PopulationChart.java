@@ -3,6 +3,7 @@ package animalkeeping.ui.controller;
 import animalkeeping.model.Housing;
 import animalkeeping.model.HousingUnit;
 import animalkeeping.model.Subject;
+import animalkeeping.ui.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -29,7 +30,7 @@ public class PopulationChart extends VBox implements Initializable {
     private Label label;
 
     public PopulationChart() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/populationChart.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/populationChart.fxml"));
         loader.setController(this);
         try {
             this.getChildren().add(loader.load());

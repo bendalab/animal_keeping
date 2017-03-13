@@ -55,7 +55,7 @@ public class InventoryController extends VBox implements Initializable, View {
 
 
     public InventoryController() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/Inventory.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/Inventory.fxml"));
         loader.setController(this);
         try {
             this.getChildren().add(loader.load());
@@ -460,7 +460,7 @@ public class InventoryController extends VBox implements Initializable, View {
             Session session = Main.sessionFactory.openSession();
             session.beginTransaction();
             session.saveOrUpdate(t);
-            if (t.getType().isInvasive()) {
+            if (t.getTreatmentType().isInvasive()) {
                 Housing h = t.getSubject().getCurrentHousing();
                 h.setEnd(interval.getValue());
                 session.saveOrUpdate(h);

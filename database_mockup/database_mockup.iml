@@ -7,7 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/model" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/sample" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/ui" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/animalkeeping/ui/fxml" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/animalkeeping/ui/fxml" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -43,7 +43,7 @@ public class PersonsView  extends VBox implements Initializable, View {
 
 
     public PersonsView() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/PersonsView.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/PersonsView.fxml"));
         loader.setController(this);
         try {
             this.getChildren().add(loader.load());

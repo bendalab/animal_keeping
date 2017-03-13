@@ -1,24 +1,16 @@
 package animalkeeping.ui;
 
+import animalkeeping.ui.controller.MainViewController;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Optional;
-import java.util.Properties;
 
 
 public class Main extends Application {
@@ -31,12 +23,9 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Main.primaryStage = primaryStage;
         Main.primaryStage.setTitle("AnimalKeepingDB");
-
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(Main.class.getResource("fxml/MainView.fxml"));
-        Scene scene = new Scene(loader.load());
+        MainViewController mv = new MainViewController();
+        Scene scene = new Scene(mv);
         primaryStage.setScene(scene);
-        //connectToDatabase();
         primaryStage.show();
     }
 
