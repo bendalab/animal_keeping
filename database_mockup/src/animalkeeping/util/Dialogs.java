@@ -11,6 +11,7 @@ import org.hibernate.Session;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public class Dialogs {
@@ -54,7 +55,7 @@ public class Dialogs {
 
     public static void batchTreatmentDialog(HousingUnit unit) {
         BatchTreatmentForm btf = new BatchTreatmentForm(unit);
-        Dialog<Boolean> dialog = new Dialog<>();
+        Dialog<List<Treatment>> dialog = new Dialog<>();
 
         dialog.setTitle("Batch Treatment");
         dialog.setResizable(true);
@@ -73,10 +74,8 @@ public class Dialogs {
             return null;
         });
 
-        Optional<Boolean> result = dialog.showAndWait();
-        if (!result.isPresent() && !result.get()) {
-            showInfo("Something went wrong while creating the treatment!");
-        } else {
+        Optional<List<Treatment>> result = dialog.showAndWait();
+        if (result.isPresent()) {
             showInfo("Successfully created a batch treatment!");
         }
     }
