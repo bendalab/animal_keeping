@@ -9,7 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/ui" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/animalkeeping/ui/fxml" isTestSource="false" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="mysql:mysql-connector-java:6.0.4" level="project" />
     <orderEntry type="module-library">
@@ -28,5 +28,6 @@
     <orderEntry type="library" name="commons-lang:commons-lang:2.6" level="project" />
     <orderEntry type="library" name="org.apache.poi:poi:3.15" level="project" />
     <orderEntry type="library" name="org.apache.poi:poi-ooxml:3.15" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>
