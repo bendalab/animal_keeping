@@ -57,7 +57,7 @@ public class QuotaView extends VBox implements Initializable {
                 return new ReadOnlyObjectWrapper<>(param.getValue().getAvailableFraction());
             }
         });
-        progressCol.setCellFactory(ProgressBarTableCell.<Quota>forTableColumn());
+        progressCol.setCellFactory(ProgressBarTableCell.forTableColumn());
         progressCol.prefWidthProperty().bind(this.widthProperty().multiply(0.39));
 
     }
