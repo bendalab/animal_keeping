@@ -235,7 +235,11 @@ public class TreatmentForm extends VBox {
         treatment.setPerson(personComboBox.getValue());
         treatment.setTreatmentType(typeComboBox.getValue());
         Communicator.pushSaveOrUpdate(treatment);
-
+        if (treatment.getTreatmentType().isInvasive() && treatment.getEnd() != null) {
+            Housing h = treatment.getSubject().getCurrentHousing();
+            h.setEnd(treatment.getEnd());
+            Communicator.pushSaveOrUpdate(h);
+        }
         if (!commentArea.getText().isEmpty()) {
             TreatmentNote note = new TreatmentNote();
             note.setName(commentNameField.getText());
