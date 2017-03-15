@@ -74,6 +74,10 @@ public class SpeciesTypeForm extends VBox {
             speciesType = new SpeciesType();
         }
 
+        if (nameField.getText() == null || trivialField.getText() == null){
+            System.out.println("Please submit all required information.");
+            return null;
+        }
 
         speciesType.setName(nameField.getText());
         speciesType.setTrivial(trivialField.getText());
