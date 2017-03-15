@@ -248,6 +248,12 @@ public class SubjectForm extends VBox {
         if (subject == null) {
             subject = new Subject();
         }
+
+        if (nameField.getText() == null || speciesComboBox.getValue() == null || supplierComboBox.getValue() == null || subjectTypeComboBox.getValue() == null || housingUnitComboBox.getValue() == null){
+            System.out.println("Please submit all required information.");
+            return null;
+        }
+
         subject.setName(nameField.getText());
         subject.setAlias(aliasField.getText());
         subject.setSpeciesType(speciesComboBox.getValue());
