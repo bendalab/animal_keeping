@@ -32,6 +32,12 @@ public class SubjectNotesForm extends NotesFrom<SubjectNote, Subject> {
         if (note_entity == null) {
             note_entity = new SubjectNote();
         }
+
+        if (personComboBox.getValue() == null || nameField.getText() == null || commentArea.getText() == null || datePicker.getValue() == null || timeField.getText() == null){
+            System.out.println("Please submit all required information");
+            return null;
+        }
+
         note_entity.setPerson(personComboBox.getValue());
         note_entity.setName(nameField.getText());
         note_entity.setComment(commentArea.getText());
