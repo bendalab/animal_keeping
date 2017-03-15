@@ -191,6 +191,17 @@ public class TreatmentForm extends VBox {
 
 
     public Treatment persistTreatment() {
+
+        if (startDate.getValue() == null || startTimeField.getText() == null || (endDate.getValue() != null  && endTimeField.getText() == null)){
+            System.out.println("Please input a valid start and end date and time.");
+            return null;
+        }
+
+        if (personComboBox.getValue() == null || typeComboBox.getValue() == null){
+            System.out.println("Please submit type and perfomer of treatment.");
+            return null;
+        }
+
         Date sd = getDateTime(startDate.getValue(), startTimeField.getText());
         Date ed = null;
         if (endDate.getValue() != null) {
@@ -199,6 +210,8 @@ public class TreatmentForm extends VBox {
         if (treatment == null) {
             treatment = new Treatment();
         }
+
+
         treatment.setStart(sd);
         treatment.setEnd(ed);
         treatment.setSubject(subject);
