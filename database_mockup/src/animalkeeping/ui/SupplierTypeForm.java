@@ -77,6 +77,11 @@ public class SupplierTypeForm extends VBox {
         supplierType.setName(nameField.getText());
         supplierType.setAddress(addressArea.getText());
 
+        if (nameField.getText() == null || addressArea.getText() == null){
+            System.out.println("Please submit a name and an address.");
+            return null;
+        }
+
         Communicator.pushSaveOrUpdate(supplierType);
 
         return supplierType;
