@@ -73,10 +73,10 @@ public class SpeciesTypeForm extends VBox {
         if (speciesType == null) {
             speciesType = new SpeciesType();
         }
+
+
         speciesType.setName(nameField.getText());
         speciesType.setTrivial(trivialField.getText());
-
-        Session session = Main.sessionFactory.openSession();
         Communicator.pushSaveOrUpdate(speciesType);
         return speciesType;
     }

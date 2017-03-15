@@ -139,6 +139,12 @@ public class QuotaForm extends VBox {
         if (quota == null) {
             quota = new Quota();
         }
+
+        if (numberField.getText() == null || licenseCombo.getValue() == null || speciesCombo.getValue() == null){
+            System.out.println("Please submit all required information.");
+            return null;
+        }
+
         quota.setNumber(Long.valueOf(numberField.getText()));
         quota.setLicense(licenseCombo.getValue());
         quota.setSpeciesType(speciesCombo.getValue());
