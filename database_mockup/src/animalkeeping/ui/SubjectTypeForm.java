@@ -77,6 +77,11 @@ public class SubjectTypeForm extends VBox {
         subjectType.setName(nameField.getText());
         subjectType.setDescription(descriptionArea.getText());
 
+        if (nameField.getText() == null){
+            System.out.println("Please enter a name.");
+            return null;
+        }
+
         Communicator.pushSaveOrUpdate(subjectType);
 
 
