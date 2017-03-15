@@ -108,6 +108,12 @@ public class AddDatabaseUserForm extends VBox {
     public boolean addUser(Connection connection){
         if (pwField.getText().equals(pwConfirmField.getText())) {
             animalkeeping.model.DatabaseUser user = new animalkeeping.model.DatabaseUser();
+
+            if (usernameField.getText() == null || userClassComboBox.getValue() == null || pwField.getText() == null) {
+                System.out.println("Please fill out all fields and select a user class!");
+                return false;
+            }
+
             user.setName(usernameField.getText());
             user.setType(userClassComboBox.getValue());
             user.setPerson(person);
