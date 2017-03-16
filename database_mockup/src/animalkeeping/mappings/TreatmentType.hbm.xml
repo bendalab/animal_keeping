@@ -12,6 +12,7 @@
         <property name="description" type="string" column="description" not-null="false"/>
         <property name="name" type="string" column="name" unique="true" not-null="true"/>
         <property name="invasive"  type="boolean" column="invasive" not-null="true"/>
+        <property name="isfinal"  type="boolean" column="isfinal" not-null="true"/>
 
         <many-to-one name="license" column="license_id" class="License" not-null="false"/>
         <set name="treatments" table="census_treatment"

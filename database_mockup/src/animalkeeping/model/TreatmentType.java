@@ -1,5 +1,6 @@
 package animalkeeping.model;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -14,6 +15,7 @@ public class TreatmentType {
     private String name;
     private String description;
     private Boolean invasive;
+    private Boolean isfinal;
     private License license;
     private Set<Treatment> treatments =
             new HashSet<>(0);
@@ -57,6 +59,14 @@ public class TreatmentType {
 
     public void setInvasive(Boolean invasive) {
         this.invasive = invasive;
+    }
+
+    public Boolean getIsfinal() {
+        return isfinal;
+    }
+
+    public void setIsfinal(Boolean isfinal) {
+        this.isfinal = isfinal;
     }
 
     public License getLicense() {
@@ -105,6 +115,7 @@ public class TreatmentType {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", invasive=" + invasive +
+                ", is final=" + isfinal +
                 ", license=" + ((license != null) ? license.getName() : "") +
                 '}';
     }
