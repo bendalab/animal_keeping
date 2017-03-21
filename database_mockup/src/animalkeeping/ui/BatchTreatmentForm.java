@@ -1,6 +1,9 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
+import animalkeeping.util.EntityHelper;
+import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -8,8 +11,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.StringConverter;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -27,8 +28,8 @@ public class BatchTreatmentForm extends VBox {
     private ComboBox<TreatmentType> treatmentComboBox;
     private ComboBox<Person> personComboBox;
     private DatePicker treatmentStartDate, treatmentEndDate;
-    private TextField startTimeField, endTimeField;
-
+    private TextField startTimeField, endTimeField, commentNameField;
+    private TextArea commentArea;
 
     public BatchTreatmentForm() {
         this(null);
@@ -87,9 +88,11 @@ public class BatchTreatmentForm extends VBox {
         treatmentStartDate = new DatePicker(LocalDate.now());
         treatmentEndDate = new DatePicker();
         startTimeField = new TextField();
-        startTimeField.setTooltip(new Tooltip("Start time of treatment, use HH:mm:ss format"));
+        startTimeField.setTooltip(new Tooltip("Start time of treatment, use hh:mm:ss format"));
         endTimeField = new TextField();
-        endTimeField.setTooltip(new Tooltip("End time of treatment, use HH:mm:ss format"));
+        endTimeField.setTooltip(new Tooltip("End time of treatment, use hh:mm:ss format"));
+        commentNameField = new TextField();
+        commentArea = new TextArea();
 
         Button newHousingUnit = new Button("+");
         newHousingUnit.setTooltip(new Tooltip("create a new housing unit"));
@@ -103,27 +106,10 @@ public class BatchTreatmentForm extends VBox {
         newPerson.setTooltip(new Tooltip("create a new supplier entry"));
         newPerson.setDisable(true);
 
-        Session session = Main.sessionFactory.openSession();
-        List<HousingUnit> housingUnits = new ArrayList<>(0);
-        List<Person> persons = new ArrayList<>(0);
-        List<TreatmentType> types = new ArrayList<>(0);
-        try {
-            session.beginTransaction();
-            housingUnits = session.createQuery("from HousingUnit", HousingUnit.class).list();
-            session.getTransaction().commit();
-            session.beginTransaction();
-            persons = session.createQuery("from Person", Person.class).list();
-            session.getTransaction().commit();
-            session.beginTransaction();
-            types = session.createQuery("from TreatmentType", TreatmentType.class).list();
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
+        List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit", HousingUnit.class);
+        List<Person> persons = EntityHelper.getEntityList("from Person", Person.class);
+        List<TreatmentType> types = EntityHelper.getEntityList("from TreatmentType", TreatmentType.class);
+
         housingUnitComboBox.getItems().addAll(housingUnits);
         housingUnitComboBox.getSelectionModel().select(unit);
         personComboBox.getItems().addAll(persons);
@@ -146,10 +132,11 @@ public class BatchTreatmentForm extends VBox {
         personComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         treatmentComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         housingUnitComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
-        startTimeField.prefWidthProperty().bind(column2.maxWidthProperty());
+        startTimeField.prefWidthProperty().bind(column2.maxWidthProperty().add(column3.maxWidthProperty()));
         treatmentStartDate.prefWidthProperty().bind(column2.maxWidthProperty());
-        endTimeField.prefWidthProperty().bind(column2.maxWidthProperty());
+        endTimeField.prefWidthProperty().bind(column2.maxWidthProperty().add(column3.maxWidthProperty()));
         treatmentEndDate.prefWidthProperty().bind(column2.maxWidthProperty());
+        commentNameField.prefWidthProperty().bind(column2.maxWidthProperty().add(column3.maxWidthProperty()));
 
         grid.setVgap(5);
         grid.setHgap(2);
@@ -170,16 +157,24 @@ public class BatchTreatmentForm extends VBox {
         grid.add(treatmentStartDate, 1, 3, 2, 1);
 
         grid.add(new Label("start time(*):"), 0, 4);
-        grid.add(startTimeField, 1, 4, 1, 1);
+        grid.add(startTimeField, 1, 4, 2, 1);
         startTimeField.setText(dateFormat.format(date));
 
         grid.add(new Label("end date:"), 0, 5);
         grid.add(treatmentEndDate, 1, 5, 2, 1);
         treatmentEndDate.setOnAction(event -> endTimeField.setText(dateFormat.format(date)));
         grid.add(new Label("end time:"), 0, 6);
-        grid.add(endTimeField, 1, 6, 1, 1);
+        grid.add(endTimeField, 1, 6, 2, 1);
 
-        grid.add(new Label("(*) required"), 0, 9);
+        grid.add(new Separator(Orientation.HORIZONTAL), 0, 7, 3, 1);
+
+        grid.add(new Label("comment title:"), 0, 8);
+        grid.add(commentNameField, 1, 8, 2, 1);
+
+        grid.add(new Label("comment:"), 0, 9);
+        grid.add(commentArea, 0, 10, 3,3);
+
+        grid.add(new Label("(*) required"), 0, 13);
 
         this.getChildren().add(grid);
     }
@@ -215,10 +210,10 @@ public class BatchTreatmentForm extends VBox {
     }
 
 
-    public Boolean persist() {
+    public List<Treatment> persist() {
         HousingUnit unit = housingUnitComboBox.getValue();
         if(unit == null) {
-            return false;
+            return null;
         }
         LocalDate sdate = treatmentStartDate.getValue();
         Date startDate = getDateTime(sdate, startTimeField.getText());
@@ -227,8 +222,8 @@ public class BatchTreatmentForm extends VBox {
             endDate = getDateTime(treatmentEndDate.getValue(), endTimeField.getText());
         }
 
-        Session session = Main.sessionFactory.openSession();
         Set<Housing> housings = unit.getAllHousings(true);
+        ArrayList<Treatment> treatments = new ArrayList<>(housings.size());
         for (Housing h : housings) {
             Treatment treatment = new Treatment(startDate, h.getSubject(), personComboBox.getValue(),
                                                 treatmentComboBox.getValue());
@@ -236,20 +231,22 @@ public class BatchTreatmentForm extends VBox {
                 treatment.setEnd(endDate);
                 if (treatment.getTreatmentType().isInvasive()) {
                     h.setEnd(endDate);
+                    Communicator.pushSaveOrUpdate(h);
                 }
             }
-
-            try {
-                session.beginTransaction();
-                session.saveOrUpdate(treatment);
-                session.saveOrUpdate(h);
-                session.getTransaction().commit();
-            } catch (HibernateException e) {
-                e.printStackTrace();
-                return false;
+            Communicator.pushSaveOrUpdate(treatment);
+            treatments.add(treatment);
+            if (!commentNameField.getText().isEmpty()) {
+                TreatmentNote tn = new TreatmentNote();
+                tn.setName(commentNameField.getText());
+                tn.setDate(startDate);
+                tn.setPerson(personComboBox.getValue());
+                tn.setComment(commentArea.getText());
+                tn.setTreatment(treatment);
+                Communicator.pushSaveOrUpdate(tn);
             }
         }
-        return true;
+        return treatments;
     }
 }
 

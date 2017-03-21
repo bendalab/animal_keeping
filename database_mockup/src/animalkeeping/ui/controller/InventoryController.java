@@ -1,5 +1,6 @@
 package animalkeeping.ui.controller;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.*;
 import animalkeeping.util.Dialogs;
@@ -14,7 +15,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
@@ -25,7 +25,6 @@ import javafx.util.Pair;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import java.io.File;
@@ -457,16 +456,12 @@ public class InventoryController extends VBox implements Initializable, View {
         if (interval != null) {
             t.setStart(interval.getKey());
             t.setEnd(interval.getValue());
-            Session session = Main.sessionFactory.openSession();
-            session.beginTransaction();
-            session.saveOrUpdate(t);
+            Communicator.pushSaveOrUpdate(t);
             if (t.getTreatmentType().isInvasive()) {
                 Housing h = t.getSubject().getCurrentHousing();
                 h.setEnd(interval.getValue());
-                session.saveOrUpdate(h);
+                Communicator.pushSaveOrUpdate(h);
             }
-            session.getTransaction().commit();
-            session.close();
         }
         refreshOpenTreatments();
     }

@@ -1,7 +1,6 @@
 package animalkeeping.util;
 
 import animalkeeping.ui.Main;
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
@@ -45,4 +44,17 @@ public class EntityHelper {
         return true;
     }
 
+    public static <T> void refreshEntity(T entity) {
+        if (entity == null)
+            return;
+        Session session = Main.sessionFactory.openSession();
+        try {
+            session.beginTransaction();
+            session.refresh(entity);
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
