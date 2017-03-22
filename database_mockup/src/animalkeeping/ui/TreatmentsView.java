@@ -63,9 +63,8 @@ public class TreatmentsView extends VBox implements Initializable, View{
     public void initialize(URL location, ResourceBundle resources) {
         tabPane.prefWidthProperty().bind(prefWidthProperty());
         typeTable = new TreatmentTypeTable();
-
-        typeTable = new TreatmentTypeTable();
-        typeTable.prefWidthProperty().bind(prefWidthProperty());
+        typeTable.prefWidthProperty().bind(widthProperty());
+        typeTable.prefHeightProperty().bind(heightProperty());
         typeTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<TreatmentType>) c -> {
             if (c.getList().size() > 0) {
                 typeSelected(c.getList().get(0));
@@ -74,7 +73,7 @@ public class TreatmentsView extends VBox implements Initializable, View{
             }
         });
         tableScrollPane.setContent(typeTable);
-
+        tableScrollPane.prefHeightProperty().bind(this.heightProperty());
         treatmentsTable = new TreatmentsTable();
         treatmentsTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Treatment>) c -> {
             if (c.getList().size() > 0) {

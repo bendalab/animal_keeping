@@ -58,71 +58,67 @@
         </Menu>
       </menus>
     </MenuBar>
-    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0">
-      <children>
-            <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <HBox fx:id="hBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+         <children>
+            <VBox fx:id="navigationBar" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="150.0" prefHeight="369.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="ALWAYS">
                <children>
-                  <VBox fx:id="navigationBar" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="150.0" prefHeight="369.0" prefWidth="150.0" spacing="5.0" HBox.hgrow="ALWAYS">
-                     <children>
-                        <TitledPane fx:id="inventoryPane" disable="true" expanded="false" onKeyPressed="#showInventory" onMouseClicked="#showInventory" text="Inventory">
-                          <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                          </content>
-                        </TitledPane>
-                        <TitledPane fx:id="personsPane" disable="true" expanded="false" onKeyPressed="#showPersons" onMouseClicked="#showPersons" text="Persons">
-                           <content>
-                              <VBox prefHeight="200.0" prefWidth="100.0" />
-                           </content>
-                        </TitledPane>
-                        <TitledPane fx:id="subjectsPane" disable="true" expanded="false" onKeyPressed="#showSubjects" onMouseClicked="#showSubjects" text="Subjects">
-                           <content>
-                              <VBox prefHeight="200.0" prefWidth="100.0" />
-                           </content>
-                        </TitledPane>
-                        <TitledPane fx:id="treatmentsPane" disable="true" expanded="false" onKeyPressed="#showTreatments" onMouseClicked="#showTreatments" text="Treatments">
-                           <content>
-                              <VBox prefHeight="200.0" prefWidth="100.0" />
-                           </content>
-                        </TitledPane>
-                        <TitledPane fx:id="animalHousingPane" disable="true" expanded="false" onKeyPressed="#showHousingUnits" onMouseClicked="#showHousingUnits" text="Animal housing">
-                           <content>
-                              <VBox prefHeight="200.0" prefWidth="100.0" />
-                           </content>
-                        </TitledPane>
-                        <TitledPane fx:id="licensesPane" animated="false" disable="true" expanded="false" layoutX="10.0" layoutY="148.0" onKeyPressed="#showLicenseView" onMouseClicked="#showLicenseView" text="Licenses">
-                           <content>
-                              <VBox prefHeight="200.0" prefWidth="100.0" />
-                           </content>
-                        </TitledPane>
-                        <Separator prefWidth="200.0" />
-                        <TitledPane fx:id="findPane" animated="false" disable="true" text="find">
-                          <content>
-                              <VBox spacing="10.0">
+                  <TitledPane fx:id="inventoryPane" disable="true" expanded="false" onKeyPressed="#showInventory" onMouseClicked="#showInventory" text="Inventory">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </content>
+                  </TitledPane>
+                  <TitledPane fx:id="personsPane" disable="true" expanded="false" onKeyPressed="#showPersons" onMouseClicked="#showPersons" text="Persons">
+                     <content>
+                        <VBox prefHeight="200.0" prefWidth="100.0" />
+                     </content>
+                  </TitledPane>
+                  <TitledPane fx:id="subjectsPane" disable="true" expanded="false" onKeyPressed="#showSubjects" onMouseClicked="#showSubjects" text="Subjects">
+                     <content>
+                        <VBox prefHeight="200.0" prefWidth="100.0" />
+                     </content>
+                  </TitledPane>
+                  <TitledPane fx:id="treatmentsPane" disable="true" expanded="false" onKeyPressed="#showTreatments" onMouseClicked="#showTreatments" text="Treatments">
+                     <content>
+                        <VBox prefHeight="200.0" prefWidth="100.0" />
+                     </content>
+                  </TitledPane>
+                  <TitledPane fx:id="animalHousingPane" disable="true" expanded="false" onKeyPressed="#showHousingUnits" onMouseClicked="#showHousingUnits" text="Animal housing">
+                     <content>
+                        <VBox prefHeight="200.0" prefWidth="100.0" />
+                     </content>
+                  </TitledPane>
+                  <TitledPane fx:id="licensesPane" animated="false" disable="true" expanded="false" layoutX="10.0" layoutY="148.0" onKeyPressed="#showLicenseView" onMouseClicked="#showLicenseView" text="Licenses">
+                     <content>
+                        <VBox prefHeight="200.0" prefWidth="100.0" />
+                     </content>
+                  </TitledPane>
+                  <Separator prefWidth="200.0" />
+                  <TitledPane fx:id="findPane" animated="false" disable="true" text="find">
+                    <content>
+                        <VBox spacing="10.0">
+                           <children>
+                              <ComboBox fx:id="findBox" prefWidth="150.0" promptText="Subject" />
+                              <TextField fx:id="idField" onAction="#goToId" promptText="find by id or name" />
+                              <HBox alignment="CENTER_RIGHT" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <ComboBox fx:id="findBox" prefWidth="150.0" promptText="Subject" />
-                                    <TextField fx:id="idField" onAction="#goToId" promptText="find by id or name" />
-                                    <HBox alignment="CENTER_RIGHT" VBox.vgrow="ALWAYS">
-                                       <children>
-                                          <Button mnemonicParsing="false" onAction="#goToId" text="go" />
-                                       </children>
-                                    </HBox>
+                                    <Button mnemonicParsing="false" onAction="#goToId" text="go" />
                                  </children>
-                              </VBox>
-                          </content>
-                        </TitledPane>
-                        <HBox VBox.vgrow="ALWAYS" />
-                     </children>
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
-                     <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </VBox>
-                  <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="940.0" prefWidth="894.0" HBox.hgrow="ALWAYS" />
+                              </HBox>
+                           </children>
+                        </VBox>
+                    </content>
+                  </TitledPane>
+                  <HBox VBox.vgrow="ALWAYS" />
                </children>
-            </HBox>
-      </children>
-    </AnchorPane>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </VBox>
+            <ScrollPane fx:id="scrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
   </children>
 </VBox>
