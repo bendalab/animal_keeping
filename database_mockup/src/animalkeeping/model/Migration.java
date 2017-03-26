@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Created by jan on 16.03.17.
  */
-public class Migrations {
+public class Migration {
     private long id;
     private String name;
     private java.util.Date migrationDate;
