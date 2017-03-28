@@ -26,38 +26,34 @@ public class TreatmentsTable extends TableView<Treatment>{
 
     public TreatmentsTable() {
         super();
-        idCol = new TableColumn<Treatment, Number>("id");
+        idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
         idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
 
-        subjectCol = new TableColumn<Treatment, String>("subject");
+        subjectCol = new TableColumn<>("subject");
         subjectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubject().getName()));
         subjectCol.prefWidthProperty().bind(this.widthProperty().multiply(0.13));
 
-        personCol = new TableColumn<Treatment, String>("by person");
+        personCol = new TableColumn<>("by person");
         personCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getPerson().getFirstName() +
         " " + data.getValue().getPerson().getLastName()));
         personCol.prefWidthProperty().bind(this.widthProperty().multiply(0.13));
 
-        treatmentCol = new TableColumn<Treatment, String>("treatment");
+        treatmentCol = new TableColumn<>("treatment");
         treatmentCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTreatmentType().getName()));
         treatmentCol.prefWidthProperty().bind(this.widthProperty().multiply(0.17));
 
-        startCol = new TableColumn<Treatment, Date>("start");
+        startCol = new TableColumn<>("start");
         startCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getStart()));
         startCol.prefWidthProperty().bind(this.widthProperty().multiply(0.19));
 
-        endCol = new TableColumn<Treatment, Date>("end");
+        endCol = new TableColumn<>("end");
         endCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getEnd()));
-        finalCol = new TableColumn<Treatment, Boolean>("is final");
-       
-
         endCol.prefWidthProperty().bind(this.widthProperty().multiply(0.19));
 
-        finalCol = new TableColumn<Treatment, Boolean>("invasive/final");
-        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Boolean>(data.getValue().getTreatmentType().isInvasive()));
+        finalCol = new TableColumn<>("final");
+        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Boolean>(data.getValue().getTreatmentType().isFinalExperiment()));
         finalCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
-
 
         this.getColumns().addAll(idCol, subjectCol, personCol, treatmentCol, startCol, endCol, finalCol);
         init();
