@@ -27,6 +27,8 @@ public class TreatmentsView extends VBox implements Initializable, View{
     @FXML private Label nameLabel;
     @FXML private Label licenseLabel;
     @FXML private Label isFinalLabel;
+    @FXML private Label isInvasiveLabel;
+    @FXML private Label targetLabel;
     @FXML private Label descriptionLabel;
     @FXML private VBox timelineBox;
     @FXML private VBox treatmentsBox;
@@ -105,7 +107,9 @@ public class TreatmentsView extends VBox implements Initializable, View{
         nameLabel.setText(type == null ? "" : type.getName());
         descriptionLabel.setText(type == null ? "" : type.getDescription());
         licenseLabel.setText((type != null) && (type.getLicense() != null) ? type.getLicense().getName() : "");
-        isFinalLabel.setText(type != null ? type.isInvasive() ? "True" : "False" : "");
+        isFinalLabel.setText(type != null ? type.isFinalExperiment() ? "True" : "False" : "");
+        isInvasiveLabel.setText(type != null ? type.isInvasive() ? "True" : "False" : "");
+        targetLabel.setText(type != null ? type.getTarget().toString() : "");
 
         editTreatmentTypeLabel.setDisable(type == null);
         deleteTreatmentTypeLabel.setDisable(type == null);
