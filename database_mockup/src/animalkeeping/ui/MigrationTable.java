@@ -1,6 +1,6 @@
 package animalkeeping.ui;
 
-import animalkeeping.model.Migrations;
+import animalkeeping.model.Migration;
 import animalkeeping.util.EntityHelper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -17,11 +17,11 @@ import java.util.List;
 /**
  * Created by jan on 18.03.17.
  */
-public class MigrationTable extends TableView<Migrations> {
-    private TableColumn<Migrations, Number> idCol;
-    private TableColumn<Migrations, String> nameCol;
-    private TableColumn<Migrations, Date> migrationDateCol;
-    private ObservableList<Migrations> masterList = FXCollections.observableArrayList();
+public class MigrationTable extends TableView<Migration> {
+    private TableColumn<Migration, Number> idCol;
+    private TableColumn<Migration, String> nameCol;
+    private TableColumn<Migration, Date> migrationDateCol;
+    private ObservableList<Migration> masterList = FXCollections.observableArrayList();
 
 
     public MigrationTable() {
@@ -31,7 +31,7 @@ public class MigrationTable extends TableView<Migrations> {
     }
 
 
-    public MigrationTable(ObservableList<Migrations> items) {
+    public MigrationTable(ObservableList<Migration> items) {
         this();
         this.masterList = items;
     }
@@ -56,13 +56,13 @@ public class MigrationTable extends TableView<Migrations> {
 
     @Override
     public void refresh() {
-        List<Migrations> result = EntityHelper.getEntityList("from Migrations", Migrations.class);
+        List<Migration> result = EntityHelper.getEntityList("from Migration", Migration.class);
         setMigrations(result);
         super.refresh();
     }
 
 
-    public void setMigrations(Collection<Migrations> migrations) {
+    public void setMigrations(Collection<Migration> migrations) {
         masterList.clear();
         if (migrations != null) {
             masterList.addAll(migrations);
