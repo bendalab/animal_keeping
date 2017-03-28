@@ -1,6 +1,7 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.License;
+import animalkeeping.model.TreatmentTarget;
 import animalkeeping.model.TreatmentType;
 import animalkeeping.util.EntityHelper;
 import javafx.scene.control.*;
@@ -12,6 +13,7 @@ import javafx.util.StringConverter;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static animalkeeping.util.Dialogs.showInfo;
@@ -21,9 +23,11 @@ import static animalkeeping.util.Dialogs.showInfo;
  */
 public class TreatmentTypeForm extends VBox {
     private ComboBox<License> licenseComboBox;
+    private ComboBox<TreatmentTarget> targetComboBox;
     private TextField nameField;
     private TextArea descriptionArea;
     private CheckBox invasiveBox;
+    private CheckBox isFinalBox;
     private TreatmentType type;
     private Label idLabel;
 
@@ -45,15 +49,19 @@ public class TreatmentTypeForm extends VBox {
         nameField.setText(t!= null ? t.getName() : "");
         descriptionArea.setText(t != null ? t.getDescription() : "");
         invasiveBox.setSelected(t != null ? t.isInvasive() : false);
+        isFinalBox.setSelected(t != null ? t.isFinalExperiment() : false);
         licenseComboBox.getSelectionModel().select(t != null ? t.getLicense() : null);
+        targetComboBox.getSelectionModel().select(t != null ? t.getTarget() : null);
     }
 
 
     private void init() {
         idLabel = new Label();
         nameField = new TextField();
-        invasiveBox = new CheckBox("is invasive/final");
+        invasiveBox = new CheckBox("is invasive");
+        isFinalBox = new CheckBox("experiment is final");
         invasiveBox.setSelected(false);
+        isFinalBox.setSelected(false);
         descriptionArea = new TextArea();
 
         licenseComboBox = new ComboBox<>();
@@ -92,6 +100,7 @@ public class TreatmentTypeForm extends VBox {
         licenseComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         nameField.prefWidthProperty().bind(column2.maxWidthProperty());
         invasiveBox.prefWidthProperty().bind(column2.maxWidthProperty());
+        isFinalBox.prefWidthProperty().bind(column2.maxWidthProperty());
         descriptionArea.prefWidthProperty().bind(column2.maxWidthProperty());
 
         grid.setVgap(5);
@@ -103,6 +112,7 @@ public class TreatmentTypeForm extends VBox {
         grid.add(nameField, 1, 1, 1, 1);
 
         grid.add(invasiveBox, 1, 2, 1, 1 );
+        grid.add(isFinalBox, 1, 3, 1, 1 );
 
         grid.add(new Label("Traget:"), 0, 4);
         grid.add(targetComboBox, 1, 4, 2,1);
@@ -130,6 +140,7 @@ public class TreatmentTypeForm extends VBox {
         }
         type.setName(nameField.getText());
         type.setInvasive(invasiveBox.isSelected());
+        type.setFinalExperiment(isFinalBox.isSelected());
         type.setTarget(targetComboBox.getValue());
         type.setDescription(descriptionArea.getText());
         type.setLicense(licenseComboBox.getValue());
