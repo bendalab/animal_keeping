@@ -81,7 +81,7 @@ public class TreatmentsView extends VBox implements Initializable, View{
         });
         controls.getChildren().add(newTreatmentTypeLabel);
 
-        editTreatmentTypeLabel = new ControlLabel("edit type", true);
+        editTreatmentTypeLabel = new ControlLabel("edit treatment type", true);
         editTreatmentTypeLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 editTreatmentType(typeTable.getSelectionModel().getSelectedItem());
@@ -89,7 +89,7 @@ public class TreatmentsView extends VBox implements Initializable, View{
         });
         controls.getChildren().add(editTreatmentTypeLabel);
 
-        deleteTreatmentTypeLabel = new ControlLabel("delete type", true);
+        deleteTreatmentTypeLabel = new ControlLabel("delete treatment type", true);
         deleteTreatmentTypeLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteType(typeTable.getSelectionModel().getSelectedItem());
