@@ -21,10 +21,10 @@ public class SuperUserDialog extends Dialogs {
         SuperUserForm suf = new SuperUserForm();
         output = new String[2];
         Dialog<Connection> dialog = new Dialog<>();
-        dialog.setTitle("Please input username and password of user with create user privilege");
+        dialog.setTitle("Please provide name and password of an admin user");
         dialog.setResizable(true);
         dialog.getDialogPane().setContent(suf);
-        dialog.setWidth(300);
+        dialog.setWidth(400);
         suf.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
