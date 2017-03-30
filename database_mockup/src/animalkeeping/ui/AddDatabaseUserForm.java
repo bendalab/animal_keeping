@@ -1,22 +1,20 @@
 package animalkeeping.ui;
 
 import animalkeeping.logging.Communicator;
-import animalkeeping.model.Person;
 import animalkeeping.model.DatabaseUserType;
+import animalkeeping.model.Person;
+import animalkeeping.util.EntityHelper;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 import static animalkeeping.util.Dialogs.showInfo;
@@ -38,7 +36,7 @@ public class AddDatabaseUserForm extends VBox {
     }
 
     private void init() {
-        userClassComboBox = new ComboBox<DatabaseUserType>();
+        userClassComboBox = new ComboBox<>();
         usernameField = new TextField();
         pwField = new PasswordField();
         pwConfirmField = new PasswordField();
@@ -55,22 +53,10 @@ public class AddDatabaseUserForm extends VBox {
             }
         });
 
-        List<DatabaseUserType> userTypes = new ArrayList(0);
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            userTypes = session.createQuery("from DatabaseUserType", DatabaseUserType.class).list();
-            session.getTransaction().commit();
-            session.beginTransaction();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
-
+        List<DatabaseUserType> userTypes = EntityHelper.getEntityList("from DatabaseUserType order by name desc", DatabaseUserType.class);
         userClassComboBox.getItems().addAll(userTypes);
+        userClassComboBox.getSelectionModel().select(0);
+
         addLocalUserBox = new CheckBox("add local user");
         addLocalUserBox.setSelected(false);
 
