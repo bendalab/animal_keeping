@@ -24,9 +24,6 @@ import javafx.application.Platform;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import org.apache.poi.hssf.util.HSSFColor;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -147,12 +144,9 @@ public class SpecialTextField extends TextField {
                 } else {
                     text = oldValue;
                 }
-                System.out.println("text prop listener, if path: " + text);
                 this.setText(text);
             } else if (newValue != null && newValue.length() == mask.length()) {
-                System.out.println("text prop listener, else path: " + newValue);
                 text = newValue;
-                //textFromMask(specialSymbols);
                 this.setText(text);
             }
             if (!isValid(text)) {
@@ -195,23 +189,6 @@ public class SpecialTextField extends TextField {
                 }
             }
         });
-    }
-
-    @Override
-    public void replaceSelection(String replacement) {
-        if (isValid(replacement)) {
-            System.out.println("isValid");
-            this.setText(replacement);
-        } else {
-            System.out.println("isInvalid");
-            this.setText(textFromMask(specialSymbols));
-        }
-        /* NO PASTING AT THE MOMENT
-        System.out.println(replacement);
-        replaceText(getSelection(), replacement);
-        System.out.println("text pasted in");
-        12:12:12
-        */
     }
 
     @Override
