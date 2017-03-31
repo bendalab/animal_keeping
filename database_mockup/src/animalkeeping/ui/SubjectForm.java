@@ -32,7 +32,8 @@ public class SubjectForm extends VBox {
     private ComboBox<SupplierType> supplierComboBox;
     private ComboBox<HousingUnit> housingUnitComboBox;
     private DatePicker importDate;
-    private TextField importTimeField, nameField, aliasField;
+    private TextField nameField, aliasField;
+    private SpecialTextField importTimeField;
     private Label idLabel;
     private Subject subject = null;
 
@@ -121,7 +122,8 @@ public class SubjectForm extends VBox {
 
         importDate = new DatePicker();
         importDate.setValue(LocalDate.now());
-        importTimeField = new TextField(timeFormat.format(new Date()));
+        importTimeField = new SpecialTextField("##:##:##");
+        //importTimeField.setText(timeFormat.format(new Date()));
 
         aliasField = new TextField();
         nameField = new TextField();
