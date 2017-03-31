@@ -51,6 +51,7 @@
         <mapping resource="animalkeeping/mappings/HousingUnit.hbm.xml"/>
         <mapping resource="animalkeeping/mappings/Housing.hbm.xml"/>
         <mapping resource="animalkeeping/mappings/HousingNote.hbm.xml"/>
+        <mapping resource="animalkeeping/mappings/Migration.hbm.xml"/>
         <mapping resource="animalkeeping/mappings/SubjectNote.hbm.xml"/>
         <mapping resource="animalkeeping/mappings/TreatmentType.hbm.xml"/>
         <mapping resource="animalkeeping/mappings/Treatment.hbm.xml"/>

@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="database_mockup" default="all">
+    <property name="version" value="0.5"/>
+    <property name="db_migration_state" value="0007-splitfinalinvasive.sql"/>
+    <property file="animalKeeping.properties"/>
+
+    <!-- Uncomment the following property if no tests compilation is needed -->
+    <!--
+    <property name="skip.tests" value="true"/>
+     -->
+
+    <!-- Compiler options -->
+
+    <property name="compiler.debug" value="on"/>
+    <property name="compiler.generate.no.warnings" value="off"/>
+    <property name="compiler.args" value=""/>
+    <property name="compiler.max.memory" value="700m"/>
+    <patternset id="ignored.files">
+        <exclude name="**/*.hprof/**"/>
+        <exclude name="**/*.pyc/**"/>
+        <exclude name="**/*.pyo/**"/>
+        <exclude name="**/*.rbc/**"/>
+        <exclude name="**/*.yarb/**"/>
+        <exclude name="**/*~/**"/>
+        <exclude name="**/.DS_Store/**"/>
+        <exclude name="**/.git/**"/>
+        <exclude name="**/.hg/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/__pycache__/**"/>
+        <exclude name="**/_svn/**"/>
+        <exclude name="**/vssver.scc/**"/>
+        <exclude name="**/vssver2.scc/**"/>
+    </patternset>
+    <patternset id="library.patterns">
+        <include name="*.war"/>
+        <include name="*.swc"/>
+        <include name="*.zip"/>
+        <include name="*.ear"/>
+        <include name="*.egg"/>
+        <include name="*.ane"/>
+        <include name="*.jar"/>
+    </patternset>
+    <patternset id="compiler.resources">
+        <exclude name="**/?*.java"/>
+        <exclude name="**/?*.form"/>
+        <exclude name="**/?*.class"/>
+        <exclude name="**/?*.groovy"/>
+        <exclude name="**/?*.scala"/>
+        <exclude name="**/?*.flex"/>
+        <exclude name="**/?*.kt"/>
+        <exclude name="**/?*.clj"/>
+    </patternset>
+
+    <!-- JDK definitions -->
+
+    <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+    <path id="jdk.classpath.1.8">
+        <fileset dir="${jdk.home.1.8}">
+            <include name="jre/lib/charsets.jar"/>
+            <include name="jre/lib/deploy.jar"/>
+            <include name="jre/lib/ext/cldrdata.jar"/>
+            <include name="jre/lib/ext/dnsns.jar"/>
+            <include name="jre/lib/ext/jaccess.jar"/>
+            <include name="jre/lib/ext/jfxrt.jar"/>
+            <include name="jre/lib/ext/localedata.jar"/>
+            <include name="jre/lib/ext/nashorn.jar"/>
+            <include name="jre/lib/ext/sunec.jar"/>
+            <include name="jre/lib/ext/sunjce_provider.jar"/>
+            <include name="jre/lib/ext/sunpkcs11.jar"/>
+            <include name="jre/lib/ext/zipfs.jar"/>
+            <include name="jre/lib/javaws.jar"/>
+            <include name="jre/lib/jce.jar"/>
+            <include name="jre/lib/jfr.jar"/>
+            <include name="jre/lib/jfxswt.jar"/>
+            <include name="jre/lib/jsse.jar"/>
+            <include name="jre/lib/management-agent.jar"/>
+            <include name="jre/lib/plugin.jar"/>
+            <include name="jre/lib/resources.jar"/>
+            <include name="jre/lib/rt.jar"/>
+            <include name="lib/ant-javafx.jar"/>
+            <include name="lib/dt.jar"/>
+            <include name="lib/javafx-mx.jar"/>
+            <include name="lib/jconsole.jar"/>
+            <include name="lib/packager.jar"/>
+            <include name="lib/sa-jdi.jar"/>
+            <include name="lib/tools.jar"/>
+        </fileset>
+    </path>
+
+    <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+    <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+    <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+
+
+    <!-- Project Libraries -->
+
+    <path id="library.commons-lang:commons-lang:2.6.classpath">
+        <pathelement location="${path.variable.maven_repository}/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"/>
+    </path>
+
+    <path id="library.mysql:mysql-connector-java:6.0.4.classpath">
+        <pathelement location="${path.variable.maven_repository}/mysql/mysql-connector-java/6.0.4/mysql-connector-java-6.0.4.jar"/>
+        <pathelement location="${basedir}/../../../../file:/home/grewe/projects/programming/animal_keeping_ui/database_mockup/lib/mysql-connector-java-6.0.4.jar"/>
+    </path>
+
+    <path id="library.org.apache.poi:poi-ooxml:3.15.classpath">
+        <pathelement location="${path.variable.maven_repository}/com/github/virtuald/curvesapi/1.04/curvesapi-1.04.jar"/>
+        <pathelement location="${path.variable.maven_repository}/commons-codec/commons-codec/1.10/commons-codec-1.10.jar"/>
+        <pathelement location="${path.variable.maven_repository}/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar"/>
+        <pathelement location="${path.variable.maven_repository}/org/apache/poi/poi-ooxml-schemas/3.15/poi-ooxml-schemas-3.15.jar"/>
+        <pathelement location="${path.variable.maven_repository}/org/apache/poi/poi-ooxml/3.15/poi-ooxml-3.15.jar"/>
+        <pathelement location="${path.variable.maven_repository}/org/apache/poi/poi/3.15/poi-3.15.jar"/>
+        <pathelement location="${path.variable.maven_repository}/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
+        <pathelement location="${path.variable.maven_repository}/stax/stax-api/1.0.1/stax-api-1.0.1.jar"/>
+    </path>
+
+    <path id="library.org.apache.poi:poi:3.15.classpath">
+        <pathelement location="${path.variable.maven_repository}/commons-codec/commons-codec/1.10/commons-codec-1.10.jar"/>
+        <pathelement location="${path.variable.maven_repository}/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar"/>
+        <pathelement location="${path.variable.maven_repository}/org/apache/poi/poi/3.15/poi-3.15.jar"/>
+    </path>
+    <!-- Register Custom Compiler Taskdefs -->
+
+    <property name="javac2.home" value="${idea.home}/lib"/>
+    <path id="javac2.classpath">
+        <pathelement location="${javac2.home}/javac2.jar"/>
+        <pathelement location="${javac2.home}/jdom.jar"/>
+        <pathelement location="${javac2.home}/asm-all.jar"/>
+        <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+    </path>
+    <target name="register.custom.compilers">
+        <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+        <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+    </target>
+
+    <!-- Modules -->
+    <!-- Module database_mockup -->
+
+    <dirname property="module.database_mockup.basedir" file="${ant.file}"/>
+
+    <property name="module.jdk.home.database_mockup" value="${project.jdk.home}"/>
+    <property name="module.jdk.bin.database_mockup" value="${project.jdk.bin}"/>
+    <property name="module.jdk.classpath.database_mockup" value="${project.jdk.classpath}"/>
+
+    <property name="compiler.args.database_mockup" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+
+    <property name="database_mockup.output.dir" value="${module.database_mockup.basedir}/out"/>
+    <property name="database_mockup.testoutput.dir" value="${module.database_mockup.basedir}/out/test/database_mockup"/>
+
+    <path id="database_mockup.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="database_mockup.module.production.classpath">
+        <path refid="${module.jdk.classpath.database_mockup}"/>
+        <path refid="library.mysql:mysql-connector-java:6.0.4.classpath"/>
+        <fileset dir="${basedir}/lib">
+            <patternset refid="library.patterns"/>
+        </fileset>
+        <path refid="library.commons-lang:commons-lang:2.6.classpath"/>
+        <path refid="library.org.apache.poi:poi:3.15.classpath"/>
+        <path refid="library.org.apache.poi:poi-ooxml:3.15.classpath"/>
+    </path>
+
+    <path id="database_mockup.runtime.production.module.classpath">
+        <pathelement location="${database_mockup.output.dir}"/>
+        <path refid="library.mysql:mysql-connector-java:6.0.4.classpath"/>
+        <fileset dir="${basedir}/lib">
+            <patternset refid="library.patterns"/>
+        </fileset>
+        <path refid="library.commons-lang:commons-lang:2.6.classpath"/>
+        <path refid="library.org.apache.poi:poi:3.15.classpath"/>
+        <path refid="library.org.apache.poi:poi-ooxml:3.15.classpath"/>
+    </path>
+
+    <path id="database_mockup.module.classpath">
+        <path refid="${module.jdk.classpath.database_mockup}"/>
+        <pathelement location="${database_mockup.output.dir}"/>
+        <path refid="library.mysql:mysql-connector-java:6.0.4.classpath"/>
+        <fileset dir="${basedir}/lib">
+            <patternset refid="library.patterns"/>
+        </fileset>
+        <path refid="library.commons-lang:commons-lang:2.6.classpath"/>
+        <path refid="library.org.apache.poi:poi:3.15.classpath"/>
+        <path refid="library.org.apache.poi:poi-ooxml:3.15.classpath"/>
+    </path>
+
+    <path id="database_mockup.runtime.module.classpath">
+        <pathelement location="${database_mockup.testoutput.dir}"/>
+        <pathelement location="${database_mockup.output.dir}"/>
+        <path refid="library.mysql:mysql-connector-java:6.0.4.classpath"/>
+        <fileset dir="${basedir}/lib">
+            <patternset refid="library.patterns"/>
+        </fileset>
+        <path refid="library.commons-lang:commons-lang:2.6.classpath"/>
+        <path refid="library.org.apache.poi:poi:3.15.classpath"/>
+        <path refid="library.org.apache.poi:poi-ooxml:3.15.classpath"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.database_mockup">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.database_mockup">
+        <patternset refid="excluded.from.module.database_mockup"/>
+    </patternset>
+
+    <path id="database_mockup.module.sourcepath">
+        <dirset dir="${module.database_mockup.basedir}">
+            <include name="src"/>
+            <include name="src/animalkeeping/ui/fxml"/>
+        </dirset>
+    </path>
+
+    <target name="compile.module.database_mockup" depends="compile.module.database_mockup.production,compile.module.database_mockup.tests, buildinfo" description="Compile module database_mockup"/>
+
+    <target name="compile.module.database_mockup.production" depends="register.custom.compilers" description="Compile module database_mockup; production classes">
+        <mkdir dir="${database_mockup.output.dir}"/>
+        <javac2 destdir="${database_mockup.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.database_mockup}/javac">
+            <compilerarg line="${compiler.args.database_mockup}"/>
+            <bootclasspath refid="database_mockup.module.bootclasspath"/>
+            <classpath refid="database_mockup.module.production.classpath"/>
+            <src refid="database_mockup.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.database_mockup"/>
+        </javac2>
+
+        <copy todir="${database_mockup.output.dir}">
+            <fileset dir="${module.database_mockup.basedir}/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+            <fileset dir="${module.database_mockup.basedir}/src/animalkeeping/ui/fxml">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.database_mockup.tests" depends="register.custom.compilers,compile.module.database_mockup.production" description="compile module database_mockup; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.database_mockup" description="cleanup module">
+        <delete dir="${database_mockup.output.dir}"/>
+        <delete dir="${database_mockup.testoutput.dir}"/>
+    </target>
+
+    <target name="init" description="Build initialization">
+        <!-- Perform any build initialization in this target -->
+    </target>
+
+    <target name="clean" depends="clean.module.database_mockup, clean.artifact.animal_keeping" description="cleanup all"/>
+
+    <target name="build.modules" depends="init, clean, compile.module.database_mockup" description="build all modules"/>
+
+    <target name="init.artifacts">
+        <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+        <property name="artifact.output.animal_keeping" value="${basedir}/out/artifacts/animal_keeping"/>
+        <property name="artifact.output.database_mockup:jar" value="${basedir}/out/artifacts/database_mockup_jar"/>
+        <mkdir dir="${artifacts.temp.dir}"/>
+        <property name="artifact.temp.output.database_mockup" value="${artifacts.temp.dir}/database_mockup.jar"/>
+        <property name="temp.jar.path.database_mockup.jar" value="${artifacts.temp.dir}/1/database_mockup.jar"/>
+        <mkdir dir="${artifacts.temp.dir}/1"/>
+        <taskdef resource="com/sun/javafx/tools/ant/antlib.xml" uri="javafx:com.sun.javafx.tools.ant" classpath="${jdk.home.1.8}/lib/ant-javafx.jar"/>
+    </target>
+
+    <target name="clean.artifact.animal_keeping" description="clean animal_keeping artifact output">
+        <delete dir="${artifact.output.animal_keeping}"/>
+    </target>
+
+    <target name="artifact.animal_keeping" depends="init.artifacts, compile.module.database_mockup" description="Build &#39;animal_keeping&#39; artifact" xmlns:fx="javafx:com.sun.javafx.tools.ant">
+        <mkdir dir="${artifact.output.animal_keeping}"/>
+        <copy todir="${artifact.temp.output.database_mockup}">
+            <fileset dir="${database_mockup.output.dir}"/>
+        </copy>
+        <copy file="${path.variable.maven_repository}/commons-lang/commons-lang/2.6/commons-lang-2.6.jar" tofile="${artifact.temp.output.database_mockup}/commons-lang-2.6.jar"/>
+        <copy file="${path.variable.maven_repository}/mysql/mysql-connector-java/6.0.4/mysql-connector-java-6.0.4.jar" tofile="${artifact.temp.output.database_mockup}/mysql-connector-java-6.0.4.jar"/>
+        <copy file="${basedir}/../../../../file:/home/grewe/projects/programming/animal_keeping_ui/database_mockup/lib/mysql-connector-java-6.0.4.jar" tofile="${artifact.temp.output.database_mockup}/mysql-connector-java-6.0.4.jar"/>
+        <copy file="${basedir}/../../../../file:/home/grewe/projects/programming/animal_keeping_ui/database_mockup/lib/mysql-connector-java-6.0.4.jar" tofile="${artifact.temp.output.database_mockup}/mysql-connector-java-6.0.4.jar"/>
+        <copy file="${basedir}/../../../../file:/home/grewe/projects/programming/animal_keeping_ui/database_mockup/lib/mysql-connector-java-6.0.4.jar" tofile="${artifact.temp.output.database_mockup}/mysql-connector-java-6.0.4.jar"/>
+        <copy file="${basedir}/../../../../file:/home/grewe/projects/programming/animal_keeping_ui/database_mockup/lib/mysql-connector-java-6.0.4.jar" tofile="${artifact.temp.output.database_mockup}/mysql-connector-java-6.0.4.jar"/>
+        <copy file="${basedir}/../../../../file:/home/grewe/projects/programming/animal_keeping_ui/database_mockup/lib/mysql-connector-java-6.0.4.jar" tofile="${artifact.temp.output.database_mockup}/mysql-connector-java-6.0.4.jar"/>
+        <copy file="${basedir}/../../../../file:/home/grewe/projects/programming/animal_keeping_ui/database_mockup/lib/mysql-connector-java-6.0.4.jar" tofile="${artifact.temp.output.database_mockup}/mysql-connector-java-6.0.4.jar"/>
+        <copy file="${basedir}/../../../../file:/home/grewe/projects/programming/animal_keeping_ui/database_mockup/lib/mysql-connector-java-6.0.4.jar" tofile="${artifact.temp.output.database_mockup}/mysql-connector-java-6.0.4.jar"/>
+        <copy file="${path.variable.maven_repository}/org/apache/poi/poi-ooxml/3.15/poi-ooxml-3.15.jar" tofile="${artifact.temp.output.database_mockup}/poi-ooxml-3.15.jar"/>
+        <copy file="${path.variable.maven_repository}/org/apache/poi/poi/3.15/poi-3.15.jar" tofile="${artifact.temp.output.database_mockup}/poi-3.15.jar"/>
+        <copy file="${path.variable.maven_repository}/commons-codec/commons-codec/1.10/commons-codec-1.10.jar" tofile="${artifact.temp.output.database_mockup}/commons-codec-1.10.jar"/>
+        <copy file="${path.variable.maven_repository}/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar" tofile="${artifact.temp.output.database_mockup}/commons-collections4-4.1.jar"/>
+        <copy file="${path.variable.maven_repository}/org/apache/poi/poi-ooxml-schemas/3.15/poi-ooxml-schemas-3.15.jar" tofile="${artifact.temp.output.database_mockup}/poi-ooxml-schemas-3.15.jar"/>
+        <copy file="${path.variable.maven_repository}/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar" tofile="${artifact.temp.output.database_mockup}/xmlbeans-2.6.0.jar"/>
+        <copy file="${path.variable.maven_repository}/stax/stax-api/1.0.1/stax-api-1.0.1.jar" tofile="${artifact.temp.output.database_mockup}/stax-api-1.0.1.jar"/>
+        <copy file="${path.variable.maven_repository}/com/github/virtuald/curvesapi/1.04/curvesapi-1.04.jar" tofile="${artifact.temp.output.database_mockup}/curvesapi-1.04.jar"/>
+        <copy file="${path.variable.maven_repository}/org/apache/poi/poi/3.15/poi-3.15.jar" tofile="${artifact.temp.output.database_mockup}/poi-3.15.jar"/>
+        <copy file="${path.variable.maven_repository}/commons-codec/commons-codec/1.10/commons-codec-1.10.jar" tofile="${artifact.temp.output.database_mockup}/commons-codec-1.10.jar"/>
+        <copy file="${path.variable.maven_repository}/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar" tofile="${artifact.temp.output.database_mockup}/commons-collections4-4.1.jar"/>
+        <fx:fileset id="all_but_database_mockup" dir="${artifact.temp.output.database_mockup}" includes="**/*.jar">
+            <exclude name="database_mockup.jar"/>
+        </fx:fileset>
+        <fx:fileset id="all_database_mockup" dir="${artifact.temp.output.database_mockup}" includes="**/*.jar"/>
+        <fx:application id="database_mockup_id" name="animal_keeping" mainClass="animalkeeping.ui.Main" version="0.5"/>
+        <fx:jar destfile="${artifact.temp.output.database_mockup}/database_mockup.jar">
+            <fx:application refid="database_mockup_id"/>
+            <fileset dir="${artifact.temp.output.database_mockup}" excludes="**/*.jar"/>
+            <fx:resources>
+                <fx:fileset refid="all_but_database_mockup"/>
+            </fx:resources>
+            <manifest>
+                <attribute name="Implementation-Title" value="AnimalKeeping"/>
+                <attribute name="Implementation-Version" value="0.5"/>
+                <attribute name="Implementation-Vendor" value="bendalab"/>
+            </manifest>
+        </fx:jar>
+        <fx:deploy width="1280" height="1024" updatemode="background" outdir="${artifact.temp.output.database_mockup}/deploy" outfile="database_mockup" nativeBundles="dmg">
+            <fx:application refid="database_mockup_id"/>
+            <fx:info title="AnimalKeeping" vendor="bendalab"/>
+            <fx:resources>
+                <fx:fileset refid="all_database_mockup"/>
+            </fx:resources>
+        </fx:deploy>
+        <copy todir="${artifact.output.animal_keeping}">
+            <fileset dir="${artifact.temp.output.database_mockup}/deploy"/>
+        </copy>
+        <delete includeemptydirs="true">
+            <fileset dir="${artifact.temp.output.database_mockup}"/>
+        </delete>
+    </target>
+
+    <target name="artifact.database_mockup:jar" depends="init.artifacts, compile.module.database_mockup" description="Build &#39;database_mockup:jar&#39; artifact">
+        <property name="artifact.temp.output.database_mockup:jar" value="${artifacts.temp.dir}/database_mockup_jar"/>
+        <mkdir dir="${artifact.temp.output.database_mockup:jar}"/>
+        <jar destfile="${temp.jar.path.database_mockup.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+            <zipfileset dir="${database_mockup.output.dir}"/>
+            <zipfileset src="${path.variable.maven_repository}/org/apache/poi/poi-ooxml/3.15/poi-ooxml-3.15.jar"/>
+            <zipfileset src="${path.variable.maven_repository}/org/apache/poi/poi/3.15/poi-3.15.jar"/>
+            <zipfileset src="${path.variable.maven_repository}/commons-codec/commons-codec/1.10/commons-codec-1.10.jar"/>
+            <zipfileset src="${path.variable.maven_repository}/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar"/>
+            <zipfileset src="${path.variable.maven_repository}/org/apache/poi/poi-ooxml-schemas/3.15/poi-ooxml-schemas-3.15.jar"/>
+            <zipfileset src="${path.variable.maven_repository}/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
+            <zipfileset src="${path.variable.maven_repository}/stax/stax-api/1.0.1/stax-api-1.0.1.jar"/>
+            <zipfileset src="${path.variable.maven_repository}/com/github/virtuald/curvesapi/1.04/curvesapi-1.04.jar"/>
+            <zipfileset src="${path.variable.maven_repository}/mysql/mysql-connector-java/6.0.4/mysql-connector-java-6.0.4.jar"/>
+            <zipfileset src="${basedir}/../../../../file:/home/huben/Documents/Animal_Keeping_Database/database_mockup/lib/mysql-connector-java-6.0.4.jar"/>
+            <zipfileset src="${idea.home}/bin/file:/Users/jan/projects/programming/animal_keeping_ui/database_mockup/lib/mysql-connector-java-6.0.4.jar"/>
+            <zipfileset src="${path.variable.maven_repository}/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"/>
+            <zipfileset src="${basedir}/lib/el-api-2.2.jar"/>
+            <zipfileset src="${basedir}/lib/antlr-2.7.7.jar"/>
+            <zipfileset src="${basedir}/lib/cdi-api-1.1.jar"/>
+            <zipfileset src="${basedir}/lib/dom4j-1.6.1.jar"/>
+            <zipfileset src="${basedir}/lib/javax.inject-1.jar"/>
+            <zipfileset src="${basedir}/lib/jsr250-api-1.0.jar"/>
+            <zipfileset src="${basedir}/lib/classmate-1.3.0.jar"/>
+            <zipfileset src="${basedir}/lib/xml-apis-1.0.b2.jar"/>
+            <zipfileset src="${basedir}/lib/jandex-2.0.3.Final.jar"/>
+            <zipfileset src="${basedir}/lib/javassist-3.20.0-GA.jar"/>
+            <zipfileset src="${basedir}/lib/jboss-logging-3.3.0.Final.jar"/>
+            <zipfileset src="${basedir}/lib/hibernate-core-5.2.6.Final.jar"/>
+            <zipfileset src="${basedir}/lib/geronimo-jta_1.1_spec-1.1.1.jar"/>
+            <zipfileset src="${basedir}/lib/hibernate-jpa-2.1-api-1.0.0.Final.jar"/>
+            <zipfileset src="${basedir}/lib/hibernate-core-5.2.6.Final-sources.jar"/>
+            <zipfileset src="${basedir}/lib/hibernate-commons-annotations-5.0.1.Final.jar"/>
+            <zipfileset src="${basedir}/lib/jboss-interceptors-api_1.1_spec-1.0.0.Beta1.jar"/>
+        </jar>
+        <copy file="${temp.jar.path.database_mockup.jar}" tofile="${artifact.temp.output.database_mockup:jar}/database_mockup.jar"/>
+    </target>
+
+    <target name="build.all.artifacts" depends="artifact.animal_keeping, artifact.database_mockup:jar" description="Build all artifacts">
+        <mkdir dir="${artifact.output.database_mockup:jar}"/>
+        <copy todir="${artifact.output.database_mockup:jar}">
+            <fileset dir="${artifact.temp.output.database_mockup:jar}"/>
+        </copy>
+
+        <!-- Delete temporary files -->
+        <delete dir="${artifacts.temp.dir}"/>
+    </target>
+
+    <target name="buildinfo">
+        <tstamp>
+            <format property="builtat" pattern="MM/dd/yyyy hh:mm aa" timezone="Europe/Berlin"/>
+        </tstamp>
+        <exec executable="whoami" outputproperty="whoami"/>
+        <exec executable="uname" outputproperty="buildsystem"><arg value="-a"/></exec>
+        <propertyfile file="${database_mockup.output.dir}/animalkeeping/version.properties"
+                      comment="This file is automatically generated - DO NOT EDIT">
+            <entry key="builder" value="${whoami}"/>
+            <entry key="version" value="${version}"/>
+            <entry key="system" value="${buildsystem}"/>
+            <entry key="migration_state" value="${db_migration_state}"/>
+        </propertyfile>
+    </target>
+
+    <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>

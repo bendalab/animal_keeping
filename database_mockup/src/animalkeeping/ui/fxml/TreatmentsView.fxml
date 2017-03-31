@@ -35,19 +35,25 @@
                                     <RowConstraints minHeight="10.0" vgrow="NEVER" />
                                     <RowConstraints minHeight="10.0" vgrow="NEVER" />
                                     <RowConstraints minHeight="10.0" vgrow="NEVER" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
                                     <RowConstraints minHeight="10.0" vgrow="NEVER" />
                                  </rowConstraints>
                                  <children>
                                     <Label text="Name:" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="NEVER" />
                                     <Label text="License:" GridPane.rowIndex="3" />
-                                    <Label text="Description:" GridPane.rowIndex="5" />
+                                    <Label text="Description:" GridPane.rowIndex="7" />
                                     <Label text="ID:" GridPane.rowIndex="1" />
                                     <Label fx:id="idLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                     <Label fx:id="nameLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                     <Label fx:id="licenseLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                    <Label fx:id="descriptionLabel" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.rowSpan="2" />
-                                    <Label text="Is final:" GridPane.rowIndex="4" />
-                                    <Label fx:id="isFinalLabel" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    <Label fx:id="descriptionLabel" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.rowSpan="2" />
+                                    <Label text="Is invasive" GridPane.rowIndex="4" />
+                                    <Label fx:id="isInvasiveLabel" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    <Label text="Is final" GridPane.rowIndex="5" />
+                                    <Label text="Target" GridPane.rowIndex="6" />
+                                    <Label fx:id="isFinalLabel" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <Label fx:id="targetLabel" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                                  </children>
                               </GridPane>
                               <HBox alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="29.0" prefWidth="598.0" spacing="5.0" />

@@ -11,8 +11,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
+import javafx.scene.control.cell.CheckBoxTableCell;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +23,8 @@ public class TreatmentTypeTable extends TableView<TreatmentType> {
     private TableColumn<TreatmentType, Number> idCol;
     private TableColumn<TreatmentType, String> nameCol;
     private TableColumn<TreatmentType, Boolean> invasiveCol;
+    private TableColumn<TreatmentType, Boolean> finalCol;
+    private TableColumn<TreatmentType, String> targetCol;
     private TableColumn<TreatmentType, String> licenseCol;
     private TableColumn<TreatmentType, String> descriptionCol;
     private ObservableList<TreatmentType> masterList = FXCollections.observableArrayList();
@@ -34,7 +35,7 @@ public class TreatmentTypeTable extends TableView<TreatmentType> {
         super();
         idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.07));
+        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.04));
 
         nameCol = new TableColumn<>("name");
         nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
@@ -44,16 +45,26 @@ public class TreatmentTypeTable extends TableView<TreatmentType> {
         licenseCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getLicense() != null ? data.getValue().getLicense().getName() : ""));
         licenseCol.prefWidthProperty().bind(this.widthProperty().multiply(0.20));
 
-        invasiveCol = new TableColumn<>("invasive/final");
+        invasiveCol = new TableColumn<>("invasive");
         invasiveCol.setCellValueFactory(data -> new ReadOnlyBooleanWrapper(data.getValue().isInvasive()));
-        invasiveCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
+        invasiveCol.setCellFactory( tc -> new CheckBoxTableCell<>());
+        invasiveCol.prefWidthProperty().bind(this.widthProperty().multiply(0.07));
+
+        finalCol = new TableColumn<>("final");
+        finalCol.setCellValueFactory(data -> new ReadOnlyBooleanWrapper(data.getValue().isFinalExperiment()));
+        finalCol.prefWidthProperty().bind(this.widthProperty().multiply(0.07));
+        finalCol.setCellFactory( tc -> new CheckBoxTableCell<>());
+
+        targetCol = new TableColumn<>("target");
+        targetCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTarget().toString()));
+        targetCol.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
 
         descriptionCol = new TableColumn<>("description");
         descriptionCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getDescription() != null ?
                 data.getValue().getDescription() : ""));
-        descriptionCol.prefWidthProperty().bind(this.widthProperty().multiply(0.44));
+        descriptionCol.prefWidthProperty().bind(this.widthProperty().multiply(0.33));
 
-        this.getColumns().addAll(idCol, nameCol, licenseCol, invasiveCol, descriptionCol);
+        this.getColumns().addAll(idCol, nameCol, licenseCol, invasiveCol, finalCol, targetCol, descriptionCol);
         init();
     }
 

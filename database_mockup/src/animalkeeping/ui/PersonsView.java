@@ -69,8 +69,6 @@ public class PersonsView  extends VBox implements Initializable, View {
         userroleLabel.setText("");
         personsTable.getSelectionModel().getSelectedItems().addListener(new PersonTableListChangeListener());
 
-
-
         controls = new VBox();
         controls.setAlignment(Pos.TOP_LEFT);
         controls.setSpacing(10);
@@ -139,6 +137,10 @@ public class PersonsView  extends VBox implements Initializable, View {
     private void addUser(){
         Person p = personsTable.getSelectionModel().getSelectedItem();
         Connection c = SuperUserDialog.openConnection();
+        if (c == null) {
+            Dialogs.showInfo("Connection refused!");
+            return;
+        }
         AddDatabaseUserDialog.addDatabaseUser(c, p);
         personsTable.refresh();
     }

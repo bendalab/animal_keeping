@@ -1,6 +1,7 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.License;
+import animalkeeping.model.TreatmentTarget;
 import animalkeeping.model.TreatmentType;
 import animalkeeping.util.EntityHelper;
 import javafx.scene.control.*;
@@ -12,6 +13,7 @@ import javafx.util.StringConverter;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static animalkeeping.util.Dialogs.showInfo;
@@ -21,9 +23,11 @@ import static animalkeeping.util.Dialogs.showInfo;
  */
 public class TreatmentTypeForm extends VBox {
     private ComboBox<License> licenseComboBox;
+    private ComboBox<TreatmentTarget> targetComboBox;
     private TextField nameField;
     private TextArea descriptionArea;
     private CheckBox invasiveBox;
+    private CheckBox isFinalBox;
     private TreatmentType type;
     private Label idLabel;
 
@@ -45,15 +49,19 @@ public class TreatmentTypeForm extends VBox {
         nameField.setText(t!= null ? t.getName() : "");
         descriptionArea.setText(t != null ? t.getDescription() : "");
         invasiveBox.setSelected(t != null ? t.isInvasive() : false);
+        isFinalBox.setSelected(t != null ? t.isFinalExperiment() : false);
         licenseComboBox.getSelectionModel().select(t != null ? t.getLicense() : null);
+        targetComboBox.getSelectionModel().select(t != null ? t.getTarget() : null);
     }
 
 
     private void init() {
         idLabel = new Label();
         nameField = new TextField();
-        invasiveBox = new CheckBox("is invasive/final");
+        invasiveBox = new CheckBox("is invasive");
+        isFinalBox = new CheckBox("experiment is final");
         invasiveBox.setSelected(false);
+        isFinalBox.setSelected(false);
         descriptionArea = new TextArea();
 
         licenseComboBox = new ComboBox<>();
@@ -69,6 +77,19 @@ public class TreatmentTypeForm extends VBox {
             }
         });
 
+        targetComboBox = new ComboBox<>();
+        targetComboBox.setConverter(new StringConverter<TreatmentTarget>() {
+            @Override
+            public String toString(TreatmentTarget object) {
+                return object.toString();
+            }
+
+            @Override
+            public TreatmentTarget fromString(String string) {
+                return string.equals("subject") ? TreatmentTarget.subject : TreatmentTarget.housing;
+            }
+        });
+
         GridPane grid = new GridPane();
         ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
         column1.setHgrow(Priority.NEVER);
@@ -79,6 +100,7 @@ public class TreatmentTypeForm extends VBox {
         licenseComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         nameField.prefWidthProperty().bind(column2.maxWidthProperty());
         invasiveBox.prefWidthProperty().bind(column2.maxWidthProperty());
+        isFinalBox.prefWidthProperty().bind(column2.maxWidthProperty());
         descriptionArea.prefWidthProperty().bind(column2.maxWidthProperty());
 
         grid.setVgap(5);
@@ -90,17 +112,26 @@ public class TreatmentTypeForm extends VBox {
         grid.add(nameField, 1, 1, 1, 1);
 
         grid.add(invasiveBox, 1, 2, 1, 1 );
+        grid.add(isFinalBox, 1, 3, 1, 1 );
 
-        grid.add(new Label("License:"), 0, 3);
-        grid.add(licenseComboBox, 1, 3, 2,1);
+        grid.add(new Label("Traget:"), 0, 4);
+        grid.add(targetComboBox, 1, 4, 2,1);
 
-        grid.add(new Label("Description:"), 0,4);
-        grid.add(descriptionArea, 0,5, 2, 2);
+        grid.add(new Label("License:"), 0, 5);
+        grid.add(licenseComboBox, 1, 5, 2,1);
+
+        grid.add(new Label("Description:"), 0,6);
+        grid.add(descriptionArea, 0,7, 2, 2);
 
         this.getChildren().add(grid);
 
         List<License> licenses = EntityHelper.getEntityList("from License", License.class);
         licenseComboBox.getItems().addAll(licenses);
+
+        List<TreatmentTarget> targets = new ArrayList<>(2);
+        targets.add(TreatmentTarget.subject);
+        targets.add(TreatmentTarget.housing);
+        targetComboBox.getItems().addAll(targets);
     }
 
     public TreatmentType persistType() {
@@ -109,6 +140,8 @@ public class TreatmentTypeForm extends VBox {
         }
         type.setName(nameField.getText());
         type.setInvasive(invasiveBox.isSelected());
+        type.setFinalExperiment(isFinalBox.isSelected());
+        type.setTarget(targetComboBox.getValue());
         type.setDescription(descriptionArea.getText());
         type.setLicense(licenseComboBox.getValue());
 

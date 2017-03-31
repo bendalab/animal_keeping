@@ -14,6 +14,8 @@ public class TreatmentType {
     private String name;
     private String description;
     private Boolean invasive;
+    private Boolean finalExperiment;
+    private TreatmentTarget target;
     private License license;
     private Set<Treatment> treatments =
             new HashSet<>(0);
@@ -57,6 +59,22 @@ public class TreatmentType {
 
     public void setInvasive(Boolean invasive) {
         this.invasive = invasive;
+    }
+
+    public Boolean isFinalExperiment() {
+        return finalExperiment;
+    }
+
+    public void setFinalExperiment(Boolean finalExperiment) {
+        this.finalExperiment = finalExperiment;
+    }
+
+    public TreatmentTarget getTarget() {
+        return target;
+    }
+
+    public void setTarget(TreatmentTarget target) {
+        this.target = target;
     }
 
     public License getLicense() {
@@ -105,6 +123,7 @@ public class TreatmentType {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", invasive=" + invasive +
+                ", is final=" + finalExperiment +
                 ", license=" + ((license != null) ? license.getName() : "") +
                 '}';
     }

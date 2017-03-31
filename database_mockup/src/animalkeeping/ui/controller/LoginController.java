@@ -1,6 +1,8 @@
 package animalkeeping.ui.controller;
 
 import animalkeeping.ui.Main;
+import animalkeeping.util.Dialogs;
+import animalkeeping.util.Version;
 import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.event.EventType;
@@ -11,8 +13,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
 
 import java.io.IOException;
@@ -69,6 +69,7 @@ public class LoginController extends FlowPane implements Initializable{
             prefs.put("db_user", userField.getText());
             prefs.put("db_host", hostField.getText());
             fireEvent(new DatabaseEvent());
+            checkVersion();
         }
     }
 
@@ -77,6 +78,18 @@ public class LoginController extends FlowPane implements Initializable{
         connectBtn.setDisable(passwordField.getText().isEmpty());
     }
 
+    private void checkVersion() {
+        Version version = new Version();
+        if (!version.getAvailable()) {
+            Dialogs.showInfo("Version information could not be found. Some things may not work properly...");
+        }
+        int migrationState = version.checkMigrationState();
+        if (migrationState != 0) {
+            String message = migrationState < 0 ? "App migration state behind database state." : "Database migration behind app migration state!";
+            Dialogs.showInfo("Migration mismatch! " + message + "\nSome things may not work properly.\n" +
+            "\n\tApp migration state: " + version.getMigrationState() + "\n\tDatabase migration state: " + version.getDatabaseMigrationState() );
+        }
+    }
 
     static class DatabaseEvent extends Event {
         private static final long serialVersionUID = 20121107L;
