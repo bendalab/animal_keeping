@@ -25,7 +25,8 @@ import java.util.List;
 public abstract class NotesFrom<T extends Note, E extends Entity> extends VBox {
     protected E entity;
     protected T note_entity;
-    protected TextField nameField, timeField;
+    protected TextField nameField;
+    protected SpecialTextField timeField;
     protected DatePicker datePicker;
     protected ComboBox<Person> personComboBox;
     private Label idLabel;
@@ -75,7 +76,8 @@ public abstract class NotesFrom<T extends Note, E extends Entity> extends VBox {
 
         datePicker = new DatePicker();
         datePicker.setValue(LocalDate.now());
-        timeField = new TextField(timeFormat.format(new Date()));
+        timeField = new SpecialTextField("##:##:##");
+        timeField.setText(timeFormat.format(new Date()));
 
         nameField = new TextField();
         commentArea = new TextArea();

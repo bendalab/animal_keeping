@@ -30,7 +30,7 @@ public class AddSubjectsForm extends VBox {
     private Spinner<Integer> startIdSpinner;
     private Spinner<Integer> countSpinner;
     private TextField nameField;
-    private TextField timeField;
+    private SpecialTextField timeField;
     private SubjectType st;
 
 
@@ -89,7 +89,7 @@ public class AddSubjectsForm extends VBox {
         housingDate = new DatePicker(LocalDate.now());
         startIdSpinner = new Spinner<>(0, 9999, 0);
         countSpinner = new Spinner<>(0, 9999, 10);
-        timeField = new TextField();
+        timeField = new SpecialTextField("##:##:##");
         timeField.setTooltip(new Tooltip("Import time use HH:mm:ss format"));
 
         Button newHousingUnit = new Button("+");
