@@ -123,7 +123,6 @@ public class SubjectForm extends VBox {
         importDate = new DatePicker();
         importDate.setValue(LocalDate.now());
         importTimeField = new SpecialTextField("##:##:##");
-        //importTimeField.setText(timeFormat.format(new Date()));
 
         aliasField = new TextField();
         nameField = new TextField();
