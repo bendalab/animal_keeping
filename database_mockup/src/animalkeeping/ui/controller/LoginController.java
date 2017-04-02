@@ -61,7 +61,7 @@ public class LoginController extends FlowPane implements Initializable{
 
     @FXML
     private void connect() {
-        String host = "jdbc:mysql://" + hostField.getText() + "/" + databaseField.getText();
+        String host = "jdbc:mysql://" + hostField.getText() + "/" + databaseField.getText() + "?serverTimezone=UTC";
         Main.ConnectionDetails credentials = new Main.ConnectionDetails(userField.getText(), passwordField.getText(),
                 host);
         if (Main.connectToDatabase(credentials)) {
