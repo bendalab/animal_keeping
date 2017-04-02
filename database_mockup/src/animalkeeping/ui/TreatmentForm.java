@@ -23,7 +23,8 @@ public class TreatmentForm extends VBox {
     private ComboBox<Person> personComboBox;
     private ComboBox<Subject> subjectComboBox;
     private DatePicker startDate, endDate;
-    private TextField startTimeField, endTimeField, commentNameField;
+    private SpecialTextField startTimeField, endTimeField;
+    private TextField commentNameField;
     private TextArea commentArea;
     private Subject subject;
     private Treatment treatment;
@@ -112,9 +113,10 @@ public class TreatmentForm extends VBox {
         });
         startDate = new DatePicker();
         startDate.setValue(LocalDate.now());
-        startTimeField = new TextField(timeFormat.format(new Date()));
+        startTimeField = new SpecialTextField("##:##:##");
+        startTimeField.setText(timeFormat.format(new Date()));
         endDate = new DatePicker();
-        endTimeField = new TextField();
+        endTimeField = new SpecialTextField("##:##:##");
         endDate.setOnAction(event -> endTimeField.setText(timeFormat.format(new Date())));
         commentArea = new TextArea();
         commentArea.setWrapText(true);

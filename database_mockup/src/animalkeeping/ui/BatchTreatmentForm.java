@@ -28,7 +28,8 @@ public class BatchTreatmentForm extends VBox {
     private ComboBox<TreatmentType> treatmentComboBox;
     private ComboBox<Person> personComboBox;
     private DatePicker treatmentStartDate, treatmentEndDate;
-    private TextField startTimeField, endTimeField, commentNameField;
+    private SpecialTextField startTimeField, endTimeField;
+    private TextField commentNameField;
     private TextArea commentArea;
 
     public BatchTreatmentForm() {
@@ -87,9 +88,9 @@ public class BatchTreatmentForm extends VBox {
 
         treatmentStartDate = new DatePicker(LocalDate.now());
         treatmentEndDate = new DatePicker();
-        startTimeField = new TextField();
+        startTimeField = new SpecialTextField("##:##:##");
         startTimeField.setTooltip(new Tooltip("Start time of treatment, use hh:mm:ss format"));
-        endTimeField = new TextField();
+        endTimeField = new SpecialTextField("##:##:##");
         endTimeField.setTooltip(new Tooltip("End time of treatment, use hh:mm:ss format"));
         commentNameField = new TextField();
         commentArea = new TextArea();
