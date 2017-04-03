@@ -13,7 +13,10 @@ import java.util.Set;
 public class License {
     private Long id;
     private String name;
+    private String agency;
     private String number;
+    private Person responsiblePerson;
+    private Person deputy;
     private Date startDate;
     private Date endDate;
     private Set<Quota> quotas =
@@ -86,6 +89,29 @@ public class License {
         this.treatmentTypes = treatmentTypes;
     }
 
+    public String getAgency() {
+        return agency;
+    }
+
+    public void setAgency(String agency) {
+        this.agency = agency;
+    }
+
+    public Person getResponsiblePerson() {
+        return responsiblePerson;
+    }
+
+    public void setResponsiblePerson(Person responsiblePerson) {
+        this.responsiblePerson = responsiblePerson;
+    }
+
+    public Person getDeputy() {
+        return deputy;
+    }
+
+    public void setDeputy(Person deputy) {
+        this.deputy = deputy;
+    }
 
     @Override
     public boolean equals(Object obj) {
