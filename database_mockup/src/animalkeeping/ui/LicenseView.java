@@ -168,9 +168,9 @@ public class LicenseView extends VBox implements Initializable, View {
         permitNoLabel.setText(l !=  null ? l.getNumber() : "");
         startDateLabel.setText(l !=null ? l.getStartDate() != null ? sdf.format(l.getStartDate()) : "" : "");
         endDateLabel.setText(l != null ? l.getEndDate() != null ? sdf.format(l.getEndDate()) : "" : "");
-        respPersonLabel.setText(l != null ? "n.a." : "");
-        deputyPersonLabel.setText(l != null ? "n.a." : "");
-        agencyLabel.setText(l != null ? "n.a." : "");
+        respPersonLabel.setText((l != null && l.getResponsiblePerson() != null) ? l.getResponsiblePerson().getFirstName() + " " + l.getResponsiblePerson().getLastName() : "");
+        deputyPersonLabel.setText((l != null && l.getDeputy() != null) ? l.getDeputy().getFirstName() + " " + l.getDeputy().getLastName() : "");
+        agencyLabel.setText((l != null && l.getAgency() != null) ? l.getAgency() : "");
     }
 
 
