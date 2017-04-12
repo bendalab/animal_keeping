@@ -116,7 +116,7 @@ public class PersonsView  extends VBox implements Initializable, View {
         selectedPerson = p;
         editLabel.setDisable(p == null);
         deleteLabel.setDisable(p == null);
-        addUserLabel.setDisable(p.getUser() != null);
+        addUserLabel.setDisable(p != null && p.getUser() != null);
 
         if (p != null) {
             idLabel.setText(p.getId().toString());
