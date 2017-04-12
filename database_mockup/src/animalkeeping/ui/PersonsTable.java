@@ -79,6 +79,7 @@ public class PersonsTable extends TableView<Person> {
 
 
     public void refresh() {
+        masterList.clear();
         masterList.addAll(EntityHelper.getEntityList("from Person", Person.class));
         super.refresh();
     }
