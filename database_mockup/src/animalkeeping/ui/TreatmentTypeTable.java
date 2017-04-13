@@ -1,6 +1,8 @@
 package animalkeeping.ui;
 
+import animalkeeping.model.Treatment;
 import animalkeeping.model.TreatmentType;
+import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyLongWrapper;
@@ -10,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 
@@ -65,6 +68,21 @@ public class TreatmentTypeTable extends TableView<TreatmentType> {
         descriptionCol.prefWidthProperty().bind(this.widthProperty().multiply(0.33));
 
         this.getColumns().addAll(idCol, nameCol, licenseCol, invasiveCol, finalCol, targetCol, descriptionCol);
+        this.setRowFactory( tv -> {
+            TableRow<TreatmentType> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    TreatmentType tt = row.getItem();
+                    tt = Dialogs.editTreatmentTypeDialog(tt);
+                    if (tt != null) {
+                        refresh();
+                        setSelectedTreatmentType(tt);
+                    }
+                }
+            });
+            return row ;
+        });
+
         init();
     }
 
@@ -96,5 +114,8 @@ public class TreatmentTypeTable extends TableView<TreatmentType> {
         super.refresh();
     }
 
+    public void setSelectedTreatmentType(TreatmentType treatmentType) {
+        this.getSelectionModel().select(treatmentType);
+    }
 }
 
