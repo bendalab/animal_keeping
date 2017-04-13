@@ -1,9 +1,6 @@
 package animalkeeping.ui;
 
-import animalkeeping.model.License;
-import animalkeeping.model.Quota;
-import animalkeeping.model.Treatment;
-import animalkeeping.model.TreatmentType;
+import animalkeeping.model.*;
 import animalkeeping.ui.controller.TimelineController;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
@@ -182,13 +179,13 @@ public class LicenseView extends VBox implements Initializable, View {
         addQuota.setDisable(l == null);
 
         if (l != null) {
-            qv.setQuota(l.getQuotas());
+            qv.setLicense(l);
             typeTable.setTreatmentTypes(l.getTreatmentTypes());
             for (TreatmentType t : l.getTreatmentTypes()) {
                 ts.addAll(t.getTreatments());
             }
         } else {
-            qv.quotaTable.getItems().clear();
+            qv.setLicense(null);
             typeTable.setTreatmentTypes(new ArrayList<>());
         }
         treatmentsTable.setTreatments(ts);
