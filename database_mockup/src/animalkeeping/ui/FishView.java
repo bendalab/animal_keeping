@@ -39,9 +39,9 @@ public class FishView extends VBox implements Initializable, View {
     @FXML private Label statusLabel;
     @FXML private Label originLabel;
     @FXML private Label speciesLabel;
-    @FXML private TableView<Treatment> treatmentTable;
     @FXML private Tab housingHistoryTab;
     @FXML private Tab observationsTab;
+    @FXML private Tab treatmentsTab;
     @FXML private VBox timelineVBox;
     @FXML private RadioButton deadOrAliveRadioBtn;
 
@@ -49,12 +49,7 @@ public class FishView extends VBox implements Initializable, View {
     private HousingTable housingTable;
     private NotesTable<SubjectNote> notesTable;
     private TimelineController timeline;
-    private TableColumn<Treatment, Number> idCol;
-    private TableColumn<Treatment, String> typeCol;
-    private TableColumn<Treatment, Date> startDateCol;
-    private TableColumn<Treatment, Date> endDateCol;
-    private TableColumn<Treatment, String> nameCol;
-    private TableColumn<Treatment, String> personCol;
+    private TreatmentsTable treatmentsTable;
     private ControlLabel reportDead;
     private ControlLabel moveSubjectLabel;
     private ControlLabel editSubjectLabel;
@@ -97,34 +92,9 @@ public class FishView extends VBox implements Initializable, View {
         housingEndLabel.setText("");
         housingStartLabel.setText("");
 
-        idCol = new TableColumn<>("id");
-        idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        idCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.08));
-
-        typeCol = new TableColumn<>("treatment");
-        typeCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTreatmentType().getName()));
-        typeCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.18));
-
-        startDateCol = new TableColumn<>("start");
-        startDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getStart()));
-        startDateCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.20));
-
-        endDateCol = new TableColumn<>("end");
-        endDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getEnd()));
-        endDateCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.20));
-
-        nameCol = new TableColumn<>("name");
-        nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubject().getName()));
-        nameCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.16));
-
-        personCol = new TableColumn<>("person");
-        personCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getPerson().getLastName() +
-         ", " + data.getValue().getPerson().getFirstName()));
-        personCol.prefWidthProperty().bind(treatmentTable.widthProperty().multiply(0.16));
-
-        treatmentTable.getColumns().clear();
-        treatmentTable.getColumns().addAll(idCol, typeCol, startDateCol, endDateCol, nameCol, personCol);
-        treatmentTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Treatment>) c -> treatmentSelected(c.getList().size() > 0 ? c.getList().get(0) : null));
+        treatmentsTable = new TreatmentsTable();
+        treatmentsTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Treatment>) c -> treatmentSelected(c.getList().size() > 0 ? c.getList().get(0) : null));
+        treatmentsTab.setContent(treatmentsTable);
 
         housingTable = new HousingTable();
         housingHistoryTab.setContent(housingTable);
@@ -164,15 +134,15 @@ public class FishView extends VBox implements Initializable, View {
         addTreatmentLabel.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 addTreatment(fishTable.getSelectionModel().getSelectedItem());
-                treatmentTable.refresh();
+                treatmentsTable.refresh();
             }
         });
         controls.getChildren().add(addTreatmentLabel);
         editTreatmentLabel = new ControlLabel("edit treatment", true);
         editTreatmentLabel.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
-                editTreatment(treatmentTable.getSelectionModel().getSelectedItem());
-                treatmentTable.refresh();
+                editTreatment(treatmentsTable.getSelectionModel().getSelectedItem());
+                treatmentsTable.refresh();
             }
         });
         controls.getChildren().add(editTreatmentLabel);
@@ -180,7 +150,7 @@ public class FishView extends VBox implements Initializable, View {
         deleteTreatmentLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteTreatment();
-                treatmentTable.refresh();
+                treatmentsTable.refresh();
             }
         });
         controls.getChildren().add(deleteTreatmentLabel);
@@ -264,8 +234,7 @@ public class FishView extends VBox implements Initializable, View {
                 statusLabel.setText("none");
             }
 
-            treatmentTable.getItems().clear();
-            treatmentTable.getItems().addAll(s.getTreatments());
+            treatmentsTable.setTreatments(s.getTreatments());
             timeline.setTreatments(s.getTreatments());
             housingTable.setHousings(s.getHousings());
             notesTable.setNotes(s.getNotes());
@@ -278,7 +247,7 @@ public class FishView extends VBox implements Initializable, View {
             statusLabel.setText("");
             housingEndLabel.setText("");
             housingStartLabel.setText("");
-            treatmentTable.getItems().clear();
+            treatmentsTable.setTreatments(null);
             timeline.setTreatments(null);
             housingTable.setHousings(null);
             notesTable.setNotes(null);
@@ -338,8 +307,8 @@ public class FishView extends VBox implements Initializable, View {
 
 
     private void deleteTreatment() {
-        Treatment t = treatmentTable.getSelectionModel().getSelectedItem();
-        treatmentTable.getSelectionModel().select(null);                    //here it is above
+        Treatment t = treatmentsTable.getSelectionModel().getSelectedItem();
+        treatmentsTable.getSelectionModel().select(null);                    //here it is above
         Communicator.pushDelete(t);
     }
 
