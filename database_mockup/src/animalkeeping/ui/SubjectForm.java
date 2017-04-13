@@ -4,8 +4,6 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.Dialogs;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -23,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 
 import static animalkeeping.util.DateTimeHelper.getDateTime;
-import static animalkeeping.util.Dialogs.showInfo;
 
 
 public class SubjectForm extends VBox {
@@ -255,7 +252,7 @@ public class SubjectForm extends VBox {
         subject.setSupplier(supplierComboBox.getValue());
         subject.setSubjectType(subjectTypeComboBox.getValue());
 
-        Housing h = null;
+        Housing h;
         if (subject.getHousings().iterator().hasNext()) {
             h = subject.getHousings().iterator().next();
         } else {

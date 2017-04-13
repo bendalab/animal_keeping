@@ -1,6 +1,5 @@
 package animalkeeping.ui;
 
-import animalkeeping.model.Treatment;
 import animalkeeping.model.TreatmentType;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
