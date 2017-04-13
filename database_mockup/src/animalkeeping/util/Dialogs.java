@@ -81,13 +81,13 @@ public class Dialogs {
     }
 
 
-    public static void editHousingTypeDialog(HousingType type) {
+    public static HousingType editHousingTypeDialog(HousingType type) {
         HousingTypeDialog htd = new HousingTypeDialog(type);
         Dialog<HousingType> dialog = new Dialog<>();
         dialog.setTitle("Housing type");
         dialog.setResizable(true);
         dialog.getDialogPane().setContent(htd);
-        dialog.setWidth(200);
+        dialog.setWidth(300);
         htd.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -111,7 +111,9 @@ public class Dialogs {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            return result.get();
         }
+        return null;
     }
 
 
