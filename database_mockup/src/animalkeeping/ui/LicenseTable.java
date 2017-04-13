@@ -1,6 +1,7 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.License;
+import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -10,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
 import java.util.Collection;
@@ -84,6 +86,20 @@ public class LicenseTable extends TableView<License> {
         deputyPersonCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
         this.getColumns().addAll(idCol, nameCol, agencyCol, fileNumberCol, respPersonCol, deputyPersonCol, startDateCol, endDateCol);
+        this.setRowFactory( tv -> {
+            TableRow<License> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty() ) {
+                    License l = row.getItem();
+                    l = Dialogs.editLicenseDialog(l);
+                    if (l != null) {
+                        refresh();
+                        setSelectedLicense(l);
+                    }
+                }
+            });
+            return row ;
+        });
     }
 
 
@@ -99,6 +115,10 @@ public class LicenseTable extends TableView<License> {
             this.getSelectionModel().clearSelection();
             masterList.remove(l);
         }
+    }
+
+    public void setSelectedLicense(License l) {
+        this.getSelectionModel().select(l);
     }
 
     public void setLicenses(Collection<License> licenses) {
