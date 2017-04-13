@@ -183,15 +183,15 @@ public class Dialogs {
         }
     }
 
-    public static void editQuotaDialog(Quota q) {
-        editQuotaDialog(q, null);
+    public static Quota editQuotaDialog(Quota q) {
+        return editQuotaDialog(q, null);
     }
 
-    public static void editQuotaDialog(License l) {
-        editQuotaDialog(null, l);
+    public static Quota editQuotaDialog(License l) {
+        return editQuotaDialog(null, l);
     }
 
-    private static void editQuotaDialog(Quota q, License l) {
+    private static Quota editQuotaDialog(Quota q, License l) {
         QuotaForm qf;
         if (q != null)
             qf = new QuotaForm(q);
@@ -220,7 +220,9 @@ public class Dialogs {
         Optional<Quota> result = dialog.showAndWait();
         if (!result.isPresent()) {
             showInfo("Something went wrong while creating the quota!");
+            return null;
         }
+        return result.get();
     }
 
 
