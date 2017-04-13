@@ -157,7 +157,7 @@ public class Dialogs {
     }
 
 
-    public static void editLicenseDialog(License l) {
+    public static License editLicenseDialog(License l) {
         LicenseForm lf = new LicenseForm(l);
         Dialog<License> dialog = new Dialog<>();
         dialog.setTitle("Add/Edit licence... ");
@@ -180,7 +180,9 @@ public class Dialogs {
         Optional<License> result = dialog.showAndWait();
         if (!result.isPresent()) {
             showInfo("Something went wrong while creating the License!");
+            return null;
         }
+        return result.get();
     }
 
     public static Quota editQuotaDialog(Quota q) {
