@@ -11,32 +11,29 @@
         </id>
         <property name="name" type="string" column="name" unique="true" not-null="true"/>
         <property name="alias" type="string" column="alias" not-null="false"/>
-        <many-to-one name="subjectType" column="type_id" class="SubjectType" not-null="true"/>
-        <many-to-one name="speciesType" column="species_id" class="SpeciesType" not-null="true"/>
-        <many-to-one name="supplier" column="source_id" class="SupplierType" not-null="false"/>
-        <set name="treatments" table="census_treatment" cascade="save-update, delete"
+        <many-to-one name="subjectType" column="type_id" class="SubjectType" not-null="true" fetch="select"/>
+        <many-to-one name="speciesType" column="species_id" class="SpeciesType" not-null="true" fetch="select"/>
+        <many-to-one name="supplier" column="source_id" class="SupplierType" not-null="false" fetch="select"/>
+        <set name="treatments" table="census_treatment" cascade="delete"
              inverse="true" lazy="true" fetch="select" order-by="start_datetime asc">
             <key>
                 <column name="subject_id" not-null="false" />
             </key>
             <one-to-many class="Treatment" />
         </set>
-        <set name="housings" table="census_housing" cascade="save-update, delete"
+        <set name="housings" table="census_housing" cascade="delete"
              inverse="true" lazy="true" fetch="select" order-by="start_datetime asc">
             <key>
                 <column name="subject_id" not-null="true" />
             </key>
             <one-to-many class="Housing" />
         </set>
-        <set name="notes" table="census_subjectnote" cascade="save-update, delete"
+        <set name="notes" table="census_subjectnote" cascade="delete"
              inverse="true" lazy="true" fetch="select" order-by="date asc">
             <key>
                 <column name="subject_id" not-null="true" />
             </key>
             <one-to-many class="SubjectNote" />
         </set>
-
-
-
     </class>
 </hibernate-mapping>
