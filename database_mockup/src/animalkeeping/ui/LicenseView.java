@@ -94,6 +94,8 @@ public class LicenseView extends VBox implements Initializable, View {
         qv.quotaTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Quota>) c -> {
             if (c.getList().size() > 0) {
                 quotaSelected(c.getList().get(0));
+            } else {
+                quotaSelected(null);
             }
         });
         quotaBox.getChildren().add(qv);
