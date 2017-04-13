@@ -3,6 +3,7 @@ package animalkeeping.ui;
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.controller.TimelineController;
+import animalkeeping.util.Dialogs;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -504,87 +505,20 @@ public class FishView extends VBox implements Initializable, View {
         }
     }
 
-    private void showTreatmentDialog(TreatmentForm tf) {
-        if (tf == null) {
-            return;
-        }
-        Dialog<Treatment> dialog = new Dialog<>();
-        dialog.setTitle("Add treatment...");
-        dialog.setHeight(200);
-        dialog.setWidth(400);
-        dialog.setResizable(true);
-        dialog.getDialogPane().setContent(tf);
-
-        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
-        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
-
-        dialog.setResultConverter(new Callback<ButtonType, Treatment>() {
-            @Override
-            public Treatment call(ButtonType b) {
-                if (b == buttonTypeOk) {
-                    return tf.persistTreatment();
-                }
-                return null;
-            }
-        });
-        dialog.showAndWait();
-    }
-
     private void editTreatment(Treatment t) {
-        if (t == null) {
-            return;
-        }
-        TreatmentForm tf = new TreatmentForm(t);
-        showTreatmentDialog(tf);
+        Dialogs.editTreatmentDialog(t);
     }
 
     private void addTreatment(Subject s) {
-        if (s == null) {
-            return;
-        }
-        TreatmentForm tf = new TreatmentForm(s);
-        showTreatmentDialog(tf);
-
-    }
-
-    private void showSubjectDialog(SubjectForm sf) {
-        if (sf == null) {
-            return;
-        }
-        Dialog<Subject> dialog = new Dialog<>();
-        dialog.setTitle("Add/edit subject ...");
-        dialog.setHeight(200);
-        dialog.setWidth(400);
-        dialog.setResizable(true);
-        dialog.getDialogPane().setContent(sf);
-
-        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
-        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
-
-        dialog.setResultConverter(new Callback<ButtonType, Subject>() {
-            @Override
-            public Subject call(ButtonType b) {
-                if (b == buttonTypeOk) {
-                    return sf.persistSubject();
-                }
-                return null;
-            }
-        });
-        dialog.showAndWait();
+        Dialogs.editTreatmentDialog(s);
     }
 
     private void newSubject() {
-        SubjectForm sf = new SubjectForm();
-        showSubjectDialog(sf);
+        Dialogs.editSubjectDialog(null);
     }
 
     private void editSubject(Subject s) {
-        SubjectForm sf = new SubjectForm(s);
-        showSubjectDialog(sf);
+        Dialogs.editSubjectDialog(s);
     }
 
     private void newSubjectObservation(Subject s) {
