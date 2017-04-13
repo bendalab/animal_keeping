@@ -98,11 +98,13 @@ public class QuotaView extends VBox implements Initializable {
     }
 
     public void setLicense(License license) {
+        this.setSelectedQuota(null);
         this.license = license;
         quotaTable.getItems().clear();
+        quotaTable.getSelectionModel().clearSelection();
         if (license != null) {
-            List<Quota> qs = EntityHelper.getEntityList("from Quota q where q.license_id = " + license.getId().toString(), Quota.class);
-            setQuota(qs);
+            EntityHelper.refreshEntity(license);
+            setQuota(license.getQuotas());
         }
         quotaTable.refresh();
     }
@@ -112,6 +114,9 @@ public class QuotaView extends VBox implements Initializable {
     }
 
     public void setSelectedQuota(Quota q) {
-        quotaTable.getSelectionModel().select(q);
+        if (q != null)
+            quotaTable.getSelectionModel().select(q);
+        else
+            quotaTable.getSelectionModel().clearSelection();
     }
 }
