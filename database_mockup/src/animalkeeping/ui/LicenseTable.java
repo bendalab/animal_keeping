@@ -77,12 +77,12 @@ public class LicenseTable extends TableView<License> {
 
         respPersonCol = new TableColumn<>("responsible");
         respPersonCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getResponsiblePerson() != null ?
-                data.getValue().getResponsiblePerson().getFirstName() + ", " + data.getValue().getResponsiblePerson().getLastName() : ""));
+                data.getValue().getResponsiblePerson().getFirstName() + " " + data.getValue().getResponsiblePerson().getLastName() : ""));
         respPersonCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
         deputyPersonCol = new TableColumn<>("deputy");
         deputyPersonCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getDeputy() != null ?
-                data.getValue().getDeputy().getFirstName() + ", " + data.getValue().getDeputy().getLastName() : ""));
+                data.getValue().getDeputy().getFirstName() + " " + data.getValue().getDeputy().getLastName() : ""));
         deputyPersonCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
         this.getColumns().addAll(idCol, nameCol, agencyCol, fileNumberCol, respPersonCol, deputyPersonCol, startDateCol, endDateCol);
