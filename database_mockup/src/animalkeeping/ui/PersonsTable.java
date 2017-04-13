@@ -1,6 +1,7 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.Person;
+import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -9,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
 
@@ -41,6 +43,20 @@ public class PersonsTable extends TableView<Person> {
         emailCol.prefWidthProperty().bind(this.widthProperty().multiply(0.50));
 
         this.getColumns().addAll(idCol, firstNameCol, lastNameCol, emailCol);
+        this.setRowFactory( tv -> {
+            TableRow<Person> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    Person p = row.getItem();
+                    p = Dialogs.editPersonDialog(p);
+                    if (p != null) {
+                        refresh();
+                        setSelectedPerson(p);
+                    }
+                }
+            });
+            return row ;
+        });
         init();
     }
 
