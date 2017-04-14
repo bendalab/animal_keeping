@@ -117,7 +117,7 @@ public class Dialogs {
 
 
     public static HousingUnit editHousingUnitDialog(HousingUnit unit) {
-        return editHousingUnitDialog(unit, null);
+        return editHousingUnitDialog(unit, unit.getParentUnit());
     }
 
 
@@ -137,24 +137,12 @@ public class Dialogs {
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
-                return hud.getHousingUnit();
+                return hud.persistHousingUnit();
             }
             return null;
         });
         Optional<HousingUnit> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-                return result.get();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
+        return result.orElse(null);
     }
 
 
