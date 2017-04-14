@@ -1,5 +1,6 @@
 package animalkeeping.model;
 
+import animalkeeping.logging.ChangeLogInterface;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -9,8 +10,7 @@ import java.util.Set;
 /**
  * Created by jan on 28.12.16.
  */
-public class HousingUnit {
-    private Long id;
+public class HousingUnit extends Entity implements ChangeLogInterface {
     private String name;
     private String description;
     private String dimensions;
@@ -30,12 +30,8 @@ public class HousingUnit {
         this.housingType = housingType;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public String getType(){
+        return this.getClass().toString();
     }
 
     public String getName() {
@@ -152,12 +148,12 @@ public class HousingUnit {
     @Override
     public String toString() {
         return "HousingUnit{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", dimensions='" + dimensions + '\'' +
-                ", housingType=" + (housingType != null ? housingType.getName() : "") +
-                ", parentUnit=" + (parentUnit != null ? parentUnit.getName() : "") +
+                "id=" + getId() +
+                ", name='" + getName() + '\'' +
+                ", description='" + getDescription() + '\'' +
+                ", dimensions='" + getDimensions() + '\'' +
+                ", housingType=" + (getHousingType() != null ? getHousingType().getName() : "") +
+                ", parentUnit=" + (getParentUnit() != null ? getParentUnit().getName() : "") +
                 '}';
     }
 }
