@@ -398,16 +398,6 @@ public class Dialogs {
         });
         Optional<SpeciesType> result = dialog.showAndWait();
         if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
             return result.get();
         }
         return null;
@@ -435,16 +425,6 @@ public class Dialogs {
         });
         Optional<SupplierType> result = dialog.showAndWait();
         if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
             return result.get();
         }
         return null;
@@ -471,16 +451,6 @@ public class Dialogs {
         });
         Optional<Person> result = dialog.showAndWait();
         if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
             return result.get();
         }
         return null;
