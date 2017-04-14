@@ -1,11 +1,15 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.HousingType;
 import animalkeeping.model.HousingUnit;
+import animalkeeping.util.EntityHelper;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.Callback;
@@ -18,7 +22,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 
-public class HousingUnitDialog extends VBox implements Initializable {
+public class HousingUnitDialog extends VBox {
     private TextField nameField, dimensionsField;
     private Label idLabel;
     private TextArea descriptionArea;
@@ -37,11 +41,6 @@ public class HousingUnitDialog extends VBox implements Initializable {
     public HousingUnitDialog(HousingUnit unit) {
         this();
         setHousingUnit(unit);
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
     }
 
     private void init() {
@@ -109,50 +108,48 @@ public class HousingUnitDialog extends VBox implements Initializable {
                 return null;
             }
         });
-        Session session = Main.sessionFactory.openSession();
-        List<HousingUnit> housingUnits = null;
-        List<HousingType> housingTypes = null;
-        try {
-            session.beginTransaction();
-            housingUnits = session.createQuery("from HousingUnit", HousingUnit.class).list();
-            session.getTransaction().commit();
-            session.beginTransaction();
-            housingTypes = session.createQuery("from HousingType", HousingType.class).list();
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
+        List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit", HousingUnit.class);
+        List<HousingType> housingTypes = EntityHelper.getEntityList("from HousingType", HousingType.class);
         typeComboBox.getItems().addAll(housingTypes);
         parentUnitComboBox.getItems().addAll(housingUnits);
 
         GridPane grid = new GridPane();
+        ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
+        column1.setHgrow(Priority.NEVER);
+        ColumnConstraints column2 = new ColumnConstraints(100, 150, Double.MAX_VALUE);
+        column2.setHgrow(Priority.ALWAYS);
+        ColumnConstraints column3 = new ColumnConstraints(30, 30, Double.MAX_VALUE);
+        column3.setHgrow(Priority.NEVER);
+        grid.getColumnConstraints().addAll(column1, column2, column3);
+
         grid.setPadding(new Insets(5, 0, 5, 0));
-        grid.add(new Label("ID"), 1, 1);
-        grid.add(idLabel, 2, 1);
+        grid.add(new Label("ID"), 0, 0);
+        grid.add(idLabel, 1, 0);
 
-        grid.add(new Label("parent"), 1, 2);
-        grid.add(parentUnitComboBox, 2, 2, 2,1);
+        grid.add(new Label("parent"), 0, 1);
+        grid.add(parentUnitComboBox, 1, 1, 2,1);
 
-        grid.add(new Label("name (*)"), 1, 3);
-        grid.add(nameField, 2, 3, 2,1);
+        grid.add(new Label("name (*)"), 0, 2);
+        grid.add(nameField, 1, 2, 2,1);
 
-        grid.add(new Label("type (*)"), 1, 4);
-        grid.add(typeComboBox, 2, 4, 2, 1);
+        grid.add(new Label("type (*)"), 0, 3);
+        grid.add(typeComboBox, 1, 3, 2, 1);
 
-        grid.add(new Label("dimensions"), 1, 5);
-        grid.add(dimensionsField, 2, 5, 2, 1);
+        grid.add(new Label("dimensions"), 0, 4);
+        grid.add(dimensionsField, 1, 4, 2, 1);
 
-        grid.add(new Label("description"), 1, 6);
-        grid.add(descriptionArea, 1, 7, 3, 3);
+        grid.add(new Label("description"), 0, 5);
+        grid.add(descriptionArea, 0, 6, 3, 3);
+
+        idLabel.prefWidthProperty().bind(column2.maxWidthProperty());
+        parentUnitComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
+        nameField.prefWidthProperty().bind(column2.maxWidthProperty());
+        typeComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
+        dimensionsField.prefWidthProperty().bind(column2.maxWidthProperty());
 
         Label l = new Label("(*) required");
         l.setFont(new Font(Font.getDefault().getFamily(), 10));
-        grid.add(l, 1, 10);
-
+        grid.add(l, 0, 9);
         this.getChildren().add(grid);
     }
 
@@ -163,7 +160,7 @@ public class HousingUnitDialog extends VBox implements Initializable {
         this.idLabel.setText(unit != null ? unit.getId().toString() : "");
         this.descriptionArea.setText(unit != null ? unit.getDescription() : "");
         this.dimensionsField.setText(unit != null ? unit.getDimensions() : "");
-        this.parentUnitComboBox.getSelectionModel().select(unit != null ? unit.getParentUnit() : null);
+        this.parentUnitComboBox.getSelectionModel().select(unit.getParentUnit());
         this.typeComboBox.getSelectionModel().select(unit != null ? unit.getHousingType() : null);
     }
 
@@ -182,6 +179,12 @@ public class HousingUnitDialog extends VBox implements Initializable {
         unit.setDimensions(dimensionsField.getText());
         unit.setHousingType(typeComboBox.getSelectionModel().getSelectedItem());
         unit.setParentUnit(parentUnitComboBox.getSelectionModel().getSelectedItem());
+        return unit;
+    }
+
+    public HousingUnit persistHousingUnit() {
+        HousingUnit unit = getHousingUnit();
+        Communicator.pushSaveOrUpdate(unit);
         return unit;
     }
 }
