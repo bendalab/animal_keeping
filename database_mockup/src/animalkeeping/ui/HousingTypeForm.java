@@ -11,14 +11,14 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 
-public class HousingTypeDialog extends VBox {
+public class HousingTypeForm extends VBox {
     private TextField nameField;
     private Label idLabel;
     private TextArea descriptionArea;
     private HousingType type;
 
 
-    public HousingTypeDialog() {
+    public HousingTypeForm() {
         super();
         this.setFillWidth(true);
         this.type = new HousingType();
@@ -26,7 +26,7 @@ public class HousingTypeDialog extends VBox {
     }
 
 
-    public HousingTypeDialog(HousingType type) {
+    public HousingTypeForm(HousingType type) {
         this();
         setHousingType(type);
     }

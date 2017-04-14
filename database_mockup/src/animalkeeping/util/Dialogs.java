@@ -81,7 +81,7 @@ public class Dialogs {
 
 
     public static HousingType editHousingTypeDialog(HousingType type) {
-        HousingTypeDialog htd = new HousingTypeDialog(type);
+        HousingTypeForm htd = new HousingTypeForm(type);
         Dialog<HousingType> dialog = new Dialog<>();
         dialog.setTitle("Housing type");
         dialog.setResizable(true);
@@ -122,7 +122,7 @@ public class Dialogs {
 
 
     public static HousingUnit editHousingUnitDialog(HousingUnit unit, HousingUnit parent) {
-        HousingUnitDialog hud = new HousingUnitDialog(unit);
+        HousingUnitForm hud = new HousingUnitForm(unit);
         hud.setParentUnit(parent);
         Dialog<HousingUnit> dialog = new Dialog<>();
         dialog.setTitle("Housing unit");

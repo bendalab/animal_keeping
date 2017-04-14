@@ -4,7 +4,6 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.HousingType;
 import animalkeeping.model.HousingUnit;
 import animalkeeping.util.EntityHelper;
-import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
@@ -14,15 +13,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 
-import java.net.URL;
 import java.util.List;
-import java.util.ResourceBundle;
 
 
-public class HousingUnitDialog extends VBox {
+public class HousingUnitForm extends VBox {
     private TextField nameField, dimensionsField;
     private Label idLabel;
     private TextArea descriptionArea;
@@ -31,14 +26,14 @@ public class HousingUnitDialog extends VBox {
     private HousingUnit unit;
 
 
-    public HousingUnitDialog() {
+    public HousingUnitForm() {
         super();
         this.setFillWidth(true);
         this.unit = new HousingUnit();
         init();
     }
 
-    public HousingUnitDialog(HousingUnit unit) {
+    public HousingUnitForm(HousingUnit unit) {
         this();
         setHousingUnit(unit);
     }
