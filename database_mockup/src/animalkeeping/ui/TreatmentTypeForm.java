@@ -1,5 +1,6 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.License;
 import animalkeeping.model.TreatmentTarget;
 import animalkeeping.model.TreatmentType;
@@ -10,13 +11,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static animalkeeping.util.Dialogs.showInfo;
 
 /**
  * Created by jan on 04.03.17.
@@ -145,16 +142,10 @@ public class TreatmentTypeForm extends VBox {
         type.setDescription(descriptionArea.getText());
         type.setLicense(licenseComboBox.getValue());
 
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.saveOrUpdate(type);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException he) {
-            showInfo(he.getLocalizedMessage());
+        if (Communicator.pushSaveOrUpdate(type)) {
+            return type;
         }
-        return type;
+        return null;
     }
 }
 
