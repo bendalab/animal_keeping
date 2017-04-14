@@ -76,8 +76,11 @@ public class LicenseView extends VBox implements Initializable, View {
                 licenseSelected(c.getList().get(0));
             }
         });
+        tableScrollPane.prefHeightProperty().bind(heightProperty());
+        tableScrollPane.prefWidthProperty().bind(widthProperty());
         typeTable = new TreatmentTypeTable();
-        typeTable.prefWidthProperty().bind(prefWidthProperty());
+        typeTable.prefWidthProperty().bind(tableScrollPane.widthProperty());
+        typeTable.prefHeightProperty().bind(tableScrollPane.heightProperty());
         typesBox.getChildren().add(typeTable);
 
         treatmentsTable = new TreatmentsTable();

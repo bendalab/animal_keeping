@@ -6,6 +6,8 @@ import animalkeeping.ui.controller.TimelineController;
 import animalkeeping.util.AddDatabaseUserDialog;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.SuperUserDialog;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -60,6 +62,8 @@ public class PersonsView  extends VBox implements Initializable, View {
             treatmentTableBox.getChildren().add(treatmentsTable);
         timeline = new TimelineController();
         this.tableScrollPane.setContent(personsTable);
+        this.tableScrollPane.prefHeightProperty().bind(this.heightProperty());
+        this.tableScrollPane.prefWidthProperty().bind(this.widthProperty());
         this.timelineVBox.getChildren().add(timeline);
         idLabel.setText("");
         firstnameLabel.setText("");
@@ -68,6 +72,7 @@ public class PersonsView  extends VBox implements Initializable, View {
         usernameLabel.setText("");
         userroleLabel.setText("");
         personsTable.getSelectionModel().getSelectedItems().addListener(new PersonTableListChangeListener());
+        personsTable.prefHeightProperty().bind(tableScrollPane.heightProperty());
 
         controls = new VBox();
         controls.setAlignment(Pos.TOP_LEFT);

@@ -85,6 +85,8 @@ public class FishView extends VBox implements Initializable, View {
         timeline = new TimelineController();
 
         this.tableScrollPane.setContent(fishTable);
+        this.tableScrollPane.prefHeightProperty().bind(this.heightProperty());
+        this.tableScrollPane.prefWidthProperty().bind(this.widthProperty());
         this.timelineVBox.getChildren().add(timeline);
         idLabel.setText("");
         nameLabel.setText("");

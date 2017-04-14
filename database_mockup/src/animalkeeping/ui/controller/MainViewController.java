@@ -6,11 +6,14 @@ import animalkeeping.model.SupplierType;
 import animalkeeping.ui.*;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -36,6 +39,7 @@ public class MainViewController extends VBox implements Initializable{
     @FXML private Menu speciesTypeMenu;
     @FXML private Menu subjectTypeMenu;
     @FXML private Menu supplierMenu;
+    @FXML private HBox hBox;
     private Vector<TitledPane> panes;
     private HashMap<String, View> views;
 
@@ -55,6 +59,8 @@ public class MainViewController extends VBox implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.setPrefWidth(1024);
+        this.setPrefHeight(768);
         findBox.getItems().clear();
         findBox.getItems().addAll("Person", "Subject", "Housing unit", "Treatment");
         findBox.getSelectionModel().select("Subject");
@@ -71,10 +77,13 @@ public class MainViewController extends VBox implements Initializable{
                 e.printStackTrace();
             }
         }
+        masterBox.prefHeightProperty().bind(this.heightProperty());
+        hBox.prefHeightProperty().bind(this.heightProperty());
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
-        scrollPane.prefWidthProperty().bind(masterBox.prefWidthProperty());
-        scrollPane.prefHeightProperty().bind(masterBox.prefWidthProperty());
+        scrollPane.prefWidthProperty().bind(this.widthProperty());
+        scrollPane.prefHeightProperty().bind(this.heightProperty());
+
         panes = new Vector<>();
         panes.add(inventoryPane);
         panes.add(subjectsPane);
@@ -136,8 +145,8 @@ public class MainViewController extends VBox implements Initializable{
                 }
                 this.scrollPane.setFitToHeight(true);
                 this.scrollPane.setFitToWidth(true);
-                pv.minHeightProperty().bind(this.scrollPane.heightProperty());
-                pv.minWidthProperty().bind(this.scrollPane.widthProperty());
+                pv.prefHeightProperty().bind(this.scrollPane.heightProperty());
+                pv.prefWidthProperty().bind(this.scrollPane.widthProperty());
                 this.scrollPane.setContent(pv);
                 this.personsPane.setContent(pv.getControls());
                 collapsePanes(personsPane);
