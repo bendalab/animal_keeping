@@ -1,5 +1,6 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.Person;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -7,10 +8,6 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-
-import static animalkeeping.util.Dialogs.showInfo;
 
 /**
  * Created by jan on 02.03.17.
@@ -84,17 +81,8 @@ public class PersonForm extends VBox {
         person.setEmail(emailField.getText());
         person.setFirstName(firstnameField.getText());
 
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.saveOrUpdate(person);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException he) {
-            showInfo(he.getLocalizedMessage());
-            session.close();
-        }
-
-        return person;
+        if (Communicator.pushSaveOrUpdate(person))
+            return person;
+        return null;
     }
 }
