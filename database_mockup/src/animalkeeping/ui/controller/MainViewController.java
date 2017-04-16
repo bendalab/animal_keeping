@@ -6,13 +6,12 @@ import animalkeeping.model.SupplierType;
 import animalkeeping.ui.*;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -39,6 +38,7 @@ public class MainViewController extends VBox implements Initializable{
     @FXML private Menu speciesTypeMenu;
     @FXML private Menu subjectTypeMenu;
     @FXML private Menu supplierMenu;
+    @FXML private MenuItem refreshItem;
     @FXML private HBox hBox;
     private Vector<TitledPane> panes;
     private HashMap<String, View> views;
@@ -91,6 +91,7 @@ public class MainViewController extends VBox implements Initializable{
         panes.add(personsPane);
         panes.add(animalHousingPane);
         panes.add(licensesPane);
+        refreshItem.setAccelerator(KeyCombination.keyCombination("Shortcut+R"));
         views = new HashMap<>();
     }
 
