@@ -175,7 +175,7 @@ public class Dialogs {
     }
 
     public static Quota editQuotaDialog(Quota q) {
-        return editQuotaDialog(q, null);
+        return editQuotaDialog(q,  q.getLicense());
     }
 
     public static Quota editQuotaDialog(License l) {
