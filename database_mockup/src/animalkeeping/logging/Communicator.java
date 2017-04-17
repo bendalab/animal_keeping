@@ -29,6 +29,8 @@ public abstract class Communicator {
     }
 
     public static boolean pushDelete(ChangeLogInterface E){
+        if (E == null)
+            return false;
         ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
         Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
         interceptorX.setSession(session);
