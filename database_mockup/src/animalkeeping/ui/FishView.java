@@ -4,9 +4,6 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.controller.TimelineController;
 import animalkeeping.util.Dialogs;
-import javafx.beans.property.ReadOnlyLongWrapper;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -45,7 +42,7 @@ public class FishView extends VBox implements Initializable, View {
     @FXML private VBox timelineVBox;
     @FXML private RadioButton deadOrAliveRadioBtn;
 
-    private SubjectsTable fishTable;
+    private SubjectsTable subjectsTable;
     private HousingTable housingTable;
     private NotesTable<SubjectNote> notesTable;
     private TimelineController timeline;
@@ -75,12 +72,12 @@ public class FishView extends VBox implements Initializable, View {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        fishTable = new SubjectsTable();
-        fishTable.getSelectionModel().getSelectedItems().addListener(new FishTableListChangeListener());
-        fishTable.setAliveFilter(true);
+        subjectsTable = new SubjectsTable();
+        subjectsTable.getSelectionModel().getSelectedItems().addListener(new FishTableListChangeListener());
+        subjectsTable.setAliveFilter(true);
         timeline = new TimelineController();
 
-        this.tableScrollPane.setContent(fishTable);
+        this.tableScrollPane.setContent(subjectsTable);
         this.tableScrollPane.prefHeightProperty().bind(this.heightProperty());
         this.tableScrollPane.prefWidthProperty().bind(this.widthProperty());
         this.timelineVBox.getChildren().add(timeline);
@@ -114,7 +111,7 @@ public class FishView extends VBox implements Initializable, View {
         editSubjectLabel = new ControlLabel("edit subject", true);
         editSubjectLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
-                editSubject(fishTable.getSelectionModel().getSelectedItem());
+                editSubject(subjectsTable.getSelectionModel().getSelectedItem());
             }
         });
         controls.getChildren().add(editSubjectLabel);
@@ -122,7 +119,7 @@ public class FishView extends VBox implements Initializable, View {
         deleteSubjectLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteSubject();
-                fishTable.refresh(); //TODO check refresh methods!
+                subjectsTable.refresh(); //TODO check refresh methods!
             }
         });
         controls.getChildren().add(deleteSubjectLabel);
@@ -133,7 +130,7 @@ public class FishView extends VBox implements Initializable, View {
         addTreatmentLabel.setTooltip(new Tooltip("add a treatment entry for the selected subject"));
         addTreatmentLabel.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
-                addTreatment(fishTable.getSelectionModel().getSelectedItem());
+                addTreatment(subjectsTable.getSelectionModel().getSelectedItem());
                 treatmentsTable.refresh();
             }
         });
@@ -159,7 +156,7 @@ public class FishView extends VBox implements Initializable, View {
         newComment = new ControlLabel("add observation", true);
         newComment.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
-                newSubjectObservation(fishTable.getSelectionModel().getSelectedItem());
+                newSubjectObservation(subjectsTable.getSelectionModel().getSelectedItem());
             }
         });
         controls.getChildren().add(newComment);
@@ -183,7 +180,7 @@ public class FishView extends VBox implements Initializable, View {
         moveSubjectLabel.setTooltip(new Tooltip("relocate subject to a different housing unit"));
         moveSubjectLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
-                moveSubject(fishTable.getSelectionModel().getSelectedItem());
+                moveSubject(subjectsTable.getSelectionModel().getSelectedItem());
             }
         });
         controls.getChildren().add(moveSubjectLabel);
@@ -191,7 +188,7 @@ public class FishView extends VBox implements Initializable, View {
         reportDead = new ControlLabel("report dead", true);
         reportDead.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
-                reportDead(fishTable.getSelectionModel().getSelectedItem());
+                reportDead(subjectsTable.getSelectionModel().getSelectedItem());
             }
         });
         controls.getChildren().add(reportDead);
@@ -272,12 +269,12 @@ public class FishView extends VBox implements Initializable, View {
     }
 
     public void nameFilter(String name) {
-        this.fishTable.setNameFilter(name);
+        this.subjectsTable.setNameFilter(name);
     }
 
 
     public void idFilter(Long id) {
-        this.fishTable.setIdFilter(id);
+        this.subjectsTable.setIdFilter(id);
     }
 
     private class FishTableListChangeListener implements ListChangeListener<Subject> {
@@ -291,18 +288,21 @@ public class FishView extends VBox implements Initializable, View {
 
     @FXML
     private void showAllOrCurrent() {
-        fishTable.setAliveFilter(deadOrAliveRadioBtn.isSelected());
+        subjectsTable.setAliveFilter(deadOrAliveRadioBtn.isSelected());
     }
 
     private void deleteSubject() {
-        Subject s = fishTable.getSelectionModel().getSelectedItem();
+        subjectsTable.deleteSubject(subjectsTable.getSelectionModel().getSelectedItem());
+        /*
+        Subject s = subjectsTable.getSelectionModel().getSelectedItem();
         if (!s.getTreatments().isEmpty()) {
             showInfo("Cannot delete subject " + s.getName() + " since it is referenced by " +
                     Integer.toString(s.getTreatments().size()) + " treatment entries! Delete them first.");
         } else {
             Communicator.pushDelete(s);
         }
-        fishTable.getSelectionModel().select(null); //this is below the other stuff; see vvvvvvv
+        subjectsTable.getSelectionModel().select(null); //this is below the other stuff; see vvvvvvv
+        */
     }
 
 
@@ -483,58 +483,28 @@ public class FishView extends VBox implements Initializable, View {
     }
 
     private void newSubject() {
-        Dialogs.editSubjectDialog(null);
+        subjectsTable.editSubject(null);
     }
 
     private void editSubject(Subject s) {
-        Dialogs.editSubjectDialog(s);
+        subjectsTable.editSubject(s);
     }
 
     private void newSubjectObservation(Subject s) {
-        SubjectNotesForm snf = new SubjectNotesForm(s);
-        showSubjectNotesDialog(snf);
+        Dialogs.editSubjectNoteDialog(s);
     }
 
     private void editSubjectObservation(SubjectNote sn) {
-        SubjectNotesForm snf = new SubjectNotesForm(sn, sn.getSubject());
-        showSubjectNotesDialog(snf);
-    }
-
-    private void showSubjectNotesDialog(SubjectNotesForm snf) {
-        if (snf == null) {
-            return;
-        }
-        Dialog<SubjectNote> dialog = new Dialog<>();
-        dialog.setTitle("Add/edit subject ...");
-        dialog.setHeight(200);
-        dialog.setWidth(400);
-        dialog.setResizable(true);
-        dialog.getDialogPane().setContent(snf);
-
-        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
-        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
-
-        dialog.setResultConverter(new Callback<ButtonType, SubjectNote>() {
-            @Override
-            public SubjectNote call(ButtonType b) {
-                if (b == buttonTypeOk) {
-                    return snf.persist();
-                }
-                return null;
-            }
-        });
-        dialog.showAndWait();
+        Dialogs.editSubjectNoteDialog(sn, sn.getSubject());
     }
 
     @Override
     public void refresh() {
-        Subject s = fishTable.getSelectionModel().getSelectedItem();
-        fishTable.getSelectionModel().select(null);
+        Subject s = subjectsTable.getSelectionModel().getSelectedItem();
+        subjectsTable.getSelectionModel().select(null);
         subjectSelected(null);
-        fishTable.refresh();
-        if (fishTable.getItems().contains(s)) {
+        subjectsTable.refresh();
+        if (subjectsTable.getItems().contains(s)) {
             subjectSelected(s);
         } else {
             subjectSelected(null);
