@@ -4,6 +4,7 @@ import animalkeeping.model.*;
 import animalkeeping.ui.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.util.Callback;
 import javafx.util.Pair;
 import org.hibernate.Session;
 
@@ -569,5 +570,46 @@ public class Dialogs {
         return null;
     }
 
+    public static SubjectNote editSubjectNoteDialog(SubjectNote note, Subject subject) {
+        SubjectNotesForm snf = new SubjectNotesForm(note, subject);
+        return editSubjectNoteDialog(snf);
+    }
+
+    public static SubjectNote editSubjectNoteDialog(Subject subject) {
+        SubjectNotesForm snf = new SubjectNotesForm(subject);
+        return editSubjectNoteDialog(snf);
+    }
+
+    public static SubjectNote editSubjectNoteDialog(SubjectNotesForm snf) {
+        if (snf == null) {
+            return null;
+        }
+        Dialog<SubjectNote> dialog = new Dialog<>();
+        dialog.setTitle("Add/edit note ...");
+        dialog.setHeight(200);
+        dialog.setWidth(400);
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(snf);
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+        dialog.setResultConverter(new Callback<ButtonType, SubjectNote>() {
+            @Override
+            public SubjectNote call(ButtonType b) {
+                if (b == buttonTypeOk) {
+                    return snf.persist();
+                }
+                return null;
+            }
+        });
+        Optional<SubjectNote> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            return result.get();
+        }
+        return null;
+    }
 }
 
