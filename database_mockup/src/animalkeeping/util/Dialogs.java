@@ -617,7 +617,6 @@ public class Dialogs {
         return null;
     }
 
-
     public static Subject reportSubjectDead(Subject s) {
         Housing current_housing = s.getCurrentHousing();
         Dialog<Date> dialog = new Dialog<>();
@@ -688,5 +687,71 @@ public class Dialogs {
         }
         return null;
     }
+
+    public static Subject relocateSubjectDialog(Subject s) {
+        HousingUnit current_hu = s.getCurrentHousing().getHousing();
+
+        Dialog<HousingUnit> dialog = new Dialog<>();
+        dialog.setTitle("Select a housing unit");
+        dialog.setHeight(200);
+        dialog.setWidth(400);
+        dialog.setResizable(true);
+        HousingUnitTable hut = new HousingUnitTable();
+        VBox box = new VBox();
+        box.setFillWidth(true);
+        HBox dateBox = new HBox();
+        dateBox.getChildren().add(new Label("relocation date"));
+        DatePicker dp = new DatePicker();
+        dp.setValue(LocalDate.now());
+        dateBox.getChildren().add(dp);
+        HBox timeBox = new HBox();
+        timeBox.getChildren().add(new Label("relocation time"));
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        TextField timeField = new TextField(timeFormat.format(new Date()));
+        timeBox.getChildren().add(timeField);
+
+        box.getChildren().add(dateBox);
+        box.getChildren().add(timeBox);
+        box.getChildren().add(hut);
+        dialog.getDialogPane().setContent(box);
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+        dialog.setResultConverter(new Callback<ButtonType, HousingUnit>() {
+            @Override
+            public HousingUnit call(ButtonType b) {
+                if (b == buttonTypeOk) {
+                    return hut.getSelectedUnit();
+                }
+                return null;
+            }
+        });
+        Optional<HousingUnit> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() != current_hu) {
+            LocalDate d = dp.getValue();
+            Date currentDate = getDateTime(d, timeField.getText());
+
+            HousingUnit new_hu = result.get();
+            Housing current_housing = s.getCurrentHousing();
+            if (currentDate.before(current_housing.getStart())) {
+                showInfo("Error during relocation of subject. Relocation date before start date of current housing!");
+                return null;
+            }
+
+            Housing new_housing = new Housing();
+            new_housing.setStart(currentDate);
+            new_housing.setSubject(s);
+            new_housing.setHousing(new_hu);
+            current_housing.setEnd(currentDate);
+            Communicator.pushSaveOrUpdate(current_housing);
+            Communicator.pushSaveOrUpdate(new_housing);
+            return s;
+        }
+        return null;
+    }
 }
+
 

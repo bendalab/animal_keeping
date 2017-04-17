@@ -293,16 +293,6 @@ public class FishView extends VBox implements Initializable, View {
 
     private void deleteSubject() {
         subjectsTable.deleteSubject(subjectsTable.getSelectionModel().getSelectedItem());
-        /*
-        Subject s = subjectsTable.getSelectionModel().getSelectedItem();
-        if (!s.getTreatments().isEmpty()) {
-            showInfo("Cannot delete subject " + s.getName() + " since it is referenced by " +
-                    Integer.toString(s.getTreatments().size()) + " treatment entries! Delete them first.");
-        } else {
-            Communicator.pushDelete(s);
-        }
-        subjectsTable.getSelectionModel().select(null); //this is below the other stuff; see vvvvvvv
-        */
     }
 
 
@@ -331,147 +321,11 @@ public class FishView extends VBox implements Initializable, View {
     }
 
     private void reportDead(Subject s) {
-        Housing current_housing = s.getCurrentHousing();
-        Dialog<Date> dialog = new Dialog<>();
-        dialog.setTitle("Report subject dead ...");
-        dialog.setHeight(200);
-        dialog.setWidth(300);
-        VBox box = new VBox();
-        box.setFillWidth(true);
-        HBox dateBox = new HBox();
-        dateBox.getChildren().add(new Label("date"));
-        DatePicker dp = new DatePicker();
-        dp.setValue(LocalDate.now());
-        dateBox.getChildren().add(dp);
-        HBox timeBox = new HBox();
-        timeBox.getChildren().add(new Label("time"));
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        TextField timeField = new TextField(timeFormat.format(new Date()));
-        timeBox.getChildren().add(timeField);
-        box.getChildren().add(dateBox);
-        box.getChildren().add(timeBox);
-        ComboBox<Person> personComboBox = new ComboBox<>();
-        personComboBox.setConverter(new StringConverter<Person>() {
-            @Override
-            public String toString(Person object) {
-                return object.getFirstName() + ", " + object.getLastName();
-            }
-
-            @Override
-            public Person fromString(String string) {
-                return null;
-            }
-        });
-
-        Session session = Main.sessionFactory.openSession();
-        session.beginTransaction();
-        List<Person> persons = session.createQuery("from Person", Person.class).list();
-        session.getTransaction().commit();
-        personComboBox.getItems().addAll(persons);
-        HBox personBox = new HBox();
-        personBox.getChildren().add(new Label("person"));
-        personBox.getChildren().add(personComboBox);
-        box.getChildren().add(personBox);
-        box.getChildren().add(new Label("comment"));
-        TextArea commentArea = new TextArea();
-        box.getChildren().add(commentArea);
-        dialog.getDialogPane().setContent(box);
-
-        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
-        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
-
-        dialog.setResultConverter(new Callback<ButtonType, Date>() {
-            @Override
-            public Date call(ButtonType b) {
-                if (b == buttonTypeOk) {
-                    return getDateTime(dp.getValue(), timeField.getText());
-                }
-                return null;
-            }
-        });
-        Optional<Date> result = dialog.showAndWait();
-        if (result.isPresent() && result.get().after(current_housing.getStart())) {
-            current_housing.setEnd(result.get());
-            SubjectNote note = new SubjectNote("reported dead", commentArea.getText(), result.get(), s);
-            note.setPerson(personComboBox.getValue());
-            session.beginTransaction();
-            session.saveOrUpdate(current_housing);
-            session.saveOrUpdate(note);
-            session.getTransaction().commit();
-        } else {
-            showInfo("Error during report subject. Reported date before start date of current housing?!");
-        }
-        if (session.isOpen()) {
-            session.close();
-        }
+        subjectsTable.reportSubjectDead(s);
     }
 
     private void moveSubject(Subject s) {
-        HousingUnit current_hu = s.getCurrentHousing().getHousing();
-
-        Dialog<HousingUnit> dialog = new Dialog<>();
-        dialog.setTitle("Select a housing unit");
-        dialog.setHeight(200);
-        dialog.setWidth(400);
-        dialog.setResizable(true);
-        HousingUnitTable hut = new HousingUnitTable();
-        VBox box = new VBox();
-        box.setFillWidth(true);
-        HBox dateBox = new HBox();
-        dateBox.getChildren().add(new Label("relocation date"));
-        DatePicker dp = new DatePicker();
-        dp.setValue(LocalDate.now());
-        dateBox.getChildren().add(dp);
-        HBox timeBox = new HBox();
-        timeBox.getChildren().add(new Label("relocation time"));
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        TextField timeField = new TextField(timeFormat.format(new Date()));
-        timeBox.getChildren().add(timeField);
-
-        box.getChildren().add(dateBox);
-        box.getChildren().add(timeBox);
-        box.getChildren().add(hut);
-        dialog.getDialogPane().setContent(box);
-
-        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
-        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
-        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
-
-        dialog.setResultConverter(new Callback<ButtonType, HousingUnit>() {
-            @Override
-            public HousingUnit call(ButtonType b) {
-                if (b == buttonTypeOk) {
-                    return hut.getSelectedUnit();
-                }
-                return null;
-            }
-        });
-        Optional<HousingUnit> result = dialog.showAndWait();
-        if (result.isPresent() && result.get() != current_hu) {
-            LocalDate d = dp.getValue();
-            Date currentDate = getDateTime(d, timeField.getText());
-
-            HousingUnit new_hu = result.get();
-            Housing current_housing = s.getCurrentHousing();
-            if (currentDate.before(current_housing.getStart())) {
-                showInfo("Error during relocation of subject. Relocation date before start date of current housing!");
-                return;
-            }
-
-            Housing new_housing = new Housing();
-            new_housing.setStart(currentDate);
-            new_housing.setSubject(s);
-            new_housing.setHousing(new_hu);
-            current_housing.setEnd(currentDate);
-            Session session = Main.sessionFactory.openSession();
-            session.beginTransaction();
-            session.saveOrUpdate(current_housing);
-            session.saveOrUpdate(new_housing);
-            session.getTransaction().commit();
-        }
+        subjectsTable.moveSubject(s);
     }
 
     private void editTreatment(Treatment t) {
