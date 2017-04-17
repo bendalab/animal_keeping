@@ -1,18 +1,23 @@
 package animalkeeping.util;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.Callback;
 import javafx.util.Pair;
+import javafx.util.StringConverter;
 import org.hibernate.Session;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static animalkeeping.util.DateTimeHelper.getDateTime;
 
 public class Dialogs {
 
@@ -608,6 +613,78 @@ public class Dialogs {
         Optional<SubjectNote> result = dialog.showAndWait();
         if (result.isPresent()) {
             return result.get();
+        }
+        return null;
+    }
+
+
+    public static Subject reportSubjectDead(Subject s) {
+        Housing current_housing = s.getCurrentHousing();
+        Dialog<Date> dialog = new Dialog<>();
+        dialog.setTitle("Report subject dead ...");
+        dialog.setHeight(200);
+        dialog.setWidth(300);
+        VBox box = new VBox();
+        box.setFillWidth(true);
+        HBox dateBox = new HBox();
+        dateBox.getChildren().add(new Label("date"));
+        DatePicker dp = new DatePicker();
+        dp.setValue(LocalDate.now());
+        dateBox.getChildren().add(dp);
+        HBox timeBox = new HBox();
+        timeBox.getChildren().add(new Label("time"));
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        TextField timeField = new TextField(timeFormat.format(new Date()));
+        timeBox.getChildren().add(timeField);
+        box.getChildren().add(dateBox);
+        box.getChildren().add(timeBox);
+        ComboBox<Person> personComboBox = new ComboBox<>();
+        personComboBox.setConverter(new StringConverter<Person>() {
+            @Override
+            public String toString(Person object) {
+                return object.getFirstName() + ", " + object.getLastName();
+            }
+
+            @Override
+            public Person fromString(String string) {
+                return null;
+            }
+        });
+
+        List<Person> persons = EntityHelper.getEntityList("from Person", Person.class);
+        personComboBox.getItems().addAll(persons);
+
+        HBox personBox = new HBox();
+        personBox.getChildren().add(new Label("person"));
+        personBox.getChildren().add(personComboBox);
+        box.getChildren().add(personBox);
+        box.getChildren().add(new Label("comment"));
+        TextArea commentArea = new TextArea();
+        box.getChildren().add(commentArea);
+        dialog.getDialogPane().setContent(box);
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+        dialog.setResultConverter(new Callback<ButtonType, Date>() {
+            @Override
+            public Date call(ButtonType b) {
+                if (b == buttonTypeOk) {
+                    return getDateTime(dp.getValue(), timeField.getText());
+                }
+                return null;
+            }
+        });
+        Optional<Date> result = dialog.showAndWait();
+        if (result.isPresent() && result.get().after(current_housing.getStart())) {
+            current_housing.setEnd(result.get());
+            SubjectNote note = new SubjectNote("reported dead", commentArea.getText(), result.get(), s);
+            note.setPerson(personComboBox.getValue());
+            Communicator.pushSaveOrUpdate(note);
+            Communicator.pushSaveOrUpdate(current_housing);
+            return s;
         }
         return null;
     }
