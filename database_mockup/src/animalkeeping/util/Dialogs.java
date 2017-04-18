@@ -623,20 +623,12 @@ public class Dialogs {
         dialog.setTitle("Report subject dead ...");
         dialog.setHeight(200);
         dialog.setWidth(300);
-        VBox box = new VBox();
-        box.setFillWidth(true);
-        HBox dateBox = new HBox();
-        dateBox.getChildren().add(new Label("date"));
+        dialog.setResizable(true);
+
         DatePicker dp = new DatePicker();
         dp.setValue(LocalDate.now());
-        dateBox.getChildren().add(dp);
-        HBox timeBox = new HBox();
-        timeBox.getChildren().add(new Label("time"));
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         TextField timeField = new TextField(timeFormat.format(new Date()));
-        timeBox.getChildren().add(timeField);
-        box.getChildren().add(dateBox);
-        box.getChildren().add(timeBox);
         ComboBox<Person> personComboBox = new ComboBox<>();
         personComboBox.setConverter(new StringConverter<Person>() {
             @Override
@@ -649,18 +641,37 @@ public class Dialogs {
                 return null;
             }
         });
-
         List<Person> persons = EntityHelper.getEntityList("from Person", Person.class);
         personComboBox.getItems().addAll(persons);
-
-        HBox personBox = new HBox();
-        personBox.getChildren().add(new Label("person"));
-        personBox.getChildren().add(personComboBox);
-        box.getChildren().add(personBox);
-        box.getChildren().add(new Label("comment"));
         TextArea commentArea = new TextArea();
-        box.getChildren().add(commentArea);
-        dialog.getDialogPane().setContent(box);
+
+        GridPane grid = new GridPane();
+        ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
+        column1.setHgrow(Priority.NEVER);
+        ColumnConstraints column2 = new ColumnConstraints(100, 150, Double.MAX_VALUE);
+        column2.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(column1, column2);
+        dp.prefWidthProperty().bind(column2.maxWidthProperty());
+        timeField.prefWidthProperty().bind(column2.maxWidthProperty());
+        personComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
+        commentArea.prefWidthProperty().bind(column2.maxWidthProperty());
+
+        grid.add(new Label("subject: "), 0, 0);
+        grid.add(new Label( s.getName()), 1, 0);
+
+        grid.add(new Label("date:"), 0, 1);
+        grid.add(dp, 1, 1);
+
+        grid.add(new Label("time:"), 0, 2);
+        grid.add(timeField, 1, 2);
+
+        grid.add(new Label("person:"), 0, 3);
+        grid.add(personComboBox, 1, 3);
+
+        grid.add(new Label("comment:"), 0, 4);
+        grid.add(commentArea, 0, 5, 2, 4);
+
+        dialog.getDialogPane().setContent(grid);
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
