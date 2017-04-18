@@ -1,5 +1,8 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
+import animalkeeping.model.Housing;
+import animalkeeping.model.Subject;
 import animalkeeping.model.Treatment;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
@@ -7,10 +10,10 @@ import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.util.Pair;
 
 import java.util.Collection;
 import java.util.Date;
@@ -25,6 +28,9 @@ public class TreatmentsTable extends TableView<Treatment>{
     private TableColumn<Treatment, Date> endCol;
     private TableColumn<Treatment, Boolean> finalCol;
     private ObservableList<Treatment> masterList = FXCollections.observableArrayList();
+    private MenuItem newItem, editItem, deleteItem, endItem;
+    private Subject subject = null;
+
 
     public TreatmentsTable() {
         super();
@@ -72,13 +78,41 @@ public class TreatmentsTable extends TableView<Treatment>{
             });
             return row ;
         });
+        this.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Treatment>) c -> {
+            int sel_count = c.getList().size();
+            editItem.setDisable(sel_count == 0);
+            deleteItem.setDisable(sel_count == 0);
+            endItem.setDisable(sel_count == 0 || c.getList().get(0).getEnd() == null);
+        });
+
+        ContextMenu cmenu = new ContextMenu();
+        newItem = new MenuItem("new treatment");
+        newItem.setOnAction(event -> editTreatment(null));
+
+        editItem = new MenuItem("edit treatment");
+        editItem.setDisable(true);
+        editItem.setOnAction(event -> editTreatment(this.getSelectionModel().getSelectedItem()));
+
+        deleteItem = new MenuItem("delete treatment");
+        deleteItem.setDisable(true);
+        deleteItem.setOnAction(event -> deleteTreatment(this.getSelectionModel().getSelectedItem()));
+
+        endItem = new MenuItem("end treatment");
+        endItem.setDisable(true);
+        endItem.setOnAction(event -> endTreatment(this.getSelectionModel().getSelectedItem()));
+        cmenu.getItems().addAll(newItem, editItem, deleteItem, endItem);
+        this.setContextMenu(cmenu);
         init();
     }
 
 
     private void init() {
-        List<Treatment> treatments = EntityHelper.getEntityList("from Treatment", Treatment.class);
-        masterList.addAll(treatments);
+        if (this.subject == null) {
+            List<Treatment> treatments = EntityHelper.getEntityList("from Treatment", Treatment.class);
+            masterList.addAll(treatments);
+        } else {
+            masterList.addAll(subject.getTreatments());
+        }
         this.setItems(masterList);
     }
 
@@ -89,6 +123,13 @@ public class TreatmentsTable extends TableView<Treatment>{
         }
     }
 
+
+    public void setSubject(Subject s) {
+        this.subject = s;
+        refresh();
+    }
+
+
     public void refresh() {
         masterList.clear();
         init();
@@ -97,5 +138,38 @@ public class TreatmentsTable extends TableView<Treatment>{
 
     public void setSelectedTreatment(Treatment treatment) {
         this.getSelectionModel().select(treatment);
+    }
+
+    public void editTreatment(Treatment t) {
+        Treatment treatment = Dialogs.editTreatmentDialog(t);
+        if(treatment != null) {
+            this.refresh();
+            this.setSelectedTreatment(treatment);
+        }
+    }
+
+    public void deleteTreatment(Treatment treatment) {
+        if (treatment == null) {
+            return;
+        }
+        Communicator.pushDelete(treatment);
+        this.refresh();
+    }
+
+    public void endTreatment(Treatment t) {
+        if (t == null)
+            return;
+        Pair<Date, Date> interval = Dialogs.getDateTimeInterval(t.getStart(), new Date());
+        if (interval != null) {
+            t.setStart(interval.getKey());
+            t.setEnd(interval.getValue());
+            Communicator.pushSaveOrUpdate(t);
+            if (t.getTreatmentType().isInvasive()) {
+                Housing h = t.getSubject().getCurrentHousing();
+                h.setEnd(interval.getValue());
+                Communicator.pushSaveOrUpdate(h);
+            }
+            refresh();
+        }
     }
 }
