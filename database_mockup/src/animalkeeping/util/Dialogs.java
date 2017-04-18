@@ -591,7 +591,7 @@ public class Dialogs {
         }
         Dialog<SubjectNote> dialog = new Dialog<>();
         dialog.setTitle("Add/edit note ...");
-        dialog.setHeight(200);
+        dialog.setHeight(300);
         dialog.setWidth(400);
         dialog.setResizable(true);
         dialog.getDialogPane().setContent(snf);
@@ -693,27 +693,37 @@ public class Dialogs {
 
         Dialog<HousingUnit> dialog = new Dialog<>();
         dialog.setTitle("Select a housing unit");
-        dialog.setHeight(200);
-        dialog.setWidth(400);
+        dialog.setHeight(300);
+        dialog.setWidth(600);
         dialog.setResizable(true);
         HousingUnitTable hut = new HousingUnitTable();
-        VBox box = new VBox();
-        box.setFillWidth(true);
-        HBox dateBox = new HBox();
-        dateBox.getChildren().add(new Label("relocation date"));
         DatePicker dp = new DatePicker();
-        dp.setValue(LocalDate.now());
-        dateBox.getChildren().add(dp);
-        HBox timeBox = new HBox();
-        timeBox.getChildren().add(new Label("relocation time"));
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         TextField timeField = new TextField(timeFormat.format(new Date()));
-        timeBox.getChildren().add(timeField);
 
-        box.getChildren().add(dateBox);
-        box.getChildren().add(timeBox);
-        box.getChildren().add(hut);
-        dialog.getDialogPane().setContent(box);
+        GridPane grid = new GridPane();
+        ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
+        column1.setHgrow(Priority.NEVER);
+        ColumnConstraints column2 = new ColumnConstraints(100, 150, Double.MAX_VALUE);
+        column2.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(column1, column2);
+        dp.prefWidthProperty().bind(column2.maxWidthProperty());
+        timeField.prefWidthProperty().bind(column2.maxWidthProperty());
+        hut.prefWidthProperty().bind(column2.maxWidthProperty());
+
+        grid.setVgap(5);
+        grid.setHgap(2);
+        grid.add(new Label("relocation date:"), 0, 0);
+        grid.add(dp, 1, 0);
+
+        grid.add(new Label("relocation time:"), 0, 1);
+        grid.add(timeField, 1, 1, 1, 1);
+
+        grid.add(new Label("housing unit:"), 0, 2);
+        grid.add(hut, 0, 3, 2, 5 );
+
+        //this.getChildren().add(new ScrollPane(housingTable));
+        dialog.getDialogPane().setContent(grid);
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
