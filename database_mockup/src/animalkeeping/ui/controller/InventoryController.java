@@ -1,6 +1,5 @@
 package animalkeeping.ui.controller;
 
-import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.*;
 import animalkeeping.util.Dialogs;
@@ -74,7 +73,7 @@ public class InventoryController extends VBox implements Initializable, View {
         unitsHashMap = new HashMap<>();
 
         housingTable = new HousingTable();
-        treatmentsTable = new TreatmentsTable();
+        treatmentsTable = new TreatmentsTable(true);
         treatmentsTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Treatment>) c -> {
             if (c.getList().size() > 0) {
                 treatmentSelected(c.getList().get(0));
@@ -116,7 +115,7 @@ public class InventoryController extends VBox implements Initializable, View {
     private void fillList() {
         unitsBox.getChildren().clear();
         unitsBox.getChildren().add(allLabel);
-        unitsBox.setMargin(allLabel, new Insets(0., 0., 5., 5.0 ));
+        setMargin(allLabel, new Insets(0., 0., 5., 5.0 ));
         List<HousingUnit> result = EntityHelper.getEntityList("from HousingUnit where parent_unit_id is NULL", HousingUnit.class);
         if (result != null) {
             for (HousingUnit h : result) {
@@ -125,7 +124,7 @@ public class InventoryController extends VBox implements Initializable, View {
                 label.setTextFill(allLabel.getTextFill());
                 label.setOnMouseClicked(event -> listPopulation(unitsHashMap.get(h.getName())));
                 unitsBox.getChildren().add(label);
-                unitsBox.setMargin(label, new Insets(0., 0., 5., 5.0 ));
+                setMargin(label, new Insets(0., 0., 5., 5.0 ));
               }
         }
     }
@@ -451,18 +450,7 @@ public class InventoryController extends VBox implements Initializable, View {
     }
 
     private void endTreatment() {
-        Treatment t = treatmentsTable.getSelectionModel().getSelectedItem();
-        Pair<Date, Date> interval = Dialogs.getDateTimeInterval(t.getStart(), new Date());
-        if (interval != null) {
-            t.setStart(interval.getKey());
-            t.setEnd(interval.getValue());
-            Communicator.pushSaveOrUpdate(t);
-            if (t.getTreatmentType().isInvasive()) {
-                Housing h = t.getSubject().getCurrentHousing();
-                h.setEnd(interval.getValue());
-                Communicator.pushSaveOrUpdate(h);
-            }
-        }
+        treatmentsTable.endTreatment(treatmentsTable.getSelectionModel().getSelectedItem());
         refreshOpenTreatments();
     }
 
