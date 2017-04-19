@@ -123,7 +123,7 @@ public class Dialogs {
 
 
     public static HousingUnit editHousingUnitDialog(HousingUnit unit) {
-        return editHousingUnitDialog(unit, unit.getParentUnit());
+        return editHousingUnitDialog(unit, unit != null ? unit.getParentUnit() : null);
     }
 
 
@@ -135,7 +135,8 @@ public class Dialogs {
         dialog.setResizable(true);
         dialog.getDialogPane().setContent(hud);
         hud.prefWidthProperty().bind(dialog.widthProperty());
-        dialog.setWidth(200);
+        dialog.setWidth(500);
+        dialog.setHeight(300);
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
