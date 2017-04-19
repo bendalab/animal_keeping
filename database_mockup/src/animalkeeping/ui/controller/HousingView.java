@@ -3,8 +3,11 @@ package animalkeeping.ui.controller;
 import animalkeeping.model.HousingType;
 import animalkeeping.model.HousingUnit;
 import animalkeeping.ui.*;
+import animalkeeping.util.Dialogs;
+import animalkeeping.util.EntityHelper;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -12,8 +15,8 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 import java.io.IOException;
@@ -99,7 +102,20 @@ public class HousingView extends VBox implements Initializable, View {
         controls = new VBox();
         controls.setAlignment(Pos.TOP_LEFT);
         controls.setSpacing(5);
-
+        table.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getClickCount() == 2) {
+                    HousingUnit hu = table.getSelectionModel().getSelectedItem().getValue();
+                    hu = Dialogs.editHousingUnitDialog(hu);
+                    if (hu != null) {
+                        refresh();
+                        table.getSelectionModel().select(new TreeItem<>(hu));
+                    }
+                }
+                event.consume();
+            }
+        });
         ControlLabel newUnitLabel = new ControlLabel("new housing unit");
         newUnitLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
@@ -174,20 +190,8 @@ public class HousingView extends VBox implements Initializable, View {
     private void fillHousingTree() {
         final TreeItem<HousingUnit> root = new TreeItem<>();
         root.setExpanded(true);
-        Session session = Main.sessionFactory.openSession();
-        List<HousingUnit> housingUnits = null;
-        try {
-            session.beginTransaction();
-            housingUnits = session.createQuery("from HousingUnit where parentUnit is null", HousingUnit.class).list();
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
-        if (housingUnits == null) {
+        List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit where parentUnit is null", HousingUnit.class);
+        if (housingUnits == null || housingUnits.isEmpty()) {
             return;
         }
         for (HousingUnit hu : housingUnits) {

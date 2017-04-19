@@ -1,6 +1,7 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.Subject;
+import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -9,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -58,6 +60,20 @@ public class SubjectsTable extends TableView<Subject> {
         supplierCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
         this.getColumns().addAll(idCol, nameCol, aliasCol, speciesCol, housingCol, subjectCol, supplierCol);
+        this.setRowFactory( tv -> {
+            TableRow<Subject> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    Subject s = row.getItem();
+                    s = Dialogs.editSubjectDialog(s);
+                    if (s != null) {
+                        refresh();
+                        setSelectedSubject(s);
+                    }
+                }
+            });
+            return row ;
+        });
         init();
     }
 
@@ -104,6 +120,11 @@ public class SubjectsTable extends TableView<Subject> {
 
     public void refresh() {
         init();
+    }
+
+
+    public void setSelectedSubject(Subject s) {
+        this.getSelectionModel().select(s);
     }
 
 

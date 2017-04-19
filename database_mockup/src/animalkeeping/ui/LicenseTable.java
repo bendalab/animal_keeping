@@ -1,6 +1,7 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.License;
+import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -10,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
 import java.util.Collection;
@@ -22,7 +24,10 @@ import java.util.List;
 public class LicenseTable extends TableView<License> {
     private TableColumn<License, Number> idCol;
     private TableColumn<License, String> nameCol;
+    private TableColumn<License, String> agencyCol;
     private TableColumn<License, String> fileNumberCol;
+    private TableColumn<License, String> respPersonCol;
+    private TableColumn<License, String> deputyPersonCol;
     private TableColumn<License, Date> startDateCol;
     private TableColumn<License, Date> endDateCol;
     private ObservableList<License> masterList = FXCollections.observableArrayList();
@@ -48,25 +53,53 @@ public class LicenseTable extends TableView<License> {
 
         idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.09));
+        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.05));
 
         nameCol = new TableColumn<>("name");
         nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
-        nameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.45));
+        nameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.149));
 
         startDateCol= new TableColumn<>("from");
         startDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getStartDate()));
-        startDateCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+        startDateCol.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
 
         endDateCol= new TableColumn<>("until");
         endDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getEndDate()));
-        endDateCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+        endDateCol.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
+
+        agencyCol = new TableColumn<>("filing agency");
+        agencyCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAgency() != null ? data.getValue().getAgency() : ""));
+        agencyCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
         fileNumberCol = new TableColumn<>("file number");
         fileNumberCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getNumber()));
         fileNumberCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
-        this.getColumns().addAll(idCol, nameCol, fileNumberCol, startDateCol, endDateCol);
+        respPersonCol = new TableColumn<>("responsible");
+        respPersonCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getResponsiblePerson() != null ?
+                data.getValue().getResponsiblePerson().getFirstName() + " " + data.getValue().getResponsiblePerson().getLastName() : ""));
+        respPersonCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+
+        deputyPersonCol = new TableColumn<>("deputy");
+        deputyPersonCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getDeputy() != null ?
+                data.getValue().getDeputy().getFirstName() + " " + data.getValue().getDeputy().getLastName() : ""));
+        deputyPersonCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+
+        this.getColumns().addAll(idCol, nameCol, agencyCol, fileNumberCol, respPersonCol, deputyPersonCol, startDateCol, endDateCol);
+        this.setRowFactory( tv -> {
+            TableRow<License> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty() ) {
+                    License l = row.getItem();
+                    l = Dialogs.editLicenseDialog(l);
+                    if (l != null) {
+                        refresh();
+                        setSelectedLicense(l);
+                    }
+                }
+            });
+            return row ;
+        });
     }
 
 
@@ -82,6 +115,10 @@ public class LicenseTable extends TableView<License> {
             this.getSelectionModel().clearSelection();
             masterList.remove(l);
         }
+    }
+
+    public void setSelectedLicense(License l) {
+        this.getSelectionModel().select(l);
     }
 
     public void setLicenses(Collection<License> licenses) {

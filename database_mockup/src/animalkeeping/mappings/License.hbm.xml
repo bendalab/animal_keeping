@@ -10,9 +10,13 @@
             <generator class="increment"/>
         </id>
         <property name="name" type="string" column="name" not-null="true"/>
+        <property name="agency" type="string" column="agency" not-null="false"/>
         <property name="number" type="string" column="number" not-null="true"/>
+        <many-to-one name="responsiblePerson" column="person_id" class="Person" not-null="false"/>
+        <many-to-one name="deputy" column="deputy_person_id" class="Person" not-null="false"/>
         <property name="startDate" type="date" column="start_date" not-null="false"/>
         <property name="endDate" type="date" column="end_date" not-null="false"/>
+
         <set name="quotas" table="census_quota"
              inverse="true" lazy="true" fetch="select">
             <key>

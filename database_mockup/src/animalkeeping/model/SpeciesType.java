@@ -13,7 +13,6 @@ import java.util.List;
  * Created by jan on 27.12.16.
  */
 public class SpeciesType extends Entity implements ChangeLogInterface {
-    private Long id;
     private String name;
     private String trivial;
     private Integer count;
@@ -25,14 +24,6 @@ public class SpeciesType extends Entity implements ChangeLogInterface {
     public SpeciesType(String name, String trivial) {
         this.name = name;
         this.trivial = trivial;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -97,9 +88,9 @@ public class SpeciesType extends Entity implements ChangeLogInterface {
     @Override
     public String toString() {
         return "SpeciesType{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", trivial='" + trivial + '\'' +
+                "id=" + getId() +
+                ", name='" + getName() + '\'' +
+                ", trivial='" + getTrivial() + '\'' +
                 '}';
     }
 }

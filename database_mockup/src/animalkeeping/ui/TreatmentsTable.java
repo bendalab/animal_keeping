@@ -1,6 +1,7 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.Treatment;
+import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -8,6 +9,7 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
 import java.util.Collection;
@@ -56,6 +58,20 @@ public class TreatmentsTable extends TableView<Treatment>{
         finalCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
 
         this.getColumns().addAll(idCol, subjectCol, personCol, treatmentCol, startCol, endCol, finalCol);
+        this.setRowFactory( tv -> {
+            TableRow<Treatment> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    Treatment t = row.getItem();
+                    t = Dialogs.editTreatmentDialog(t);
+                    if (t != null) {
+                        refresh();
+                        setSelectedTreatment(t);
+                    }
+                }
+            });
+            return row ;
+        });
         init();
     }
 
@@ -71,5 +87,15 @@ public class TreatmentsTable extends TableView<Treatment>{
         if (treatments != null) {
             masterList.addAll(treatments);
         }
+    }
+
+    public void refresh() {
+        masterList.clear();
+        init();
+        super.refresh();
+    }
+
+    public void setSelectedTreatment(Treatment treatment) {
+        this.getSelectionModel().select(treatment);
     }
 }

@@ -9,8 +9,6 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -72,18 +70,9 @@
                         </VBox>
                      </content>
                   </Tab>
-                  <Tab closable="false" text="Treatments">
+                  <Tab fx:id="treatmentsTab" closable="false" text="Treatments">
                      <content>
-                        <AnchorPane minHeight="-Infinity" minWidth="-Infinity">
-                           <children>
-                              <TableView fx:id="treatmentTable" layoutX="41.0" layoutY="-36.0" prefHeight="155.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <columns>
-                                    <TableColumn prefWidth="75.0" text="C1" />
-                                    <TableColumn prefWidth="75.0" text="C2" />
-                                 </columns>
-                              </TableView>
-                           </children>
-                        </AnchorPane>
+                        <AnchorPane minHeight="-Infinity" minWidth="-Infinity" />
                      </content>
                   </Tab>
                   <Tab fx:id="housingHistoryTab" closable="false" text="Housing history">

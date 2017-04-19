@@ -8,7 +8,7 @@ import org.hibernate.Session;
  * Created by huben on 06.03.17.
  */
 public abstract class Communicator {
-    public static void pushSaveOrUpdate(ChangeLogInterface E){
+    public static boolean pushSaveOrUpdate(ChangeLogInterface E){
         ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
         Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
         interceptorX.setSession(session);
@@ -23,11 +23,12 @@ public abstract class Communicator {
             if (session.isOpen()) {
                 session.close();
             }
+            return false;
         }
-
+        return true;
     }
 
-    public static void pushDelete(ChangeLogInterface E){
+    public static boolean pushDelete(ChangeLogInterface E){
         ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
         Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
         interceptorX.setSession(session);
@@ -42,8 +43,9 @@ public abstract class Communicator {
             if (session.isOpen()) {
                 session.close();
             }
+            return false;
         }
-
+        return true;
     }
 
 

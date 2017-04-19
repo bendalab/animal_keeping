@@ -1,9 +1,11 @@
 package animalkeeping.ui;
 
 import animalkeeping.model.HousingType;
+import animalkeeping.util.Dialogs;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -43,6 +45,21 @@ public class HousingTypeTable  extends TableView<HousingType> {
         descriptionCol.prefWidthProperty().bind(this.widthProperty().multiply(0.6));
 
         this.getColumns().addAll(idCol, nameCol, descriptionCol);
+        this.setRowFactory( tv -> {
+            TableRow<HousingType> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    HousingType ht = row.getItem();
+                    ht = Dialogs.editHousingTypeDialog(ht);
+                    if (ht != null) {
+                        refresh();
+                        setSelectedHousingType(ht);
+                    }
+                }
+            });
+            return row ;
+        });
+
     }
 
 
@@ -68,5 +85,9 @@ public class HousingTypeTable  extends TableView<HousingType> {
         }
         setTypes(housingTypes);
         super.refresh();
+    }
+
+    public void setSelectedHousingType(HousingType ht) {
+        this.getSelectionModel().select(ht);
     }
 }

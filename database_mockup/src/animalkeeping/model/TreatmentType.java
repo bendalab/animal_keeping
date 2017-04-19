@@ -1,5 +1,6 @@
 package animalkeeping.model;
 
+import animalkeeping.logging.ChangeLogInterface;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -9,8 +10,7 @@ import java.util.Set;
 /**
  * Created by jan on 28.12.16.
  */
-public class TreatmentType {
-    private Long id;
+public class TreatmentType extends Entity implements ChangeLogInterface {
     private String name;
     private String description;
     private Boolean invasive;
@@ -24,17 +24,13 @@ public class TreatmentType {
     public TreatmentType() {}
 
     public TreatmentType(Long id, String name, Boolean invasive) {
-        this.id = id;
+        setId(id);
         this.name = name;
         this.invasive = invasive;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public String getType() {
+        return this.getClass().toString();
     }
 
     public String getName() {
@@ -119,12 +115,12 @@ public class TreatmentType {
     @Override
     public String toString() {
         return "TreatmentType{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", invasive=" + invasive +
-                ", is final=" + finalExperiment +
-                ", license=" + ((license != null) ? license.getName() : "") +
+                "id=" + getId() +
+                ", name='" + getName() + '\'' +
+                ", description='" + getDescription() + '\'' +
+                ", invasive=" + isInvasive() +
+                ", is final=" + isFinalExperiment() +
+                ", license=" + ((getLicense() != null) ? getLicense().getName() : "") +
                 '}';
     }
 }

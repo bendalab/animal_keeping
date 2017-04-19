@@ -130,7 +130,7 @@ public class MainViewController extends VBox implements Initializable{
 
 
     @FXML
-    private void showPersons() throws Exception{
+    private void showPersons() {
         this.scrollPane.setContent(null);
         if (!personsPane.isExpanded()) {
             showInventory();
@@ -265,9 +265,7 @@ public class MainViewController extends VBox implements Initializable{
         Long aLong = null;
         try {
             aLong = Long.parseLong(text);
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-        }
+        } catch (NumberFormatException e) {}
         if (aLong!= null && aLong < 0)
             aLong = null;
         return aLong;
@@ -288,16 +286,20 @@ public class MainViewController extends VBox implements Initializable{
 
         switch (selectedTable) {
             case "Subject":
-                FishView fv = new FishView();
+                subjectsPane.setExpanded(true);
+                showSubjects();
+                FishView fv = (FishView) views.get("subjects");
                 if (id != null) {
                     fv.idFilter(id);
                 } else {
                     fv.nameFilter(idField.getText());
                 }
-                this.scrollPane.setContent(fv);
+                //this.scrollPane.setContent(fv);
                 break;
             case "Person":
-                PersonsView pv = new PersonsView();
+                personsPane.setExpanded(true);
+                showPersons();
+                PersonsView pv = (PersonsView) views.get("persons");
                 if (id != null) {
                     pv.idFilter(id);
                 } else {

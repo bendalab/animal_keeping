@@ -76,8 +76,9 @@ public class SpeciesTypeForm extends VBox {
         speciesType.setName(nameField.getText());
         speciesType.setTrivial(trivialField.getText());
 
-        Session session = Main.sessionFactory.openSession();
-        Communicator.pushSaveOrUpdate(speciesType);
-        return speciesType;
+        if (Communicator.pushSaveOrUpdate(speciesType)) {
+            return speciesType;
+        }
+        return null;
     }
 }

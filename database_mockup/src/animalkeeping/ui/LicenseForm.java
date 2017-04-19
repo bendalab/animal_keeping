@@ -44,8 +44,8 @@ public class LicenseForm extends VBox {
             return;
         }
         idLabel.setText(l.getId().toString());
-        // respPersonCombo.getSelectionModel().select(l.getResponsiblePerson());
-        // deputyPersonCombo.getSelectionModel().select(l.getDeputy());
+        respPersonCombo.getSelectionModel().select(l.getResponsiblePerson());
+        deputyPersonCombo.getSelectionModel().select(l.getDeputy());
         if (l.getStartDate() != null) {
             startDate.setValue(DateTimeHelper.toLocalDate(l.getStartDate()));
         }
@@ -55,7 +55,7 @@ public class LicenseForm extends VBox {
 
         fileNoField.setText(l.getNumber());
         nameField.setText(l.getName());
-        // agencyField.setText(l.getAgency());
+        agencyField.setText(l.getAgency());
     }
 
     private void init() {
@@ -72,7 +72,7 @@ public class LicenseForm extends VBox {
                 return null;
             }
         });
-        respPersonCombo.setDisable(true);
+        respPersonCombo.setDisable(false);
         deputyPersonCombo = new ComboBox<>();
         deputyPersonCombo.setConverter(new StringConverter<Person>() {
             @Override
@@ -85,7 +85,7 @@ public class LicenseForm extends VBox {
                 return null;
             }
         });
-        deputyPersonCombo.setDisable(true);
+        deputyPersonCombo.setDisable(false);
         startDate = new DatePicker();
         startDate.setValue(LocalDate.now());
         endDate = new DatePicker();
@@ -93,7 +93,6 @@ public class LicenseForm extends VBox {
 
         fileNoField = new TextField();
         agencyField = new TextField();
-        agencyField.setDisable(true);
         nameField = new TextField();
 
         Button newPersonButton = new Button("+");
@@ -173,10 +172,10 @@ public class LicenseForm extends VBox {
             license = new License();
         }
         license.setName(nameField.getText());
-        // license.setAgency(agencyField.getText());
+        license.setAgency(agencyField.getText());
         license.setNumber(fileNoField.getText());
-        // license.setResponsiblePerson(respPersonCombo.getValue());
-        // license.setDeputy(deputyPersonCombo.getValue());
+        license.setResponsiblePerson(respPersonCombo.getValue());
+        license.setDeputy(deputyPersonCombo.getValue());
         license.setStartDate(sd);
         license.setEndDate(ed);
 

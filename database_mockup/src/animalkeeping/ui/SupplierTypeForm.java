@@ -77,8 +77,10 @@ public class SupplierTypeForm extends VBox {
         supplierType.setName(nameField.getText());
         supplierType.setAddress(addressArea.getText());
 
-        Communicator.pushSaveOrUpdate(supplierType);
+        if (Communicator.pushSaveOrUpdate(supplierType)) {
+            return supplierType;
+        }
 
-        return supplierType;
+        return null;
     }
 }

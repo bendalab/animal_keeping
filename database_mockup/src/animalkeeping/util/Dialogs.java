@@ -4,7 +4,6 @@ import animalkeeping.model.*;
 import animalkeeping.ui.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.util.Callback;
 import javafx.util.Pair;
 import org.hibernate.Session;
 
@@ -81,13 +80,13 @@ public class Dialogs {
     }
 
 
-    public static void editHousingTypeDialog(HousingType type) {
-        HousingTypeDialog htd = new HousingTypeDialog(type);
+    public static HousingType editHousingTypeDialog(HousingType type) {
+        HousingTypeForm htd = new HousingTypeForm(type);
         Dialog<HousingType> dialog = new Dialog<>();
         dialog.setTitle("Housing type");
         dialog.setResizable(true);
         dialog.getDialogPane().setContent(htd);
-        dialog.setWidth(200);
+        dialog.setWidth(300);
         htd.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -111,17 +110,19 @@ public class Dialogs {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            return result.get();
         }
+        return null;
     }
 
 
     public static HousingUnit editHousingUnitDialog(HousingUnit unit) {
-        return editHousingUnitDialog(unit, null);
+        return editHousingUnitDialog(unit, unit.getParentUnit());
     }
 
 
     public static HousingUnit editHousingUnitDialog(HousingUnit unit, HousingUnit parent) {
-        HousingUnitDialog hud = new HousingUnitDialog(unit);
+        HousingUnitForm hud = new HousingUnitForm(unit);
         hud.setParentUnit(parent);
         Dialog<HousingUnit> dialog = new Dialog<>();
         dialog.setTitle("Housing unit");
@@ -136,28 +137,16 @@ public class Dialogs {
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
-                return hud.getHousingUnit();
+                return hud.persistHousingUnit();
             }
             return null;
         });
         Optional<HousingUnit> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-                return result.get();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
+        return result.orElse(null);
     }
 
 
-    public static void editLicenseDialog(License l) {
+    public static License editLicenseDialog(License l) {
         LicenseForm lf = new LicenseForm(l);
         Dialog<License> dialog = new Dialog<>();
         dialog.setTitle("Add/Edit licence... ");
@@ -180,18 +169,20 @@ public class Dialogs {
         Optional<License> result = dialog.showAndWait();
         if (!result.isPresent()) {
             showInfo("Something went wrong while creating the License!");
+            return null;
         }
+        return result.get();
     }
 
-    public static void editQuotaDialog(Quota q) {
-        editQuotaDialog(q, null);
+    public static Quota editQuotaDialog(Quota q) {
+        return editQuotaDialog(q, null);
     }
 
-    public static void editQuotaDialog(License l) {
-        editQuotaDialog(null, l);
+    public static Quota editQuotaDialog(License l) {
+        return editQuotaDialog(null, l);
     }
 
-    private static void editQuotaDialog(Quota q, License l) {
+    private static Quota editQuotaDialog(Quota q, License l) {
         QuotaForm qf;
         if (q != null)
             qf = new QuotaForm(q);
@@ -220,7 +211,9 @@ public class Dialogs {
         Optional<Quota> result = dialog.showAndWait();
         if (!result.isPresent()) {
             showInfo("Something went wrong while creating the quota!");
+            return null;
         }
+        return result.get();
     }
 
 
@@ -405,16 +398,6 @@ public class Dialogs {
         });
         Optional<SpeciesType> result = dialog.showAndWait();
         if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
             return result.get();
         }
         return null;
@@ -442,16 +425,6 @@ public class Dialogs {
         });
         Optional<SupplierType> result = dialog.showAndWait();
         if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
             return result.get();
         }
         return null;
@@ -478,16 +451,6 @@ public class Dialogs {
         });
         Optional<Person> result = dialog.showAndWait();
         if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
             return result.get();
         }
         return null;
@@ -514,16 +477,6 @@ public class Dialogs {
         });
         Optional<TreatmentType> result = dialog.showAndWait();
         if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
             return result.get();
         }
         return null;
@@ -586,5 +539,35 @@ public class Dialogs {
         }
         return null;
     }
+
+    public static Subject editSubjectDialog(Subject s) {
+        SubjectForm sf = new SubjectForm(s);
+
+        Dialog<Subject> dialog = new Dialog<>();
+        dialog.setTitle("Add/edit subject ...");
+        dialog.setHeight(200);
+        dialog.setWidth(400);
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(sf);
+        sf.prefWidthProperty().bind(dialog.widthProperty());
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return sf.persistSubject();
+            }
+            return null;
+        });
+        Optional<Subject> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            return result.get();
+        }
+        return null;
+    }
+
 }
 

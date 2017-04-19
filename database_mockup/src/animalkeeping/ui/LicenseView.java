@@ -1,9 +1,6 @@
 package animalkeeping.ui;
 
-import animalkeeping.model.License;
-import animalkeeping.model.Quota;
-import animalkeeping.model.Treatment;
-import animalkeeping.model.TreatmentType;
+import animalkeeping.model.*;
 import animalkeeping.ui.controller.TimelineController;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
@@ -97,6 +94,8 @@ public class LicenseView extends VBox implements Initializable, View {
         qv.quotaTable.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Quota>) c -> {
             if (c.getList().size() > 0) {
                 quotaSelected(c.getList().get(0));
+            } else {
+                quotaSelected(null);
             }
         });
         quotaBox.getChildren().add(qv);
@@ -168,9 +167,9 @@ public class LicenseView extends VBox implements Initializable, View {
         permitNoLabel.setText(l !=  null ? l.getNumber() : "");
         startDateLabel.setText(l !=null ? l.getStartDate() != null ? sdf.format(l.getStartDate()) : "" : "");
         endDateLabel.setText(l != null ? l.getEndDate() != null ? sdf.format(l.getEndDate()) : "" : "");
-        respPersonLabel.setText(l != null ? "n.a." : "");
-        deputyPersonLabel.setText(l != null ? "n.a." : "");
-        agencyLabel.setText(l != null ? "n.a." : "");
+        respPersonLabel.setText((l != null && l.getResponsiblePerson() != null) ? l.getResponsiblePerson().getFirstName() + " " + l.getResponsiblePerson().getLastName() : "");
+        deputyPersonLabel.setText((l != null && l.getDeputy() != null) ? l.getDeputy().getFirstName() + " " + l.getDeputy().getLastName() : "");
+        agencyLabel.setText((l != null && l.getAgency() != null) ? l.getAgency() : "");
     }
 
 
@@ -182,13 +181,13 @@ public class LicenseView extends VBox implements Initializable, View {
         addQuota.setDisable(l == null);
 
         if (l != null) {
-            qv.setQuota(l.getQuotas());
+            qv.setLicense(l);
             typeTable.setTreatmentTypes(l.getTreatmentTypes());
             for (TreatmentType t : l.getTreatmentTypes()) {
                 ts.addAll(t.getTreatments());
             }
         } else {
-            qv.quotaTable.getItems().clear();
+            qv.setLicense(null);
             typeTable.setTreatmentTypes(new ArrayList<>());
         }
         treatmentsTable.setTreatments(ts);
