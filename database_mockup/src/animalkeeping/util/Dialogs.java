@@ -135,8 +135,8 @@ public class Dialogs {
         dialog.setResizable(true);
         dialog.getDialogPane().setContent(hud);
         hud.prefWidthProperty().bind(dialog.widthProperty());
-        dialog.setWidth(500);
-        dialog.setHeight(300);
+        dialog.setWidth(200);
+        dialog.setHeight(500);
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -704,10 +704,10 @@ public class Dialogs {
         HousingUnit current_hu = s.getCurrentHousing().getHousing();
 
         Dialog<HousingUnit> dialog = new Dialog<>();
+        dialog.setResizable(true);
         dialog.setTitle("Select a housing unit");
         dialog.setHeight(300);
         dialog.setWidth(600);
-        dialog.setResizable(true);
         HousingUnitTable hut = new HousingUnitTable();
         DatePicker dp = new DatePicker();
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
@@ -716,7 +716,7 @@ public class Dialogs {
         GridPane grid = new GridPane();
         ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
         column1.setHgrow(Priority.NEVER);
-        ColumnConstraints column2 = new ColumnConstraints(100, 150, Double.MAX_VALUE);
+        ColumnConstraints column2 = new ColumnConstraints(100, 250, Double.MAX_VALUE);
         column2.setHgrow(Priority.ALWAYS);
         grid.getColumnConstraints().addAll(column1, column2);
         dp.prefWidthProperty().bind(column2.maxWidthProperty());
