@@ -17,45 +17,43 @@ import javafx.scene.control.*;
 import java.util.List;
 
 public class SubjectsTable extends TableView<Subject> {
-    private TableColumn<Subject, Number> idCol;
-    private TableColumn<Subject, String> nameCol;
-    private TableColumn<Subject, String> aliasCol;
-    private TableColumn<Subject, String> speciesCol;
-    private TableColumn<Subject, String> subjectCol;
-    private TableColumn<Subject, String> supplierCol;
-    private TableColumn<Subject, String> housingCol;
     private ObservableList<Subject> masterList = FXCollections.observableArrayList();
     private FilteredList<Subject> filteredList;
-    private MenuItem newItem, editItem, deleteItem, addTreatmentItem, reportDeadItem, observationItem, moveItem;
+    private MenuItem editItem;
+    private MenuItem deleteItem;
+    private MenuItem addTreatmentItem;
+    private MenuItem reportDeadItem;
+    private MenuItem observationItem;
+    private MenuItem moveItem;
 
     public SubjectsTable() {
         super();
-        idCol = new TableColumn<>("id");
+        TableColumn<Subject, Number> idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
         idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
 
-        nameCol = new TableColumn<>("name");
+        TableColumn<Subject, String> nameCol = new TableColumn<>("name");
         nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
         nameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
-        aliasCol = new TableColumn<>("alias");
+        TableColumn<Subject, String> aliasCol = new TableColumn<>("alias");
         aliasCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAlias()));
         aliasCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
-        speciesCol = new TableColumn<>("species");
+        TableColumn<Subject, String> speciesCol = new TableColumn<>("species");
         speciesCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSpeciesType().getName()));
         speciesCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
-        housingCol = new TableColumn<>("housing");
+        TableColumn<Subject, String> housingCol = new TableColumn<>("housing");
         housingCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getCurrentHousing() != null ?
                 data.getValue().getCurrentHousing().getHousing().getName() : ""));
         housingCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
-        subjectCol = new TableColumn<>("subject");
+        TableColumn<Subject, String> subjectCol = new TableColumn<>("subject");
         subjectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubjectType().getName()));
         subjectCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
-        supplierCol = new TableColumn<>("supplier");
+        TableColumn<Subject, String> supplierCol = new TableColumn<>("supplier");
         supplierCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSupplier().getName()));
         supplierCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
@@ -75,25 +73,23 @@ public class SubjectsTable extends TableView<Subject> {
             return row ;
         });
 
-        this.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Subject>() {
-            @Override
-            public void onChanged(Change<? extends Subject> c) {
-                int sel_count = c.getList().size();
-                editItem.setDisable(sel_count == 0);
-                deleteItem.setDisable(sel_count == 0);
-                addTreatmentItem.setDisable(sel_count == 0);
-                if (sel_count > 0) {
-                    Subject s = c.getList().get(0);
-                    boolean alive = s.getCurrentHousing() != null;
-                    moveItem.setDisable(!alive);
-                    addTreatmentItem.setDisable(!alive);
-                    reportDeadItem.setDisable(!alive);
-                }
+        this.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Subject>) c -> {
+            int sel_count = c.getList().size();
+            editItem.setDisable(sel_count == 0);
+            deleteItem.setDisable(sel_count == 0);
+            addTreatmentItem.setDisable(sel_count == 0);
+            observationItem.setDisable(sel_count == 0);
+            if (sel_count > 0) {
+                Subject s = c.getList().get(0);
+                boolean alive = s.getCurrentHousing() != null;
+                moveItem.setDisable(!alive);
+                addTreatmentItem.setDisable(!alive);
+                reportDeadItem.setDisable(!alive);
             }
         });
 
         ContextMenu cmenu = new ContextMenu();
-        newItem = new MenuItem("new subject");
+        MenuItem newItem = new MenuItem("new subject");
         newItem.setOnAction(event -> editSubject(null));
 
         editItem = new MenuItem("edit subject");
