@@ -10,7 +10,6 @@ import com.apple.eawt.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
@@ -70,7 +69,6 @@ public class MainViewController extends VBox implements Initializable{
 
         if (System.getProperty("os.name").startsWith("Mac OS X")) {
             System.setProperty("bendalab.animalkeeping", "Animal Keeping");
-            System.out.println(System.getProperty("os.name"));
             Application.getApplication().setQuitHandler((quitEvent, quitResponse) -> closeApplication());
             Application.getApplication().setQuitStrategy(QuitStrategy.CLOSE_ALL_WINDOWS);
             Application.getApplication().setAboutHandler(new myAboutHandler());

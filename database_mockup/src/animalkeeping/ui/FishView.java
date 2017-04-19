@@ -297,9 +297,7 @@ public class FishView extends VBox implements Initializable, View {
 
 
     private void deleteTreatment() {
-        Treatment t = treatmentsTable.getSelectionModel().getSelectedItem();
-        treatmentsTable.getSelectionModel().select(null);                    //here it is above
-        Communicator.pushDelete(t);
+        treatmentsTable.deleteTreatment(treatmentsTable.getSelectionModel().getSelectedItem());
     }
 
     private void deleteObservation(SubjectNote n) {
