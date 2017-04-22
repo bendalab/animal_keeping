@@ -6,7 +6,7 @@ import animalkeeping.model.SupplierType;
 import animalkeeping.ui.*;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
-import com.apple.eawt.*;
+// import com.apple.eawt.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -69,9 +69,9 @@ public class MainViewController extends VBox implements Initializable{
 
         if (System.getProperty("os.name").startsWith("Mac OS X")) {
             System.setProperty("bendalab.animalkeeping", "Animal Keeping");
-            Application.getApplication().setQuitHandler((quitEvent, quitResponse) -> closeApplication());
-            Application.getApplication().setQuitStrategy(QuitStrategy.CLOSE_ALL_WINDOWS);
-            Application.getApplication().setAboutHandler(new myAboutHandler());
+            //Application.getApplication().setQuitHandler((quitEvent, quitResponse) -> closeApplication());
+            //Application.getApplication().setQuitStrategy(QuitStrategy.CLOSE_ALL_WINDOWS);
+            //Application.getApplication().setAboutHandler(new myAboutHandler());
             aboutMenuItem.setVisible(false);
             quitMenuItem.setVisible(false);
         }
@@ -523,11 +523,12 @@ public class MainViewController extends VBox implements Initializable{
         System.out.println("Show about");
     }
 
-
+    /*
     class myAboutHandler implements AboutHandler {
         @Override
         public void handleAbout(AppEvent.AboutEvent aboutEvent) {
             showAbout();
         }
     }
+    */
 }
