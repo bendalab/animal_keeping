@@ -7,6 +7,7 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -24,7 +25,12 @@
                <children>
                   <TabPane fx:id="plotTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
-                      <Tab fx:id="populationTab" text="Population" />
+                      <Tab fx:id="populationTab" text="Overview" />
+                        <Tab fx:id="currentHousingTab" text="Current Population">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                          </content>
+                        </Tab>
                       <Tab text="History" />
                     </tabs>
                   </TabPane>

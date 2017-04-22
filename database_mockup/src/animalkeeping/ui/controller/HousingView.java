@@ -22,7 +22,7 @@ import static animalkeeping.util.Dialogs.*;
 
 public class HousingView extends VBox implements Initializable, View {
     @FXML ScrollPane tableScrollPane;
-    @FXML private Tab populationTab, historyTab;
+    @FXML private Tab populationTab, historyTab, currentHousingTab;
     @FXML private TabPane plotTabPane;
     @FXML private ScrollPane typesScrollPane;
     @FXML private SplitPane unitsSplit;
@@ -31,6 +31,7 @@ public class HousingView extends VBox implements Initializable, View {
     private PopulationChart populationChart;
     private HousingTypeTable housingTypes;
     private HousingUnitTable housingUnitTable;
+    private HousingTable housingTable;
     private VBox controls;
     private ControlLabel editUnitLabel, deleteUnitLabel, appendUnitLabel;
     private ControlLabel editTypeLabel, deleteTypeLabel;
@@ -52,6 +53,8 @@ public class HousingView extends VBox implements Initializable, View {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         housingUnitTable = new HousingUnitTable();
+        housingTable = new HousingTable();
+
         tableScrollPane.setContent(housingUnitTable);
         tabVBox.prefHeightProperty().bind(unitsSplit.prefHeightProperty().subtract(unitsSplit.getDividers().get(0).positionProperty().multiply(unitsSplit.getPrefHeight())));
         housingUnitTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> setSelectedUnit(newSelection != null ? newSelection.getValue() : null));
@@ -62,6 +65,8 @@ public class HousingView extends VBox implements Initializable, View {
         populationChart.prefHeightProperty().bind(plotTabPane.prefHeightProperty().multiply(0.8));
         populationChart.prefWidthProperty().bind(this.prefWidthProperty().multiply(0.95));
         populationTab.setContent(populationChart);
+        housingTable.prefWidthProperty().bind(plotTabPane.maxWidthProperty());
+        currentHousingTab.setContent(housingTable);
         unitsSplit.prefHeightProperty().bind(this.prefHeightProperty().multiply(0.6));
         unitsSplit.prefWidthProperty().bind(this.prefWidthProperty());
 
@@ -163,6 +168,7 @@ public class HousingView extends VBox implements Initializable, View {
         importSubjectsLabel.setDisable(unit == null);
         batchTreatmentLabel.setDisable(unit == null);
         appendUnitLabel.setDisable(unit == null);
+        housingTable.setHousingUnit(unit);
     }
 
 
