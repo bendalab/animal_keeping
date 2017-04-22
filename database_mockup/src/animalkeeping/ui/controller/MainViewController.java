@@ -181,11 +181,11 @@ public class MainViewController extends VBox implements Initializable{
             showInventory();
         } else {
             try {
-                FishView fv;
+                SubjectView fv;
                 if (viewIsCached("subjects")) {
-                    fv = (FishView) views.get("subjects");
+                    fv = (SubjectView) views.get("subjects");
                 } else {
-                    fv = new FishView();
+                    fv = new SubjectView();
                     cacheView("subjects", fv);
                 }
                 fv.prefHeightProperty().bind(this.scrollPane.heightProperty());
@@ -304,7 +304,7 @@ public class MainViewController extends VBox implements Initializable{
             case "Subject":
                 subjectsPane.setExpanded(true);
                 showSubjects();
-                FishView fv = (FishView) views.get("subjects");
+                SubjectView fv = (SubjectView) views.get("subjects");
                 if (id != null) {
                     fv.idFilter(id);
                 } else {

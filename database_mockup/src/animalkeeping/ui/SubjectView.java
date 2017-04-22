@@ -26,7 +26,7 @@ import java.util.*;
 
 import static animalkeeping.util.DateTimeHelper.getDateTime;
 
-public class FishView extends VBox implements Initializable, View {
+public class SubjectView extends VBox implements Initializable, View {
     @FXML private ScrollPane tableScrollPane;
     @FXML private Label idLabel;
     @FXML private Label nameLabel;
@@ -60,7 +60,7 @@ public class FishView extends VBox implements Initializable, View {
     private VBox controls;
 
 
-    public FishView() {
+    public SubjectView() {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/FishView.fxml"));
         loader.setController(this);
         try {
