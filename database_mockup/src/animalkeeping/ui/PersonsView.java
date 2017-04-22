@@ -6,8 +6,6 @@ import animalkeeping.ui.controller.TimelineController;
 import animalkeeping.util.AddDatabaseUserDialog;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.SuperUserDialog;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -41,7 +39,9 @@ public class PersonsView  extends VBox implements Initializable, View {
     private TimelineController timeline;
     private VBox controls;
     private Person selectedPerson;
-    private ControlLabel newLabel, editLabel, deleteLabel, addUserLabel;
+    private ControlLabel editLabel;
+    private ControlLabel deleteLabel;
+    private ControlLabel addUserLabel;
 
 
     public PersonsView() {
@@ -78,7 +78,7 @@ public class PersonsView  extends VBox implements Initializable, View {
         controls.setAlignment(Pos.TOP_LEFT);
         controls.setSpacing(10);
 
-        newLabel = new ControlLabel("new person", false);
+        ControlLabel newLabel = new ControlLabel("new person", false);
         newLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 newPerson();
@@ -168,10 +168,6 @@ public class PersonsView  extends VBox implements Initializable, View {
     private void deletePerson() {
          if (selectedPerson != null) {
              Communicator.pushDelete(selectedPerson);
-             System.out.println("deleted person: " + selectedPerson);
-         }
-         else{
-             System.out.println("No person selected");
          }
     }
 
