@@ -233,7 +233,7 @@ public class FishView extends VBox implements Initializable, View {
 
             treatmentsTable.setTreatments(s.getTreatments());
             timeline.setTreatments(s.getTreatments());
-            housingTable.setHousings(s.getHousings());
+            housingTable.setSubject(s);
             notesTable.setNotes(s.getNotes());
         } else {
             idLabel.setText("");
@@ -246,7 +246,7 @@ public class FishView extends VBox implements Initializable, View {
             housingStartLabel.setText("");
             treatmentsTable.setTreatments(null);
             timeline.setTreatments(null);
-            housingTable.setHousings(null);
+            housingTable.clear();
             notesTable.setNotes(null);
         }
         moveSubjectLabel.setDisable(s == null);

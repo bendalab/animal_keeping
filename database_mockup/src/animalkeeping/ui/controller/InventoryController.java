@@ -46,8 +46,6 @@ public class InventoryController extends VBox implements Initializable, View {
     private TreatmentsTable treatmentsTable;
     private VBox controls;
     private HashMap<String, HousingUnit> unitsHashMap;
-    private ControlLabel animalUseLabel;
-    private ControlLabel exportStock;
     private ControlLabel allLabel;
     private ControlLabel endTreatmentLabel;
 
@@ -83,14 +81,14 @@ public class InventoryController extends VBox implements Initializable, View {
         tableScrollPane.setContent(treatmentsTable);
 
         controls = new VBox();
-        animalUseLabel = new ControlLabel("export animal use", false);
+        ControlLabel animalUseLabel = new ControlLabel("export animal use", false);
         animalUseLabel.setTooltip(new Tooltip("export excel sheet containing the animal use per license"));
         animalUseLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)) {
                 exportAnimalUse();
             }
         });
-        exportStock = new ControlLabel("export stock list", false);
+        ControlLabel exportStock = new ControlLabel("export stock list", false);
         exportStock.setTooltip(new Tooltip("Export current stock list to excel sheet."));
         exportStock.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
@@ -149,7 +147,7 @@ public class InventoryController extends VBox implements Initializable, View {
         }
         populationChart.setTitle("Total population: " + count.toString());
         populationChart.setData(pieChartData);
-        housingTable.setHousings(housings);
+        housingTable.setSubject(null);
     }
 
 
@@ -176,7 +174,7 @@ public class InventoryController extends VBox implements Initializable, View {
 
         populationChart.setTitle(housingUnit.getName() + ": " + subjects.size());
         populationChart.setData(pieChartData);
-        housingTable.setHousings(housings);
+        housingTable.setHousingUnit(housingUnit);
     }
 
     @Override
