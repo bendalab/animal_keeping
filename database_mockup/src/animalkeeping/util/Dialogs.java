@@ -3,6 +3,7 @@ package animalkeeping.util;
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.*;
+import animalkeeping.ui.HousingForm;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.Callback;
@@ -532,16 +533,6 @@ public class Dialogs {
         });
         Optional<Treatment> result = dialog.showAndWait();
         if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
             return result.get();
         }
         return null;
@@ -612,6 +603,33 @@ public class Dialogs {
             }
         });
         Optional<SubjectNote> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            return result.get();
+        }
+        return null;
+    }
+
+    public static  Housing editHousing(Housing housing) {
+        HousingForm form = new HousingForm(housing);
+
+        Dialog<Housing> dialog = new Dialog<>();
+        dialog.setTitle("Create/edit housing ...");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(form);
+        dialog.setWidth(300);
+        form.prefWidthProperty().bind(dialog.widthProperty());
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return form.persistHousing();
+            }
+            return null;
+        });
+        Optional<Housing> result = dialog.showAndWait();
         if (result.isPresent()) {
             return result.get();
         }
