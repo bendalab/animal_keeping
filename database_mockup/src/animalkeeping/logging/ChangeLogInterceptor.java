@@ -32,9 +32,7 @@ private Set deletes = new HashSet();
     @Override
     public boolean onSave(Object entity,Serializable id, Object[] state,String[] propertyNames,Type[] types)
     {
-
-        System.out.println("onSave");
-
+        //System.out.println("onSave");
         if (entity instanceof ChangeLogInterface){
             inserts.add(entity);
         }
@@ -46,9 +44,7 @@ private Set deletes = new HashSet();
                             Object[] currentState,Object[] previousState,
                             String[] propertyNames,Type[] types)
         throws CallbackException {
-
-    System.out.println("onFlushDirty");
-
+    //System.out.println("onFlushDirty");
     if (entity instanceof ChangeLogInterface){
         updates.add(entity);
     }
@@ -59,9 +55,7 @@ private Set deletes = new HashSet();
 public void onDelete(Object entity, Serializable id,
                      Object[] state, String[] propertyNames,
                      Type[] types) {
-
-    System.out.println("onDelete");
-
+    //    System.out.println("onDelete");
     if (entity instanceof ChangeLogInterface){
         deletes.add(entity);
     }
@@ -70,14 +64,13 @@ public void onDelete(Object entity, Serializable id,
 //called before commit into database
 @Override
 public void preFlush(Iterator iterator) {
-    System.out.println("preFlush");
+    //System.out.println("preFlush");
 }
 
 //called after committed into database
 @Override
 public void postFlush(Iterator iterator) {
-    System.out.println("postFlush");
-
+    //System.out.println("postFlush");
     try{
 
         for (Iterator it = inserts.iterator(); it.hasNext();) {
