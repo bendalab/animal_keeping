@@ -4,10 +4,8 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.Housing;
 import animalkeeping.model.HousingUnit;
 import animalkeeping.model.Subject;
-import animalkeeping.ui.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.EntityHelper;
-import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -16,10 +14,8 @@ import javafx.scene.layout.VBox;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * Created by jan on 19.04.17.
@@ -135,6 +131,7 @@ public class HousingForm extends VBox {
         startTimeField.setText(timeFormat.format(h.getStart()));
         endDate.setValue(h.getEnd() != null ? DateTimeHelper.toLocalDate(h.getEnd()) : null);
         endTimeField.setText(h.getEnd() != null ? timeFormat.format(h.getEnd()) : "");
+        commentArea.setText(h.getComment());
     }
 
     public Housing persistHousing() {
@@ -144,6 +141,7 @@ public class HousingForm extends VBox {
         housing.setSubject(subjectCombo.getValue());
         housing.setHousing(unitCombo.getValue());
         housing.setStart(DateTimeHelper.getDateTime(startDate.getValue(), startTimeField.getText()));
+        housing.setComment(commentArea.getText());
         if (endDate.getValue() != null) {
             housing.setEnd(DateTimeHelper.getDateTime(endDate.getValue(), endTimeField.getText()));
         }
