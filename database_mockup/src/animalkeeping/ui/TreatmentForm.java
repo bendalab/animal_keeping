@@ -276,7 +276,9 @@ public class TreatmentForm extends VBox {
             note.setPerson(personComboBox.getValue());
             note.setDate(sd);
             note.setTreatment(treatment);
-            Communicator.pushSaveOrUpdate(note);
+            if (!Communicator.pushSaveOrUpdate(note)) {
+                return null;
+            }
         }
         return treatment;
     }
