@@ -6,6 +6,7 @@ import animalkeeping.model.Subject;
 import animalkeeping.model.Treatment;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -15,6 +16,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.util.Pair;
 
 import java.util.Collection;
@@ -33,7 +35,7 @@ public class TreatmentsTable extends TableView<Treatment>{
     private boolean manual = false;
 
 
-    public TreatmentsTable() {
+    TreatmentsTable() {
         super();
         initUI();
         init();
@@ -50,7 +52,7 @@ public class TreatmentsTable extends TableView<Treatment>{
     private void initUI() {
         TableColumn<Treatment, Number> idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
+        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.05));
 
         TableColumn<Treatment, String> subjectCol = new TableColumn<>("subject");
         subjectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubject().getName()));
@@ -66,18 +68,24 @@ public class TreatmentsTable extends TableView<Treatment>{
         treatmentCol.prefWidthProperty().bind(this.widthProperty().multiply(0.17));
 
         TableColumn<Treatment, Date> startCol = new TableColumn<>("start");
-        startCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getStart()));
+        startCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getStart()));
         startCol.prefWidthProperty().bind(this.widthProperty().multiply(0.19));
 
         TableColumn<Treatment, Date> endCol = new TableColumn<>("end");
-        endCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getEnd()));
+        endCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getEnd()));
         endCol.prefWidthProperty().bind(this.widthProperty().multiply(0.19));
 
         TableColumn<Treatment, Boolean> finalCol = new TableColumn<>("final");
-        finalCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Boolean>(data.getValue().getTreatmentType().isFinalExperiment()));
-        finalCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
+        finalCol.setCellValueFactory(data -> new ReadOnlyBooleanWrapper(data.getValue().getTreatmentType().isFinalExperiment()));
+        finalCol.setCellFactory( tc -> new CheckBoxTableCell<>());
+        finalCol.prefWidthProperty().bind(this.widthProperty().multiply(0.05));
 
-        this.getColumns().addAll(idCol, subjectCol, personCol, treatmentCol, startCol, endCol, finalCol);
+        TableColumn<Treatment, Boolean> invasiveCol = new TableColumn<>("invasive");
+        invasiveCol.setCellValueFactory(data -> new ReadOnlyBooleanWrapper(data.getValue().getTreatmentType().isInvasive()));
+        invasiveCol.setCellFactory( tc -> new CheckBoxTableCell<>());
+        invasiveCol.prefWidthProperty().bind(this.widthProperty().multiply(0.05));
+
+        this.getColumns().addAll(idCol, subjectCol, personCol, treatmentCol, startCol, endCol, invasiveCol, finalCol);
         this.setRowFactory( tv -> {
             TableRow<Treatment> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
