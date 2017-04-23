@@ -24,8 +24,12 @@ public class Main extends Application {
         Main.primaryStage = primaryStage;
         Main.primaryStage.setTitle("AnimalKeepingDB");
         MainViewController mainView = new MainViewController();
+        mainView.prefHeightProperty().bind(primaryStage.heightProperty());
+        mainView.prefWidthProperty().bind(primaryStage.widthProperty());
         Scene scene = new Scene(mainView);
         primaryStage.setScene(scene);
+        primaryStage.setWidth(1024);
+        primaryStage.setHeight(768);
         primaryStage.show();
     }
 

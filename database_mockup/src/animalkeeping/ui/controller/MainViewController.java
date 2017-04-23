@@ -41,6 +41,7 @@ public class MainViewController extends VBox implements Initializable{
     @FXML private Menu subjectTypeMenu;
     @FXML private Menu supplierMenu;
     @FXML private HBox hBox;
+    @FXML private VBox navigationBar;
     private Vector<TitledPane> panes;
     private HashMap<String, View> views;
 
@@ -78,10 +79,8 @@ public class MainViewController extends VBox implements Initializable{
                 e.printStackTrace();
             }
         }
-        this.setPrefWidth(1024);
-        this.setPrefHeight(768);
         borderPane.prefHeightProperty().bind(this.prefHeightProperty());
-        scrollPane.prefWidthProperty().bind(this.widthProperty());
+        navigationBar.prefHeightProperty().bind(this.prefHeightProperty());
 
         panes = new Vector<>();
         panes.add(inventoryPane);
@@ -117,8 +116,8 @@ public class MainViewController extends VBox implements Initializable{
                 inventory = new InventoryController();
                 cacheView("inventory", inventory);
             }
-            inventory.prefHeightProperty().bind(this.scrollPane.heightProperty());
-            inventory.prefWidthProperty().bind(this.scrollPane.widthProperty());
+            inventory.prefHeightProperty().bind(this.borderPane.heightProperty());
+            inventory.prefWidthProperty().bind(this.borderPane.widthProperty());
             this.scrollPane.setContent(inventory);
             this.inventoryPane.setContent(inventory.getControls());
             collapsePanes(inventoryPane);

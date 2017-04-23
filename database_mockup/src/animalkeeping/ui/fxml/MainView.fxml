@@ -9,7 +9,6 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
@@ -67,7 +66,7 @@
     </MenuBar>
    </top>
    <left>
-      <VBox fx:id="navigationBar" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="150.0" prefHeight="369.0" prefWidth="150.0" spacing="5.0" BorderPane.alignment="CENTER">
+      <VBox fx:id="navigationBar" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="150.0" prefWidth="150.0" spacing="5.0">
          <children>
             <TitledPane fx:id="inventoryPane" disable="true" expanded="false" onKeyPressed="#showInventory" onMouseClicked="#showInventory" text="Inventory">
               <content>
@@ -99,7 +98,6 @@
                   <VBox prefHeight="200.0" prefWidth="100.0" />
                </content>
             </TitledPane>
-            <Separator prefWidth="200.0" />
             <TitledPane fx:id="findPane" animated="false" disable="true" text="Find">
               <content>
                   <VBox spacing="10.0">
@@ -122,7 +120,7 @@
       </VBox>
    </left>
    <center>
-      <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER" />
+      <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" BorderPane.alignment="CENTER" />
    </center>
    <bottom>
       <HBox fx:id="hBox" fillHeight="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
