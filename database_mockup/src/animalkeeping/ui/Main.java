@@ -23,8 +23,8 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Main.primaryStage = primaryStage;
         Main.primaryStage.setTitle("AnimalKeepingDB");
-        MainViewController mv = new MainViewController();
-        Scene scene = new Scene(mv);
+        MainViewController mainView = new MainViewController();
+        Scene scene = new Scene(mainView);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

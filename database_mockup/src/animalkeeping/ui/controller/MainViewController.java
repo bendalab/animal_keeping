@@ -6,13 +6,12 @@ import animalkeeping.model.SupplierType;
 import animalkeeping.ui.*;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -33,7 +32,9 @@ public class MainViewController extends VBox implements Initializable{
     @FXML private TitledPane treatmentsPane;
     @FXML private TextField idField;
     @FXML private ScrollPane scrollPane;
-    @FXML private VBox masterBox;
+    @FXML private BorderPane borderPane;
+    @FXML private ProgressBar progressBar;
+    @FXML private Label messageLabel;
     @FXML private ComboBox<String> findBox;
     @FXML private TitledPane findPane;
     @FXML private Menu speciesTypeMenu;
@@ -59,30 +60,28 @@ public class MainViewController extends VBox implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.setPrefWidth(1024);
-        this.setPrefHeight(768);
         findBox.getItems().clear();
         findBox.getItems().addAll("Person", "Subject", "Housing unit", "Treatment");
         findBox.getSelectionModel().select("Subject");
         this.scrollPane.setContent(null);
         if (!Main.isConnected()) {
             LoginController login = new LoginController();
-            login.addEventHandler(LoginController.DatabaseEvent.CONNECT, event -> connectedToDatabase());
+            login.addEventHandler(LoginController.DatabaseEvent.CONNECTING, this::connectedToDatabase);
+            login.addEventHandler(LoginController.DatabaseEvent.CONNECTED, this::connectedToDatabase);
+            login.addEventHandler(LoginController.DatabaseEvent.FAILED, this::connectedToDatabase);
             this.scrollPane.setContent(login);
         }
         else {
             try{
-                connectedToDatabase();}
+                connectedToDatabase(null);}
             catch(Exception e){
                 e.printStackTrace();
             }
         }
-        masterBox.prefHeightProperty().bind(this.heightProperty());
-        hBox.prefHeightProperty().bind(this.heightProperty());
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true);
+        this.setPrefWidth(1024);
+        this.setPrefHeight(768);
+        borderPane.prefHeightProperty().bind(this.prefHeightProperty());
         scrollPane.prefWidthProperty().bind(this.widthProperty());
-        scrollPane.prefHeightProperty().bind(this.heightProperty());
 
         panes = new Vector<>();
         panes.add(inventoryPane);
@@ -442,18 +441,25 @@ public class MainViewController extends VBox implements Initializable{
     }
 
 
-    private void connectedToDatabase() {
-        subjectsPane.setDisable(false);
-        personsPane.setDisable(false);
-        inventoryPane.setDisable(false);
-        treatmentsPane.setDisable(false);
-        findPane.setDisable(false);
-        animalHousingPane.setDisable(false);
-        licensesPane.setDisable(false);
-        subjectTypeMenu.setDisable(false);
-        speciesTypeMenu.setDisable(false);
-        fillMenus();
-        showInventory();
+    private void connectedToDatabase(LoginController.DatabaseEvent event) {
+        if(event.getEventType() == LoginController.DatabaseEvent.CONNECTED) {
+            subjectsPane.setDisable(false);
+            personsPane.setDisable(false);
+            inventoryPane.setDisable(false);
+            treatmentsPane.setDisable(false);
+            findPane.setDisable(false);
+            animalHousingPane.setDisable(false);
+            licensesPane.setDisable(false);
+            subjectTypeMenu.setDisable(false);
+            speciesTypeMenu.setDisable(false);
+            fillMenus();
+            showInventory();
+            setIdle("Successfully conneted to database!", false);
+        } else if (event.getEventType() == LoginController.DatabaseEvent.CONNECTING) {
+            setBusy("Connecting to database...");
+        } else {
+            setIdle("Connection failed!", true);
+        }
     }
 
     private void collapsePanes(TitledPane excludedPane) {
@@ -501,5 +507,19 @@ public class MainViewController extends VBox implements Initializable{
         fillSupplierTypeMenu();
     }
 
+    public void setBusy(String message) {
+        progressBar.setProgress(-1.0);
+        if (message != null) {
+            messageLabel.setText(message);
+        }
+    }
 
+    public void setIdle(String message, boolean error) {
+        progressBar.setProgress(0.);
+        messageLabel.setText("");
+        if (message != null) {
+            messageLabel.setText(message);
+            //messageLabel
+        }
+    }
 }
