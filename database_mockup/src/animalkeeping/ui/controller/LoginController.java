@@ -3,6 +3,8 @@ package animalkeeping.ui.controller;
 import animalkeeping.ui.Main;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.Version;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.event.EventType;
@@ -15,6 +17,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 
+import javax.swing.event.DocumentEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -61,14 +64,16 @@ public class LoginController extends FlowPane implements Initializable{
 
     @FXML
     private void connect() {
-        String host = "jdbc:mysql://" + hostField.getText() + "/" + databaseField.getText() + "?serverTimezone=UTC";
-        Main.ConnectionDetails credentials = new Main.ConnectionDetails(userField.getText(), passwordField.getText(),
-                host);
-        if (Main.connectToDatabase(credentials)) {
-            prefs.put("db_name", databaseField.getText());
-            prefs.put("db_user", userField.getText());
-            prefs.put("db_host", hostField.getText());
-            fireEvent(new DatabaseEvent());
+        ConnectionWorker worker = new ConnectionWorker(prefs);
+        worker.addEventHandler(DatabaseEvent.ANY, this::handleEvents);
+        new Thread(worker).start();
+    }
+
+    private void handleEvents(Event event) {
+        if (event.getEventType() == WorkerStateEvent.WORKER_STATE_SCHEDULED) {
+            fireEvent(new DatabaseEvent(DatabaseEvent.CONNECTING));
+        } else if (event.getEventType() == WorkerStateEvent.WORKER_STATE_SUCCEEDED) {
+            fireEvent(new DatabaseEvent(DatabaseEvent.CONNECTED));
             checkVersion();
         }
     }
@@ -91,14 +96,40 @@ public class LoginController extends FlowPane implements Initializable{
         }
     }
 
+    class ConnectionWorker extends Task<Void> {
+        private Preferences prefs;
+
+        ConnectionWorker(Preferences preferences) {
+            super();
+            this.prefs = preferences;
+        }
+
+        @Override
+        protected Void call() throws Exception {
+            String host = "jdbc:mysql://" + hostField.getText() + "/" + databaseField.getText() + "?serverTimezone=UTC";
+            Main.ConnectionDetails credentials = new Main.ConnectionDetails(userField.getText(), passwordField.getText(),
+                    host);
+            if (Main.connectToDatabase(credentials)) {
+                prefs.put("db_name", databaseField.getText());
+                prefs.put("db_user", userField.getText());
+                prefs.put("db_host", hostField.getText());
+            }
+            return null;
+        }
+    }
+
     static class DatabaseEvent extends Event {
         private static final long serialVersionUID = 20121107L;
 
-        static final EventType<DatabaseEvent> CONNECT =
-                new EventType<>(Event.ANY, "CONNECT");
+        static final EventType<DatabaseEvent> CONNECTING =
+                new EventType<>(Event.ANY, "Connecting");
+        static final EventType<DatabaseEvent> CONNECTED =
+                new EventType<>(Event.ANY, "Connected");
+        static final EventType<DatabaseEvent> FAILED =
+                new EventType<>(Event.ANY, "failed");
 
-        DatabaseEvent() {
-            super(CONNECT);
+        DatabaseEvent(EventType<DatabaseEvent> type) {
+            super(type);
         }
 
         @Override

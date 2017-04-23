@@ -21,9 +21,13 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Main.primaryStage = primaryStage;
         Main.primaryStage.setTitle("AnimalKeepingDB");
-        MainViewController mv = new MainViewController();
-        Scene scene = new Scene(mv);
+        MainViewController mainView = new MainViewController();
+        mainView.prefHeightProperty().bind(primaryStage.heightProperty());
+        mainView.prefWidthProperty().bind(primaryStage.widthProperty());
+        Scene scene = new Scene(mainView);
         primaryStage.setScene(scene);
+        primaryStage.setWidth(1024);
+        primaryStage.setHeight(768);
         primaryStage.show();
     }
 
