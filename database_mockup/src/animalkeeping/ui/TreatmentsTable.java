@@ -38,15 +38,15 @@ public class TreatmentsTable extends TableView<Treatment>{
     TreatmentsTable() {
         super();
         initUI();
-        init();
+        //init();
     }
 
     public TreatmentsTable(boolean openOnly) {
         super();
         this.openOnly = openOnly;
         initUI();
-        init();
-        setOpenFilter(openOnly);
+        //init();
+        //setOpenFilter(openOnly);
     }
 
     private void initUI() {

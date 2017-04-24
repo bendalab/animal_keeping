@@ -94,7 +94,7 @@ public class PersonsTable extends TableView<Person> {
         cmenu.getItems().addAll(newItem, editItem, deleteItem, addToDBItem);
 
         this.setContextMenu(cmenu);
-        init();
+        //init();
     }
 
    /* public PersonsTable(ObservableList<Person> items) {

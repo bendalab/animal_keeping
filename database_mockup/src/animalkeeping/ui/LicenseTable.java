@@ -39,7 +39,7 @@ public class LicenseTable extends TableView<License> {
     public LicenseTable() {
         super();
         init();
-        refresh();
+        //refresh();
     }
 
     public LicenseTable(ObservableList<License> items) {
