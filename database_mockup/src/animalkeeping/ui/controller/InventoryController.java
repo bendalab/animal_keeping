@@ -14,9 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -39,6 +37,7 @@ import java.util.*;
 public class InventoryController extends VBox implements Initializable, View {
     @FXML private PieChart populationChart;
     @FXML private VBox unitsBox;
+    @FXML private ListView<String> unitsList;
     @FXML private VBox chartVbox;
     @FXML private VBox currentHousingsBox;
     @FXML private ScrollPane tableScrollPane;
@@ -46,7 +45,7 @@ public class InventoryController extends VBox implements Initializable, View {
     private TreatmentsTable treatmentsTable;
     private VBox controls;
     private HashMap<String, HousingUnit> unitsHashMap;
-    private ControlLabel allLabel;
+    //private ControlLabel allLabel;
     private ControlLabel endTreatmentLabel;
 
 
@@ -62,12 +61,18 @@ public class InventoryController extends VBox implements Initializable, View {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        allLabel = new ControlLabel("All", false);
-        allLabel.setOnMouseClicked(event -> {
-            if (event.getButton().equals(MouseButton.PRIMARY)) {
-                listAllPopulation();
+        //unitsList = new ListView<String>();
+        unitsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        unitsList.getItems().add("all");
+        unitsList.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<String>() {
+            @Override
+            public void onChanged(Change<? extends String> c) {
+                if (c.getList().size() > 0) {
+                    listPopulation(c.getList().get(0));
+                }
             }
         });
+
         unitsHashMap = new HashMap<>();
 
         housingTable = new HousingTable();
@@ -107,22 +112,17 @@ public class InventoryController extends VBox implements Initializable, View {
         controls.getChildren().add(exportStock);
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
         controls.getChildren().add(endTreatmentLabel);
-        refresh();
+        //refresh();
     }
 
     private void fillList() {
-        unitsBox.getChildren().clear();
-        unitsBox.getChildren().add(allLabel);
-        setMargin(allLabel, new Insets(0., 0., 5., 5.0 ));
+        unitsList.getItems().clear();
+        unitsList.getItems().add("all");
         List<HousingUnit> result = EntityHelper.getEntityList("from HousingUnit where parent_unit_id is NULL", HousingUnit.class);
         if (result != null) {
             for (HousingUnit h : result) {
                 unitsHashMap.put(h.getName(), h);
-                ControlLabel label = new ControlLabel(h.getName(), false);
-                label.setTextFill(allLabel.getTextFill());
-                label.setOnMouseClicked(event -> listPopulation(unitsHashMap.get(h.getName())));
-                unitsBox.getChildren().add(label);
-                setMargin(label, new Insets(0., 0., 5., 5.0 ));
+                unitsList.getItems().add(h.getName());
               }
         }
     }
@@ -151,7 +151,12 @@ public class InventoryController extends VBox implements Initializable, View {
     }
 
 
-    private void listPopulation(HousingUnit housingUnit) {
+    private void listPopulation(String unitName) {
+        if (unitName.toLowerCase().equals("all")) {
+            listAllPopulation();
+            return;
+        }
+        HousingUnit housingUnit = unitsHashMap.get(unitName);
         Set<Housing> housings = housingUnit.getAllHousings(true);
         Set<Subject> subjects = new HashSet<>();
         collectSubjects(subjects, housingUnit, true);

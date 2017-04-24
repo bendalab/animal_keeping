@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
@@ -21,7 +22,10 @@
             <Insets bottom="10.0" />
          </padding>
       </Label>
-      <VBox fx:id="unitsBox" />
+      <VBox fx:id="unitsBox">
+         <children>
+            <ListView fx:id="unitsList" minHeight="-Infinity" prefHeight="150.0" prefWidth="200.0" />
+         </children></VBox>
       <Separator maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
       <TabPane>
          <tabs>
