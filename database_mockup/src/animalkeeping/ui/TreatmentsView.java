@@ -218,10 +218,6 @@ public class TreatmentsView extends VBox implements Initializable, View{
 
     @Override
     public void refresh() {
-        selectedType = typeTable.getSelectionModel().getSelectedItem();
-        typeTable.getSelectionModel().clearSelection();
-        typeSelected(null);
         typeTable.refresh();
-        typeTable.getSelectionModel().select(selectedType);
     }
 }
