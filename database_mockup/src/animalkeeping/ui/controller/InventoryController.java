@@ -4,10 +4,15 @@ import animalkeeping.model.*;
 import animalkeeping.ui.*;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -30,6 +35,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static animalkeeping.ui.ViewEvent.*;
 
 /**
  * Created by jan on 14.01.17.
@@ -189,10 +196,35 @@ public class InventoryController extends VBox implements Initializable, View {
 
     @Override
     public void refresh() {
-        fillList();
-        refreshOpenTreatments();
-        listAllPopulation();
+        Task<Void> refreshTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                System.out.println("before run");
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        fillList();
+                        refreshOpenTreatments();
+                        listAllPopulation();
+                    }
+                });
+                return null;
+            }
+        };
+        refreshTask.addEventHandler(EventType.ROOT, this::handleEvents);
+        new Thread(refreshTask).start();
     }
+
+    private void handleEvents(Event event) {
+        if (event.getEventType() == WorkerStateEvent.WORKER_STATE_SCHEDULED) {
+            fireEvent(new ViewEvent(ViewEvent.REFRESHING));
+        } else if (event.getEventType() == WorkerStateEvent.WORKER_STATE_SUCCEEDED) {
+            fireEvent(new ViewEvent(ViewEvent.REFRESHED));
+        } else if (event.getEventType() == WorkerStateEvent.WORKER_STATE_FAILED) {
+            fireEvent(new ViewEvent(ViewEvent.REFRESH_FAIL));
+        }
+    }
+
 
     private void collectSubjects(Set<Subject> subjects, HousingUnit h) {
         collectSubjects(subjects, h, true);
