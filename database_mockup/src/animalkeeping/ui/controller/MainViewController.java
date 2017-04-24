@@ -7,6 +7,10 @@ import animalkeeping.ui.*;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 // import com.apple.eawt.*;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -135,14 +139,25 @@ public class MainViewController extends VBox implements Initializable{
             }
             inventory.prefHeightProperty().bind(this.borderPane.heightProperty());
             inventory.prefWidthProperty().bind(this.borderPane.widthProperty());
+            inventory.addEventHandler(EventType.ROOT, this::handleViewEvents);
             this.scrollPane.setContent(inventory);
             this.inventoryPane.setContent(inventory.getControls());
             collapsePanes(inventoryPane);
+            refreshView();
         } catch(Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void handleViewEvents(Event event) {
+        if (event.getEventType() == ViewEvent.REFRESHING) {
+            setBusy("Refreshing view ...");
+        } else if (event.getEventType() == ViewEvent.REFRESHED) {
+            setIdle(" ", false);
+        } else if (event.getEventType() == ViewEvent.REFRESH_FAIL) {
+            setIdle("refreshing failed!", true);
+        }
+    }
 
     @FXML
     private void showPersons() {
@@ -165,6 +180,7 @@ public class MainViewController extends VBox implements Initializable{
                 this.scrollPane.setContent(pv);
                 this.personsPane.setContent(pv.getControls());
                 collapsePanes(personsPane);
+                refreshView();
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -189,9 +205,11 @@ public class MainViewController extends VBox implements Initializable{
                 }
                 fv.prefHeightProperty().bind(this.scrollPane.heightProperty());
                 fv.prefWidthProperty().bind(this.scrollPane.widthProperty());
+                //fv.addEventHandler(EventType.ROOT, this::handleViewEvents);
                 this.scrollPane.setContent(fv);
                 subjectsPane.setContent(fv.getControls());
                 collapsePanes(subjectsPane);
+                refreshView();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -218,6 +236,7 @@ public class MainViewController extends VBox implements Initializable{
                 this.scrollPane.setContent(treatmentsView);
                 this.treatmentsPane.setContent(treatmentsView.getControls());
                 collapsePanes(treatmentsPane);
+                refreshView();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -244,6 +263,7 @@ public class MainViewController extends VBox implements Initializable{
                 this.scrollPane.setContent(housingView);
                 this.animalHousingPane.setContent(housingView.getControls());
                 collapsePanes(animalHousingPane);
+                refreshView();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -270,6 +290,7 @@ public class MainViewController extends VBox implements Initializable{
                 this.scrollPane.setContent(licenseView);
                 this.licensesPane.setContent(licenseView.getControls());
                 collapsePanes(licensesPane);
+                refreshView();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -375,8 +396,20 @@ public class MainViewController extends VBox implements Initializable{
 
     @FXML
     private void refreshView() {
+
         if (this.scrollPane.getContent() instanceof View) {
-            ((View) this.scrollPane.getContent()).refresh();
+            Task<Void> refreshTask = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    Thread.sleep(100);
+                    ((View) scrollPane.getContent()).refresh();
+                    return null;
+                }
+            };
+            refreshTask.setOnScheduled(event -> setBusy("refreshing ..."));
+            refreshTask.setOnSucceeded(event -> setIdle("", false));
+
+            new Thread(refreshTask).start();
         }
     }
 
@@ -459,6 +492,8 @@ public class MainViewController extends VBox implements Initializable{
 
 
     private void connectedToDatabase(LoginController.DatabaseEvent event) {
+        if (event == null)
+            return;
         if(event.getEventType() == LoginController.DatabaseEvent.CONNECTED) {
             subjectsPane.setDisable(false);
             personsPane.setDisable(false);
@@ -536,19 +571,32 @@ public class MainViewController extends VBox implements Initializable{
         }
     }
     */
-    public void setBusy(String message) {
-        progressBar.setProgress(-1.0);
+    private void setBusy(String message) {
+        /*progressBar.setProgress(-1.0);
         if (message != null) {
             messageLabel.setText(message);
         }
+        */
+        Platform.runLater(() -> {
+            progressBar.setProgress(-1.0);
+            if (message != null) {
+                messageLabel.setText(message);
+            }
+        });
+
     }
 
-    public void setIdle(String message, boolean error) {
-        progressBar.setProgress(0.);
+    private void setIdle(String message, boolean error) {
+
+
+        Platform.runLater(() -> {
+progressBar.setProgress(0.);
         messageLabel.setText("");
         if (message != null) {
             messageLabel.setText(message);
             //messageLabel
         }
+        });
+
     }
 }
