@@ -48,7 +48,7 @@
               <items>
                   <Menu fx:id="subjectTypeMenu" disable="true" mnemonicParsing="false" text="subject types" />
                   <Menu fx:id="speciesTypeMenu" disable="true" mnemonicParsing="false" text="species" />
-                  <Menu fx:id="supplierMenu" disable="true" mnemonicParsing="false" text="supplier" />
+                  <Menu fx:id="supplierMenu" mnemonicParsing="false" text="supplier" />
               </items>
             </Menu>
         <Menu mnemonicParsing="false" text="Help">

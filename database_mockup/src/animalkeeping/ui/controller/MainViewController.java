@@ -572,30 +572,22 @@ public class MainViewController extends VBox implements Initializable{
     }
     */
     private void setBusy(String message) {
-        /*progressBar.setProgress(-1.0);
-        if (message != null) {
-            messageLabel.setText(message);
-        }
-        */
         Platform.runLater(() -> {
             progressBar.setProgress(-1.0);
-            if (message != null) {
-                messageLabel.setText(message);
-            }
+            messageLabel.setText(message != null ? message : "");
         });
 
     }
 
     private void setIdle(String message, boolean error) {
-
-
         Platform.runLater(() -> {
-progressBar.setProgress(0.);
-        messageLabel.setText("");
-        if (message != null) {
-            messageLabel.setText(message);
-            //messageLabel
-        }
+            progressBar.setProgress(0.);
+            messageLabel.setText(message != null ? message : "");
+            if (error) {
+                this.setStyle("-fx-text-inner-color: red;");
+            } else {
+                this.setStyle("-fx-text-inner-color: green;");
+            }
         });
 
     }
