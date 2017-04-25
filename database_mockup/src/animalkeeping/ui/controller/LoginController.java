@@ -6,6 +6,7 @@ import animalkeeping.util.Version;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
@@ -66,7 +67,10 @@ public class LoginController extends FlowPane implements Initializable{
     private void connect() {
         ConnectionWorker worker = new ConnectionWorker(prefs);
         worker.addEventHandler(DatabaseEvent.ANY, this::handleEvents);
+        worker.setOnFailed(event -> fireEvent(new DatabaseEvent(DatabaseEvent.FAILED,
+                worker.exceptionProperty().getValue().getCause().getCause().getMessage())));
         new Thread(worker).start();
+
     }
 
     private void handleEvents(Event event) {
@@ -120,18 +124,20 @@ public class LoginController extends FlowPane implements Initializable{
 
     static class DatabaseEvent extends Event {
         private static final long serialVersionUID = 20121107L;
-
-        static final EventType<DatabaseEvent> CONNECTING =
-                new EventType<>(Event.ANY, "Connecting");
-        static final EventType<DatabaseEvent> CONNECTED =
-                new EventType<>(Event.ANY, "Connected");
-        static final EventType<DatabaseEvent> FAILED =
-                new EventType<>(Event.ANY, "failed");
+        private String message = "";
+        static final EventType<DatabaseEvent> DATABASE_ALL = new EventType<>("DATABASE all");
+        static final EventType<DatabaseEvent> CONNECTING = new EventType<>(DATABASE_ALL, "Connecting");
+        static final EventType<DatabaseEvent> CONNECTED = new EventType<>(DATABASE_ALL, "Connected");
+        static final EventType<DatabaseEvent> FAILED = new EventType<>(DATABASE_ALL, "failed");
 
         DatabaseEvent(EventType<DatabaseEvent> type) {
             super(type);
         }
 
+        DatabaseEvent(EventType<DatabaseEvent> type, String message) {
+            this(type);
+            this.message = message;
+        }
         @Override
         public DatabaseEvent copyFor(Object newSource, EventTarget newTarget) {
             return (DatabaseEvent) super.copyFor(newSource, newTarget);
@@ -141,6 +147,11 @@ public class LoginController extends FlowPane implements Initializable{
         public EventType<? extends DatabaseEvent> getEventType() {
             return (EventType<? extends DatabaseEvent>) super.getEventType();
         }
+
+        public String getMessage() {
+            return message;
+        }
+
     }
 
 }

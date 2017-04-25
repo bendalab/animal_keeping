@@ -199,7 +199,6 @@ public class InventoryController extends VBox implements Initializable, View {
         Task<Void> refreshTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                System.out.println("before run");
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
