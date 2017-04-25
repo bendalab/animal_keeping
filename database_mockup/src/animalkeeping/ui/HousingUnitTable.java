@@ -3,13 +3,15 @@ package animalkeeping.ui;
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.HousingUnit;
 import animalkeeping.util.Dialogs;
+import animalkeeping.util.EntityHelper;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 
 import java.util.List;
 
@@ -23,7 +25,7 @@ public class HousingUnitTable extends TreeTableView<HousingUnit> {
 
 
     public HousingUnitTable () {
-        super();
+        //super();
         initialize();
     }
 
@@ -90,7 +92,6 @@ public class HousingUnitTable extends TreeTableView<HousingUnit> {
 
         cmenu.getItems().addAll(newItem, appendItem, editItem, deleteItem);
         setContextMenu(cmenu);
-        fillHousingTree();
     }
 
     @Override
@@ -100,31 +101,30 @@ public class HousingUnitTable extends TreeTableView<HousingUnit> {
     }
 
     private void fillHousingTree() {
-        final TreeItem<HousingUnit> root = new TreeItem<>();
-        root.setExpanded(true);
-        Session session = Main.sessionFactory.openSession();
-        List<HousingUnit> housingUnits = null;
-        try {
-            session.beginTransaction();
-            housingUnits = session.createQuery("from HousingUnit where parentUnit is null", HousingUnit.class).list();
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
+        Task<Void> refreshTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                ObservableList<Integer> indices = getSelectionModel().getSelectedIndices();
+                Integer idx = indices.size() > 0 ? indices.get(0) : 0;
+                System.out.println(indices);
+                final TreeItem<HousingUnit> root = new TreeItem<>();
+                List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit where parentUnit is null", HousingUnit.class);
+                for (HousingUnit hu : housingUnits) {
+                    TreeItem<HousingUnit> child = new TreeItem<>(hu);
+                    root.getChildren().add(child);
+                    fillRecursive(hu, child);
+                }
+                Platform.runLater(() -> {
+                    root.setExpanded(true);
+                    setRoot(root);
+                    setShowRoot(false);
+
+                    getSelectionModel().select(idx);
+                });
+                return null;
             }
-        }
-        if (housingUnits == null) {
-            return;
-        }
-        for (HousingUnit hu : housingUnits) {
-            TreeItem<HousingUnit> child = new TreeItem<>(hu);
-            root.getChildren().add(child);
-            fillRecursive(hu, child);
-        }
-        this.setRoot(root);
-        this.setShowRoot(false);
+        };
+        new Thread(refreshTask).start();
     }
 
 

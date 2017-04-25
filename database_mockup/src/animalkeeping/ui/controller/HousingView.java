@@ -3,6 +3,7 @@ package animalkeeping.ui.controller;
 import animalkeeping.model.HousingType;
 import animalkeeping.model.HousingUnit;
 import animalkeeping.ui.*;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -156,19 +157,19 @@ public class HousingView extends VBox implements Initializable, View {
             }
         });
         controls.getChildren().add(batchTreatmentLabel);
-
-        refresh();
     }
 
 
     private void setSelectedUnit(HousingUnit unit) {
-        populationChart.listPopulation(unit);
-        deleteUnitLabel.setDisable(unit == null);
-        editUnitLabel.setDisable(unit == null);
-        importSubjectsLabel.setDisable(unit == null);
-        batchTreatmentLabel.setDisable(unit == null);
-        appendUnitLabel.setDisable(unit == null);
-        housingTable.setHousingUnit(unit);
+        Platform.runLater(() -> {
+            populationChart.listPopulation(unit);
+            deleteUnitLabel.setDisable(unit == null);
+            editUnitLabel.setDisable(unit == null);
+            importSubjectsLabel.setDisable(unit == null);
+            batchTreatmentLabel.setDisable(unit == null);
+            appendUnitLabel.setDisable(unit == null);
+            housingTable.setHousingUnit(unit);
+        });
     }
 
 
