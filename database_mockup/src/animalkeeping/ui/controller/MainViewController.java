@@ -19,6 +19,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 import java.io.IOException;
 import java.net.URL;
@@ -509,8 +510,8 @@ public class MainViewController extends VBox implements Initializable{
             setIdle("Successfully connected to database!", false);
         } else if (event.getEventType() == LoginController.DatabaseEvent.CONNECTING) {
             setBusy("Connecting to database...");
-        } else {
-            setIdle("Connection failed!", true);
+        } else if (event.getEventType() == LoginController.DatabaseEvent.FAILED) {
+            setIdle("Connection failed! " + event.getMessage(), true);
         }
     }
 
@@ -574,6 +575,7 @@ public class MainViewController extends VBox implements Initializable{
     private void setBusy(String message) {
         Platform.runLater(() -> {
             progressBar.setProgress(-1.0);
+            messageLabel.setTextFill(Color.BLACK);
             messageLabel.setText(message != null ? message : "");
         });
 
@@ -582,12 +584,12 @@ public class MainViewController extends VBox implements Initializable{
     private void setIdle(String message, boolean error) {
         Platform.runLater(() -> {
             progressBar.setProgress(0.);
-            messageLabel.setText(message != null ? message : "");
             if (error) {
-                this.setStyle("-fx-text-inner-color: red;");
+                messageLabel.setTextFill(Color.RED);
             } else {
-                this.setStyle("-fx-text-inner-color: green;");
+                messageLabel.setTextFill(Color.BLACK);
             }
+            messageLabel.setText(message != null ? message : "");
         });
 
     }
