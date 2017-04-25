@@ -8,11 +8,11 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static animalkeeping.util.Dialogs.showInfo;
@@ -100,28 +100,59 @@ public class HousingUnitTable extends TreeTableView<HousingUnit> {
         super.refresh();
     }
 
+    private HashMap<String, Boolean> getFoldingState() {
+        HashMap<String, Boolean> states = new HashMap<>();
+        int row = 0;
+        while (true) {
+            TreeItem<HousingUnit> item = getTreeItem(row);
+            if (item == null) {
+                break;
+            } else {
+                states.put(item.getValue().getName(), item.isExpanded());
+            }
+            row++;
+        }
+        return states;
+    }
+
+
+    private void setFoldingState(HashMap<String, Boolean> state) {
+        int row = 0;
+        while (true) {
+            TreeItem<HousingUnit> item = getTreeItem(row);
+            if (item == null) {
+                break;
+            } else {
+                if (state.containsKey(item.getValue().getName())) {
+                    item.setExpanded(state.get(item.getValue().getName()));
+                }
+            }
+            row++;
+        }
+    }
+
+
     private void fillHousingTree() {
         Task<Void> refreshTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                ObservableList<Integer> indices = getSelectionModel().getSelectedIndices();
-                Integer idx = indices.size() > 0 ? indices.get(0) : 0;
-                System.out.println(indices);
-                final TreeItem<HousingUnit> root = new TreeItem<>();
-                List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit where parentUnit is null", HousingUnit.class);
-                for (HousingUnit hu : housingUnits) {
-                    TreeItem<HousingUnit> child = new TreeItem<>(hu);
-                    root.getChildren().add(child);
-                    fillRecursive(hu, child);
-                }
-                Platform.runLater(() -> {
-                    root.setExpanded(true);
-                    setRoot(root);
-                    setShowRoot(false);
-
-                    getSelectionModel().select(idx);
-                });
-                return null;
+            HashMap<String, Boolean> folding = getFoldingState();
+            TreeItem<HousingUnit> seletedItem = getSelectionModel().getSelectedItem();
+            final TreeItem<HousingUnit> root = new TreeItem<>();
+            List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit where parentUnit is null", HousingUnit.class);
+            for (HousingUnit hu : housingUnits) {
+                TreeItem<HousingUnit> child = new TreeItem<>(hu);
+                root.getChildren().add(child);
+                fillRecursive(hu, child);
+            }
+            Platform.runLater(() -> {
+                root.setExpanded(true);
+                setRoot(root);
+                setShowRoot(false);
+                setFoldingState(folding);
+                getSelectionModel().select(seletedItem);
+            });
+            return null;
             }
         };
         new Thread(refreshTask).start();
