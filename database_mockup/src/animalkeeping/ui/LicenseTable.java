@@ -15,9 +15,6 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCombination;
-
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -25,23 +22,13 @@ import java.util.List;
  * Created by jan on 18.02.17.
  */
 public class LicenseTable extends TableView<License> {
-    private TableColumn<License, Number> idCol;
-    private TableColumn<License, String> nameCol;
-    private TableColumn<License, String> agencyCol;
-    private TableColumn<License, String> fileNumberCol;
-    private TableColumn<License, String> respPersonCol;
-    private TableColumn<License, String> deputyPersonCol;
-    private TableColumn<License, Date> startDateCol;
-    private TableColumn<License, Date> endDateCol;
-    private MenuItem newLicenseItem, editLicenseItem, deleteLicenseItem;
+    private MenuItem editLicenseItem;
+    private MenuItem deleteLicenseItem;
     private ObservableList<License> masterList = FXCollections.observableArrayList();
-    SortedList<License> sortedList;
-    private FilteredList<License> filteredList;
 
     public LicenseTable() {
         super();
         init();
-        //refresh();
     }
 
     public LicenseTable(ObservableList<License> items) {
@@ -50,41 +37,41 @@ public class LicenseTable extends TableView<License> {
     }
 
     private void init() {
-        filteredList = new FilteredList<>(masterList, p -> true);
-        sortedList = new SortedList<>(filteredList);
+        FilteredList<License> filteredList = new FilteredList<>(masterList, p -> true);
+        SortedList<License> sortedList = new SortedList<>(filteredList);
         sortedList.comparatorProperty().bind(this.comparatorProperty());
         setItems(sortedList);
 
-        idCol = new TableColumn<>("id");
+        TableColumn<License, Number> idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
         idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.05));
 
-        nameCol = new TableColumn<>("name");
+        TableColumn<License, String> nameCol = new TableColumn<>("name");
         nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
         nameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.149));
 
-        startDateCol= new TableColumn<>("from");
+        TableColumn<License, Date> startDateCol = new TableColumn<>("from");
         startDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getStartDate()));
         startDateCol.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
 
-        endDateCol= new TableColumn<>("until");
+        TableColumn<License, Date> endDateCol = new TableColumn<>("until");
         endDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getEndDate()));
         endDateCol.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
 
-        agencyCol = new TableColumn<>("filing agency");
+        TableColumn<License, String> agencyCol = new TableColumn<>("filing agency");
         agencyCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAgency() != null ? data.getValue().getAgency() : ""));
         agencyCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
-        fileNumberCol = new TableColumn<>("file number");
+        TableColumn<License, String> fileNumberCol = new TableColumn<>("file number");
         fileNumberCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getNumber()));
         fileNumberCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
-        respPersonCol = new TableColumn<>("responsible");
+        TableColumn<License, String> respPersonCol = new TableColumn<>("responsible");
         respPersonCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getResponsiblePerson() != null ?
                 data.getValue().getResponsiblePerson().getFirstName() + " " + data.getValue().getResponsiblePerson().getLastName() : ""));
         respPersonCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
-        deputyPersonCol = new TableColumn<>("deputy");
+        TableColumn<License, String> deputyPersonCol = new TableColumn<>("deputy");
         deputyPersonCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getDeputy() != null ?
                 data.getValue().getDeputy().getFirstName() + " " + data.getValue().getDeputy().getLastName() : ""));
         deputyPersonCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
@@ -106,7 +93,7 @@ public class LicenseTable extends TableView<License> {
         });
 
         ContextMenu cmenu = new ContextMenu();
-        newLicenseItem = new MenuItem("new license");
+        MenuItem newLicenseItem = new MenuItem("new license");
         newLicenseItem.setOnAction(event -> editLicense(null));
 
         editLicenseItem = new MenuItem("edit license");
