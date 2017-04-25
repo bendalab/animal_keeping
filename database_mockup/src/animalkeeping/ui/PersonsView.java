@@ -230,10 +230,7 @@ public class PersonsView  extends VBox implements Initializable, View {
 
     @Override
     public void refresh() {
-        personSelected(null);
-        Person p = personsTable.getSelectionModel().getSelectedItem();
         personsTable.refresh();
-        personsTable.setSelectedPerson(p);
     }
 
 

@@ -6,6 +6,7 @@ import animalkeeping.util.AddDatabaseUserDialog;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import animalkeeping.util.SuperUserDialog;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -13,6 +14,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.scene.control.*;
 
 
@@ -103,12 +105,24 @@ public class PersonsTable extends TableView<Person> {
     }*/
 
     private void init() {
-        List<Person> result = EntityHelper.getEntityList("from Person", Person.class);
-        masterList.addAll(result);
-        filteredList = new FilteredList<>(masterList, p -> true);
-        SortedList<Person> sortedList = new SortedList<>(filteredList);
-        sortedList.comparatorProperty().bind(this.comparatorProperty());
-        this.setItems(sortedList);
+        Task<Void> refreshTask = new Task<Void>() {
+            Person p = getSelectionModel().getSelectedItem();
+            @Override
+            protected Void call() throws Exception {
+                List<Person> result = EntityHelper.getEntityList("from Person", Person.class);
+                Platform.runLater(() -> {
+                    masterList.clear();
+                    masterList.addAll(result);
+                    filteredList = new FilteredList<>(masterList, p -> true);
+                    SortedList<Person> sortedList = new SortedList<>(filteredList);
+                    sortedList.comparatorProperty().bind(comparatorProperty());
+                    setItems(sortedList);
+                    getSelectionModel().select(p);
+                });
+                return null;
+            }
+        };
+        new Thread(refreshTask).start();
     }
 
     public void setNameFilter(String name) {
@@ -132,8 +146,7 @@ public class PersonsTable extends TableView<Person> {
 
 
     public void refresh() {
-        masterList.clear();
-        masterList.addAll(EntityHelper.getEntityList("from Person", Person.class));
+        init();
         super.refresh();
     }
 
