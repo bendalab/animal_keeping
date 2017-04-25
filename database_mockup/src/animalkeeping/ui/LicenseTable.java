@@ -4,6 +4,7 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.License;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -12,6 +13,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCombination;
 
@@ -127,9 +129,20 @@ public class LicenseTable extends TableView<License> {
 
     @Override
     public void refresh() {
-        List<License> result = EntityHelper.getEntityList("from License", License.class);
-        setLicenses(result);
-        super.refresh();
+        License l = getSelectionModel().getSelectedItem();
+        Task<Void> refreshTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                List<License> result = EntityHelper.getEntityList("from License", License.class);
+                Platform.runLater(() -> {
+                    masterList.clear();
+                    masterList.addAll(result);
+                    getSelectionModel().select(l);
+                });
+                return null;
+            }
+        };
+        new Thread(refreshTask).start();
     }
 
     public void remove(License l) {
@@ -143,12 +156,6 @@ public class LicenseTable extends TableView<License> {
         this.getSelectionModel().select(l);
     }
 
-    public void setLicenses(Collection<License> licenses) {
-        masterList.clear();
-        if (licenses != null) {
-            masterList.addAll(licenses);
-        }
-    }
 
     private void editLicense(License l) {
         License ls = Dialogs.editLicenseDialog(l);
