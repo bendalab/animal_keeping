@@ -31,31 +31,15 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static  boolean connectToDatabase(ConnectionDetails credentials) {
+    public static  boolean connectToDatabase(ConnectionDetails credentials) throws Exception {
         StandardServiceRegistryBuilder registrybuilder = new StandardServiceRegistryBuilder();
         registrybuilder.configure();
         registrybuilder.applySettings(credentials.getCredentials());
 
         final StandardServiceRegistry registry = registrybuilder.build();
-
-        try {
-            sessionFactory = new MetadataSources( registry ).buildMetadata().buildSessionFactory();
-            connected = true;
-            return true;
-        }
-        catch (Exception e) {
-            StandardServiceRegistryBuilder.destroy( registry );
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Connection error!");
-            alert.setHeaderText("Cannot establish connection to database!");
-            String s = e.getLocalizedMessage();
-            alert.setContentText(s);
-            alert.show();
-            e.printStackTrace();
-            connected = false;
-            return false;
-        }
-
+        sessionFactory = new MetadataSources( registry ).buildMetadata().buildSessionFactory();
+        connected = true;
+        return true;
     }
 
 
