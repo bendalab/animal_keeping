@@ -15,7 +15,7 @@ public class Main extends Application {
     public static SessionFactory sessionFactory;
     private static Boolean connected = false;
     private static Stage primaryStage;
-
+    private static ConnectionDetails connectionDetails = null;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -39,6 +39,7 @@ public class Main extends Application {
         final StandardServiceRegistry registry = registrybuilder.build();
         sessionFactory = new MetadataSources( registry ).buildMetadata().buildSessionFactory();
         connected = true;
+        connectionDetails = credentials;
         return true;
     }
 
@@ -55,6 +56,9 @@ public class Main extends Application {
         return  sessionFactory;
     }
 
+    public static ConnectionDetails getCredentials(){
+        return connectionDetails;
+    };
 
     public static void main(String[] args) {
         launch(args);
@@ -69,11 +73,15 @@ public class Main extends Application {
 		private String user;
 		private String passwd;
 		private String hostName;
+        private String databaseName;
+        private String hostUrl;
 
-		public ConnectionDetails(String userName, String password, String host) {
+		public ConnectionDetails(String userName, String password, String host, String dbName, String hostUrl) {
 			user = userName;
 			passwd = password;
 			hostName = host;
+			databaseName = dbName;
+			this.hostUrl = hostUrl;
 		}
 
         public String getUser() {
@@ -86,11 +94,15 @@ public class Main extends Application {
 
         public String getHostName() { return hostName; }
 
+        public String getDatabaseName() { return databaseName; }
+
+        public String getHostUrl() { return hostUrl; }
+
         public HashMap<String, String> getCredentials() {
 		    HashMap<String, String> cred = new HashMap<>();
             cred.put("hibernate.connection.username", getUser());
             cred.put("hibernate.connection.password", getPasswd());
-            cred.put("hibernate.connection.url", getHostName());
+            cred.put("hibernate.connection.url", getHostUrl());
             return  cred;
 		}
 
