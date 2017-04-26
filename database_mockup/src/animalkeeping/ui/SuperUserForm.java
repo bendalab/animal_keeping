@@ -51,7 +51,7 @@ public class SuperUserForm extends VBox{
     }
 
     public Connection openDatabaseUserDialog(String rootName, String rootPassword) {
-        String url = "jdbc:mysql://localhost:3306/animal_keeping";
+        String url = "jdbc:mysql://localhost:3306/animal_keeping?serverTimezone=UTC";
     try {
         Connection connection = DriverManager.getConnection(url, rootName, rootPassword);
 
