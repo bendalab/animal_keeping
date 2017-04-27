@@ -171,17 +171,11 @@ public class TreatmentsView extends VBox implements Initializable, View{
     }
 
     private void editTreatmentType(TreatmentType type) {
-        Dialogs.editTreatmentTypeDialog(type);
-        refresh();
+        typeTable.editTreatmentType(type);
     }
 
     private void deleteType(TreatmentType type) {
-        if (type.getTreatments().size() > 0) {
-            Dialogs.showInfo("Can not delete treatement type since it is referenced by treatment entries!");
-            return;
-        }
-        Communicator.pushDelete(type);
-        refresh();
+        typeTable.deleteTreatmentType(type);
     }
 
 
