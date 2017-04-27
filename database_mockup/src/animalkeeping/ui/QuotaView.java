@@ -1,23 +1,22 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.License;
 import animalkeeping.model.Quota;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.beans.property.*;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.ProgressBarTableCell;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class QuotaView extends VBox implements Initializable {
@@ -26,6 +25,7 @@ public class QuotaView extends VBox implements Initializable {
     @FXML private TableColumn<Quota, Number> numberCol;
     @FXML private TableColumn<Quota, Number> usedCol;
     @FXML private TableColumn<Quota, Double> progressCol;
+    private MenuItem newItem, editItem, deleteItem;
     License license = null;
 
 
@@ -77,7 +77,28 @@ public class QuotaView extends VBox implements Initializable {
             return row ;
         });
 
+        this.quotaTable.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Quota>() {
+            @Override
+            public void onChanged(Change<? extends Quota> c) {
+                int sel_count = c.getList().size();
+                editItem.setDisable(sel_count == 0);
+                deleteItem.setDisable(sel_count == 0);
+            }
+        });
 
+        ContextMenu cmenu = new ContextMenu();
+        newItem = new MenuItem("new quota");
+        newItem.setOnAction(event -> editQuota(null));
+
+        editItem = new MenuItem("edit quota");
+        editItem.setDisable(true);
+        editItem.setOnAction(event -> editQuota(quotaTable.getSelectionModel().getSelectedItem()));
+
+        deleteItem = new MenuItem("delete quota");
+        deleteItem.setDisable(true);
+        deleteItem.setOnAction(event -> deleteQuota(quotaTable.getSelectionModel().getSelectedItem()));
+        cmenu.getItems().addAll(newItem, editItem, deleteItem);
+        this.quotaTable.setContextMenu(cmenu);
     }
 
     public void setQuota(Collection<Quota> quota) {
@@ -92,7 +113,7 @@ public class QuotaView extends VBox implements Initializable {
     public Quota getSelectedItem() {
         Quota q = null;
         if (!quotaTable.getSelectionModel().isEmpty()) {
-            return  quotaTable.getSelectionModel().getSelectedItem();
+            q = quotaTable.getSelectionModel().getSelectedItem();
         }
         return q;
     }
@@ -119,4 +140,27 @@ public class QuotaView extends VBox implements Initializable {
         else
             quotaTable.getSelectionModel().clearSelection();
     }
+
+    private void editQuota(Quota q) {
+        Quota quota;
+        if (q == null)
+            quota = Dialogs.editQuotaDialog(license);
+        else
+            quota = Dialogs.editQuotaDialog(q);
+        if (quota != null) {
+            setLicense(this.license);
+            setSelectedQuota(quota);
+        }
+    }
+
+    private void deleteQuota(Quota q) {
+        if (q.getUsed() > 0) {
+            Dialogs.showInfo("Cannot delete Quota " + q.getSpeciesType().getName().substring(0, 20) + " since it is referenced by treatments!");
+            return;
+        }
+        Communicator.pushDelete(q);
+        refresh();
+    }
+
+
 }

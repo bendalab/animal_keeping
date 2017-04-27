@@ -1,17 +1,24 @@
 package animalkeeping.util;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.*;
+import animalkeeping.ui.HousingForm;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.util.Callback;
 import javafx.util.Pair;
+import javafx.util.StringConverter;
 import org.hibernate.Session;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static animalkeeping.util.DateTimeHelper.getDateTime;
 
 public class Dialogs {
 
@@ -117,7 +124,7 @@ public class Dialogs {
 
 
     public static HousingUnit editHousingUnitDialog(HousingUnit unit) {
-        return editHousingUnitDialog(unit, unit.getParentUnit());
+        return editHousingUnitDialog(unit, unit != null ? unit.getParentUnit() : null);
     }
 
 
@@ -130,6 +137,7 @@ public class Dialogs {
         dialog.getDialogPane().setContent(hud);
         hud.prefWidthProperty().bind(dialog.widthProperty());
         dialog.setWidth(200);
+        dialog.setHeight(500);
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -175,7 +183,7 @@ public class Dialogs {
     }
 
     public static Quota editQuotaDialog(Quota q) {
-        return editQuotaDialog(q, null);
+        return editQuotaDialog(q,  q.getLicense());
     }
 
     public static Quota editQuotaDialog(License l) {
@@ -525,16 +533,6 @@ public class Dialogs {
         });
         Optional<Treatment> result = dialog.showAndWait();
         if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
             return result.get();
         }
         return null;
@@ -569,5 +567,231 @@ public class Dialogs {
         return null;
     }
 
+    public static SubjectNote editSubjectNoteDialog(SubjectNote note, Subject subject) {
+        SubjectNotesForm snf = new SubjectNotesForm(note, subject);
+        return editSubjectNoteDialog(snf);
+    }
+
+    public static SubjectNote editSubjectNoteDialog(Subject subject) {
+        SubjectNotesForm snf = new SubjectNotesForm(subject);
+        return editSubjectNoteDialog(snf);
+    }
+
+    public static SubjectNote editSubjectNoteDialog(SubjectNotesForm snf) {
+        if (snf == null) {
+            return null;
+        }
+        Dialog<SubjectNote> dialog = new Dialog<>();
+        dialog.setTitle("Add/edit note ...");
+        dialog.setHeight(300);
+        dialog.setWidth(400);
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(snf);
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+        dialog.setResultConverter(new Callback<ButtonType, SubjectNote>() {
+            @Override
+            public SubjectNote call(ButtonType b) {
+                if (b == buttonTypeOk) {
+                    return snf.persist();
+                }
+                return null;
+            }
+        });
+        Optional<SubjectNote> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            return result.get();
+        }
+        return null;
+    }
+
+    public static  Housing editHousing(Housing housing) {
+        HousingForm form = new HousingForm(housing);
+
+        Dialog<Housing> dialog = new Dialog<>();
+        dialog.setTitle("Create/edit housing ...");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(form);
+        dialog.setWidth(300);
+        form.prefWidthProperty().bind(dialog.widthProperty());
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return form.persistHousing();
+            }
+            return null;
+        });
+        Optional<Housing> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            return result.get();
+        }
+        return null;
+    }
+
+    public static Subject reportSubjectDead(Subject s) {
+        Housing current_housing = s.getCurrentHousing();
+        Dialog<Date> dialog = new Dialog<>();
+        dialog.setTitle("Report subject dead ...");
+        dialog.setHeight(200);
+        dialog.setWidth(300);
+        dialog.setResizable(true);
+
+        DatePicker dp = new DatePicker();
+        dp.setValue(LocalDate.now());
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        TextField timeField = new TextField(timeFormat.format(new Date()));
+        ComboBox<Person> personComboBox = new ComboBox<>();
+        personComboBox.setConverter(new StringConverter<Person>() {
+            @Override
+            public String toString(Person object) {
+                return object.getFirstName() + ", " + object.getLastName();
+            }
+
+            @Override
+            public Person fromString(String string) {
+                return null;
+            }
+        });
+        List<Person> persons = EntityHelper.getEntityList("from Person", Person.class);
+        personComboBox.getItems().addAll(persons);
+        TextArea commentArea = new TextArea();
+
+        GridPane grid = new GridPane();
+        ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
+        column1.setHgrow(Priority.NEVER);
+        ColumnConstraints column2 = new ColumnConstraints(100, 150, Double.MAX_VALUE);
+        column2.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(column1, column2);
+        dp.prefWidthProperty().bind(column2.maxWidthProperty());
+        timeField.prefWidthProperty().bind(column2.maxWidthProperty());
+        personComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
+        commentArea.prefWidthProperty().bind(column2.maxWidthProperty());
+
+        grid.add(new Label("subject: "), 0, 0);
+        grid.add(new Label( s.getName()), 1, 0);
+
+        grid.add(new Label("date:"), 0, 1);
+        grid.add(dp, 1, 1);
+
+        grid.add(new Label("time:"), 0, 2);
+        grid.add(timeField, 1, 2);
+
+        grid.add(new Label("person:"), 0, 3);
+        grid.add(personComboBox, 1, 3);
+
+        grid.add(new Label("comment:"), 0, 4);
+        grid.add(commentArea, 0, 5, 2, 4);
+
+        dialog.getDialogPane().setContent(grid);
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+        dialog.setResultConverter(new Callback<ButtonType, Date>() {
+            @Override
+            public Date call(ButtonType b) {
+                if (b == buttonTypeOk) {
+                    return getDateTime(dp.getValue(), timeField.getText());
+                }
+                return null;
+            }
+        });
+        Optional<Date> result = dialog.showAndWait();
+        if (result.isPresent() && result.get().after(current_housing.getStart())) {
+            current_housing.setEnd(result.get());
+            SubjectNote note = new SubjectNote("reported dead", commentArea.getText(), result.get(), s);
+            note.setPerson(personComboBox.getValue());
+            Communicator.pushSaveOrUpdate(note);
+            Communicator.pushSaveOrUpdate(current_housing);
+            return s;
+        }
+        return null;
+    }
+
+    public static Subject relocateSubjectDialog(Subject s) {
+        HousingUnit current_hu = s.getCurrentHousing().getHousing();
+
+        Dialog<HousingUnit> dialog = new Dialog<>();
+        dialog.setResizable(true);
+        dialog.setTitle("Select a housing unit");
+        dialog.setHeight(300);
+        dialog.setWidth(600);
+        HousingUnitTable hut = new HousingUnitTable();
+        DatePicker dp = new DatePicker();
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        TextField timeField = new TextField(timeFormat.format(new Date()));
+
+        GridPane grid = new GridPane();
+        ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
+        column1.setHgrow(Priority.NEVER);
+        ColumnConstraints column2 = new ColumnConstraints(100, 250, Double.MAX_VALUE);
+        column2.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(column1, column2);
+        dp.prefWidthProperty().bind(column2.maxWidthProperty());
+        timeField.prefWidthProperty().bind(column2.maxWidthProperty());
+        hut.prefWidthProperty().bind(column2.maxWidthProperty());
+
+        grid.setVgap(5);
+        grid.setHgap(2);
+        grid.add(new Label("relocation date:"), 0, 0);
+        grid.add(dp, 1, 0);
+
+        grid.add(new Label("relocation time:"), 0, 1);
+        grid.add(timeField, 1, 1, 1, 1);
+
+        grid.add(new Label("housing unit:"), 0, 2);
+        grid.add(hut, 0, 3, 2, 5 );
+
+        //this.getChildren().add(new ScrollPane(housingTable));
+        dialog.getDialogPane().setContent(grid);
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+
+        dialog.setResultConverter(new Callback<ButtonType, HousingUnit>() {
+            @Override
+            public HousingUnit call(ButtonType b) {
+                if (b == buttonTypeOk) {
+                    return hut.getSelectedUnit();
+                }
+                return null;
+            }
+        });
+        Optional<HousingUnit> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() != current_hu) {
+            LocalDate d = dp.getValue();
+            Date currentDate = getDateTime(d, timeField.getText());
+
+            HousingUnit new_hu = result.get();
+            Housing current_housing = s.getCurrentHousing();
+            if (currentDate.before(current_housing.getStart())) {
+                showInfo("Error during relocation of subject. Relocation date before start date of current housing!");
+                return null;
+            }
+
+            Housing new_housing = new Housing();
+            new_housing.setStart(currentDate);
+            new_housing.setSubject(s);
+            new_housing.setHousing(new_hu);
+            current_housing.setEnd(currentDate);
+            Communicator.pushSaveOrUpdate(current_housing);
+            Communicator.pushSaveOrUpdate(new_housing);
+            return s;
+        }
+        return null;
+    }
 }
+
 

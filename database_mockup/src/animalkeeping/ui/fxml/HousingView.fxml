@@ -7,8 +7,7 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TreeTableColumn?>
-<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -21,24 +20,17 @@
       </Label>
       <SplitPane fx:id="unitsSplit" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
          <items>
-            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="300.0" prefWidth="308.0">
-               <content>
-                  <TreeTableView fx:id="table" prefHeight="500.0" prefWidth="222.0">
-                    <columns>
-                        <TreeTableColumn fx:id="unitsColumn" maxWidth="1.7976931348623157E308" prefWidth="75.0" text="unit" />
-                      <TreeTableColumn fx:id="typeColumn" maxWidth="1.7976931348623157E308" prefWidth="75.0" text="type" />
-                        <TreeTableColumn fx:id="dimensionColumn" maxWidth="1.7976931348623157E308" prefWidth="75.0" text="dimensions" />
-                        <TreeTableColumn fx:id="populationColumn" maxWidth="1.7976931348623157E308" prefWidth="75.0" text="population" />
-                        <TreeTableColumn fx:id="descriptionColumn" maxWidth="1.7976931348623157E308" prefWidth="75.0" text="description" />
-                    </columns>
-                  </TreeTableView>
-               </content>
-            </ScrollPane>
+            <ScrollPane fx:id="tableScrollPane" fitToHeight="true" fitToWidth="true" prefHeight="300.0" prefWidth="308.0" />
             <VBox fx:id="tabVBox">
                <children>
                   <TabPane fx:id="plotTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
-                      <Tab fx:id="populationTab" text="Population" />
+                      <Tab fx:id="populationTab" text="Overview" />
+                        <Tab fx:id="currentHousingTab" text="Current Population">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                          </content>
+                        </Tab>
                       <Tab text="History" />
                     </tabs>
                   </TabPane>

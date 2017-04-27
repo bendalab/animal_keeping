@@ -4,19 +4,17 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.License;
 import animalkeeping.model.Quota;
 import animalkeeping.model.SpeciesType;
+import animalkeeping.util.Dialogs;
+import animalkeeping.util.EntityHelper;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-
-import java.util.ArrayList;
 import java.util.List;
-
-import static animalkeeping.util.Dialogs.showInfo;
 
 public class QuotaForm extends VBox {
     private ComboBox<License> licenseCombo;
@@ -81,8 +79,18 @@ public class QuotaForm extends VBox {
 
         Button newSpeciesTypeButton = new Button("+");
         newSpeciesTypeButton.setTooltip(new Tooltip("create a new species entry"));
-        newSpeciesTypeButton.setDisable(true);
-
+        newSpeciesTypeButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                SpeciesType st = Dialogs.editSpeciesTypeDialog(null);
+                if (st != null) {
+                    List<SpeciesType> species = EntityHelper.getEntityList("From SpeciesType", SpeciesType.class);
+                    speciesCombo.getItems().clear();
+                    speciesCombo.getItems().addAll(species);
+                    speciesCombo.getSelectionModel().select(st);
+                }
+            }
+        });
         GridPane grid = new GridPane();
         ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
         column1.setHgrow(Priority.NEVER);
@@ -113,23 +121,8 @@ public class QuotaForm extends VBox {
 
         this.getChildren().add(grid);
 
-        Session session = Main.sessionFactory.openSession();
-        List<SpeciesType> species = new ArrayList<>(0);
-        List<License> licenses = new ArrayList<>(0);
-        try {
-            session.beginTransaction();
-            species = session.createQuery("from SpeciesType", SpeciesType.class).list();
-            session.getTransaction().commit();
-            session.beginTransaction();
-            licenses = session.createQuery("from License", License.class).list();
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
+        List<SpeciesType> species = EntityHelper.getEntityList("From SpeciesType", SpeciesType.class);
+        List<License> licenses = EntityHelper.getEntityList("From License", License.class);
         speciesCombo.getItems().addAll(species);
         licenseCombo.getItems().addAll(licenses);
     }

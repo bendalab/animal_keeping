@@ -3,11 +3,6 @@ package animalkeeping.ui.controller;
 import animalkeeping.model.HousingType;
 import animalkeeping.model.HousingUnit;
 import animalkeeping.ui.*;
-import animalkeeping.util.Dialogs;
-import animalkeeping.util.EntityHelper;
-import javafx.beans.property.ReadOnlyIntegerWrapper;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -15,26 +10,19 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.hibernate.Session;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static animalkeeping.util.Dialogs.*;
 
 
 public class HousingView extends VBox implements Initializable, View {
-    @FXML private TreeTableView<HousingUnit> table;
-    @FXML private TreeTableColumn<HousingUnit, String> unitsColumn;
-    @FXML private TreeTableColumn<HousingUnit, String> typeColumn;
-    @FXML private TreeTableColumn<HousingUnit, String> dimensionColumn;
-    @FXML private TreeTableColumn<HousingUnit, Number> populationColumn;
-    @FXML private TreeTableColumn<HousingUnit, String> descriptionColumn;
-    @FXML private Tab populationTab, historyTab;
+    @FXML ScrollPane tableScrollPane;
+    @FXML private Tab populationTab, historyTab, currentHousingTab;
     @FXML private TabPane plotTabPane;
     @FXML private ScrollPane typesScrollPane;
     @FXML private SplitPane unitsSplit;
@@ -42,8 +30,10 @@ public class HousingView extends VBox implements Initializable, View {
 
     private PopulationChart populationChart;
     private HousingTypeTable housingTypes;
+    private HousingUnitTable housingUnitTable;
+    private HousingTable housingTable;
     private VBox controls;
-    private ControlLabel editUnitLabel, deleteUnitLabel;
+    private ControlLabel editUnitLabel, deleteUnitLabel, appendUnitLabel;
     private ControlLabel editTypeLabel, deleteTypeLabel;
     private ControlLabel importSubjectsLabel, batchTreatmentLabel;
 
@@ -62,32 +52,21 @@ public class HousingView extends VBox implements Initializable, View {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        unitsColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<HousingUnit, String> hu) ->
-                new ReadOnlyStringWrapper(hu.getValue().getValue() != null ? hu.getValue().getValue().getName() : ""));
-        unitsColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.25));
-        typeColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<HousingUnit, String> hu) ->
-                new ReadOnlyStringWrapper(hu.getValue().getValue() != null ? hu.getValue().getValue().getHousingType().getName() : ""));
-        typeColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
-        dimensionColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<HousingUnit, String> hu) ->
-                new ReadOnlyStringWrapper(hu.getValue().getValue() != null ? hu.getValue().getValue().getDimensions() : ""));
-        dimensionColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.15));
-        descriptionColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<HousingUnit, String> hu) ->
-                new ReadOnlyStringWrapper(hu.getValue().getValue() != null ? hu.getValue().getValue().getDescription() : ""));
-        descriptionColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.25));
-        populationColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<HousingUnit, Number> hu) ->
-                new ReadOnlyIntegerWrapper(hu.getValue().getValue() != null ? hu.getValue().getValue().getAllHousings(true).size() : 0));
-        populationColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.15));
+        housingUnitTable = new HousingUnitTable();
+        housingTable = new HousingTable();
 
+        tableScrollPane.setContent(housingUnitTable);
         tabVBox.prefHeightProperty().bind(unitsSplit.prefHeightProperty().subtract(unitsSplit.getDividers().get(0).positionProperty().multiply(unitsSplit.getPrefHeight())));
-        table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> setSelectedUnit(newSelection != null ? newSelection.getValue() : null));
-        table.prefWidthProperty().bind(this.prefWidthProperty().multiply(0.95));
+        housingUnitTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> setSelectedUnit(newSelection != null ? newSelection.getValue() : null));
+        housingUnitTable.prefWidthProperty().bind(this.prefWidthProperty().multiply(0.95));
         plotTabPane.prefWidthProperty().bind(this.prefWidthProperty().multiply(0.95));
         plotTabPane.prefHeightProperty().bind(tabVBox.prefHeightProperty());
         populationChart = new PopulationChart();
         populationChart.prefHeightProperty().bind(plotTabPane.prefHeightProperty().multiply(0.8));
         populationChart.prefWidthProperty().bind(this.prefWidthProperty().multiply(0.95));
         populationTab.setContent(populationChart);
+        housingTable.prefWidthProperty().bind(plotTabPane.maxWidthProperty());
+        currentHousingTab.setContent(housingTable);
         unitsSplit.prefHeightProperty().bind(this.prefHeightProperty().multiply(0.6));
         unitsSplit.prefWidthProperty().bind(this.prefWidthProperty());
 
@@ -102,20 +81,6 @@ public class HousingView extends VBox implements Initializable, View {
         controls = new VBox();
         controls.setAlignment(Pos.TOP_LEFT);
         controls.setSpacing(5);
-        table.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (event.getClickCount() == 2) {
-                    HousingUnit hu = table.getSelectionModel().getSelectedItem().getValue();
-                    hu = Dialogs.editHousingUnitDialog(hu);
-                    if (hu != null) {
-                        refresh();
-                        table.getSelectionModel().select(new TreeItem<>(hu));
-                    }
-                }
-                event.consume();
-            }
-        });
         ControlLabel newUnitLabel = new ControlLabel("new housing unit");
         newUnitLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
@@ -123,6 +88,15 @@ public class HousingView extends VBox implements Initializable, View {
             }
         });
         controls.getChildren().add(newUnitLabel);
+
+        appendUnitLabel = new ControlLabel("append housing unit");
+        appendUnitLabel.setDisable(true);
+        appendUnitLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                housingUnitTable.appendHousingUnit(housingUnitTable.getSelectedUnit());
+            }
+        });
+        controls.getChildren().add(appendUnitLabel);
 
         editUnitLabel = new ControlLabel("edit housing unit", true);
         editUnitLabel.setOnMouseClicked(event -> {
@@ -187,38 +161,14 @@ public class HousingView extends VBox implements Initializable, View {
     }
 
 
-    private void fillHousingTree() {
-        final TreeItem<HousingUnit> root = new TreeItem<>();
-        root.setExpanded(true);
-        List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit where parentUnit is null", HousingUnit.class);
-        if (housingUnits == null || housingUnits.isEmpty()) {
-            return;
-        }
-        for (HousingUnit hu : housingUnits) {
-            TreeItem<HousingUnit> child = new TreeItem<>(hu);
-            root.getChildren().add(child);
-            fillRecursive(hu, child);
-        }
-        table.setRoot(root);
-        table.setShowRoot(false);
-    }
-
-
-    private void fillRecursive(HousingUnit unit, TreeItem<HousingUnit> item) {
-        for (HousingUnit hu : unit.getChildHousingUnits()) {
-            TreeItem<HousingUnit> it = new TreeItem<>(hu);
-            item.getChildren().add(it);
-            fillRecursive(hu, it);
-        }
-    }
-
-
     private void setSelectedUnit(HousingUnit unit) {
         populationChart.listPopulation(unit);
         deleteUnitLabel.setDisable(unit == null);
         editUnitLabel.setDisable(unit == null);
         importSubjectsLabel.setDisable(unit == null);
         batchTreatmentLabel.setDisable(unit == null);
+        appendUnitLabel.setDisable(unit == null);
+        housingTable.setHousingUnit(unit);
     }
 
 
@@ -230,26 +180,19 @@ public class HousingView extends VBox implements Initializable, View {
 
     @Override
     public void refresh() {
-        fillHousingTree();
+        housingUnitTable.refresh();
         housingTypes.refresh();
     }
 
 
     private void editHousingUnit() {
-        HousingUnit unit = table.getSelectionModel().getSelectedItem().getValue();
-        editHousingUnitDialog(unit);
-        fillHousingTree();
+        housingUnitTable.editHousingUnit(housingUnitTable.getSelectionModel().getSelectedItem().getValue());
     }
 
 
 
     private void newHousingUnit() {
-        HousingUnit unit = null;
-        if(!table.getSelectionModel().isEmpty()) {
-            unit = table.getSelectionModel().getSelectedItem().getValue();
-        }
-        editHousingUnitDialog(null, unit);
-        fillHousingTree();
+        housingUnitTable.editHousingUnit(null);
     }
 
 
@@ -267,18 +210,7 @@ public class HousingView extends VBox implements Initializable, View {
 
 
     private void deleteHousingUnit() {
-        HousingUnit h = table.getSelectionModel().getSelectedItem().getValue();
-        if (!h.getHousings().isEmpty() || !h.getChildHousingUnits().isEmpty()) {
-            showInfo("Cannot delete housing unit " + h.getName() + " since there are referring housing entries or child housing units!");
-        } else {
-            Session session = Main.sessionFactory.openSession();
-            session.beginTransaction();
-            session.delete(h);
-            session.getTransaction().commit();
-            session.close();
-        }
-        table.getSelectionModel().select(null);
-        fillHousingTree();
+        housingUnitTable.deleteHousingUnit(housingUnitTable.getSelectionModel().getSelectedItem().getValue());
     }
 
 
@@ -300,16 +232,16 @@ public class HousingView extends VBox implements Initializable, View {
 
 
     private void importSubjects() {
-        TreeItem<HousingUnit> item = table.getSelectionModel().getSelectedItem();
+        TreeItem<HousingUnit> item = housingUnitTable.getSelectionModel().getSelectedItem();
         HousingUnit unit = item.getValue();
         importSubjectsDialog(unit);
-        fillHousingTree();
-        table.getSelectionModel().select(item);
+        housingUnitTable.refresh();
+        housingUnitTable.getSelectionModel().select(item);
     }
 
 
     private void batchTreatment() {
-        HousingUnit unit = table.getSelectionModel().getSelectedItem().getValue();
+        HousingUnit unit = housingUnitTable.getSelectionModel().getSelectedItem().getValue();
         batchTreatmentDialog(unit);
     }
 

@@ -155,7 +155,7 @@ public class HousingUnitForm extends VBox {
         this.idLabel.setText(unit != null ? unit.getId().toString() : "");
         this.descriptionArea.setText(unit != null ? unit.getDescription() : "");
         this.dimensionsField.setText(unit != null ? unit.getDimensions() : "");
-        this.parentUnitComboBox.getSelectionModel().select(unit.getParentUnit());
+        this.parentUnitComboBox.getSelectionModel().select(unit != null ? unit.getParentUnit() : null);
         this.typeComboBox.getSelectionModel().select(unit != null ? unit.getHousingType() : null);
     }
 

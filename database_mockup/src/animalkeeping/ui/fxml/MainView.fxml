@@ -18,7 +18,7 @@
 
 <VBox fx:id="masterBox" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <MenuBar VBox.vgrow="NEVER">
+    <MenuBar fx:id="menuBar" VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
@@ -29,31 +29,27 @@
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="preferences…" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" onAction="#closeApplication" text="quit">
+            <MenuItem fx:id="quitMenuItem" mnemonicParsing="false" onAction="#closeApplication" text="quit">
                      <accelerator>
-                        <KeyCodeCombination alt="DOWN" code="Q" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                        <KeyCodeCombination alt="UP" code="Q" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                      </accelerator></MenuItem>
           </items>
         </Menu>
             <Menu mnemonicParsing="false" text="View">
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#refreshView" text="refresh">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
+                <MenuItem fx:id="refreshItem" mnemonicParsing="false" onAction="#refreshView" text="refresh" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Misc. entities">
               <items>
                   <Menu fx:id="subjectTypeMenu" disable="true" mnemonicParsing="false" text="subject types" />
                   <Menu fx:id="speciesTypeMenu" disable="true" mnemonicParsing="false" text="species" />
-                  <Menu fx:id="supplierMenu" mnemonicParsing="false" text="supplier" />
+                  <Menu fx:id="supplierMenu" disable="true" mnemonicParsing="false" text="supplier" />
               </items>
             </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="about" />
+            <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" text="about" />
           </items>
         </Menu>
       </menus>

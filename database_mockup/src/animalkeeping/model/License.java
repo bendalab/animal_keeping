@@ -3,6 +3,7 @@ package animalkeeping.model;
 /**
  * Created by jan on 27.12.16.
  */
+import animalkeeping.logging.ChangeLogInterface;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -10,8 +11,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class License {
-    private Long id;
+public class License extends Entity implements ChangeLogInterface {
     private String name;
     private String agency;
     private String number;
@@ -33,12 +33,9 @@ public class License {
         this.startDate = startDate;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public String getType() {
+        return this.getClass().toString();
     }
 
     public String getName() {
@@ -141,8 +138,8 @@ public class License {
     @Override
     public String toString() {
         return "License{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "id=" + getId() +
+                ", name='" + getName() + '\'' +
                 ", number='" + number + '\'' +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +

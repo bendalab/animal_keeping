@@ -263,7 +263,7 @@ public class SubjectForm extends VBox {
         h.setSubject(subject);
 
         Communicator.pushSaveOrUpdate(subject);
-
+        Communicator.pushSaveOrUpdate(h);
         return subject;
     }
 

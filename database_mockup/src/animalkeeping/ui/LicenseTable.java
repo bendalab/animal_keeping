@@ -1,5 +1,6 @@
 package animalkeeping.ui;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.License;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
@@ -7,12 +8,12 @@ import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCombination;
 
 import java.util.Collection;
 import java.util.Date;
@@ -30,6 +31,7 @@ public class LicenseTable extends TableView<License> {
     private TableColumn<License, String> deputyPersonCol;
     private TableColumn<License, Date> startDateCol;
     private TableColumn<License, Date> endDateCol;
+    private MenuItem newLicenseItem, editLicenseItem, deleteLicenseItem;
     private ObservableList<License> masterList = FXCollections.observableArrayList();
     SortedList<License> sortedList;
     private FilteredList<License> filteredList;
@@ -100,6 +102,26 @@ public class LicenseTable extends TableView<License> {
             });
             return row ;
         });
+
+        ContextMenu cmenu = new ContextMenu();
+        newLicenseItem = new MenuItem("new license");
+        newLicenseItem.setOnAction(event -> editLicense(null));
+
+        editLicenseItem = new MenuItem("edit license");
+        editLicenseItem.setDisable(true);
+        editLicenseItem.setOnAction(event -> editLicense(this.getSelectionModel().getSelectedItem()));
+
+        deleteLicenseItem = new MenuItem("delete license");
+        deleteLicenseItem.setDisable(true);
+        deleteLicenseItem.setOnAction(event -> deleteLicense(this.getSelectionModel().getSelectedItem()));
+
+        cmenu.getItems().addAll(newLicenseItem, editLicenseItem, deleteLicenseItem);
+        this.setContextMenu(cmenu);
+        this.getSelectionModel().getSelectedItems().addListener((ListChangeListener<License>) c -> {
+            int sel_count = c.getList().size();
+            editLicenseItem.setDisable(sel_count == 0);
+            deleteLicenseItem.setDisable(sel_count == 0);
+        });
     }
 
 
@@ -126,5 +148,19 @@ public class LicenseTable extends TableView<License> {
         if (licenses != null) {
             masterList.addAll(licenses);
         }
+    }
+
+    private void editLicense(License l) {
+        License ls = Dialogs.editLicenseDialog(l);
+        refresh();
+        setSelectedLicense(ls);
+    }
+
+    private void deleteLicense(License l) {
+        if (l.getTreatmentTypes().size() != 0) {
+            Dialogs.showInfo("Cannot delete License " + l.getName().substring(0, 20) + " since it is referenced by treatment types!");
+            return;
+        }
+        Communicator.pushDelete(l);
     }
 }

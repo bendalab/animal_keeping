@@ -9,9 +9,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-
 import java.util.HashMap;
-
 
 public class Main extends Application {
     public static SessionFactory sessionFactory;

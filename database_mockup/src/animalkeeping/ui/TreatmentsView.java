@@ -43,7 +43,6 @@ public class TreatmentsView extends VBox implements Initializable, View{
     private ControlLabel deleteTreatmentTypeLabel;
     private ControlLabel editTreatmentLabel;
     private ControlLabel deleteTreatmentLabel;
-    private ControlLabel batchTreatmentLabel;
     private VBox controls;
     private TreatmentType selectedType;
 
@@ -138,7 +137,7 @@ public class TreatmentsView extends VBox implements Initializable, View{
         });
         controls.getChildren().add(deleteTreatmentLabel);
 
-        batchTreatmentLabel = new ControlLabel("new batch treatment", false);
+        ControlLabel batchTreatmentLabel = new ControlLabel("new batch treatment", false);
         batchTreatmentLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 Dialogs.batchTreatmentDialog(null);

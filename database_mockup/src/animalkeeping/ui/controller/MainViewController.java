@@ -6,13 +6,12 @@ import animalkeeping.model.SupplierType;
 import animalkeeping.ui.*;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+// import com.apple.eawt.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -39,7 +38,12 @@ public class MainViewController extends VBox implements Initializable{
     @FXML private Menu speciesTypeMenu;
     @FXML private Menu subjectTypeMenu;
     @FXML private Menu supplierMenu;
+    @FXML private MenuItem refreshItem;
     @FXML private HBox hBox;
+    @FXML private MenuItem quitMenuItem;
+    @FXML private MenuItem aboutMenuItem;
+    @FXML private MenuBar menuBar;
+
     private Vector<TitledPane> panes;
     private HashMap<String, View> views;
 
@@ -61,6 +65,17 @@ public class MainViewController extends VBox implements Initializable{
     public void initialize(URL location, ResourceBundle resources) {
         this.setPrefWidth(1024);
         this.setPrefHeight(768);
+        menuBar.setUseSystemMenuBar(true);
+
+        if (System.getProperty("os.name").startsWith("Mac OS X")) {
+            System.setProperty("bendalab.animalkeeping", "Animal Keeping");
+            //Application.getApplication().setQuitHandler((quitEvent, quitResponse) -> closeApplication());
+            //Application.getApplication().setQuitStrategy(QuitStrategy.CLOSE_ALL_WINDOWS);
+            //Application.getApplication().setAboutHandler(new myAboutHandler());
+            aboutMenuItem.setVisible(false);
+            quitMenuItem.setVisible(false);
+        }
+
         findBox.getItems().clear();
         findBox.getItems().addAll("Person", "Subject", "Housing unit", "Treatment");
         findBox.getSelectionModel().select("Subject");
@@ -91,6 +106,7 @@ public class MainViewController extends VBox implements Initializable{
         panes.add(personsPane);
         panes.add(animalHousingPane);
         panes.add(licensesPane);
+        refreshItem.setAccelerator(KeyCombination.keyCombination("Shortcut+R"));
         views = new HashMap<>();
     }
 
@@ -165,11 +181,11 @@ public class MainViewController extends VBox implements Initializable{
             showInventory();
         } else {
             try {
-                FishView fv;
+                SubjectView fv;
                 if (viewIsCached("subjects")) {
-                    fv = (FishView) views.get("subjects");
+                    fv = (SubjectView) views.get("subjects");
                 } else {
-                    fv = new FishView();
+                    fv = new SubjectView();
                     cacheView("subjects", fv);
                 }
                 fv.prefHeightProperty().bind(this.scrollPane.heightProperty());
@@ -288,7 +304,7 @@ public class MainViewController extends VBox implements Initializable{
             case "Subject":
                 subjectsPane.setExpanded(true);
                 showSubjects();
-                FishView fv = (FishView) views.get("subjects");
+                SubjectView fv = (SubjectView) views.get("subjects");
                 if (id != null) {
                     fv.idFilter(id);
                 } else {
@@ -317,25 +333,26 @@ public class MainViewController extends VBox implements Initializable{
     }
 
 
-
+    /*
     @FXML
     private void showUserAddInterface() throws Exception{
         Main.getPrimaryStage().setScene(new Scene(FXMLLoader.load(Main.class.getResource("fxml/UserAddView.fxml"))));
-        /*this.scrollPane.setContent(null);
+        this.scrollPane.setContent(null);
         PersonsTable personTable = new PersonsTable();
-        this.scrollPane.setContent(personTable);*/
+        this.scrollPane.setContent(personTable);
     }
-
+    */
     @FXML
     private  void closeApplication() {
         Main.getPrimaryStage().close();
     }
 
+    /*
     @FXML
     private void disconnectFromDatabase() {
         Main.sessionFactory.close();
     }
-
+    */
 
     @FXML
     private void newSubjectType() {
@@ -452,6 +469,7 @@ public class MainViewController extends VBox implements Initializable{
         licensesPane.setDisable(false);
         subjectTypeMenu.setDisable(false);
         speciesTypeMenu.setDisable(false);
+        supplierMenu.setDisable(false);
         fillMenus();
         showInventory();
     }
@@ -501,5 +519,16 @@ public class MainViewController extends VBox implements Initializable{
         fillSupplierTypeMenu();
     }
 
+    private void showAbout() {
+        System.out.println("Show about");
+    }
 
+    /*
+    class myAboutHandler implements AboutHandler {
+        @Override
+        public void handleAbout(AppEvent.AboutEvent aboutEvent) {
+            showAbout();
+        }
+    }
+    */
 }

@@ -2,6 +2,7 @@
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
+import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
@@ -56,6 +57,8 @@ public class TreatmentForm extends VBox {
     }
 
     private  void setTreatment(Treatment t) {
+        if (t == null)
+            return;
         this.treatment = t;
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         idLabel.setText(t.getId().toString());
@@ -132,14 +135,38 @@ public class TreatmentForm extends VBox {
         });
 
         Button newTypeButton = new Button("+");
-        newTypeButton.setTooltip(new Tooltip("create a new species entry"));
-        newTypeButton.setDisable(true);
+        newTypeButton.setTooltip(new Tooltip("create a new treatment type entry"));
+        newTypeButton.setOnAction(event -> {
+            TreatmentType treatmentType = Dialogs.editTreatmentTypeDialog(null);
+            if (treatmentType != null) {
+                List<TreatmentType> types = EntityHelper.getEntityList("From TreatmentType", TreatmentType.class);
+                typeComboBox.getItems().clear();
+                typeComboBox.getItems().addAll(types);
+                typeComboBox.getSelectionModel().select(treatmentType);
+            }
+        });
         Button newPersonButton = new Button("+");
         newPersonButton.setTooltip(new Tooltip("create a new person entry"));
-        newPersonButton.setDisable(true);
+        newPersonButton.setOnAction(event -> {
+            Person p = Dialogs.editPersonDialog(null);
+            if (p != null) {
+                List<Person> persons = EntityHelper.getEntityList("From Person", Person.class);
+                personComboBox.getItems().clear();
+                personComboBox.getItems().addAll(persons);
+                personComboBox.getSelectionModel().select(p);
+            }
+        });
         Button newSubjectButton = new Button("+");
         newSubjectButton.setTooltip(new Tooltip("create a new subject entry"));
-        newSubjectButton.setDisable(true);
+        newSubjectButton.setOnAction(event -> {
+            Subject s = Dialogs.editSubjectDialog(null);
+            if(s != null) {
+                List<Subject> subjects = EntityHelper.getEntityList("From Subject", Subject.class);
+                subjectComboBox.getItems().clear();
+                subjectComboBox.getItems().addAll(subjects);
+                subjectComboBox.getSelectionModel().select(s);
+            }
+        });
 
         GridPane grid = new GridPane();
         ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
@@ -165,7 +192,7 @@ public class TreatmentForm extends VBox {
         grid.add(new Label("ID:"), 0, 0);
         grid.add(idLabel, 1, 0);
 
-        grid.add(new Label("type:"), 0, 1);
+        grid.add(new Label("treatment:"), 0, 1);
         grid.add(typeComboBox, 1, 1, 1, 1);
         grid.add(newTypeButton, 2, 1, 1, 1);
 
@@ -249,7 +276,9 @@ public class TreatmentForm extends VBox {
             note.setPerson(personComboBox.getValue());
             note.setDate(sd);
             note.setTreatment(treatment);
-            Communicator.pushSaveOrUpdate(note);
+            if (!Communicator.pushSaveOrUpdate(note)) {
+                return null;
+            }
         }
         return treatment;
     }
