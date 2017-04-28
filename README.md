@@ -54,7 +54,7 @@ user:
 
 ```
 mysql> CREATE DATABASE animal_keeping;
-mysql> GRANT ALL ON `animal_keeping`.* TO `root`@ `localhost` IDENTIFIED BY your_root_password;
+mysql> GRANT ALL ON `animal_keeping`.* TO `root`@`localhost` IDENTIFIED BY 'your_root_password';
 ```
 
 Log out and setup the database by executing from the command line:
@@ -84,7 +84,7 @@ mysql> CREATE DATABASE animal_keeping;
 Log out and restore the backup by:
 
 ```
-> mysql animalkeeping < my_database_dump.sql -h localhost -u root -p
+> mysql animal_keeping < my_database_dump.sql -h localhost -u root -p
 ```
 
 
