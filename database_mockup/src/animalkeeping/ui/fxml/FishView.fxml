@@ -31,36 +31,39 @@
                               <GridPane alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="130.0" prefWidth="174.0" vgap="5.0">
                                  <columnConstraints>
                                     <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="173.0" minWidth="55.0" prefWidth="111.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="171.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="95.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="247.0" />
+                                    <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="171.0" />
+                                    <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="95.0" />
+                                    <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="247.0" />
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints />
                                     <RowConstraints />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
                                  </rowConstraints>
                                  <children>
-                                    <Label text="In lab since" GridPane.rowIndex="3" />
-                                    <Label text="Origin" GridPane.rowIndex="4" />
+                                    <Label text="In lab since" GridPane.rowIndex="4" />
+                                    <Label text="Origin" GridPane.rowIndex="5" />
                                     <Label text="ID" GridPane.rowIndex="1" />
-                                    <Label text="Current status" GridPane.rowIndex="5" />
+                                    <Label text="Current status" GridPane.rowIndex="6" />
                                     <Label fx:id="idLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <Label text="Name" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-                                    <Label fx:id="housingStartLabel" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
-                                    <Label fx:id="nameLabel" GridPane.columnIndex="3" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                                    <Label fx:id="housingStartLabel" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+                                    <Label fx:id="nameLabel" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
                                     <Label fx:id="idLabel" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-                                    <Label text="Until" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
-                                    <Label fx:id="housingEndLabel" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
-                                    <Label fx:id="originLabel" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
-                                    <Label fx:id="statusLabel" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.rowSpan="2147483647" />
-                                    <Label text="Species" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
-                                    <Label fx:id="speciesLabel" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
-                                    <Label fx:id="aliasLabel" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
-                                    <Label text="Alias" GridPane.rowIndex="2" />
+                                    <Label text="Until" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
+                                    <Label fx:id="housingEndLabel" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
+                                    <Label fx:id="originLabel" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.rowIndex="5" />
+                                    <Label fx:id="statusLabel" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.rowSpan="2147483647" />
+                                    <Label text="Species" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
+                                    <Label fx:id="speciesLabel" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
+                                    <Label text="Name (alias)" GridPane.rowIndex="2" />
+                                    <Label text="Gender" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                    <Label fx:id="genderLabel" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                    <Label text="Birthdate (age)" GridPane.rowIndex="3" />
+                                    <Label fx:id="birthdateLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                  </children>
                               </GridPane>
                            </children>
