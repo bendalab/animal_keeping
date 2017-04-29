@@ -15,6 +15,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -110,7 +112,7 @@ public class MainViewController extends VBox implements Initializable{
         panes.add(personsPane);
         panes.add(animalHousingPane);
         panes.add(licensesPane);
-        refreshItem.setAccelerator(KeyCombination.keyCombination("Shortcut+R"));
+        refreshItem.setAccelerator(new KeyCodeCombination( KeyCode.R, KeyCombination.SHORTCUT_DOWN));
         views = new HashMap<>();
     }
 
@@ -145,6 +147,7 @@ public class MainViewController extends VBox implements Initializable{
             this.inventoryPane.setContent(inventory.getControls());
             collapsePanes(inventoryPane);
             refreshView();
+            inventory.requestFocus();
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -397,7 +400,6 @@ public class MainViewController extends VBox implements Initializable{
 
     @FXML
     private void refreshView() {
-
         if (this.scrollPane.getContent() instanceof View) {
             Task<Void> refreshTask = new Task<Void>() {
                 @Override
