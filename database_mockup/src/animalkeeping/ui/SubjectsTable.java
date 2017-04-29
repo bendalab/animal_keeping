@@ -6,6 +6,7 @@ import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyLongWrapper;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -21,6 +22,7 @@ import javafx.scene.control.*;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SubjectsTable extends TableView<Subject> {
@@ -37,7 +39,7 @@ public class SubjectsTable extends TableView<Subject> {
         super();
         TableColumn<Subject, Number> idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
+        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.03));
 
         TableColumn<Subject, String> nameCol = new TableColumn<>("name");
         nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
@@ -45,7 +47,15 @@ public class SubjectsTable extends TableView<Subject> {
 
         TableColumn<Subject, String> aliasCol = new TableColumn<>("alias");
         aliasCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAlias()));
-        aliasCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+        aliasCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
+
+        TableColumn<Subject, String> genderCol = new TableColumn<>("gender");
+        genderCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getGender().toString()));
+        genderCol.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
+
+        TableColumn<Subject, Date> birthdateCol = new TableColumn<>("birth date");
+        birthdateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getBirthday()));
+        birthdateCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
 
         TableColumn<Subject, String> speciesCol = new TableColumn<>("species");
         speciesCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSpeciesType().getName()));
@@ -54,17 +64,17 @@ public class SubjectsTable extends TableView<Subject> {
         TableColumn<Subject, String> housingCol = new TableColumn<>("housing");
         housingCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getCurrentHousing() != null ?
                 data.getValue().getCurrentHousing().getHousing().getName() : ""));
-        housingCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+        housingCol.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
 
-        TableColumn<Subject, String> subjectCol = new TableColumn<>("subject");
+        TableColumn<Subject, String> subjectCol = new TableColumn<>("type");
         subjectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubjectType().getName()));
-        subjectCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+        subjectCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
 
         TableColumn<Subject, String> supplierCol = new TableColumn<>("supplier");
         supplierCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSupplier().getName()));
-        supplierCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+        supplierCol.prefWidthProperty().bind(this.widthProperty().multiply(0.125));
 
-        this.getColumns().addAll(idCol, nameCol, aliasCol, speciesCol, housingCol, subjectCol, supplierCol);
+        this.getColumns().addAll(idCol, nameCol, aliasCol, birthdateCol, genderCol, speciesCol, housingCol, subjectCol, supplierCol);
         this.setRowFactory( tv -> {
             TableRow<Subject> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
