@@ -2,8 +2,8 @@ About
 -----
 
 *Animal keeping* is a tool to keep track of the animal population in a
- lab. It contains of a mysql backend to store subject-related
- information and a Java-written graphical interface to
+ lab. It consists of a mysql database backend to store subject-related
+ information and a JavaFX-written graphical interface to
  view/edit/create entries in the database.
 
 Features
