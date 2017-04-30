@@ -4,19 +4,21 @@ import animalkeeping.model.*;
 import animalkeeping.ui.*;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -39,6 +41,7 @@ import java.util.*;
 public class InventoryController extends VBox implements Initializable, View {
     @FXML private PieChart populationChart;
     @FXML private VBox unitsBox;
+    @FXML private ListView<String> unitsList;
     @FXML private VBox chartVbox;
     @FXML private VBox currentHousingsBox;
     @FXML private ScrollPane tableScrollPane;
@@ -46,7 +49,6 @@ public class InventoryController extends VBox implements Initializable, View {
     private TreatmentsTable treatmentsTable;
     private VBox controls;
     private HashMap<String, HousingUnit> unitsHashMap;
-    private ControlLabel allLabel;
     private ControlLabel endTreatmentLabel;
 
 
@@ -62,12 +64,17 @@ public class InventoryController extends VBox implements Initializable, View {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        allLabel = new ControlLabel("All", false);
-        allLabel.setOnMouseClicked(event -> {
-            if (event.getButton().equals(MouseButton.PRIMARY)) {
-                listAllPopulation();
+        unitsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        unitsList.getItems().add("all");
+        unitsList.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<String>() {
+            @Override
+            public void onChanged(Change<? extends String> c) {
+                if (c.getList().size() > 0) {
+                    listPopulation(c.getList().get(0));
+                }
             }
         });
+
         unitsHashMap = new HashMap<>();
 
         housingTable = new HousingTable();
@@ -107,52 +114,76 @@ public class InventoryController extends VBox implements Initializable, View {
         controls.getChildren().add(exportStock);
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
         controls.getChildren().add(endTreatmentLabel);
-        refresh();
     }
 
     private void fillList() {
-        unitsBox.getChildren().clear();
-        unitsBox.getChildren().add(allLabel);
-        setMargin(allLabel, new Insets(0., 0., 5., 5.0 ));
-        List<HousingUnit> result = EntityHelper.getEntityList("from HousingUnit where parent_unit_id is NULL", HousingUnit.class);
-        if (result != null) {
-            for (HousingUnit h : result) {
-                unitsHashMap.put(h.getName(), h);
-                ControlLabel label = new ControlLabel(h.getName(), false);
-                label.setTextFill(allLabel.getTextFill());
-                label.setOnMouseClicked(event -> listPopulation(unitsHashMap.get(h.getName())));
-                unitsBox.getChildren().add(label);
-                setMargin(label, new Insets(0., 0., 5., 5.0 ));
-              }
-        }
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                List<HousingUnit> result = EntityHelper.getEntityList("from HousingUnit where parent_unit_id is NULL", HousingUnit.class);
+                Platform.runLater(() -> {
+                    unitsList.getItems().clear();
+                    unitsList.getItems().add("all");
+                    if (result != null) {
+                        for (HousingUnit h : result) {
+                            unitsHashMap.put(h.getName(), h);
+                            unitsList.getItems().add(h.getName());
+                        }
+                    }
+                });
+                return null;
+            }
+        };
+        new Thread(task).start();
     }
 
     private void refreshOpenTreatments() {
-        treatmentsTable.getSelectionModel().select(null);
-        List<Treatment> treatments = EntityHelper.getEntityList("from Treatment where end_datetime is NULL", Treatment.class);
-        treatmentsTable.setTreatments(treatments);
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                List<Treatment> treatments = EntityHelper.getEntityList("from Treatment where end_datetime is NULL", Treatment.class);
+                Platform.runLater(() -> {
+                    treatmentsTable.getSelectionModel().select(null);
+                    treatmentsTable.setTreatments(treatments);
+                });
+                return null;
+            }
+        };
+        new Thread(task).start();
     }
 
     @FXML
     private void listAllPopulation() {
-        List<SpeciesType> result = EntityHelper.getEntityList("from SpeciesType", SpeciesType.class);
-        List<Housing> housings = EntityHelper.getEntityList("from Housing where end_datetime is null", Housing.class);
-        Integer count = 0;
-        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        if (result != null) {
-            for (SpeciesType st : result) {
-                count += st.getCount();
-                pieChartData.add(new PieChart.Data(st.getName() + " (" + st.getCount() + ")", st.getCount()));
+        final Integer[] total_count = {0};
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                List<SpeciesType> result = EntityHelper.getEntityList("from SpeciesType", SpeciesType.class);
+                ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+                if (result != null) {
+                    for (SpeciesType st : result) {
+                        total_count[0] += st.getCount();
+                        pieChartData.add(new PieChart.Data(st.getName() + " (" + st.getCount() + ")", st.getCount()));
+                    }
+                }
+                Platform.runLater(() -> {
+                    populationChart.setTitle("Total population: " + total_count[0].toString());
+                    populationChart.setData(pieChartData);
+                    housingTable.setSubject(null);
+                });
+                return null;
             }
-        }
-        populationChart.setTitle("Total population: " + count.toString());
-        populationChart.setData(pieChartData);
-        housingTable.setSubject(null);
+        };
+        new Thread(task).start();
     }
 
 
-    private void listPopulation(HousingUnit housingUnit) {
-        Set<Housing> housings = housingUnit.getAllHousings(true);
+    private void listPopulation(String unitName) {
+        if (unitName.toLowerCase().equals("all")) {
+            listAllPopulation();
+            return;
+        }
+        HousingUnit housingUnit = unitsHashMap.get(unitName);
         Set<Subject> subjects = new HashSet<>();
         collectSubjects(subjects, housingUnit, true);
 
@@ -184,10 +215,29 @@ public class InventoryController extends VBox implements Initializable, View {
 
     @Override
     public void refresh() {
-        fillList();
-        refreshOpenTreatments();
-        listAllPopulation();
+        Task<Void> refreshTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+            fillList();
+            refreshOpenTreatments();
+            listAllPopulation();
+            return null;
+            }
+        };
+        refreshTask.addEventHandler(EventType.ROOT, this::handleEvents);
+        new Thread(refreshTask).start();
     }
+
+    private void handleEvents(Event event) {
+        if (event.getEventType() == WorkerStateEvent.WORKER_STATE_SCHEDULED) {
+            fireEvent(new ViewEvent(ViewEvent.REFRESHING));
+        } else if (event.getEventType() == WorkerStateEvent.WORKER_STATE_SUCCEEDED) {
+            fireEvent(new ViewEvent(ViewEvent.REFRESHED));
+        } else if (event.getEventType() == WorkerStateEvent.WORKER_STATE_FAILED) {
+            fireEvent(new ViewEvent(ViewEvent.REFRESH_FAIL));
+        }
+    }
+
 
     private void collectSubjects(Set<Subject> subjects, HousingUnit h) {
         collectSubjects(subjects, h, true);

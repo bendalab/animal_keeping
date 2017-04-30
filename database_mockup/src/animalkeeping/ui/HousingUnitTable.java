@@ -3,14 +3,16 @@ package animalkeeping.ui;
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.HousingUnit;
 import animalkeeping.util.Dialogs;
+import animalkeeping.util.EntityHelper;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ListChangeListener;
+import javafx.concurrent.Task;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static animalkeeping.util.Dialogs.showInfo;
@@ -23,7 +25,7 @@ public class HousingUnitTable extends TreeTableView<HousingUnit> {
 
 
     public HousingUnitTable () {
-        super();
+        //super();
         initialize();
     }
 
@@ -90,7 +92,6 @@ public class HousingUnitTable extends TreeTableView<HousingUnit> {
 
         cmenu.getItems().addAll(newItem, appendItem, editItem, deleteItem);
         setContextMenu(cmenu);
-        fillHousingTree();
     }
 
     @Override
@@ -99,32 +100,62 @@ public class HousingUnitTable extends TreeTableView<HousingUnit> {
         super.refresh();
     }
 
-    private void fillHousingTree() {
-        final TreeItem<HousingUnit> root = new TreeItem<>();
-        root.setExpanded(true);
-        Session session = Main.sessionFactory.openSession();
-        List<HousingUnit> housingUnits = null;
-        try {
-            session.beginTransaction();
-            housingUnits = session.createQuery("from HousingUnit where parentUnit is null", HousingUnit.class).list();
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
+    private HashMap<String, Boolean> getFoldingState() {
+        HashMap<String, Boolean> states = new HashMap<>();
+        int row = 0;
+        while (true) {
+            TreeItem<HousingUnit> item = getTreeItem(row);
+            if (item == null) {
+                break;
+            } else {
+                states.put(item.getValue().getName(), item.isExpanded());
             }
+            row++;
         }
-        if (housingUnits == null) {
-            return;
+        return states;
+    }
+
+
+    private void setFoldingState(HashMap<String, Boolean> state) {
+        int row = 0;
+        while (true) {
+            TreeItem<HousingUnit> item = getTreeItem(row);
+            if (item == null) {
+                break;
+            } else {
+                if (state.containsKey(item.getValue().getName())) {
+                    item.setExpanded(state.get(item.getValue().getName()));
+                }
+            }
+            row++;
         }
-        for (HousingUnit hu : housingUnits) {
-            TreeItem<HousingUnit> child = new TreeItem<>(hu);
-            root.getChildren().add(child);
-            fillRecursive(hu, child);
-        }
-        this.setRoot(root);
-        this.setShowRoot(false);
+    }
+
+
+    private void fillHousingTree() {
+        Task<Void> refreshTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+            HashMap<String, Boolean> folding = getFoldingState();
+            TreeItem<HousingUnit> seletedItem = getSelectionModel().getSelectedItem();
+            final TreeItem<HousingUnit> root = new TreeItem<>();
+            List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit where parentUnit is null", HousingUnit.class);
+            for (HousingUnit hu : housingUnits) {
+                TreeItem<HousingUnit> child = new TreeItem<>(hu);
+                root.getChildren().add(child);
+                fillRecursive(hu, child);
+            }
+            Platform.runLater(() -> {
+                root.setExpanded(true);
+                setRoot(root);
+                setShowRoot(false);
+                setFoldingState(folding);
+                getSelectionModel().select(seletedItem);
+            });
+            return null;
+            }
+        };
+        new Thread(refreshTask).start();
     }
 
 

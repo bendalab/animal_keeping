@@ -14,7 +14,6 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
-import org.hibernate.Session;
 
 import java.io.IOException;
 import java.net.URL;
@@ -149,6 +148,7 @@ public class TreatmentsView extends VBox implements Initializable, View{
 
 
     private void typeSelected(TreatmentType type) {
+        selectedType = type;
         idLabel.setText(type == null ? "" : type.getId().toString());
         nameLabel.setText(type == null ? "" : type.getName());
         descriptionLabel.setText(type == null ? "" : type.getDescription());
@@ -171,21 +171,11 @@ public class TreatmentsView extends VBox implements Initializable, View{
     }
 
     private void editTreatmentType(TreatmentType type) {
-        Dialogs.editTreatmentTypeDialog(type);
-        refresh();
+        typeTable.editTreatmentType(type);
     }
 
     private void deleteType(TreatmentType type) {
-        if (type.getTreatments().size() > 0) {
-            Dialogs.showInfo("Can not delete treatement type since it is referenced by treatment entries!");
-            return;
-        }
-        Session session = Main.sessionFactory.openSession();
-        session.beginTransaction();
-        session.delete(type);
-        session.getTransaction().commit();
-        session.close();
-        refresh();
+        typeTable.deleteTreatmentType(type);
     }
 
 
@@ -218,10 +208,6 @@ public class TreatmentsView extends VBox implements Initializable, View{
 
     @Override
     public void refresh() {
-        selectedType = typeTable.getSelectionModel().getSelectedItem();
-        typeTable.getSelectionModel().clearSelection();
-        typeSelected(null);
         typeTable.refresh();
-        typeTable.getSelectionModel().select(selectedType);
     }
 }

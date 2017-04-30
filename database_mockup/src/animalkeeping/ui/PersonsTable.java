@@ -6,6 +6,7 @@ import animalkeeping.util.AddDatabaseUserDialog;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import animalkeeping.util.SuperUserDialog;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -13,6 +14,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.scene.control.*;
 
 
@@ -20,29 +22,27 @@ import java.sql.Connection;
 import java.util.List;
 
 public class PersonsTable extends TableView<Person> {
-    private TableColumn<Person, Number> idCol;
-    private TableColumn<Person, String> firstNameCol;
-    private TableColumn<Person, String> lastNameCol;
-    private TableColumn<Person, String> emailCol;
     private ObservableList<Person> masterList = FXCollections.observableArrayList();
     private FilteredList<Person> filteredList;
-    private MenuItem newItem, editItem, deleteItem, addToDBItem;
+    private MenuItem editItem;
+    private MenuItem deleteItem;
+    private MenuItem addToDBItem;
 
     public PersonsTable() {
         super();
-        idCol = new TableColumn<>("id");
+        TableColumn<Person, Number> idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
         idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.09));
 
-        firstNameCol = new TableColumn<>("first name");
+        TableColumn<Person, String> firstNameCol = new TableColumn<>("first name");
         firstNameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getFirstName()));
         firstNameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.20));
 
-        lastNameCol = new TableColumn<>("last name");
+        TableColumn<Person, String> lastNameCol = new TableColumn<>("last name");
         lastNameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getLastName()));
         lastNameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.20));
 
-        emailCol= new TableColumn<>("email");
+        TableColumn<Person, String> emailCol = new TableColumn<>("email");
         emailCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getEmail()));
         emailCol.prefWidthProperty().bind(this.widthProperty().multiply(0.50));
 
@@ -62,22 +62,19 @@ public class PersonsTable extends TableView<Person> {
             return row ;
         });
 
-        this.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Person>() {
-            @Override
-            public void onChanged(Change<? extends Person> c) {
-                int sel_count = c.getList().size();
-                editItem.setDisable(sel_count == 0);
-                deleteItem.setDisable(sel_count == 0);
-                boolean hasUser = false;
-                if (sel_count > 0) {
-                    Person p = c.getList().get(0);
-                    hasUser = p.getUser() != null;
-                }
-                addToDBItem.setDisable(sel_count == 0 && hasUser);
+        this.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Person>) c -> {
+            int sel_count = c.getList().size();
+            editItem.setDisable(sel_count == 0);
+            deleteItem.setDisable(sel_count == 0);
+            boolean hasUser = false;
+            if (sel_count > 0) {
+                Person p = c.getList().get(0);
+                hasUser = p.getUser() != null;
             }
+            addToDBItem.setDisable(sel_count == 0 && hasUser);
         });
         ContextMenu cmenu = new ContextMenu();
-        newItem = new MenuItem("new person");
+        MenuItem newItem = new MenuItem("new person");
         newItem.setOnAction(event -> editPerson(null));
 
         editItem = new MenuItem("edit person");
@@ -94,21 +91,27 @@ public class PersonsTable extends TableView<Person> {
         cmenu.getItems().addAll(newItem, editItem, deleteItem, addToDBItem);
 
         this.setContextMenu(cmenu);
-        init();
     }
 
-   /* public PersonsTable(ObservableList<Person> items) {
-        this();
-        this.setItems(items);
-    }*/
-
     private void init() {
-        List<Person> result = EntityHelper.getEntityList("from Person", Person.class);
-        masterList.addAll(result);
-        filteredList = new FilteredList<>(masterList, p -> true);
-        SortedList<Person> sortedList = new SortedList<>(filteredList);
-        sortedList.comparatorProperty().bind(this.comparatorProperty());
-        this.setItems(sortedList);
+        Task<Void> refreshTask = new Task<Void>() {
+            Person p = getSelectionModel().getSelectedItem();
+            @Override
+            protected Void call() throws Exception {
+                List<Person> result = EntityHelper.getEntityList("from Person", Person.class);
+                Platform.runLater(() -> {
+                    masterList.clear();
+                    masterList.addAll(result);
+                    filteredList = new FilteredList<>(masterList, p -> true);
+                    SortedList<Person> sortedList = new SortedList<>(filteredList);
+                    sortedList.comparatorProperty().bind(comparatorProperty());
+                    setItems(sortedList);
+                    getSelectionModel().select(p);
+                });
+                return null;
+            }
+        };
+        new Thread(refreshTask).start();
     }
 
     public void setNameFilter(String name) {
@@ -132,8 +135,7 @@ public class PersonsTable extends TableView<Person> {
 
 
     public void refresh() {
-        masterList.clear();
-        masterList.addAll(EntityHelper.getEntityList("from Person", Person.class));
+        init();
         super.refresh();
     }
 

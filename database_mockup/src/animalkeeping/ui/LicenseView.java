@@ -240,8 +240,6 @@ public class LicenseView extends VBox implements Initializable, View {
 
     @Override
     public void refresh() {
-        licenseTable.getSelectionModel().clearSelection();
-        licenseSelected(null);
         licenseTable.refresh();
     }
 

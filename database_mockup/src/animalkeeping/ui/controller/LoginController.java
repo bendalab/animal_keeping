@@ -3,7 +3,10 @@ package animalkeeping.ui.controller;
 import animalkeeping.ui.Main;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.Version;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
@@ -15,6 +18,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 
+import javax.swing.event.DocumentEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -61,14 +65,19 @@ public class LoginController extends FlowPane implements Initializable{
 
     @FXML
     private void connect() {
-        String host = "jdbc:mysql://" + hostField.getText() + "/" + databaseField.getText() + "?serverTimezone=UTC";
-        Main.ConnectionDetails credentials = new Main.ConnectionDetails(userField.getText(), passwordField.getText(),
-                host);
-        if (Main.connectToDatabase(credentials)) {
-            prefs.put("db_name", databaseField.getText());
-            prefs.put("db_user", userField.getText());
-            prefs.put("db_host", hostField.getText());
-            fireEvent(new DatabaseEvent());
+        ConnectionWorker worker = new ConnectionWorker(prefs);
+        worker.addEventHandler(DatabaseEvent.ANY, this::handleEvents);
+        worker.setOnFailed(event -> fireEvent(new DatabaseEvent(DatabaseEvent.FAILED,
+                worker.exceptionProperty().getValue().getCause().getCause().getMessage())));
+        new Thread(worker).start();
+
+    }
+
+    private void handleEvents(Event event) {
+        if (event.getEventType() == WorkerStateEvent.WORKER_STATE_SCHEDULED) {
+            fireEvent(new DatabaseEvent(DatabaseEvent.CONNECTING));
+        } else if (event.getEventType() == WorkerStateEvent.WORKER_STATE_SUCCEEDED) {
+            fireEvent(new DatabaseEvent(DatabaseEvent.CONNECTED));
             checkVersion();
         }
     }
@@ -91,16 +100,44 @@ public class LoginController extends FlowPane implements Initializable{
         }
     }
 
-    static class DatabaseEvent extends Event {
-        private static final long serialVersionUID = 20121107L;
+    class ConnectionWorker extends Task<Void> {
+        private Preferences prefs;
 
-        static final EventType<DatabaseEvent> CONNECT =
-                new EventType<>(Event.ANY, "CONNECT");
-
-        DatabaseEvent() {
-            super(CONNECT);
+        ConnectionWorker(Preferences preferences) {
+            super();
+            this.prefs = preferences;
         }
 
+        @Override
+        protected Void call() throws Exception {
+            String host = "jdbc:mysql://" + hostField.getText() + "/" + databaseField.getText() + "?serverTimezone=UTC";
+            Main.ConnectionDetails credentials = new Main.ConnectionDetails(userField.getText(), passwordField.getText(),
+                    hostField.getText(), databaseField.getText(), host);
+            if (Main.connectToDatabase(credentials)) {
+                prefs.put("db_name", databaseField.getText());
+                prefs.put("db_user", userField.getText());
+                prefs.put("db_host", hostField.getText());
+            }
+            return null;
+        }
+    }
+
+    static class DatabaseEvent extends Event {
+        private static final long serialVersionUID = 20121107L;
+        private String message = "";
+        static final EventType<DatabaseEvent> DATABASE_ALL = new EventType<>("DATABASE all");
+        static final EventType<DatabaseEvent> CONNECTING = new EventType<>(DATABASE_ALL, "Connecting");
+        static final EventType<DatabaseEvent> CONNECTED = new EventType<>(DATABASE_ALL, "Connected");
+        static final EventType<DatabaseEvent> FAILED = new EventType<>(DATABASE_ALL, "failed");
+
+        DatabaseEvent(EventType<DatabaseEvent> type) {
+            super(type);
+        }
+
+        DatabaseEvent(EventType<DatabaseEvent> type, String message) {
+            this(type);
+            this.message = message;
+        }
         @Override
         public DatabaseEvent copyFor(Object newSource, EventTarget newTarget) {
             return (DatabaseEvent) super.copyFor(newSource, newTarget);
@@ -110,6 +147,11 @@ public class LoginController extends FlowPane implements Initializable{
         public EventType<? extends DatabaseEvent> getEventType() {
             return (EventType<? extends DatabaseEvent>) super.getEventType();
         }
+
+        public String getMessage() {
+            return message;
+        }
+
     }
 
 }

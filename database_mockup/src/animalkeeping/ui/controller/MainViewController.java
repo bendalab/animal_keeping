@@ -7,13 +7,19 @@ import animalkeeping.ui.*;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 // import com.apple.eawt.*;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 import java.io.IOException;
 import java.net.URL;
@@ -32,7 +38,9 @@ public class MainViewController extends VBox implements Initializable{
     @FXML private TitledPane treatmentsPane;
     @FXML private TextField idField;
     @FXML private ScrollPane scrollPane;
-    @FXML private VBox masterBox;
+    @FXML private BorderPane borderPane;
+    @FXML private ProgressBar progressBar;
+    @FXML private Label messageLabel;
     @FXML private ComboBox<String> findBox;
     @FXML private TitledPane findPane;
     @FXML private Menu speciesTypeMenu;
@@ -43,6 +51,7 @@ public class MainViewController extends VBox implements Initializable{
     @FXML private MenuItem quitMenuItem;
     @FXML private MenuItem aboutMenuItem;
     @FXML private MenuBar menuBar;
+    @FXML private VBox navigationBar;
 
     private Vector<TitledPane> panes;
     private HashMap<String, View> views;
@@ -63,8 +72,6 @@ public class MainViewController extends VBox implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.setPrefWidth(1024);
-        this.setPrefHeight(768);
         menuBar.setUseSystemMenuBar(true);
 
         if (System.getProperty("os.name").startsWith("Mac OS X")) {
@@ -75,29 +82,26 @@ public class MainViewController extends VBox implements Initializable{
             aboutMenuItem.setVisible(false);
             quitMenuItem.setVisible(false);
         }
-
         findBox.getItems().clear();
         findBox.getItems().addAll("Person", "Subject", "Housing unit", "Treatment");
         findBox.getSelectionModel().select("Subject");
         this.scrollPane.setContent(null);
         if (!Main.isConnected()) {
             LoginController login = new LoginController();
-            login.addEventHandler(LoginController.DatabaseEvent.CONNECT, event -> connectedToDatabase());
+            login.addEventHandler(LoginController.DatabaseEvent.CONNECTING, this::connectedToDatabase);
+            login.addEventHandler(LoginController.DatabaseEvent.CONNECTED, this::connectedToDatabase);
+            login.addEventHandler(LoginController.DatabaseEvent.FAILED, this::connectedToDatabase);
             this.scrollPane.setContent(login);
         }
         else {
             try{
-                connectedToDatabase();}
+                connectedToDatabase(null);}
             catch(Exception e){
                 e.printStackTrace();
             }
         }
-        masterBox.prefHeightProperty().bind(this.heightProperty());
-        hBox.prefHeightProperty().bind(this.heightProperty());
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true);
-        scrollPane.prefWidthProperty().bind(this.widthProperty());
-        scrollPane.prefHeightProperty().bind(this.heightProperty());
+        borderPane.prefHeightProperty().bind(this.prefHeightProperty());
+        navigationBar.prefHeightProperty().bind(this.prefHeightProperty());
 
         panes = new Vector<>();
         panes.add(inventoryPane);
@@ -134,16 +138,27 @@ public class MainViewController extends VBox implements Initializable{
                 inventory = new InventoryController();
                 cacheView("inventory", inventory);
             }
-            inventory.prefHeightProperty().bind(this.scrollPane.heightProperty());
-            inventory.prefWidthProperty().bind(this.scrollPane.widthProperty());
+            inventory.prefHeightProperty().bind(this.borderPane.heightProperty());
+            inventory.prefWidthProperty().bind(this.borderPane.widthProperty());
+            inventory.addEventHandler(EventType.ROOT, this::handleViewEvents);
             this.scrollPane.setContent(inventory);
             this.inventoryPane.setContent(inventory.getControls());
             collapsePanes(inventoryPane);
+            refreshView();
         } catch(Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void handleViewEvents(Event event) {
+        if (event.getEventType() == ViewEvent.REFRESHING) {
+            setBusy("Refreshing view ...");
+        } else if (event.getEventType() == ViewEvent.REFRESHED) {
+            setIdle(" ", false);
+        } else if (event.getEventType() == ViewEvent.REFRESH_FAIL) {
+            setIdle("refreshing failed!", true);
+        }
+    }
 
     @FXML
     private void showPersons() {
@@ -166,6 +181,7 @@ public class MainViewController extends VBox implements Initializable{
                 this.scrollPane.setContent(pv);
                 this.personsPane.setContent(pv.getControls());
                 collapsePanes(personsPane);
+                refreshView();
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -190,9 +206,11 @@ public class MainViewController extends VBox implements Initializable{
                 }
                 fv.prefHeightProperty().bind(this.scrollPane.heightProperty());
                 fv.prefWidthProperty().bind(this.scrollPane.widthProperty());
+                //fv.addEventHandler(EventType.ROOT, this::handleViewEvents);
                 this.scrollPane.setContent(fv);
                 subjectsPane.setContent(fv.getControls());
                 collapsePanes(subjectsPane);
+                refreshView();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -219,6 +237,7 @@ public class MainViewController extends VBox implements Initializable{
                 this.scrollPane.setContent(treatmentsView);
                 this.treatmentsPane.setContent(treatmentsView.getControls());
                 collapsePanes(treatmentsPane);
+                refreshView();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -245,6 +264,7 @@ public class MainViewController extends VBox implements Initializable{
                 this.scrollPane.setContent(housingView);
                 this.animalHousingPane.setContent(housingView.getControls());
                 collapsePanes(animalHousingPane);
+                refreshView();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -271,6 +291,7 @@ public class MainViewController extends VBox implements Initializable{
                 this.scrollPane.setContent(licenseView);
                 this.licensesPane.setContent(licenseView.getControls());
                 collapsePanes(licensesPane);
+                refreshView();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -376,8 +397,20 @@ public class MainViewController extends VBox implements Initializable{
 
     @FXML
     private void refreshView() {
+
         if (this.scrollPane.getContent() instanceof View) {
-            ((View) this.scrollPane.getContent()).refresh();
+            Task<Void> refreshTask = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    Thread.sleep(250);
+                    ((View) scrollPane.getContent()).refresh();
+                    return null;
+                }
+            };
+            refreshTask.setOnScheduled(event -> setBusy("refreshing ..."));
+            refreshTask.setOnSucceeded(event -> setIdle("", false));
+
+            new Thread(refreshTask).start();
         }
     }
 
@@ -459,19 +492,27 @@ public class MainViewController extends VBox implements Initializable{
     }
 
 
-    private void connectedToDatabase() {
-        subjectsPane.setDisable(false);
-        personsPane.setDisable(false);
-        inventoryPane.setDisable(false);
-        treatmentsPane.setDisable(false);
-        findPane.setDisable(false);
-        animalHousingPane.setDisable(false);
-        licensesPane.setDisable(false);
-        subjectTypeMenu.setDisable(false);
-        speciesTypeMenu.setDisable(false);
-        supplierMenu.setDisable(false);
-        fillMenus();
-        showInventory();
+    private void connectedToDatabase(LoginController.DatabaseEvent event) {
+        if (event == null)
+            return;
+        if(event.getEventType() == LoginController.DatabaseEvent.CONNECTED) {
+            subjectsPane.setDisable(false);
+            personsPane.setDisable(false);
+            inventoryPane.setDisable(false);
+            treatmentsPane.setDisable(false);
+            findPane.setDisable(false);
+            animalHousingPane.setDisable(false);
+            licensesPane.setDisable(false);
+            subjectTypeMenu.setDisable(false);
+            speciesTypeMenu.setDisable(false);
+            fillMenus();
+            showInventory();
+            setIdle("Successfully connected to database!", false);
+        } else if (event.getEventType() == LoginController.DatabaseEvent.CONNECTING) {
+            setBusy("Connecting to database...");
+        } else if (event.getEventType() == LoginController.DatabaseEvent.FAILED) {
+            setIdle("Connection failed! " + event.getMessage(), true);
+        }
     }
 
     private void collapsePanes(TitledPane excludedPane) {
@@ -531,4 +572,25 @@ public class MainViewController extends VBox implements Initializable{
         }
     }
     */
+    private void setBusy(String message) {
+        Platform.runLater(() -> {
+            progressBar.setProgress(-1.0);
+            messageLabel.setTextFill(Color.BLACK);
+            messageLabel.setText(message != null ? message : "");
+        });
+
+    }
+
+    private void setIdle(String message, boolean error) {
+        Platform.runLater(() -> {
+            progressBar.setProgress(0.);
+            if (error) {
+                messageLabel.setTextFill(Color.RED);
+            } else {
+                messageLabel.setTextFill(Color.BLACK);
+            }
+            messageLabel.setText(message != null ? message : "");
+        });
+
+    }
 }

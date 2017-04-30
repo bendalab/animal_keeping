@@ -4,7 +4,13 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.controller.TimelineController;
 import animalkeeping.util.Dialogs;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -74,7 +80,7 @@ public class SubjectView extends VBox implements Initializable, View {
     public void initialize(URL location, ResourceBundle resources) {
         subjectsTable = new SubjectsTable();
         subjectsTable.getSelectionModel().getSelectedItems().addListener(new FishTableListChangeListener());
-        subjectsTable.setAliveFilter(true);
+        //subjectsTable.setAliveFilter(true);
         timeline = new TimelineController();
 
         this.tableScrollPane.setContent(subjectsTable);
@@ -230,8 +236,7 @@ public class SubjectView extends VBox implements Initializable, View {
             } else {
                 statusLabel.setText("none");
             }
-
-            treatmentsTable.setTreatments(s.getTreatments());
+            treatmentsTable.setSubject(s);
             timeline.setTreatments(s.getTreatments());
             housingTable.setSubject(s);
             notesTable.setNotes(s.getNotes());
@@ -352,14 +357,16 @@ public class SubjectView extends VBox implements Initializable, View {
 
     @Override
     public void refresh() {
+        fireEvent(new ViewEvent(ViewEvent.REFRESHING));
         Subject s = subjectsTable.getSelectionModel().getSelectedItem();
-        subjectsTable.getSelectionModel().select(null);
-        subjectSelected(null);
         subjectsTable.refresh();
-        if (subjectsTable.getItems().contains(s)) {
-            subjectSelected(s);
-        } else {
-            subjectSelected(null);
-        }
+        subjectsTable.addEventHandler(ViewEvent.REFRESHED, event -> {
+            if (event.getEventType()== ViewEvent.REFRESHED) {
+                subjectsTable.getSelectionModel().select(s);
+                fireEvent(new ViewEvent(ViewEvent.REFRESHED));
+            }
+        });
+        //treatmentsTable.refresh();
     }
+
 }

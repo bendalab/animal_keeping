@@ -7,7 +7,6 @@ import javafx.scene.text.Font;
 
 
 public class ControlLabel extends Label {
-    private Font defaultFont = new Font(Font.getDefault().getFamily(), 12);
 
     public ControlLabel(String text) {
         this(text, false);
@@ -15,6 +14,7 @@ public class ControlLabel extends Label {
 
     public ControlLabel(String text, Boolean disabled) {
         super(text);
+        Font defaultFont = new Font(Font.getDefault().getFamily(), 12);
         this.setFont(defaultFont);
         this.setDisable(disabled);
         this.setOnMouseEntered(event -> {

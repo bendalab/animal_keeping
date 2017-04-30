@@ -4,6 +4,7 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.Subject;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -11,9 +12,15 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.control.*;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SubjectsTable extends TableView<Subject> {
@@ -118,7 +125,7 @@ public class SubjectsTable extends TableView<Subject> {
 
         cmenu.getItems().addAll(newItem, editItem, deleteItem, addTreatmentItem, observationItem, reportDeadItem, moveItem);
         this.setContextMenu(cmenu);
-        init();
+        //init();
     }
 
     public SubjectsTable(ObservableList<Subject> items) {
@@ -128,13 +135,23 @@ public class SubjectsTable extends TableView<Subject> {
 
     private void init() {
         masterList.clear();
-        List<Subject> subjects = EntityHelper.getEntityList("from Subject", Subject.class);
-        masterList.addAll(subjects);
-        filteredList = new FilteredList<>(masterList, p -> true);
-        SortedList<Subject> sortedList = new SortedList<>(filteredList);
-        sortedList.comparatorProperty().bind(this.comparatorProperty());
-        this.setItems(sortedList);
-        setAliveFilter(true);
+        Task<Void> refresh_task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                Thread.sleep(1000);
+                masterList.addAll(EntityHelper.getEntityList("from Subject", Subject.class));
+                return null;
+            }
+        };
+        refresh_task.setOnSucceeded(event -> {
+            filteredList = new FilteredList<>(masterList, p -> true);
+            SortedList<Subject> sortedList = new SortedList<>(filteredList);
+            sortedList.comparatorProperty().bind(comparatorProperty());
+            setItems(sortedList);
+            setAliveFilter(true);
+            fireEvent(new ViewEvent(ViewEvent.REFRESHED));
+        });
+        new Thread(refresh_task).run();
     }
 
 

@@ -1,6 +1,7 @@
 package animalkeeping.util;
 
 import animalkeeping.ui.AddDatabaseUserForm;
+import animalkeeping.ui.Main;
 import animalkeeping.ui.SuperUserForm;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -31,9 +32,10 @@ public class SuperUserDialog extends Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        Main.ConnectionDetails cd = Main.getCredentials();
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
-                Connection connection = suf.openDatabaseUserDialog(suf.getSuperUserName(), suf.getSuperUserPassword());
+                Connection connection = suf.openDatabaseUserDialog(cd.getDatabaseName(), cd.getHostName(), suf.getSuperUserName(), suf.getSuperUserPassword());
                 if (connection!= null){
                     return connection;
                 }

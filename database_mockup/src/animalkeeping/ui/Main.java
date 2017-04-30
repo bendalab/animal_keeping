@@ -15,43 +15,32 @@ public class Main extends Application {
     public static SessionFactory sessionFactory;
     private static Boolean connected = false;
     private static Stage primaryStage;
-
+    private static ConnectionDetails connectionDetails = null;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         Main.primaryStage = primaryStage;
         Main.primaryStage.setTitle("AnimalKeepingDB");
-        MainViewController mv = new MainViewController();
-        Scene scene = new Scene(mv);
+        MainViewController mainView = new MainViewController();
+        mainView.prefHeightProperty().bind(primaryStage.heightProperty());
+        mainView.prefWidthProperty().bind(primaryStage.widthProperty());
+        Scene scene = new Scene(mainView);
         primaryStage.setScene(scene);
+        primaryStage.setWidth(1024);
+        primaryStage.setHeight(768);
         primaryStage.show();
     }
 
-    public static  boolean connectToDatabase(ConnectionDetails credentials) {
+    public static  boolean connectToDatabase(ConnectionDetails credentials) throws Exception {
         StandardServiceRegistryBuilder registrybuilder = new StandardServiceRegistryBuilder();
         registrybuilder.configure();
         registrybuilder.applySettings(credentials.getCredentials());
 
         final StandardServiceRegistry registry = registrybuilder.build();
-
-        try {
-            sessionFactory = new MetadataSources( registry ).buildMetadata().buildSessionFactory();
-            connected = true;
-            return true;
-        }
-        catch (Exception e) {
-            StandardServiceRegistryBuilder.destroy( registry );
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Connection error!");
-            alert.setHeaderText("Cannot establish connection to database!");
-            String s = e.getLocalizedMessage();
-            alert.setContentText(s);
-            alert.show();
-            e.printStackTrace();
-            connected = false;
-            return false;
-        }
-
+        sessionFactory = new MetadataSources( registry ).buildMetadata().buildSessionFactory();
+        connected = true;
+        connectionDetails = credentials;
+        return true;
     }
 
 
@@ -67,6 +56,9 @@ public class Main extends Application {
         return  sessionFactory;
     }
 
+    public static ConnectionDetails getCredentials(){
+        return connectionDetails;
+    };
 
     public static void main(String[] args) {
         launch(args);
@@ -81,11 +73,15 @@ public class Main extends Application {
 		private String user;
 		private String passwd;
 		private String hostName;
+        private String databaseName;
+        private String hostUrl;
 
-		public ConnectionDetails(String userName, String password, String host) {
+		public ConnectionDetails(String userName, String password, String host, String dbName, String hostUrl) {
 			user = userName;
 			passwd = password;
 			hostName = host;
+			databaseName = dbName;
+			this.hostUrl = hostUrl;
 		}
 
         public String getUser() {
@@ -98,11 +94,15 @@ public class Main extends Application {
 
         public String getHostName() { return hostName; }
 
+        public String getDatabaseName() { return databaseName; }
+
+        public String getHostUrl() { return hostUrl; }
+
         public HashMap<String, String> getCredentials() {
 		    HashMap<String, String> cred = new HashMap<>();
             cred.put("hibernate.connection.username", getUser());
             cred.put("hibernate.connection.password", getPasswd());
-            cred.put("hibernate.connection.url", getHostName());
+            cred.put("hibernate.connection.url", getHostUrl());
             return  cred;
 		}
 

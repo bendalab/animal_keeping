@@ -6,6 +6,7 @@ import animalkeeping.model.Subject;
 import animalkeeping.model.Treatment;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -15,10 +16,12 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.util.Pair;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -38,15 +41,15 @@ public class TreatmentsTable extends TableView<Treatment>{
     TreatmentsTable() {
         super();
         initUI();
-        init();
+        //init();
     }
 
     public TreatmentsTable(boolean openOnly) {
         super();
         this.openOnly = openOnly;
         initUI();
-        init();
-        setOpenFilter(openOnly);
+        //init();
+        //setOpenFilter(openOnly);
     }
 
     private void initUI() {
@@ -129,23 +132,34 @@ public class TreatmentsTable extends TableView<Treatment>{
 
         cmenu.getItems().addAll(newItem, editItem, deleteItem, endItem, openOnlyItem);
         this.setContextMenu(cmenu);
-    }
-
-    private void init() {
-        if (!manual) {
-            masterList.clear();
-            if (this.subject == null) {
-                List<Treatment> treatments = EntityHelper.getEntityList("from Treatment", Treatment.class);
-                masterList.addAll(treatments);
-            } else {
-                masterList.addAll(subject.getTreatments());
-            }
-        }
         filteredList = new FilteredList<>(masterList, p -> true);
         SortedList<Treatment> sortedList = new SortedList<>(filteredList);
         sortedList.comparatorProperty().bind(this.comparatorProperty());
         this.setItems(sortedList);
-        setOpenFilter(this.openOnly);
+    }
+
+    private void init() {
+        if (!manual) {
+            Task<Void> refreshTask = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    List<Treatment> treatments;
+                    if (subject == null) {
+                        treatments = EntityHelper.getEntityList("from Treatment", Treatment.class);
+                    } else {
+                        treatments = new ArrayList<>(subject.getTreatments());
+                    }
+
+                    Platform.runLater(() -> {
+                        masterList.clear();
+                        masterList.addAll(treatments);
+                        setOpenFilter(openOnly);
+                    });
+                    return null;
+                }
+            };
+            new Thread(refreshTask).start();
+        }
     }
 
     public void setTreatments(Collection<Treatment> treatments) {
