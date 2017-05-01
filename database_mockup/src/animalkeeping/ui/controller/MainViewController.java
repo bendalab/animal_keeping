@@ -8,6 +8,8 @@ import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 // import com.apple.eawt.*;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.event.EventType;
@@ -55,8 +57,8 @@ public class MainViewController extends VBox implements Initializable{
     @FXML private MenuBar menuBar;
     @FXML private VBox navigationBar;
 
-    private Vector<TitledPane> panes;
-    private HashMap<String, View> views;
+    private HashMap<String, TitledPane> panes;
+    private HashMap<String, AbstractView> views;
 
 
     public MainViewController() {
@@ -104,15 +106,33 @@ public class MainViewController extends VBox implements Initializable{
         }
         borderPane.prefHeightProperty().bind(this.prefHeightProperty());
         navigationBar.prefHeightProperty().bind(this.prefHeightProperty());
+        inventoryPane.expandedProperty().addListener((observable, oldValue, newValue) -> {
+            showView("inventory", newValue);
+        });
+        personsPane.expandedProperty().addListener((observable, oldValue, newValue) -> {
+            showView("person", newValue);
+        });
+        animalHousingPane.expandedProperty().addListener((observable, oldValue, newValue) -> {
+            showView("housing", newValue);
+        });
+        licensesPane.expandedProperty().addListener((observable, oldValue, newValue) -> {
+            showView("license", newValue);
+        });
+        treatmentsPane.expandedProperty().addListener((observable, oldValue, newValue) -> {
+            showView("treatment", newValue);
+        });
+        subjectsPane.expandedProperty().addListener((observable, oldValue, newValue) -> {
+                showView("subject", newValue);
+        });
 
-        panes = new Vector<>();
-        panes.add(inventoryPane);
-        panes.add(subjectsPane);
-        panes.add(treatmentsPane);
-        panes.add(personsPane);
-        panes.add(animalHousingPane);
-        panes.add(licensesPane);
-        refreshItem.setAccelerator(new KeyCodeCombination( KeyCode.R, KeyCombination.SHORTCUT_DOWN));
+        panes = new HashMap<>(6);
+        panes.put("inventory", inventoryPane);
+        panes.put("subject", subjectsPane);
+        panes.put("treatment", treatmentsPane);
+        panes.put("person", personsPane);
+        panes.put("housing", animalHousingPane);
+        panes.put("license", licensesPane);
+        refreshItem.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN));
         views = new HashMap<>();
     }
 
@@ -121,36 +141,67 @@ public class MainViewController extends VBox implements Initializable{
         return views.containsKey(name);
     }
 
-    private void cacheView(String name, View view) {
+    private void cacheView(String name, AbstractView view) {
         if (!views.containsKey(name)) {
             views.put(name, view);
         }
     }
 
-
-    @FXML
-    private void showInventory() {
-        this.scrollPane.setContent(null);
-        inventoryPane.setExpanded(true);
-        try {
-            InventoryController inventory;
-            if (viewIsCached("inventory")) {
-                inventory = (InventoryController) views.get("inventory");
-            } else {
-                inventory = new InventoryController();
-                cacheView("inventory", inventory);
-            }
-            inventory.prefHeightProperty().bind(this.borderPane.heightProperty());
-            inventory.prefWidthProperty().bind(this.borderPane.widthProperty());
-            inventory.addEventHandler(EventType.ROOT, this::handleViewEvents);
-            this.scrollPane.setContent(inventory);
-            this.inventoryPane.setContent(inventory.getControls());
-            collapsePanes(inventoryPane);
-            refreshView();
-            inventory.requestFocus();
-        } catch(Exception e) {
-            e.printStackTrace();
+    private void showView(String type, boolean expanded) {
+        if (!type.equals("inventory") && !expanded) {
+            inventoryPane.setExpanded(true);
+            return;
         }
+        if (expanded) {
+            this.scrollPane.setContent(null);
+            AbstractView view;
+            if (viewIsCached(type)) {
+                view = views.get(type);
+            } else {
+                view = createView(type);
+            }
+            if (view != null) {
+                collapsePanes(panes.get(type));
+                this.scrollPane.setContent(view);
+                refreshView();
+                view.requestFocus();
+            }
+        }
+    }
+
+    private AbstractView createView(String type) {
+        AbstractView view = null;
+        TitledPane pane = null;
+        switch (type) {
+            case "inventory":
+                view = new InventoryController();
+                break;
+            case "person":
+                view = new PersonsView();
+                break;
+            case "subject":
+                view = new SubjectView();
+                break;
+            case "treatment":
+                view = new TreatmentsView();
+                break;
+            case "license":
+                view = new LicenseView();
+                break;
+            case "housing":
+                view = new HousingView();
+                break;
+            default:
+                setIdle("invalid view requested!", true);
+        }
+        if (view != null) {
+            cacheView(type, view);
+            view.prefHeightProperty().bind(this.borderPane.heightProperty());
+            view.prefWidthProperty().bind(this.borderPane.widthProperty());
+            view.addEventHandler(EventType.ROOT, this::handleViewEvents);
+            panes.get(type).setContent(view.getControls());
+        }
+        return view;
     }
 
     private void handleViewEvents(Event event) {
@@ -163,144 +214,6 @@ public class MainViewController extends VBox implements Initializable{
         }
     }
 
-    @FXML
-    private void showPersons() {
-        this.scrollPane.setContent(null);
-        if (!personsPane.isExpanded()) {
-            showInventory();
-        } else {
-            try{
-                PersonsView pv;
-                if (viewIsCached("persons")) {
-                    pv = (PersonsView) views.get("persons");
-                } else {
-                    pv = new PersonsView();
-                    cacheView("persons", pv);
-                }
-                this.scrollPane.setFitToHeight(true);
-                this.scrollPane.setFitToWidth(true);
-                pv.prefHeightProperty().bind(this.scrollPane.heightProperty());
-                pv.prefWidthProperty().bind(this.scrollPane.widthProperty());
-                this.scrollPane.setContent(pv);
-                this.personsPane.setContent(pv.getControls());
-                collapsePanes(personsPane);
-                refreshView();
-            }
-            catch(Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    @FXML
-    private void showSubjects() {
-        this.scrollPane.setContent(null);
-        if (!subjectsPane.isExpanded()) {
-            showInventory();
-        } else {
-            try {
-                SubjectView fv;
-                if (viewIsCached("subjects")) {
-                    fv = (SubjectView) views.get("subjects");
-                } else {
-                    fv = new SubjectView();
-                    cacheView("subjects", fv);
-                }
-                fv.prefHeightProperty().bind(this.scrollPane.heightProperty());
-                fv.prefWidthProperty().bind(this.scrollPane.widthProperty());
-                //fv.addEventHandler(EventType.ROOT, this::handleViewEvents);
-                this.scrollPane.setContent(fv);
-                subjectsPane.setContent(fv.getControls());
-                collapsePanes(subjectsPane);
-                refreshView();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    @FXML
-    private void showTreatments() {
-        this.scrollPane.setContent(null);
-        if (!treatmentsPane.isExpanded()) {
-            showInventory();
-        } else {
-            try {
-                TreatmentsView treatmentsView;
-                if (viewIsCached("treatment")) {
-                    treatmentsView = (TreatmentsView) views.get("treatment");
-                } else {
-                    treatmentsView = new TreatmentsView();
-                    cacheView("treatment", treatmentsView);
-                }
-                treatmentsView.prefHeightProperty().bind(this.scrollPane.heightProperty());
-                treatmentsView.prefWidthProperty().bind(this.scrollPane.widthProperty());
-                this.scrollPane.setContent(treatmentsView);
-                this.treatmentsPane.setContent(treatmentsView.getControls());
-                collapsePanes(treatmentsPane);
-                refreshView();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    @FXML
-    private void showHousingUnits() {
-        this.scrollPane.setContent(null);
-        if (!animalHousingPane.isExpanded()) {
-            showInventory();
-        } else {
-            try {
-                HousingView housingView;
-                if (viewIsCached("housing")) {
-                    housingView = (HousingView) views.get("housing");
-                } else {
-                    housingView = new HousingView();
-                    cacheView("housing", housingView);
-                }
-                housingView.prefHeightProperty().bind(this.scrollPane.heightProperty());
-                housingView.prefWidthProperty().bind(this.scrollPane.widthProperty());
-                this.scrollPane.setContent(housingView);
-                this.animalHousingPane.setContent(housingView.getControls());
-                collapsePanes(animalHousingPane);
-                refreshView();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @FXML
-    private void showLicenseView() {
-        this.scrollPane.setContent(null);
-        if (!licensesPane.isExpanded()) {
-            showInventory();
-        } else {
-            this.licensesPane.setContent(null);
-            try {
-                LicenseView licenseView;
-                if (viewIsCached("license")) {
-                    licenseView = (LicenseView) views.get("license");
-                } else {
-                    licenseView = new LicenseView();
-                    cacheView("license", licenseView);
-                }
-                licenseView.prefHeightProperty().bind(this.scrollPane.heightProperty());
-                licenseView.prefWidthProperty().bind(this.scrollPane.widthProperty());
-                this.scrollPane.setContent(licenseView);
-                this.licensesPane.setContent(licenseView.getControls());
-                collapsePanes(licensesPane);
-                refreshView();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private Long looksLikeId(String text) {
         Long aLong = null;
         try {
@@ -310,7 +223,6 @@ public class MainViewController extends VBox implements Initializable{
             aLong = null;
         return aLong;
     }
-
 
     @FXML
     private void goToId(){
@@ -327,7 +239,6 @@ public class MainViewController extends VBox implements Initializable{
         switch (selectedTable) {
             case "Subject":
                 subjectsPane.setExpanded(true);
-                showSubjects();
                 SubjectView fv = (SubjectView) views.get("subjects");
                 if (id != null) {
                     fv.idFilter(id);
@@ -338,7 +249,6 @@ public class MainViewController extends VBox implements Initializable{
                 break;
             case "Person":
                 personsPane.setExpanded(true);
-                showPersons();
                 PersonsView pv = (PersonsView) views.get("persons");
                 if (id != null) {
                     pv.idFilter(id);
@@ -356,16 +266,6 @@ public class MainViewController extends VBox implements Initializable{
         }
     }
 
-
-    /*
-    @FXML
-    private void showUserAddInterface() throws Exception{
-        Main.getPrimaryStage().setScene(new Scene(FXMLLoader.load(Main.class.getResource("fxml/UserAddView.fxml"))));
-        this.scrollPane.setContent(null);
-        PersonsTable personTable = new PersonsTable();
-        this.scrollPane.setContent(personTable);
-    }
-    */
     @FXML
     private  void closeApplication() {
         Main.getPrimaryStage().close();
@@ -384,13 +284,11 @@ public class MainViewController extends VBox implements Initializable{
         fillSubjectTypeMenu();
     }
 
-
     @FXML
     private void newSpeciesType() {
         Dialogs.editSpeciesTypeDialog(null);
         fillSpeciesTypeMenu();
     }
-
 
     @FXML
     private void newSupplierType() {
@@ -415,7 +313,6 @@ public class MainViewController extends VBox implements Initializable{
             new Thread(refreshTask).start();
         }
     }
-
 
     private void fillSubjectTypeMenu() {
         subjectTypeMenu.getItems().clear();
@@ -498,17 +395,13 @@ public class MainViewController extends VBox implements Initializable{
         if (event == null)
             return;
         if(event.getEventType() == LoginController.DatabaseEvent.CONNECTED) {
-            subjectsPane.setDisable(false);
-            personsPane.setDisable(false);
-            inventoryPane.setDisable(false);
-            treatmentsPane.setDisable(false);
-            findPane.setDisable(false);
-            animalHousingPane.setDisable(false);
-            licensesPane.setDisable(false);
+            for (TitledPane p : panes.values())
+                p.setDisable(false);
             subjectTypeMenu.setDisable(false);
             speciesTypeMenu.setDisable(false);
+            supplierMenu.setDisable(false);
             fillMenus();
-            showInventory();
+            inventoryPane.setExpanded(true);
             setIdle("Successfully connected to database!", false);
         } else if (event.getEventType() == LoginController.DatabaseEvent.CONNECTING) {
             setBusy("Connecting to database...");
@@ -518,8 +411,8 @@ public class MainViewController extends VBox implements Initializable{
     }
 
     private void collapsePanes(TitledPane excludedPane) {
-        for (TitledPane p : panes) {
-            if (p != excludedPane) {
+        for (TitledPane p : panes.values()) {
+            if (p != excludedPane && p.isExpanded()) {
                 p.setExpanded(false);
             }
         }
