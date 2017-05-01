@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 import static animalkeeping.util.Dialogs.*;
 
 
-public class HousingView extends VBox implements Initializable, View {
+public class HousingView extends AbstractView implements Initializable {
     @FXML ScrollPane tableScrollPane;
     @FXML private Tab populationTab, historyTab, currentHousingTab;
     @FXML private TabPane plotTabPane;

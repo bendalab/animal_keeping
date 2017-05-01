@@ -24,7 +24,7 @@ import java.util.ResourceBundle;
 /**
  * Created by jan on 18.02.17.
  */
-public class LicenseView extends VBox implements Initializable, View {
+public class LicenseView extends AbstractView implements Initializable {
     @FXML private ScrollPane tableScrollPane;
     @FXML private Label idLabel;
     @FXML private Label nameLabel;

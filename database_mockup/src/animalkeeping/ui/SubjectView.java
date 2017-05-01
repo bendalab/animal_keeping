@@ -35,7 +35,7 @@ import java.util.*;
 
 import static animalkeeping.util.DateTimeHelper.getDateTime;
 
-public class SubjectView extends VBox implements Initializable, View {
+public class SubjectView extends AbstractView implements Initializable {
     @FXML private ScrollPane tableScrollPane;
     @FXML private Label idLabel;
     @FXML private Label nameLabel;

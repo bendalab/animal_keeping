@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 /**
  * Created by jan on 04.03.17.
  */
-public class TreatmentsView extends VBox implements Initializable, View{
+public class TreatmentsView extends AbstractView implements Initializable {
     @FXML private ScrollPane tableScrollPane;
     @FXML private Label idLabel;
     @FXML private Label nameLabel;

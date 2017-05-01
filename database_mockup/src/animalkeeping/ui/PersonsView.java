@@ -23,7 +23,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class PersonsView  extends VBox implements Initializable, View {
+public class PersonsView  extends AbstractView implements Initializable {
     @FXML private ScrollPane tableScrollPane;
     @FXML private VBox timelineVBox;
     @FXML private Label firstnameLabel;

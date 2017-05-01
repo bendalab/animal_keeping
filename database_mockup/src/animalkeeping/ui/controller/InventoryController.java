@@ -38,7 +38,7 @@ import java.util.*;
 /**
  * Created by jan on 14.01.17.
  */
-public class InventoryController extends VBox implements Initializable, View {
+public class InventoryController extends AbstractView implements Initializable {
     @FXML private PieChart populationChart;
     @FXML private VBox unitsBox;
     @FXML private ListView<String> unitsList;
