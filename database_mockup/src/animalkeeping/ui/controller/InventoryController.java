@@ -431,7 +431,7 @@ public class InventoryController extends VBox implements Initializable, View {
         rowid++;
         row = sheet.createRow(rowid++);
         row.createCell(0).setCellValue("species");
-        row.createCell(1).setCellValue("no used in reporting period");
+        row.createCell(1).setCellValue("used in reporting period");
         row.createCell(2).setCellValue("remaining quota");
         row = sheet.createRow(rowid++);
         Set<Quota> quotas = l.getQuotas();
@@ -440,7 +440,7 @@ public class InventoryController extends VBox implements Initializable, View {
             Integer used = counts.containsKey(q.getSpeciesType()) ? counts.get(q.getSpeciesType()) : 0;
             row.createCell(0).setCellValue(q.getSpeciesType().getName());
             row.createCell(1).setCellValue(used);
-            row.createCell(2).setCellValue(q.getNumber() - q.getUsed());
+            row.createCell(2).setCellValue((q.getNumber() != null ? q.getNumber() : 0) - q.getUsed());
             row = sheet.createRow(rowid++);
         }
         row = sheet.createRow(rowid++);

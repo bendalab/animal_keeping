@@ -4,14 +4,13 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.Dialogs;
+import animalkeeping.util.EntityHelper;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -21,6 +20,8 @@ import java.util.Date;
 import java.util.List;
 
 import static animalkeeping.util.DateTimeHelper.getDateTime;
+import static animalkeeping.util.DateTimeHelper.localDateToUtilDate;
+import static animalkeeping.util.DateTimeHelper.toLocalDate;
 
 
 public class SubjectForm extends VBox {
@@ -28,7 +29,8 @@ public class SubjectForm extends VBox {
     private ComboBox<SubjectType> subjectTypeComboBox;
     private ComboBox<SupplierType> supplierComboBox;
     private ComboBox<HousingUnit> housingUnitComboBox;
-    private DatePicker importDate;
+    private ComboBox<Gender> genderComboBox;
+    private DatePicker importDate, birthDate;
     private TextField nameField, aliasField;
     private SpecialTextField importTimeField;
     private Label idLabel;
@@ -54,6 +56,8 @@ public class SubjectForm extends VBox {
         supplierComboBox.getSelectionModel().select(s.getSupplier());
         speciesComboBox.getSelectionModel().select(s.getSpeciesType());
         subjectTypeComboBox.getSelectionModel().select(s.getSubjectType());
+        genderComboBox.getSelectionModel().select(s.getGender());
+        birthDate.setValue(s.getBirthday() != null ? toLocalDate(s.getBirthday()) : null);
         Housing h = s.getHousings().iterator().next();
         LocalDate sd = DateTimeHelper.toLocalDate(h.getStart());
         importDate.setValue(sd);
@@ -116,6 +120,26 @@ public class SubjectForm extends VBox {
             }
         });
         // housingTable = new HousingTable();
+        genderComboBox = new ComboBox<>();
+        genderComboBox.setConverter(new StringConverter<Gender>() {
+            @Override
+            public String toString(Gender object) {
+                return object.toString();
+            }
+
+            @Override
+            public Gender fromString(String string) {
+                if (string.equals("unknown"))
+                    return Gender.unknown;
+                if (string.equals("female"))
+                    return Gender.female;
+                if (string.equals("male"))
+                    return Gender.male;
+                return Gender.hermaphrodite;
+            }
+        });
+
+        birthDate = new DatePicker();
 
         importDate = new DatePicker();
         importDate.setValue(LocalDate.now());
@@ -172,72 +196,69 @@ public class SubjectForm extends VBox {
         importTimeField.prefWidthProperty().bind(column2.maxWidthProperty());
         nameField.prefWidthProperty().bind(column2.maxWidthProperty());
         aliasField.prefWidthProperty().bind(column2.maxWidthProperty());
+        genderComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
+        birthDate.prefWidthProperty().bind(column2.maxWidthProperty());
 
         grid.setVgap(5);
         grid.setHgap(2);
         grid.add(new Label("ID:"), 0, 0);
         grid.add(idLabel, 1, 0);
 
-        grid.add(new Label("species:"), 0, 1);
-        grid.add(speciesComboBox, 1, 1, 1, 1);
-        grid.add(newSpeciesButton, 2, 1, 1, 1);
+        grid.add(new Label("name*:"), 0,1);
+        grid.add(nameField, 1,1, 2, 1);
 
-        grid.add(new Label("subject type:"), 0, 2);
-        grid.add(subjectTypeComboBox, 1, 2, 1, 1 );
-        grid.add(newSubjectTypeButton, 2, 2, 1, 1);
+        grid.add(new Label("alias:"), 0, 2);
+        grid.add(aliasField, 1, 2, 2, 1);
 
-        grid.add(new Label("supplier:"), 0, 3);
-        grid.add(supplierComboBox, 1, 3, 1, 1 );
-        grid.add(newSupplierButton, 2, 3, 1, 1);
+        grid.add(new Label("date of birth:"), 0,3);
+        grid.add(birthDate, 1,3, 2, 1);
 
-        grid.add(new Label("housing unit:"), 0, 4);
-        grid.add(housingUnitComboBox, 1, 4, 1, 1 );
-        grid.add(newHousingUnitButton, 2, 4, 1, 1);
+        grid.add(new Label("gender:"), 0, 4);
+        grid.add(genderComboBox, 1, 4, 2, 1);
 
-        grid.add(new Label("import date:"), 0, 5);
-        grid.add(importDate, 1, 5, 2,1);
+        grid.add(new Label("species*:"), 0, 5);
+        grid.add(speciesComboBox, 1, 5, 1, 1);
+        grid.add(newSpeciesButton, 2, 5, 1, 1);
 
-        grid.add(new Label("import time:"), 0, 6);
-        grid.add(importTimeField, 1, 6, 2,1);
+        grid.add(new Label("subject type*:"), 0, 6);
+        grid.add(subjectTypeComboBox, 1, 6, 1, 1 );
+        grid.add(newSubjectTypeButton, 2, 6, 1, 1);
 
-        grid.add(new Label("name:"), 0,7);
-        grid.add(nameField, 1,7, 2, 1);
+        grid.add(new Label("supplier*:"), 0, 7);
+        grid.add(supplierComboBox, 1, 7, 1, 1 );
+        grid.add(newSupplierButton, 2, 7, 1, 1);
 
-        grid.add(new Label("alias:"), 0, 8);
-        grid.add(aliasField, 1, 8, 2, 1);
+        grid.add(new Label("housing unit*:"), 0, 8);
+        grid.add(housingUnitComboBox, 1, 8, 1, 1 );
+        grid.add(newHousingUnitButton, 2, 8, 1, 1);
+
+        grid.add(new Label("import date*:"), 0, 9);
+        grid.add(importDate, 1, 9, 2,1);
+
+        grid.add(new Label("import time*:"), 0, 10);
+        grid.add(importTimeField, 1, 10, 2,1);
+
+        grid.add(new Label("(* required)"), 0, 11);
 
         //this.getChildren().add(new ScrollPane(housingTable));
         this.getChildren().add(grid);
 
-        Session session = Main.sessionFactory.openSession();
-        List<SpeciesType> species= new ArrayList<>(0);
-        List<SubjectType> types = new ArrayList<>(0);
-        List<SupplierType> supplier = new ArrayList<>(0);
-        List<HousingUnit> housingUnits = new ArrayList<>(0);
-        try {
-            session.beginTransaction();
-            species = session.createQuery("from SpeciesType", SpeciesType.class).list();
-            session.getTransaction().commit();
-            session.beginTransaction();
-            types = session.createQuery("from SubjectType", SubjectType.class).list();
-            session.getTransaction().commit();
-            session.beginTransaction();
-            supplier = session.createQuery("from SupplierType", SupplierType.class).list();
-            session.getTransaction().commit();
-            session.beginTransaction();
-            housingUnits = session.createQuery("from HousingUnit", HousingUnit.class).list();
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
+        List<SpeciesType> species= EntityHelper.getEntityList("from SpeciesType", SpeciesType.class);
+        List<SubjectType> types = EntityHelper.getEntityList("from SubjectType", SubjectType.class);
+        List<SupplierType> supplier = EntityHelper.getEntityList("from SupplierType", SupplierType.class);
+        List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit", HousingUnit.class);
+
         subjectTypeComboBox.getItems().addAll(types);
         supplierComboBox.getItems().addAll(supplier);
         speciesComboBox.getItems().addAll(species);
         housingUnitComboBox.getItems().addAll(housingUnits);
+        List<Gender> sexes = new ArrayList<>(4);
+        sexes.add(Gender.unknown);
+        sexes.add(Gender.female);
+        sexes.add(Gender.male);
+        sexes.add(Gender.hermaphrodite);
+        genderComboBox.getItems().addAll(sexes);
+        genderComboBox.getSelectionModel().select(Gender.unknown);
     }
 
 
@@ -251,7 +272,8 @@ public class SubjectForm extends VBox {
         subject.setSpeciesType(speciesComboBox.getValue());
         subject.setSupplier(supplierComboBox.getValue());
         subject.setSubjectType(subjectTypeComboBox.getValue());
-
+        subject.setGender(genderComboBox.getValue());
+        subject.setBirthday(birthDate.getValue() != null ? localDateToUtilDate(birthDate.getValue()) : null);
         Housing h;
         if (subject.getHousings().iterator().hasNext()) {
             h = subject.getHousings().iterator().next();

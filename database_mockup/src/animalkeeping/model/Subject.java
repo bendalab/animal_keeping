@@ -5,6 +5,7 @@ import animalkeeping.logging.ChangeLogUtil;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,6 +15,8 @@ import java.util.Set;
 public class Subject extends Entity implements ChangeLogInterface {
     private String name;
     private String alias;
+    private Date birthday;
+    private Gender gender;
     private SpeciesType speciesType;
     private SubjectType subjectType;
     private SupplierType supplier;
@@ -47,6 +50,22 @@ public class Subject extends Entity implements ChangeLogInterface {
 
     public void setAlias(String alias) {
         this.alias = alias;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
     }
 
     public SpeciesType getSpeciesType() {

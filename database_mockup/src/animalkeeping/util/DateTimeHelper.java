@@ -1,8 +1,11 @@
 package animalkeeping.util;
 
+import javafx.util.Pair;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -60,4 +63,41 @@ public class DateTimeHelper {
             return  false;
         }
     }
+
+    public static Age age(LocalDate birthDate, LocalDate currentDate) {
+        if ((birthDate != null) && (currentDate != null)) {
+            Integer years, months, days;
+            years = Period.between(birthDate, currentDate).getYears();
+            LocalDate ref = LocalDate.of(birthDate.getYear() + years, birthDate.getMonth(), birthDate.getDayOfMonth());
+            months = Period.between(ref, currentDate).getMonths();
+            ref.plusMonths(months);
+            days = Period.between(ref, currentDate).getDays();
+            return new Age(years, months, days);
+        } else {
+            return null;
+        }
+    }
+
+    public static class Age {
+        Integer years, months, days;
+
+        Age(Integer years, Integer months, Integer days) {
+            this.years = years;
+            this.months = months;
+            this.days = days;
+        }
+
+        public Integer getYears() {
+            return years;
+        }
+
+        public Integer getMonths() {
+            return months;
+        }
+
+        public Integer getDays() {
+            return days;
+        }
+    }
+
 }

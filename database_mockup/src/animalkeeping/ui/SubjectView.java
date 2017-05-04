@@ -3,6 +3,7 @@ package animalkeeping.ui;
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.controller.TimelineController;
+import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.Dialogs;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -20,6 +21,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import javafx.util.Pair;
 import javafx.util.StringConverter;
 import org.hibernate.Session;
 
@@ -28,6 +30,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.*;
 
 import static animalkeeping.util.DateTimeHelper.getDateTime;
@@ -36,7 +39,8 @@ public class SubjectView extends VBox implements Initializable, View {
     @FXML private ScrollPane tableScrollPane;
     @FXML private Label idLabel;
     @FXML private Label nameLabel;
-    @FXML private Label aliasLabel;
+    @FXML private Label genderLabel;
+    @FXML private Label birthdateLabel;
     @FXML private Label housingStartLabel;
     @FXML private Label housingEndLabel;
     @FXML private Label statusLabel;
@@ -202,12 +206,10 @@ public class SubjectView extends VBox implements Initializable, View {
 
 
     private void subjectSelected(Subject s) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat timestampFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
         if (s != null) {
-            idLabel.setText(s.getId().toString());
-            nameLabel.setText(s.getName());
-            aliasLabel.setText(s.getAlias() != null ? s.getAlias() : "");
-            speciesLabel.setText(s.getSpeciesType().getName());
-            originLabel.setText(s.getSupplier().getName());
             Iterator<Housing> iter = s.getHousings().iterator();
             Housing firstHousing = null;
             Housing lastHousing = null;
@@ -217,12 +219,27 @@ public class SubjectView extends VBox implements Initializable, View {
             while (iter.hasNext()) {
                 lastHousing = iter.next();
             }
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            housingStartLabel.setText(firstHousing != null ? sdf.format(firstHousing.getStart()) : "");
+            idLabel.setText(s.getId().toString());
+            String alias = s.getAlias() != null ? " (" + s.getAlias() + ")" : "";
+            nameLabel.setText(s.getName() + alias);
+            genderLabel.setText(s.getGender().toString());
+            String agestr = "";
+            if (s.getBirthday() != null) {
+                LocalDate ld = LocalDate.now();
+                if (lastHousing != null && lastHousing.getEnd() != null)
+                    ld = DateTimeHelper.toLocalDate(lastHousing.getEnd());
+                DateTimeHelper.Age age = DateTimeHelper.age(DateTimeHelper.toLocalDate(s.getBirthday()), ld);
+                agestr = " ("+ age.getYears() + "|" + age.getMonths() + "|" + age.getDays() + ")";
+            }
+            birthdateLabel.setText((s.getBirthday() != null ? dateFormat.format(s.getBirthday()) : "unknown") + agestr);
+            speciesLabel.setText(s.getSpeciesType().getName());
+            originLabel.setText(s.getSupplier().getName());
+
+            housingStartLabel.setText(firstHousing != null ? timestampFormat.format(firstHousing.getStart()) : "");
             if (lastHousing != null) {
-                housingEndLabel.setText(lastHousing.getEnd() != null ? sdf.format(lastHousing.getEnd()) : "");
+                housingEndLabel.setText(lastHousing.getEnd() != null ? timestampFormat.format(lastHousing.getEnd()) : "");
             } else {
-                housingEndLabel.setText(firstHousing.getEnd() != null ? sdf.format(firstHousing.getEnd()) : "");
+                housingEndLabel.setText(firstHousing.getEnd() != null ? timestampFormat.format(firstHousing.getEnd()) : "");
             }
             Iterator<Treatment> titer = s.getTreatments().iterator();
             Treatment t = null;
@@ -232,9 +249,9 @@ public class SubjectView extends VBox implements Initializable, View {
             if (t != null && t.getEnd() == null) {
                 statusLabel.setText("In treatment: " + t.getTreatmentType().getName());
             } else if (s.getCurrentHousing() != null) {
-                statusLabel.setText("In housing unit: " + s.getCurrentHousing().getHousing().getName());
+                statusLabel.setText("Available: " + s.getCurrentHousing().getHousing().getName());
             } else {
-                statusLabel.setText("none");
+                statusLabel.setText("Unavailable");
             }
             treatmentsTable.setSubject(s);
             timeline.setTreatments(s.getTreatments());
@@ -243,7 +260,8 @@ public class SubjectView extends VBox implements Initializable, View {
         } else {
             idLabel.setText("");
             nameLabel.setText("");
-            aliasLabel.setText("");
+            genderLabel.setText("");
+            birthdateLabel.setText("");
             originLabel.setText("");
             speciesLabel.setText("");
             statusLabel.setText("");
