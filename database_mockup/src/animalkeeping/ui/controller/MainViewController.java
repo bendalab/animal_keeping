@@ -83,7 +83,6 @@ public class MainViewController extends VBox implements Initializable{
             //Application.getApplication().setQuitHandler((quitEvent, quitResponse) -> closeApplication());
             //Application.getApplication().setQuitStrategy(QuitStrategy.CLOSE_ALL_WINDOWS);
             //Application.getApplication().setAboutHandler(new myAboutHandler());
-            aboutMenuItem.setVisible(false);
             quitMenuItem.setVisible(false);
         }
         findBox.getItems().clear();
@@ -455,8 +454,9 @@ public class MainViewController extends VBox implements Initializable{
         fillSupplierTypeMenu();
     }
 
+    @FXML
     private void showAbout() {
-        System.out.println("Show about");
+        Dialogs.showAboutDialog();
     }
 
     /*

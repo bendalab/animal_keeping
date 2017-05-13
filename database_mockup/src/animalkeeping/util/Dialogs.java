@@ -792,6 +792,18 @@ public class Dialogs {
         }
         return null;
     }
+
+    public static void showAboutDialog( ) {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setResizable(false);
+        dialog.setTitle("About animalBase");
+        About about = new About();
+        dialog.getDialogPane().setContent(about);
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.show();
+    }
 }
 
 
