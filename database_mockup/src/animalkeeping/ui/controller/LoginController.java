@@ -1,3 +1,38 @@
+/******************************************************************************
+ Copyright (c) 2017 Neuroethology Lab, University of Tuebingen,
+ Jan Grewe <jan.grewe@g-node.org>,
+ Dennis Huben <dennis.huben@rwth-aachen.de>
+
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without modification,
+ are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this list
+ of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce the above copyright notice, this
+ list of conditions and the following disclaimer in the documentation and/or other
+ materials provided with the distribution.
+
+ 3. Neither the name of the copyright holder nor the names of its contributors may
+ be used to endorse or promote products derived from this software without specific
+ prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ DAMAGE.
+
+ * Created by jan on 25.01.17.
+
+ *****************************************************************************/
 package animalkeeping.ui.controller;
 
 import animalkeeping.ui.Main;
@@ -6,7 +41,6 @@ import animalkeeping.util.Version;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
@@ -18,15 +52,10 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 
-import javax.swing.event.DocumentEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
-
-/**
- * Created by jan on 25.01.17.
- */
 
 public class LoginController extends FlowPane implements Initializable{
     @FXML private TextField databaseField;
@@ -67,8 +96,10 @@ public class LoginController extends FlowPane implements Initializable{
     private void connect() {
         ConnectionWorker worker = new ConnectionWorker(prefs);
         worker.addEventHandler(DatabaseEvent.ANY, this::handleEvents);
-        worker.setOnFailed(event -> fireEvent(new DatabaseEvent(DatabaseEvent.FAILED,
-                worker.exceptionProperty().getValue().getCause().getCause().getMessage())));
+        worker.setOnFailed(event -> {fireEvent(new DatabaseEvent(DatabaseEvent.FAILED,
+                worker.exceptionProperty().getValue().getCause().getCause().getMessage()));
+                worker.exceptionProperty().getValue().printStackTrace();
+        });
         new Thread(worker).start();
 
     }
@@ -113,11 +144,10 @@ public class LoginController extends FlowPane implements Initializable{
             String host = "jdbc:mysql://" + hostField.getText() + "/" + databaseField.getText() + "?serverTimezone=UTC";
             Main.ConnectionDetails credentials = new Main.ConnectionDetails(userField.getText(), passwordField.getText(),
                     hostField.getText(), databaseField.getText(), host);
-            if (Main.connectToDatabase(credentials)) {
-                prefs.put("db_name", databaseField.getText());
-                prefs.put("db_user", userField.getText());
-                prefs.put("db_host", hostField.getText());
-            }
+            Main.connectToDatabase(credentials);
+            prefs.put("db_name", databaseField.getText());
+            prefs.put("db_user", userField.getText());
+            prefs.put("db_host", hostField.getText());
             return null;
         }
     }
