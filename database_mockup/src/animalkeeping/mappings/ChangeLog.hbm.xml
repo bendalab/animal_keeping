@@ -15,7 +15,7 @@
         <property name="targetType" type="string" column="target_type" not-null="true"/>
         <property name="targetId" column="target_id" not-null="true"/>
         <property name="who" type="string" column="who" not-null="true"/>
-
+        <property name="changeSet" type="string" column="change_set" not-null="true"/>
     </class>
 
 </hibernate-mapping>
