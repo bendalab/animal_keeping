@@ -1,3 +1,38 @@
+/******************************************************************************
+ Copyright (c) 2017 Neuroethology Lab, University of Tuebingen,
+ Jan Grewe <jan.grewe@g-node.org>,
+ Dennis Huben <dennis.huben@rwth-aachen.de>
+
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without modification,
+ are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this list
+ of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce the above copyright notice, this
+ list of conditions and the following disclaimer in the documentation and/or other
+ materials provided with the distribution.
+
+ 3. Neither the name of the copyright holder nor the names of its contributors may
+ be used to endorse or promote products derived from this software without specific
+ prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ DAMAGE.
+
+ * Created by jan on 27.12.16.
+
+ *****************************************************************************/
 package animalkeeping.ui.controller;
 
 import animalkeeping.model.SpeciesType;
@@ -8,8 +43,6 @@ import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 // import com.apple.eawt.*;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.event.EventType;
@@ -30,7 +63,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Vector;
 
 
 public class MainViewController extends VBox implements Initializable{
@@ -105,24 +137,12 @@ public class MainViewController extends VBox implements Initializable{
         }
         borderPane.prefHeightProperty().bind(this.prefHeightProperty());
         navigationBar.prefHeightProperty().bind(this.prefHeightProperty());
-        inventoryPane.expandedProperty().addListener((observable, oldValue, newValue) -> {
-            showView("inventory", newValue);
-        });
-        personsPane.expandedProperty().addListener((observable, oldValue, newValue) -> {
-            showView("person", newValue);
-        });
-        animalHousingPane.expandedProperty().addListener((observable, oldValue, newValue) -> {
-            showView("housing", newValue);
-        });
-        licensesPane.expandedProperty().addListener((observable, oldValue, newValue) -> {
-            showView("license", newValue);
-        });
-        treatmentsPane.expandedProperty().addListener((observable, oldValue, newValue) -> {
-            showView("treatment", newValue);
-        });
-        subjectsPane.expandedProperty().addListener((observable, oldValue, newValue) -> {
-                showView("subject", newValue);
-        });
+        inventoryPane.expandedProperty().addListener((observable, oldValue, newValue) -> showView("inventory", newValue));
+        personsPane.expandedProperty().addListener((observable, oldValue, newValue) -> showView("person", newValue));
+        animalHousingPane.expandedProperty().addListener((observable, oldValue, newValue) -> showView("housing", newValue));
+        licensesPane.expandedProperty().addListener((observable, oldValue, newValue) -> showView("license", newValue));
+        treatmentsPane.expandedProperty().addListener((observable, oldValue, newValue) -> showView("treatment", newValue));
+        subjectsPane.expandedProperty().addListener((observable, oldValue, newValue) -> showView("subject", newValue));
 
         panes = new HashMap<>(6);
         panes.put("inventory", inventoryPane);
@@ -170,7 +190,6 @@ public class MainViewController extends VBox implements Initializable{
 
     private AbstractView createView(String type) {
         AbstractView view = null;
-        TitledPane pane = null;
         switch (type) {
             case "inventory":
                 view = new InventoryController();
@@ -217,7 +236,7 @@ public class MainViewController extends VBox implements Initializable{
         Long aLong = null;
         try {
             aLong = Long.parseLong(text);
-        } catch (NumberFormatException e) {}
+        } catch (NumberFormatException ignored) {}
         if (aLong!= null && aLong < 0)
             aLong = null;
         return aLong;
