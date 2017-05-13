@@ -11,7 +11,7 @@ public abstract class Communicator {
     public static boolean pushSaveOrUpdate(ChangeLogInterface E){
         ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
         Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
-        interceptorX.setSession(session);
+        //interceptorX.setSession(session);
         try {
             session.beginTransaction();
             session.saveOrUpdate(E);
@@ -33,7 +33,7 @@ public abstract class Communicator {
             return false;
         ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
         Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
-        interceptorX.setSession(session);
+        //interceptorX.setSession(session);
         try {
             session.beginTransaction();
             session.delete(E);
