@@ -35,6 +35,7 @@
  *****************************************************************************/
 package animalkeeping.logging;
 
+import animalkeeping.model.Entity;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
@@ -117,7 +118,11 @@ public class ChangeLogInterceptor extends EmptyInterceptor{
                 continue;
             }
             params = params.concat("'" + propertyNames[i] + "' ");
-            vals = vals.concat(state[i] != null ? ("'" + state[i].toString() + "' ") : "NULL ");
+            if (state[i] != null && state[i] instanceof Entity) {
+                vals = vals.concat("'" + ((Entity) state[i]).getId().toString() + "' ");
+            } else {
+                vals = vals.concat(state[i] != null ? ("'" + state[i].toString() + "' ") : "NULL ");
+            }
         }
         return params.concat(") ").concat(vals).concat(")");
     }
