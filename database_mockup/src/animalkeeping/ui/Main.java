@@ -33,7 +33,7 @@
  *****************************************************************************/
 package animalkeeping.ui;
 
-import animalkeeping.ui.controller.MainViewController;
+import animalkeeping.ui.views.MainViewController;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

@@ -1,15 +1,12 @@
 package animalkeeping.util;
 
-import animalkeeping.ui.AddDatabaseUserForm;
 import animalkeeping.ui.Main;
-import animalkeeping.ui.SuperUserForm;
+import animalkeeping.ui.forms.SuperUserForm;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Optional;
 
 /**

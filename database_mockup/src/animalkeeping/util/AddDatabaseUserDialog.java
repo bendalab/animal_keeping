@@ -1,6 +1,6 @@
 package animalkeeping.util;
 
-import animalkeeping.ui.AddDatabaseUserForm;
+import animalkeeping.ui.forms.AddDatabaseUserForm;
 import animalkeeping.model.Person;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
