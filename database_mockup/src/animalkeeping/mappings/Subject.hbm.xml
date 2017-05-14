@@ -11,7 +11,7 @@
         </id>
         <property name="name" type="string" column="name" unique="true" not-null="true"/>
         <property name="alias" type="string" column="alias" not-null="false"/>
-        <property name="birthday" type="date" column="birthday" not-null="true"/>
+        <property name="birthday" type="date" column="birthday" not-null="false"/>
         <property name="gender" column="gender">
             <type name="org.hibernate.type.EnumType">
                 <param name="enumClass">animalkeeping.model.Gender</param>
