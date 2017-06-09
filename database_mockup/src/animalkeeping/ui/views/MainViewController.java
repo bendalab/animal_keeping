@@ -138,12 +138,12 @@ public class MainViewController extends VBox implements Initializable{
         }
         borderPane.prefHeightProperty().bind(this.prefHeightProperty());
         navigationBar.prefHeightProperty().bind(this.prefHeightProperty());
-        inventoryPane.expandedProperty().addListener((observable, oldValue, newValue) -> showView("inventory", newValue));
-        personsPane.expandedProperty().addListener((observable, oldValue, newValue) -> showView("person", newValue));
-        animalHousingPane.expandedProperty().addListener((observable, oldValue, newValue) -> showView("housing", newValue));
-        licensesPane.expandedProperty().addListener((observable, oldValue, newValue) -> showView("license", newValue));
-        treatmentsPane.expandedProperty().addListener((observable, oldValue, newValue) -> showView("treatment", newValue));
-        subjectsPane.expandedProperty().addListener((observable, oldValue, newValue) -> showView("subject", newValue));
+        inventoryPane.setOnMouseClicked(event -> showView( "inventory", inventoryPane.isExpanded()));
+        personsPane.setOnMouseClicked(event -> showView("person", personsPane.isExpanded()));
+        subjectsPane.setOnMouseClicked(event -> showView("subject", subjectsPane.isExpanded()));
+        licensesPane.setOnMouseClicked(event -> showView("license", licensesPane.isExpanded()));
+        animalHousingPane.setOnMouseClicked(event -> showView( "housing", animalHousingPane.isExpanded()));
+        treatmentsPane.setOnMouseClicked(event -> showView("treatment", treatmentsPane.isExpanded()));
 
         panes = new HashMap<>(6);
         panes.put("inventory", inventoryPane);
@@ -420,6 +420,7 @@ public class MainViewController extends VBox implements Initializable{
             speciesTypeMenu.setDisable(false);
             supplierMenu.setDisable(false);
             fillMenus();
+            showView("inventory", true);
             inventoryPane.setExpanded(true);
             setIdle("Successfully connected to database!", false);
         } else if (event.getEventType() == LoginController.DatabaseEvent.CONNECTING) {
