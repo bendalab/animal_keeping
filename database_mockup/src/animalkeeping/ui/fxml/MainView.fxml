@@ -62,27 +62,27 @@
    <left>
       <VBox fx:id="navigationBar" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="150.0" prefWidth="150.0" spacing="5.0">
          <children>
-            <TitledPane fx:id="inventoryPane" disable="true" expanded="false" text="Inventory">
+            <TitledPane fx:id="inventoryPane" animated="false" disable="true" expanded="false" text="Inventory">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
               </content>
             </TitledPane>
-            <TitledPane fx:id="personsPane" disable="true" expanded="false" text="Persons">
+            <TitledPane fx:id="personsPane" animated="false" disable="true" expanded="false" text="Persons">
                <content>
                   <VBox prefHeight="200.0" prefWidth="100.0" />
                </content>
             </TitledPane>
-            <TitledPane fx:id="subjectsPane" disable="true" expanded="false" text="Subjects">
+            <TitledPane fx:id="subjectsPane" animated="false" disable="true" expanded="false" text="Subjects">
                <content>
                   <VBox prefHeight="200.0" prefWidth="100.0" />
                </content>
             </TitledPane>
-            <TitledPane fx:id="treatmentsPane" disable="true" expanded="false" text="Treatments">
+            <TitledPane fx:id="treatmentsPane" animated="false" disable="true" expanded="false" text="Treatments">
                <content>
                   <VBox prefHeight="200.0" prefWidth="100.0" />
                </content>
             </TitledPane>
-            <TitledPane fx:id="animalHousingPane" disable="true" expanded="false" text="Animal housing">
+            <TitledPane fx:id="animalHousingPane" animated="false" disable="true" expanded="false" text="Animal housing">
                <content>
                   <VBox prefHeight="200.0" prefWidth="100.0" />
                </content>
