@@ -726,9 +726,11 @@ public class Dialogs {
         dialog.setResizable(true);
         dialog.setTitle("Select a housing unit");
         dialog.setHeight(300);
-        dialog.setWidth(600);
+        dialog.setWidth(800);
         HousingUnitTable hut = new HousingUnitTable();
+        hut.refresh();
         DatePicker dp = new DatePicker();
+        dp.setValue(DateTimeHelper.toLocalDate(new Date()));
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         TextField timeField = new TextField(timeFormat.format(new Date()));
 
