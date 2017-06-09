@@ -368,13 +368,13 @@ public class SubjectView extends AbstractView implements Initializable {
     public void refresh() {
         fireEvent(new ViewEvent(ViewEvent.REFRESHING));
         Subject s = subjectsTable.getSelectionModel().getSelectedItem();
-        subjectsTable.refresh();
         subjectsTable.addEventHandler(ViewEvent.REFRESHED, event -> {
             if (event.getEventType()== ViewEvent.REFRESHED) {
                 subjectsTable.getSelectionModel().select(s);
                 fireEvent(new ViewEvent(ViewEvent.REFRESHED));
             }
         });
+        subjectsTable.refresh();
         //treatmentsTable.refresh();
     }
 

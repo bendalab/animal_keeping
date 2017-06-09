@@ -142,8 +142,9 @@ public class SubjectsTable extends TableView<Subject> {
         Task<Void> refresh_task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                Thread.sleep(1000);
+
                 masterList.addAll(EntityHelper.getEntityList("from Subject", Subject.class));
+                Thread.sleep(100);
                 return null;
             }
         };

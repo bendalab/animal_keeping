@@ -321,8 +321,8 @@ public class MainViewController extends VBox implements Initializable{
             Task<Void> refreshTask = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
-                    Thread.sleep(250);
                     ((View) scrollPane.getContent()).refresh();
+                    Thread.sleep(250);
                     return null;
                 }
             };
