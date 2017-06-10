@@ -12,6 +12,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -49,8 +50,29 @@ public class HousingForm extends VBox {
         endTimeField = new SpecialTextField("##:##:##");
 
         subjectCombo = new ComboBox<>();
-        unitCombo = new ComboBox<>();
+        subjectCombo.setConverter(new StringConverter<Subject>() {
+            @Override
+            public String toString(Subject object) {
+                return object.getName();
+            }
 
+            @Override
+            public Subject fromString(String string) {
+                return null;
+            }
+        });
+        unitCombo = new ComboBox<>();
+        unitCombo.setConverter(new StringConverter<HousingUnit>() {
+            @Override
+            public String toString(HousingUnit object) {
+                return object.getName();
+            }
+
+            @Override
+            public HousingUnit fromString(String string) {
+                return null;
+            }
+        });
         commentArea = new TextArea();
 
         Button newPersonButton = new Button("+");
