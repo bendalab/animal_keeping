@@ -11,21 +11,20 @@ public abstract class Communicator {
     public static boolean pushSaveOrUpdate(ChangeLogInterface E){
         ChangeLogInterceptor interceptorX = new ChangeLogInterceptor();
         Session session = Main.sessionFactory.withOptions().interceptor(interceptorX).openSession();
+        boolean success = true;
         //interceptorX.setSession(session);
         try {
             session.beginTransaction();
             session.saveOrUpdate(E);
             session.getTransaction().commit();
-
-            session.close();
-        } catch (HibernateException e) {
+        } catch (Exception e) {
+            session.getTransaction().rollback();
             e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-            return false;
+            success = false;
+        } finally {
+            session.close();
         }
-        return true;
+        return success;
     }
 
     public static boolean pushDelete(ChangeLogInterface E){
