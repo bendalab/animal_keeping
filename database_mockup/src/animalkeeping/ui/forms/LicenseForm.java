@@ -1,5 +1,6 @@
 package animalkeeping.ui.forms;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.Main;
 import animalkeeping.util.DateTimeHelper;
@@ -172,23 +173,17 @@ public class LicenseForm extends VBox {
         if (license == null) {
             license = new License();
         }
-        license.setName(nameField.getText());
+        license.setName(nameField.getText().isEmpty() ? null : nameField.getText());
         license.setAgency(agencyField.getText());
-        license.setNumber(fileNoField.getText());
+        license.setNumber(fileNoField.getText().isEmpty() ? null : fileNoField.getText());
         license.setResponsiblePerson(respPersonCombo.getValue());
         license.setDeputy(deputyPersonCombo.getValue());
         license.setStartDate(sd);
         license.setEndDate(ed);
 
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.saveOrUpdate(license);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException he) {
-            showInfo(he.getLocalizedMessage());
-            session.close();
+        if (!Communicator.pushSaveOrUpdate(license)) {
+            showInfo("Error: License entry could not be persisted! Missing required information?");
+            return null;
         }
         return license;
     }

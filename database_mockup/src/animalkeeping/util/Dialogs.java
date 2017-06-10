@@ -176,11 +176,7 @@ public class Dialogs {
         });
 
         Optional<License> result = dialog.showAndWait();
-        if (!result.isPresent()) {
-            showInfo("Something went wrong while creating the License!");
-            return null;
-        }
-        return result.get();
+        return result.orElse(null);
     }
 
     public static Quota editQuotaDialog(Quota q) {
