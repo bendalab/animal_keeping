@@ -101,8 +101,8 @@ public class Quota extends Entity implements ChangeLogInterface{
     public String toString() {
         return "Quota{" +
                 "number=" + number +
-                ", speciesType=" + speciesType.getName() +
-                ", license=" + license.getName() +
+                ", speciesType=" + (speciesType != null ? speciesType.getName() : " ") +
+                ", license=" + (license != null ? license.getName() : " ") +
                 '}';
     }
 }
