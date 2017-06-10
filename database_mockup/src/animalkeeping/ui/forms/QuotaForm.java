@@ -16,6 +16,8 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import java.util.List;
 
+import static animalkeeping.util.Dialogs.showInfo;
+
 public class QuotaForm extends VBox {
     private ComboBox<License> licenseCombo;
     private ComboBox<SpeciesType> speciesCombo;
@@ -132,11 +134,14 @@ public class QuotaForm extends VBox {
         if (quota == null) {
             quota = new Quota();
         }
-        quota.setNumber(Long.valueOf(numberField.getText()));
+        quota.setNumber(numberField.getText().isEmpty() ? 0 : Long.valueOf(numberField.getText()));
         quota.setLicense(licenseCombo.getValue());
         quota.setSpeciesType(speciesCombo.getValue());
-        Communicator.pushSaveOrUpdate(quota);
+        System.out.println(quota);
+        if (!Communicator.pushSaveOrUpdate(quota)) {
+            showInfo("Error: Quota entry could not be persisted! Missing required information?");
+            return null;
+        }
         return quota;
-
     }
 }

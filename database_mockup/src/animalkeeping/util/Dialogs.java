@@ -214,11 +214,7 @@ public class Dialogs {
         });
 
         Optional<Quota> result = dialog.showAndWait();
-        if (!result.isPresent()) {
-            showInfo("Something went wrong while creating the quota!");
-            return null;
-        }
-        return result.get();
+        return result.orElse(null);
     }
 
 
