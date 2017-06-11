@@ -3,8 +3,6 @@ package animalkeeping.util;
 import animalkeeping.ui.Main;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-
-import javax.persistence.PersistenceException;
 import java.util.List;
 
 /**
@@ -20,9 +18,10 @@ public class EntityHelper {
             session.beginTransaction();
             list = session.createQuery(query, c).list();
             session.getTransaction().commit();
-            session.close();
         } catch (HibernateException e) {
+            session.getTransaction().rollback();
             e.printStackTrace();
+        } finally {
             if (session.isOpen()) {
                 session.close();
             }
@@ -32,16 +31,18 @@ public class EntityHelper {
 
     public static <T> boolean deleteEntity(T entity) {
         Session session = Main.sessionFactory.openSession();
+        boolean success = true;
         try {
             session.beginTransaction();
             session.delete(entity);
             session.getTransaction().commit();
-        } catch (PersistenceException e) {
-            return false;
         } catch (Exception e) {
+            success = false;
             e.printStackTrace();
+        } finally {
+            session.close();
         }
-        return true;
+        return success;
     }
 
     public static <T> void refreshEntity(T entity) {
@@ -52,9 +53,10 @@ public class EntityHelper {
             session.beginTransaction();
             session.refresh(entity);
             session.getTransaction().commit();
-            session.close();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            session.close();
         }
     }
 }
