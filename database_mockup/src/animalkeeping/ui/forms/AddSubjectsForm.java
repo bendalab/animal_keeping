@@ -3,6 +3,7 @@ package animalkeeping.ui.forms;
 import animalkeeping.model.*;
 import animalkeeping.ui.Main;
 import animalkeeping.ui.widgets.SpecialTextField;
+import animalkeeping.util.EntityHelper;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -49,7 +50,7 @@ public class AddSubjectsForm extends VBox {
 
 
     private void init(HousingUnit unit) {
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         Date date = new Date();
 
         housingUnitComboBox = new ComboBox<>();
@@ -93,6 +94,7 @@ public class AddSubjectsForm extends VBox {
         countSpinner = new Spinner<>(0, 9999, 10);
         timeField = new SpecialTextField("##:##:##");
         timeField.setTooltip(new Tooltip("Import time use HH:mm:ss format"));
+        timeField.replaceText(0, 7, timeFormat.format(date));
 
         Button newHousingUnit = new Button("+");
         newHousingUnit.setTooltip(new Tooltip("create a new housing unit"));
@@ -106,32 +108,12 @@ public class AddSubjectsForm extends VBox {
         newSupplier.setTooltip(new Tooltip("create a new supplier entry"));
         newSupplier.setDisable(true);
 
-        Session session = Main.sessionFactory.openSession();
-        List<HousingUnit> housingUnits = new ArrayList<>(0);
-        List<SupplierType> supplier = new ArrayList<>(0);
-        List<SpeciesType> species = new ArrayList<>(0);
-        try {
-            session.beginTransaction();
-            housingUnits = session.createQuery("from HousingUnit", HousingUnit.class).list();
-            session.getTransaction().commit();
-            session.beginTransaction();
-            supplier = session.createQuery("from SupplierType", SupplierType.class).list();
-            session.getTransaction().commit();
-            session.beginTransaction();
-            species = session.createQuery("from SpeciesType", SpeciesType.class).list();
-            session.getTransaction().commit();
-            session.beginTransaction();
-            List<SubjectType> subjectTypes = session.createQuery("from SubjectType where name = 'animal'",
-                                                                SubjectType.class).list();
-            st = subjectTypes.get(0);
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
+        List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit", HousingUnit.class);
+        List<SupplierType> supplier = EntityHelper.getEntityList("from SupplierType", SupplierType.class);
+        List<SpeciesType> species = EntityHelper.getEntityList("from SpeciesType", SpeciesType.class);
+        List<SubjectType> subjectTypes = EntityHelper.getEntityList("from SubjectType where name = 'animal'", SubjectType.class);
+
+        st = subjectTypes.get(0);
         housingUnitComboBox.getItems().addAll(housingUnits);
         housingUnitComboBox.getSelectionModel().select(unit);
         supplierComboBox.getItems().addAll(supplier);
@@ -181,7 +163,7 @@ public class AddSubjectsForm extends VBox {
 
         grid.add(new Label("time(*):"), 0, 6);
         grid.add(timeField, 1, 6, 1, 1);
-        timeField.setText(dateFormat.format(date));
+        //timeField.setText(timeFormat.format(date));
 
         grid.add(new Label("subject count"), 0, 7);
         grid.add(countSpinner, 1, 7, 1, 1);
