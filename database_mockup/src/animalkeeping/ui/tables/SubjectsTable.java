@@ -129,36 +129,12 @@ public class SubjectsTable extends TableView<Subject> {
 
         cmenu.getItems().addAll(newItem, editItem, deleteItem, addTreatmentItem, observationItem, reportDeadItem, moveItem);
         this.setContextMenu(cmenu);
-        //init();
     }
 
     public SubjectsTable(ObservableList<Subject> items) {
         this();
         this.setItems(items);
     }
-
-    private void init() {
-        masterList.clear();
-        Task<Void> refresh_task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-
-                masterList.addAll(EntityHelper.getEntityList("from Subject", Subject.class));
-                Thread.sleep(100);
-                return null;
-            }
-        };
-        refresh_task.setOnSucceeded(event -> {
-            filteredList = new FilteredList<>(masterList, p -> true);
-            SortedList<Subject> sortedList = new SortedList<>(filteredList);
-            sortedList.comparatorProperty().bind(comparatorProperty());
-            setItems(sortedList);
-            setAliveFilter(true);
-            fireEvent(new ViewEvent(ViewEvent.REFRESHED));
-        });
-        new Thread(refresh_task).run();
-    }
-
 
     public void setAliveFilter(Boolean set) {
         if (set) {
@@ -185,7 +161,24 @@ public class SubjectsTable extends TableView<Subject> {
 
 
     public void refresh() {
-        init();
+        masterList.clear();
+        Task<Void> refresh_task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                masterList.addAll(EntityHelper.getEntityList("from Subject", Subject.class));
+                Thread.sleep(100);
+                return null;
+            }
+        };
+        refresh_task.setOnSucceeded(event -> {
+            filteredList = new FilteredList<>(masterList, p -> true);
+            SortedList<Subject> sortedList = new SortedList<>(filteredList);
+            sortedList.comparatorProperty().bind(comparatorProperty());
+            setItems(sortedList);
+            setAliveFilter(true);
+            fireEvent(new ViewEvent(ViewEvent.REFRESHED));
+        });
+        new Thread(refresh_task).run();
     }
 
 
@@ -202,6 +195,7 @@ public class SubjectsTable extends TableView<Subject> {
     public void editSubject(Subject s) {
         Subject sbct = Dialogs.editSubjectDialog(s);
         if (sbct != null) {
+            System.out.println("Subject is not null, refreshing");
             refresh();
             setSelectedSubject(s);
         }
@@ -213,9 +207,9 @@ public class SubjectsTable extends TableView<Subject> {
                     Integer.toString(s.getTreatments().size()) + " treatment entries! Delete them first.");
         } else {
             Communicator.pushDelete(s);
+            refresh();
+            setSelectedSubject(null);
         }
-        refresh();
-        setSelectedSubject(null);
     }
 
     public void addTreatment(Subject s) {
