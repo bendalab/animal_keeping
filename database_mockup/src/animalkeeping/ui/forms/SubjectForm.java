@@ -145,7 +145,7 @@ public class SubjectForm extends VBox {
         importDate = new DatePicker();
         importDate.setValue(LocalDate.now());
         importTimeField = new SpecialTextField("##:##:##");
-
+        importTimeField.setText("00:00:00");
         aliasField = new TextField();
         nameField = new TextField();
 
@@ -241,7 +241,6 @@ public class SubjectForm extends VBox {
 
         grid.add(new Label("(* required)"), 0, 11);
 
-        //this.getChildren().add(new ScrollPane(housingTable));
         this.getChildren().add(grid);
 
         List<SpeciesType> species= EntityHelper.getEntityList("from SpeciesType", SpeciesType.class);
@@ -250,6 +249,7 @@ public class SubjectForm extends VBox {
         List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit", HousingUnit.class);
 
         subjectTypeComboBox.getItems().addAll(types);
+        subjectTypeComboBox.getSelectionModel().select(0);
         supplierComboBox.getItems().addAll(supplier);
         speciesComboBox.getItems().addAll(species);
         housingUnitComboBox.getItems().addAll(housingUnits);
