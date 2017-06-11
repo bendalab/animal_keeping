@@ -105,7 +105,7 @@ public class SubjectView extends AbstractView implements Initializable {
         ControlLabel newSubjectLabel = new ControlLabel("new subject", false);
         newSubjectLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
-                newSubject();
+                editSubject(null);
             }
         });
         controls.getChildren().add(newSubjectLabel);
@@ -346,10 +346,6 @@ public class SubjectView extends AbstractView implements Initializable {
 
     private void addTreatment(Subject s) {
         Dialogs.editTreatmentDialog(s);
-    }
-
-    private void newSubject() {
-        subjectsTable.editSubject(null);
     }
 
     private void editSubject(Subject s) {
