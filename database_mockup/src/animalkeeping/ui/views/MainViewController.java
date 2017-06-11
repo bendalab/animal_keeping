@@ -92,7 +92,7 @@ public class MainViewController extends VBox implements Initializable{
 
     private HashMap<String, TitledPane> panes;
     private HashMap<String, AbstractView> views;
-
+    private String currentView;
 
     public MainViewController() {
         URL url = Main.class.getResource("/animalkeeping/ui/fxml/MainView.fxml");
@@ -170,10 +170,10 @@ public class MainViewController extends VBox implements Initializable{
     private void showView(String type, boolean expanded) {
         if (!type.equals("inventory") && !expanded) {
             inventoryPane.setExpanded(true);
+            showView("inventory", true);
             return;
         }
-        if (expanded) {
-            this.scrollPane.setContent(null);
+        if (expanded && !type.equalsIgnoreCase(currentView)) {
             AbstractView view;
             if (viewIsCached(type)) {
                 view = views.get(type);
@@ -181,8 +181,10 @@ public class MainViewController extends VBox implements Initializable{
                 view = createView(type);
             }
             if (view != null) {
+                this.scrollPane.setContent(null);
                 collapsePanes(panes.get(type));
                 this.scrollPane.setContent(view);
+                currentView = type;
                 refreshView();
                 view.requestFocus();
             }

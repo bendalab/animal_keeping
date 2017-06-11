@@ -554,10 +554,7 @@ public class Dialogs {
             return null;
         });
         Optional<Subject> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            return result.get();
-        }
-        return null;
+        return result.orElse(null);
     }
 
     public static SubjectNote editSubjectNoteDialog(SubjectNote note, Subject subject) {
