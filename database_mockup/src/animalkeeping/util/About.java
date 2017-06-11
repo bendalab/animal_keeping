@@ -1,7 +1,9 @@
 package animalkeeping.util;
 
 import animalkeeping.ui.Main;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -46,6 +48,8 @@ import java.io.IOException;
  *****************************************************************************/
 
 public class About extends VBox {
+    @FXML private Label versionLabel;
+    @FXML private Label migrationLabel;
 
     public About() {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/About.fxml"));
@@ -56,5 +60,12 @@ public class About extends VBox {
             throw new RuntimeException(e);
         }
         this.setFillWidth(true);
+        setVersion();
+    }
+
+    private void setVersion() {
+        Version version = new Version();
+        versionLabel.setText(version.getVersion());
+        migrationLabel.setText(version.getMigrationState());
     }
 }
