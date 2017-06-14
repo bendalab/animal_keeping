@@ -115,9 +115,9 @@ public class PersonsView  extends AbstractView implements Initializable {
 
         controls = new VBox();
         controls.setAlignment(Pos.TOP_LEFT);
-        controls.setSpacing(10);
+        //controls.setSpacing(10);
 
-        ControlLabel newLabel = new ControlLabel("new person", false);
+        ControlLabel newLabel = new ControlLabel("new person", "Create a new person entry.", false);
         newLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 newPerson();
@@ -125,7 +125,7 @@ public class PersonsView  extends AbstractView implements Initializable {
         });
         controls.getChildren().add(newLabel);
 
-        editLabel = new ControlLabel("edit person", true);
+        editLabel = new ControlLabel("edit person", "Edit person information (restricted usage).",  true);
         editLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 editPerson();
@@ -133,7 +133,8 @@ public class PersonsView  extends AbstractView implements Initializable {
         });
         controls.getChildren().add(editLabel);
 
-        deleteLabel = new ControlLabel("delete person", true);
+        deleteLabel = new ControlLabel("delete person", "Remove the selected Person entry. Only possible " +
+                "if not referenced.", true);
         deleteLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deletePerson();
@@ -141,7 +142,8 @@ public class PersonsView  extends AbstractView implements Initializable {
         });
         controls.getChildren().add(deleteLabel);
 
-        addUserLabel = new ControlLabel("add as database user", true);
+        addUserLabel = new ControlLabel("add as database user", "Create a database user for the selected Person.",
+                true);
         addUserLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 addUser();
