@@ -121,7 +121,7 @@ public class HousingView extends AbstractView implements Initializable {
 
         controls = new VBox();
         controls.setAlignment(Pos.TOP_LEFT);
-        ControlLabel newUnitLabel = new ControlLabel("new housing unit");
+        ControlLabel newUnitLabel = new ControlLabel("new housing unit", "Create new housing unit.", false);
         newUnitLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 newHousingUnit();
@@ -129,7 +129,7 @@ public class HousingView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(newUnitLabel);
 
-        appendUnitLabel = new ControlLabel("append housing unit");
+        appendUnitLabel = new ControlLabel("append housing unit", "Append a new housing unit to the selected one.", true);
         appendUnitLabel.setDisable(true);
         appendUnitLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
@@ -138,7 +138,7 @@ public class HousingView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(appendUnitLabel);
 
-        editUnitLabel = new ControlLabel("edit housing unit", true);
+        editUnitLabel = new ControlLabel("edit housing unit", "Edit the information of the selected Housing unit.", true);
         editUnitLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 editHousingUnit();
@@ -146,7 +146,7 @@ public class HousingView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(editUnitLabel);
 
-        deleteUnitLabel = new ControlLabel("delete housing unit", true);
+        deleteUnitLabel = new ControlLabel("delete housing unit", "Remove the selected Housing unit (only possible if not referenced).", true);
         deleteUnitLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteHousingUnit();
@@ -156,7 +156,7 @@ public class HousingView extends AbstractView implements Initializable {
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
 
-        ControlLabel newTypeLabel = new ControlLabel("new housing type");
+        ControlLabel newTypeLabel = new ControlLabel("new housing type", "Create new type of Housing unit.", false);
         newTypeLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 newHousingType();
@@ -164,7 +164,7 @@ public class HousingView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(newTypeLabel);
 
-        editTypeLabel = new ControlLabel("edit housing type", true);
+        editTypeLabel = new ControlLabel("edit housing type", "Edit type of Hounsing unit.", true);
         editTypeLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 editHousingType();
@@ -172,7 +172,7 @@ public class HousingView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(editTypeLabel);
 
-        deleteTypeLabel = new ControlLabel("delete housing type", true);
+        deleteTypeLabel = new ControlLabel("delete housing type", "Delete the selected type (only possible if not used).", true);
         deleteTypeLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteHousingType();
@@ -181,7 +181,7 @@ public class HousingView extends AbstractView implements Initializable {
         controls.getChildren().add(deleteTypeLabel);
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
 
-        importSubjectsLabel = new ControlLabel("import subjects", true);
+        importSubjectsLabel = new ControlLabel("import subjects", "Import a subject into the selected Housing unit.", true);
         importSubjectsLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 importSubjects();
@@ -189,7 +189,7 @@ public class HousingView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(importSubjectsLabel);
 
-        batchTreatmentLabel = new ControlLabel("batch treatment", true);
+        batchTreatmentLabel = new ControlLabel("batch treatment", "Treat all subjects in the selected Housing unit at once.", true);
         batchTreatmentLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 batchTreatment();

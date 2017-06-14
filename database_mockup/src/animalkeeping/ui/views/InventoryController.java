@@ -126,7 +126,7 @@ public class InventoryController extends AbstractView implements Initializable {
 
         controls = new VBox();
         ControlLabel animalUseLabel = new ControlLabel("export animal use", false);
-        animalUseLabel.setTooltip(new Tooltip("export excel sheet containing the animal use per license"));
+        animalUseLabel.setTooltip(new Tooltip("Export excel sheet containing the animal use per license."));
         animalUseLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)) {
                 exportAnimalUse();
@@ -141,7 +141,7 @@ public class InventoryController extends AbstractView implements Initializable {
         });
 
         endTreatmentLabel  = new ControlLabel("end treatment", true);
-        endTreatmentLabel.setTooltip(new Tooltip("end an open treatment"));
+        endTreatmentLabel.setTooltip(new Tooltip("End an open treatment."));
         endTreatmentLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 endTreatment();

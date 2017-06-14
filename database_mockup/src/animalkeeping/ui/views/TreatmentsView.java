@@ -123,7 +123,7 @@ public class TreatmentsView extends AbstractView implements Initializable {
         this.timelineBox.getChildren().add(timeline);
 
         controls = new VBox();
-        ControlLabel newTreatmentTypeLabel = new ControlLabel("new treatment type", false);
+        ControlLabel newTreatmentTypeLabel = new ControlLabel("new treatment type", "Define a new treatment type entry.", false);
         newTreatmentTypeLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 editTreatmentType(null);
@@ -131,7 +131,7 @@ public class TreatmentsView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(newTreatmentTypeLabel);
 
-        editTreatmentTypeLabel = new ControlLabel("edit treatment type", true);
+        editTreatmentTypeLabel = new ControlLabel("edit treatment type", "Edit the selected treatment type.", true);
         editTreatmentTypeLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 editTreatmentType(typeTable.getSelectionModel().getSelectedItem());
@@ -139,7 +139,7 @@ public class TreatmentsView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(editTreatmentTypeLabel);
 
-        deleteTreatmentTypeLabel = new ControlLabel("delete treatment type", true);
+        deleteTreatmentTypeLabel = new ControlLabel("delete treatment type", "Delete a treatment type (only possible if not referenced). ", true);
         deleteTreatmentTypeLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteType(typeTable.getSelectionModel().getSelectedItem());
@@ -148,7 +148,7 @@ public class TreatmentsView extends AbstractView implements Initializable {
         controls.getChildren().add(deleteTreatmentTypeLabel);
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
 
-        ControlLabel newTreatmentLabel = new ControlLabel("new treatment", false);
+        ControlLabel newTreatmentLabel = new ControlLabel("new treatment", "Create a new treatment entry. Relates to a single subject.", false);
         newTreatmentLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 newTreatment();
@@ -156,7 +156,7 @@ public class TreatmentsView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(newTreatmentLabel);
 
-        editTreatmentLabel = new ControlLabel("edit treatment", true);
+        editTreatmentLabel = new ControlLabel("edit treatment", "Edit the treatment information.", true);
         editTreatmentLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 editTreatment(treatmentsTable.getSelectionModel().getSelectedItem());
@@ -164,7 +164,7 @@ public class TreatmentsView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(editTreatmentLabel);
 
-        deleteTreatmentLabel = new ControlLabel("delete treatment", true);
+        deleteTreatmentLabel = new ControlLabel("delete treatment", "Delete a treatment entry.", true);
         deleteTreatmentLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteTreatment(treatmentsTable.getSelectionModel().getSelectedItem());
@@ -172,7 +172,7 @@ public class TreatmentsView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(deleteTreatmentLabel);
 
-        ControlLabel batchTreatmentLabel = new ControlLabel("new batch treatment", false);
+        ControlLabel batchTreatmentLabel = new ControlLabel("new batch treatment", "Create a new treatment for all subjects in a housing unit.", false);
         batchTreatmentLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 Dialogs.batchTreatmentDialog(null);

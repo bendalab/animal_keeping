@@ -138,7 +138,7 @@ public class LicenseView extends AbstractView implements Initializable {
         quotaBox.getChildren().add(qv);
 
         controls = new VBox();
-        ControlLabel addLicenseLabel = new ControlLabel("new license", false);
+        ControlLabel addLicenseLabel = new ControlLabel("new license", "Add a new permit, license.", false);
         addLicenseLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 editLicense(null);
@@ -146,7 +146,7 @@ public class LicenseView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(addLicenseLabel);
 
-        editLicenseLabel = new ControlLabel("edit license", true);
+        editLicenseLabel = new ControlLabel("edit license", "Edit the selected license.", true);
         editLicenseLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 editLicense(licenseTable.getSelectionModel().getSelectedItem());
@@ -154,7 +154,7 @@ public class LicenseView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(editLicenseLabel);
 
-        deleteLicenseLabel = new ControlLabel("delete license", true);
+        deleteLicenseLabel = new ControlLabel("delete license", "Delete the selected license (only possible if not referenced).", true);
         deleteLicenseLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
               deleteLicense(licenseTable.getSelectionModel().getSelectedItem());
@@ -163,7 +163,7 @@ public class LicenseView extends AbstractView implements Initializable {
         controls.getChildren().add(deleteLicenseLabel);
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
 
-        addQuota = new ControlLabel("add quota", true);
+        addQuota = new ControlLabel("add quota", "Add species specific animal quota to the selected license.", true);
         addQuota.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 Dialogs.editQuotaDialog(licenseTable.getSelectionModel().getSelectedItem());
@@ -175,7 +175,7 @@ public class LicenseView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(addQuota);
 
-        editQuotaLabel = new ControlLabel("edit quota", true);
+        editQuotaLabel = new ControlLabel("edit quota", "Edit the selected quota.", true);
         editQuotaLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 Dialogs.editQuotaDialog(qv.getSelectedItem());
@@ -187,7 +187,7 @@ public class LicenseView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(editQuotaLabel);
 
-        deleteQuotaLabel = new ControlLabel("delete quota", true);
+        deleteQuotaLabel = new ControlLabel("delete quota", "Delete the selected quota.", true);
         deleteQuotaLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteQuota(qv.getSelectedItem());
