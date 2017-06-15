@@ -108,8 +108,12 @@ public class HousingDropDown extends Button {
         this.setContentDisplay(ContentDisplay.RIGHT);
         this.setEllipsisString(" ");
         this.setOnAction(event -> {
-            Bounds sourceNodeBounds = this.localToScreen(this.getBoundsInLocal());
-            popup.show(this, sourceNodeBounds.getMinX(), sourceNodeBounds.getMaxY());
+            if (popup.isShowing()) {
+                popup.hide();
+            } else {
+                Bounds sourceNodeBounds = this.localToScreen(this.getBoundsInLocal());
+                popup.show(this, sourceNodeBounds.getMinX(), sourceNodeBounds.getMaxY());
+            }
         });
         applyPadding();
         fillTree();
@@ -118,7 +122,7 @@ public class HousingDropDown extends Button {
     private void applyPadding() {
         String text = this.getText();
         int i = 0;
-        while (i < 10) {
+        while (i < 20) {
             text = text.concat("    ");
             i++;
         }
