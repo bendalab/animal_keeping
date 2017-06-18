@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="database_mockup" default="all">
-    <property name="version" value="0.5.2"/>
+    <property name="version" value="0.5.3"/>
     <property name="db_migration_state" value="0010-changelogquery.sql"/>
     <property file="animalKeeping.properties"/>
 
