@@ -1,47 +1,74 @@
+/******************************************************************************
+ Copyright (c) 2017 Neuroethology Lab, University of Tuebingen,
+ Jan Grewe <jan.grewe@g-node.org>,
+ Dennis Huben <dennis.huben@rwth-aachen.de>
+
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without modification,
+ are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this list
+ of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce the above copyright notice, this
+ list of conditions and the following disclaimer in the documentation and/or other
+ materials provided with the distribution.
+
+ 3. Neither the name of the copyright holder nor the names of its contributors may
+ be used to endorse or promote products derived from this software without specific
+ prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ DAMAGE.
+
+ * Created by jan on 01.05.17.
+
+ *****************************************************************************/
 package animalkeeping.ui.tables;
 
 import animalkeeping.model.HousingType;
-import animalkeeping.ui.Main;
 import animalkeeping.util.Dialogs;
+import animalkeeping.util.EntityHelper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 
 import java.util.Collection;
 import java.util.List;
 
 public class HousingTypeTable  extends TableView<HousingType> {
-    private TableColumn<HousingType, Number> idCol;
-    private TableColumn<HousingType, String> nameCol;
-    private TableColumn<HousingType, String> descriptionCol;
 
     public HousingTypeTable() {
         initTable();
         refresh();
     }
 
-
     public HousingTypeTable(Collection<HousingType> types) {
         initTable();
         this.setTypes(types);
     }
 
-
-
     private void initTable() {
-        idCol = new TableColumn<HousingType, Number>("id");
+        TableColumn<HousingType, Number> idCol = new TableColumn<HousingType, Number>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
         idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
-        nameCol = new TableColumn<HousingType, String>("name");
+        TableColumn<HousingType, String> nameCol = new TableColumn<HousingType, String>("name");
         nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
         nameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.25));
 
-        descriptionCol = new TableColumn<HousingType, String>("description");
+        TableColumn<HousingType, String> descriptionCol = new TableColumn<HousingType, String>("description");
         descriptionCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getDescription()));
         descriptionCol.prefWidthProperty().bind(this.widthProperty().multiply(0.6));
 
@@ -63,7 +90,6 @@ public class HousingTypeTable  extends TableView<HousingType> {
 
     }
 
-
     public void setTypes(Collection<HousingType> types) {
         this.getItems().clear();
         this.getItems().addAll(types);
@@ -71,19 +97,7 @@ public class HousingTypeTable  extends TableView<HousingType> {
 
     @Override
     public void refresh() {
-        Session session = Main.sessionFactory.openSession();
-        List<HousingType> housingTypes = null;
-        try {
-            session.beginTransaction();
-            housingTypes = session.createQuery("from HousingType", HousingType.class).list();
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
+        List<HousingType> housingTypes = EntityHelper.getEntityList("from HousingType", HousingType.class);
         setTypes(housingTypes);
         super.refresh();
     }
