@@ -13,6 +13,8 @@ public class ViewEvent extends Event {
     public static final EventType<ViewEvent> REFRESHING = new EventType<>(VIEW_ALL, "refreshing data");
     public static final EventType<ViewEvent> REFRESHED = new EventType<>(VIEW_ALL, "refreshed");
     public static final EventType<ViewEvent> REFRESH_FAIL = new EventType<>(VIEW_ALL, "failed");
+    public static final EventType<ViewEvent> EXPORTING = new EventType<>(VIEW_ALL, "exporting data");
+    public static final EventType<ViewEvent> DONE = new EventType<>(VIEW_ALL, "done");
 
     public ViewEvent(EventType<ViewEvent> type) {
         super(type);

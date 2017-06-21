@@ -246,10 +246,12 @@ public class MainViewController extends VBox implements Initializable{
     private void handleViewEvents(Event event) {
         if (event.getEventType() == ViewEvent.REFRESHING) {
             setBusy("Refreshing view ...");
-        } else if (event.getEventType() == ViewEvent.REFRESHED) {
+        } else if (event.getEventType() == ViewEvent.REFRESHED || event.getEventType() == ViewEvent.DONE) {
             setIdle(" ", false);
         } else if (event.getEventType() == ViewEvent.REFRESH_FAIL) {
             setIdle("refreshing failed!", true);
+        } else if (event.getEventType() == ViewEvent.EXPORTING) {
+            setBusy("Exporting data ...");
         }
     }
 
