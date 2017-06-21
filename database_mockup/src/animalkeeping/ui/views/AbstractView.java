@@ -1,5 +1,6 @@
 package animalkeeping.ui.views;
 
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 
 /******************************************************************************
@@ -39,5 +40,7 @@ import javafx.scene.layout.VBox;
  *****************************************************************************/
 public abstract class AbstractView extends VBox implements View {
 
-
+    static Tooltip getToolTip() {
+        return new Tooltip("A tooltip that describes the functions offered by the view. Please override!");
+    }
 }

@@ -1,3 +1,38 @@
+/******************************************************************************
+ Copyright (c) 2017 Neuroethology Lab, University of Tuebingen,
+ Jan Grewe <jan.grewe@g-node.org>,
+ Dennis Huben <dennis.huben@rwth-aachen.de>
+
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without modification,
+ are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this list
+ of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce the above copyright notice, this
+ list of conditions and the following disclaimer in the documentation and/or other
+ materials provided with the distribution.
+
+ 3. Neither the name of the copyright holder nor the names of its contributors may
+ be used to endorse or promote products derived from this software without specific
+ prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ DAMAGE.
+
+ * Created by jan on 01.05.17.
+
+ *****************************************************************************/
 package animalkeeping.ui.views;
 
 import animalkeeping.model.HousingType;
@@ -86,8 +121,7 @@ public class HousingView extends AbstractView implements Initializable {
 
         controls = new VBox();
         controls.setAlignment(Pos.TOP_LEFT);
-        controls.setSpacing(5);
-        ControlLabel newUnitLabel = new ControlLabel("new housing unit");
+        ControlLabel newUnitLabel = new ControlLabel("new housing unit", "Create new housing unit.", false);
         newUnitLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 newHousingUnit();
@@ -95,7 +129,7 @@ public class HousingView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(newUnitLabel);
 
-        appendUnitLabel = new ControlLabel("append housing unit");
+        appendUnitLabel = new ControlLabel("append housing unit", "Append a new housing unit to the selected one.", true);
         appendUnitLabel.setDisable(true);
         appendUnitLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
@@ -104,7 +138,7 @@ public class HousingView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(appendUnitLabel);
 
-        editUnitLabel = new ControlLabel("edit housing unit", true);
+        editUnitLabel = new ControlLabel("edit housing unit", "Edit the information of the selected Housing unit.", true);
         editUnitLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 editHousingUnit();
@@ -112,7 +146,7 @@ public class HousingView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(editUnitLabel);
 
-        deleteUnitLabel = new ControlLabel("delete housing unit", true);
+        deleteUnitLabel = new ControlLabel("delete housing unit", "Remove the selected Housing unit (only possible if not referenced).", true);
         deleteUnitLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteHousingUnit();
@@ -122,7 +156,7 @@ public class HousingView extends AbstractView implements Initializable {
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
 
-        ControlLabel newTypeLabel = new ControlLabel("new housing type");
+        ControlLabel newTypeLabel = new ControlLabel("new housing type", "Create new type of Housing unit.", false);
         newTypeLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 newHousingType();
@@ -130,7 +164,7 @@ public class HousingView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(newTypeLabel);
 
-        editTypeLabel = new ControlLabel("edit housing type", true);
+        editTypeLabel = new ControlLabel("edit housing type", "Edit type of Hounsing unit.", true);
         editTypeLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 editHousingType();
@@ -138,7 +172,7 @@ public class HousingView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(editTypeLabel);
 
-        deleteTypeLabel = new ControlLabel("delete housing type", true);
+        deleteTypeLabel = new ControlLabel("delete housing type", "Delete the selected type (only possible if not used).", true);
         deleteTypeLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteHousingType();
@@ -147,7 +181,7 @@ public class HousingView extends AbstractView implements Initializable {
         controls.getChildren().add(deleteTypeLabel);
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
 
-        importSubjectsLabel = new ControlLabel("import subjects", true);
+        importSubjectsLabel = new ControlLabel("import subjects", "Import a subject into the selected Housing unit.", true);
         importSubjectsLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 importSubjects();
@@ -155,7 +189,7 @@ public class HousingView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(importSubjectsLabel);
 
-        batchTreatmentLabel = new ControlLabel("batch treatment", true);
+        batchTreatmentLabel = new ControlLabel("batch treatment", "Treat all subjects in the selected Housing unit at once.", true);
         batchTreatmentLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 batchTreatment();
@@ -255,5 +289,9 @@ public class HousingView extends AbstractView implements Initializable {
     @Override
     public VBox getControls() {
         return controls;
+    }
+
+    public static Tooltip getToolTip(){
+        return new Tooltip("Define the animal housing. Batch import and treatment options.");
     }
 }

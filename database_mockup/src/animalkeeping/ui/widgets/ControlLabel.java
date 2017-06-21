@@ -3,6 +3,7 @@ package animalkeeping.ui.widgets;
 
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
 
 
@@ -25,6 +26,11 @@ public class ControlLabel extends Label {
             getScene().setCursor(Cursor.DEFAULT);
             this.setUnderline(false);
         });
+    }
+
+    public ControlLabel(String text, String toolTip, Boolean disabled) {
+        this(text, disabled);
+        this.setTooltip(new Tooltip(toolTip));
     }
 
 }

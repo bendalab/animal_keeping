@@ -58,6 +58,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.util.Pair;
 
 import java.io.IOException;
 import java.net.URL;
@@ -92,6 +93,7 @@ public class MainViewController extends VBox implements Initializable{
 
     private HashMap<String, TitledPane> panes;
     private HashMap<String, AbstractView> views;
+    private HashMap<String, Pair<String, Tooltip>> paneAliasMap;
     private String currentView;
 
     public MainViewController() {
@@ -136,14 +138,17 @@ public class MainViewController extends VBox implements Initializable{
                 e.printStackTrace();
             }
         }
+
         borderPane.prefHeightProperty().bind(this.prefHeightProperty());
         navigationBar.prefHeightProperty().bind(this.prefHeightProperty());
-        inventoryPane.setOnMouseClicked(event -> showView( "inventory", inventoryPane.isExpanded()));
-        personsPane.setOnMouseClicked(event -> showView("person", personsPane.isExpanded()));
-        subjectsPane.setOnMouseClicked(event -> showView("subject", subjectsPane.isExpanded()));
-        licensesPane.setOnMouseClicked(event -> showView("license", licensesPane.isExpanded()));
-        animalHousingPane.setOnMouseClicked(event -> showView( "housing", animalHousingPane.isExpanded()));
-        treatmentsPane.setOnMouseClicked(event -> showView("treatment", treatmentsPane.isExpanded()));
+
+        paneAliasMap = new HashMap<>(6);
+        paneAliasMap.put("Inventory", new Pair<>("inventory", InventoryController.getToolTip()));
+        paneAliasMap.put("Animals", new Pair<>("subject", SubjectView.getToolTip()));
+        paneAliasMap.put("Treatments", new Pair<>("treatment", TreatmentsView.getToolTip()));
+        paneAliasMap.put("Persons", new Pair<>("person", PersonsView.getToolTip()));
+        paneAliasMap.put("Animal housing", new Pair<>("housing", HousingView.getToolTip()));
+        paneAliasMap.put("Licenses", new Pair<>("license", LicenseView.getToolTip()));
 
         panes = new HashMap<>(6);
         panes.put("inventory", inventoryPane);
@@ -152,10 +157,23 @@ public class MainViewController extends VBox implements Initializable{
         panes.put("person", personsPane);
         panes.put("housing", animalHousingPane);
         panes.put("license", licensesPane);
+
+        for (String t : paneAliasMap.keySet()) {
+            String alias = paneAliasMap.get(t).getKey();
+            setupTiteldPane(panes.get(alias), t, alias, paneAliasMap.get(t).getValue());
+        }
         refreshItem.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN));
         views = new HashMap<>();
     }
 
+    private void setupTiteldPane(TitledPane pane, String title, String alias, Tooltip ttip) {
+        Label imgLabel = new Label(title, null);
+        imgLabel.setTooltip(ttip);
+        imgLabel.setContentDisplay(ContentDisplay.RIGHT);
+        pane.setGraphic(imgLabel);
+        pane.setGraphicTextGap(5.0);
+        pane.setOnMouseClicked(event -> showView(alias, pane.isExpanded()));
+    }
 
     private Boolean viewIsCached(String name) {
         return views.containsKey(name);

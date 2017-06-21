@@ -1,3 +1,38 @@
+/******************************************************************************
+ Copyright (c) 2017 Neuroethology Lab, University of Tuebingen,
+ Jan Grewe <jan.grewe@g-node.org>,
+ Dennis Huben <dennis.huben@rwth-aachen.de>
+
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without modification,
+ are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this list
+ of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce the above copyright notice, this
+ list of conditions and the following disclaimer in the documentation and/or other
+ materials provided with the distribution.
+
+ 3. Neither the name of the copyright holder nor the names of its contributors may
+ be used to endorse or promote products derived from this software without specific
+ prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ DAMAGE.
+
+ * Created by jan on 01.05.17.
+
+ *****************************************************************************/
 package animalkeeping.ui.views;
 
 import animalkeeping.logging.Communicator;
@@ -102,21 +137,21 @@ public class SubjectView extends AbstractView implements Initializable {
         observationsTab.setContent(notesTable);
 
         controls = new VBox();
-        ControlLabel newSubjectLabel = new ControlLabel("new subject", false);
+        ControlLabel newSubjectLabel = new ControlLabel("new subject", "Create a new subject entry.", false);
         newSubjectLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 editSubject(null);
             }
         });
         controls.getChildren().add(newSubjectLabel);
-        editSubjectLabel = new ControlLabel("edit subject", true);
+        editSubjectLabel = new ControlLabel("edit subject", "Edit the selected subject's information", true);
         editSubjectLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 editSubject(subjectsTable.getSelectionModel().getSelectedItem());
             }
         });
         controls.getChildren().add(editSubjectLabel);
-        deleteSubjectLabel = new ControlLabel("delete subject", true);
+        deleteSubjectLabel = new ControlLabel("delete subject", "Delete the selected subject (only possible, if not referenced).", true);
         deleteSubjectLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteSubject();
@@ -127,8 +162,7 @@ public class SubjectView extends AbstractView implements Initializable {
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
 
-        addTreatmentLabel = new ControlLabel("new treatment", true);
-        addTreatmentLabel.setTooltip(new Tooltip("add a treatment entry for the selected subject"));
+        addTreatmentLabel = new ControlLabel("new treatment", "Add a treatment entry for the selected subject", true);
         addTreatmentLabel.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 addTreatment(subjectsTable.getSelectionModel().getSelectedItem());
@@ -136,7 +170,7 @@ public class SubjectView extends AbstractView implements Initializable {
             }
         });
         controls.getChildren().add(addTreatmentLabel);
-        editTreatmentLabel = new ControlLabel("edit treatment", true);
+        editTreatmentLabel = new ControlLabel("edit treatment", "Edit the selected treatment information.", true);
         editTreatmentLabel.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 editTreatment(treatmentsTable.getSelectionModel().getSelectedItem());
@@ -144,7 +178,7 @@ public class SubjectView extends AbstractView implements Initializable {
             }
         });
         controls.getChildren().add(editTreatmentLabel);
-        deleteTreatmentLabel = new ControlLabel("remove treatment", true);
+        deleteTreatmentLabel = new ControlLabel("remove treatment", "Delete the selected subject treatment.",true);
         deleteTreatmentLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 deleteTreatment();
@@ -154,21 +188,21 @@ public class SubjectView extends AbstractView implements Initializable {
         controls.getChildren().add(deleteTreatmentLabel);
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
-        newComment = new ControlLabel("add observation", true);
+        newComment = new ControlLabel("add observation", "Add an observation note to the selected subject.", true);
         newComment.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 newSubjectObservation(subjectsTable.getSelectionModel().getSelectedItem());
             }
         });
         controls.getChildren().add(newComment);
-        editComment = new ControlLabel("edit observation", true);
+        editComment = new ControlLabel("edit observation", "Edit an observation.", true);
         editComment.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 editSubjectObservation(notesTable.getSelectionModel().getSelectedItem());
             }
         });
         controls.getChildren().add(editComment);
-        deleteComment = new ControlLabel("delete observation", true);
+        deleteComment = new ControlLabel("delete observation", "Delete the selected observation.", true);
         deleteComment.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 deleteObservation(notesTable.getSelectionModel().getSelectedItem());
@@ -177,8 +211,7 @@ public class SubjectView extends AbstractView implements Initializable {
         controls.getChildren().add(deleteComment);
 
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
-        moveSubjectLabel = new ControlLabel("move subject", true);
-        moveSubjectLabel.setTooltip(new Tooltip("relocate subject to a different housing unit"));
+        moveSubjectLabel = new ControlLabel("move subject", "Relocate the selected subject to a different housing unit.", true);
         moveSubjectLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 moveSubject(subjectsTable.getSelectionModel().getSelectedItem());
@@ -186,7 +219,7 @@ public class SubjectView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(moveSubjectLabel);
 
-        reportDead = new ControlLabel("report dead", true);
+        reportDead = new ControlLabel("report dead",  "Report that the selected subject deceased.", true);
         reportDead.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 reportDead(subjectsTable.getSelectionModel().getSelectedItem());
@@ -374,4 +407,7 @@ public class SubjectView extends AbstractView implements Initializable {
         //treatmentsTable.refresh();
     }
 
+    public static Tooltip getToolTip() {
+        return new Tooltip("Manage Subjects, add Treatments, observations etc.");
+    }
 }
