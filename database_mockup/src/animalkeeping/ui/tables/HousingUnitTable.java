@@ -103,9 +103,9 @@ public class HousingUnitTable extends TreeTableView<HousingUnit> {
         });
         this.getSelectionModel().getSelectedItems().addListener((ListChangeListener<TreeItem<HousingUnit>>) c -> {
             int sel_count = c.getList().size();
-            editItem.setDisable(sel_count == 0);
-            deleteItem.setDisable(sel_count == 0);
-            appendItem.setDisable(sel_count == 0);
+            for (MenuItem item : getContextMenu().getItems()) {
+                item.setDisable(sel_count == 0);
+            }
         });
 
         ContextMenu cmenu = new ContextMenu();
