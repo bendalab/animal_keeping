@@ -52,6 +52,7 @@ public class Subject extends Entity implements ChangeLogInterface {
     private SpeciesType speciesType;
     private SubjectType subjectType;
     private SupplierType supplier;
+    private Date importDate;
     private Set<Treatment> treatments =
             new HashSet<Treatment>(0);
     private Set<SubjectNote> notes =
@@ -147,6 +148,14 @@ public class Subject extends Entity implements ChangeLogInterface {
             }
         }
         return null;
+    }
+
+    public Date getImportDate() {
+        return importDate;
+    }
+
+    public void setImportDate(Date importDate) {
+        this.importDate = importDate;
     }
 
     public Set<SubjectNote> getNotes() {

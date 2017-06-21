@@ -42,5 +42,8 @@
             </key>
             <one-to-many class="SubjectNote" />
         </set>
+        <property name="importDate" update="false" insert="false"
+                  formula="(SELECT h.start_datetime FROM census_housing h WHERE h.subject_id = id ORDER BY h.start_datetime asc LIMIT 1)"
+                  type="timestamp" />
     </class>
 </hibernate-mapping>
