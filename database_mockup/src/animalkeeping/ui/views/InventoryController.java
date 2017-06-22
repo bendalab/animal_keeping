@@ -323,7 +323,9 @@ public class InventoryController extends AbstractView implements Initializable {
         row = overviewsheet.createRow(rowid++);
         row.createCell(0).setCellValue("Total: ");
         row.createCell(1).setCellValue(currentHousings.size());
-
+        for (int i = 0; i < 4; i++) {
+            overviewsheet.autoSizeColumn(i);
+        }
         // write a detailed stocklist
         try {
             Session session = Main.sessionFactory.openSession();
@@ -347,7 +349,8 @@ public class InventoryController extends AbstractView implements Initializable {
         rowid = 0;
         row = stocklist.createRow(rowid++);
         row.createCell(0).setCellValue( "Date:");
-        row.createCell(1).setCellValue( "from " + sdf.format(interval.getKey()) + " until " + sdf.format(interval.getValue()));
+        row.createCell(1).setCellValue( "from " + sdf.format(interval.getKey()));
+        row.createCell(2).setCellValue( "until " + sdf.format(interval.getValue()));
 
         row = stocklist.createRow(rowid++);
         row.createCell(0).setCellValue("Species");
@@ -383,12 +386,14 @@ public class InventoryController extends AbstractView implements Initializable {
                 row.createCell(cellid++).setCellValue((String)obj);
             }
         }
-
+        for (int i = 0; i < 8; i++) {
+            stocklist.autoSizeColumn(i);
+        }
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Select output file");
         //chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("xlsx"));
         chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel doc(*.xlsx)", "*.xlsx"));
-        chooser.setInitialFileName("*.xlsx");
+        chooser.setInitialFileName("stockList.xlsx");
         File f = chooser.showSaveDialog(Main.getPrimaryStage());
         if (f != null) {
             //Write the workbook in file system
@@ -438,7 +443,7 @@ public class InventoryController extends AbstractView implements Initializable {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Select output file");
         chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel spreadsheet (*.xlsx)", "*.xlsx"));
-        chooser.setInitialFileName("*.xlsx");
+        chooser.setInitialFileName("animalUse.xlsx");
         File f = chooser.showSaveDialog(Main.getPrimaryStage());
         if (f != null) {
             try {
@@ -489,6 +494,9 @@ public class InventoryController extends AbstractView implements Initializable {
         Set<TreatmentType> types = l.getTreatmentTypes();
         for (TreatmentType t : types) {
             rowid = exportTreatmentType(t, sheet, rowid, start, end);
+        }
+        for (int i = 0; i < 4; i++) {
+            sheet.autoSizeColumn(i);
         }
     }
 
