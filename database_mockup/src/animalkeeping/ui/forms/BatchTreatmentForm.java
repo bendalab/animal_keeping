@@ -2,6 +2,7 @@ package animalkeeping.ui.forms;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
+import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.EntityHelper;
 import javafx.geometry.Orientation;
@@ -25,7 +26,7 @@ import static animalkeeping.util.Dialogs.editHousingUnitDialog;
 
 
 public class BatchTreatmentForm extends VBox {
-    private ComboBox<HousingUnit> housingUnitComboBox;
+    private HousingDropDown housingUnitComboBox;
     private ComboBox<TreatmentType> treatmentComboBox;
     private ComboBox<Person> personComboBox;
     private DatePicker treatmentStartDate, treatmentEndDate;
@@ -48,18 +49,7 @@ public class BatchTreatmentForm extends VBox {
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
         Date date = new Date();
 
-        housingUnitComboBox = new ComboBox<>();
-        housingUnitComboBox.setConverter(new StringConverter<HousingUnit>() {
-            @Override
-            public String toString(HousingUnit object) {
-                return object.getName();
-            }
-
-            @Override
-            public HousingUnit fromString(String string) {
-                return null;
-            }
-        });
+        housingUnitComboBox = new HousingDropDown();
 
         treatmentComboBox = new ComboBox<>();
         treatmentComboBox.setConverter(new StringConverter<TreatmentType>() {
@@ -108,12 +98,9 @@ public class BatchTreatmentForm extends VBox {
         newPerson.setTooltip(new Tooltip("create a new supplier entry"));
         newPerson.setDisable(true);
 
-        List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit", HousingUnit.class);
         List<Person> persons = EntityHelper.getEntityList("from Person", Person.class);
         List<TreatmentType> types = EntityHelper.getEntityList("from TreatmentType", TreatmentType.class);
 
-        housingUnitComboBox.getItems().addAll(housingUnits);
-        housingUnitComboBox.getSelectionModel().select(unit);
         personComboBox.getItems().addAll(persons);
         personComboBox.getSelectionModel().select(0);
         treatmentComboBox.getItems().addAll(types);
@@ -213,7 +200,7 @@ public class BatchTreatmentForm extends VBox {
 
 
     public List<Treatment> persist() {
-        HousingUnit unit = housingUnitComboBox.getValue();
+        HousingUnit unit = housingUnitComboBox.getHousingUnit();
         if(unit == null) {
             return null;
         }

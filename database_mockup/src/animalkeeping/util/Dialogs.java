@@ -131,7 +131,9 @@ public class Dialogs {
 
     public static HousingUnit editHousingUnitDialog(HousingUnit unit, HousingUnit parent) {
         HousingUnitForm hud = new HousingUnitForm(unit);
-        hud.setParentUnit(parent);
+        if (unit == null && parent != null) {
+            hud.setParentUnit(parent);
+        }
         Dialog<HousingUnit> dialog = new Dialog<>();
         dialog.setTitle("Housing unit");
         dialog.setResizable(true);

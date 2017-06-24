@@ -3,6 +3,7 @@ package animalkeeping.ui.forms;
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.HousingType;
 import animalkeeping.model.HousingUnit;
+import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.util.EntityHelper;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -21,7 +22,7 @@ public class HousingUnitForm extends VBox {
     private TextField nameField, dimensionsField;
     private Label idLabel;
     private TextArea descriptionArea;
-    private ComboBox<HousingUnit> parentUnitComboBox;
+    private HousingDropDown parentUnitComboBox;
     private ComboBox<HousingType> typeComboBox;
     private HousingUnit unit;
 
@@ -44,35 +45,7 @@ public class HousingUnitForm extends VBox {
         dimensionsField = new TextField();
         descriptionArea = new TextArea();
         descriptionArea.setWrapText(true);
-        parentUnitComboBox = new ComboBox<>();
-        parentUnitComboBox.setConverter(new StringConverter<HousingUnit>() {
-            @Override
-            public String toString(HousingUnit object) {
-                return object.getName();
-            }
-
-            @Override
-            public HousingUnit fromString(String string) {
-                return null;
-            }
-        });
-        parentUnitComboBox.setCellFactory(new Callback<ListView<HousingUnit>, ListCell<HousingUnit>>() {
-            @Override
-            public ListCell<HousingUnit> call(ListView<HousingUnit> p) {
-                final ListCell<HousingUnit> cell = new ListCell<HousingUnit>() {
-                    @Override
-                    protected void updateItem(HousingUnit t, boolean bln) {
-                        super.updateItem(t, bln);
-                        if (t != null) {
-                            setText(t.getName());
-                        } else {
-                            setText(null);
-                        }
-                    }
-                };
-                return cell;
-            }
-        });
+        parentUnitComboBox = new HousingDropDown();
 
         typeComboBox = new ComboBox<>();
         typeComboBox.setCellFactory(new Callback<ListView<HousingType>, ListCell<HousingType>>() {
@@ -103,10 +76,8 @@ public class HousingUnitForm extends VBox {
                 return null;
             }
         });
-        List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit", HousingUnit.class);
         List<HousingType> housingTypes = EntityHelper.getEntityList("from HousingType", HousingType.class);
         typeComboBox.getItems().addAll(housingTypes);
-        parentUnitComboBox.getItems().addAll(housingUnits);
 
         GridPane grid = new GridPane();
         ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
@@ -155,13 +126,13 @@ public class HousingUnitForm extends VBox {
         this.idLabel.setText(unit != null ? unit.getId().toString() : "");
         this.descriptionArea.setText(unit != null ? unit.getDescription() : "");
         this.dimensionsField.setText(unit != null ? unit.getDimensions() : "");
-        this.parentUnitComboBox.getSelectionModel().select(unit != null ? unit.getParentUnit() : null);
+        this.parentUnitComboBox.setHousingUnit((unit != null) ? unit.getParentUnit() : null);
         this.typeComboBox.getSelectionModel().select(unit != null ? unit.getHousingType() : null);
     }
 
 
     public void setParentUnit(HousingUnit parent) {
-        this.parentUnitComboBox.getSelectionModel().select(parent);
+        this.parentUnitComboBox.setHousingUnit(parent);
     }
 
 
@@ -173,7 +144,7 @@ public class HousingUnitForm extends VBox {
         unit.setDescription(descriptionArea.getText());
         unit.setDimensions(dimensionsField.getText());
         unit.setHousingType(typeComboBox.getSelectionModel().getSelectedItem());
-        unit.setParentUnit(parentUnitComboBox.getSelectionModel().getSelectedItem());
+        unit.setParentUnit(parentUnitComboBox.getHousingUnit());
         return unit;
     }
 

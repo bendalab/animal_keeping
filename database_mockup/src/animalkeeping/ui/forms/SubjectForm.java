@@ -2,6 +2,7 @@ package animalkeeping.ui.forms;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
+import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.Dialogs;
@@ -29,7 +30,7 @@ public class SubjectForm extends VBox {
     private ComboBox<SpeciesType> speciesComboBox;
     private ComboBox<SubjectType> subjectTypeComboBox;
     private ComboBox<SupplierType> supplierComboBox;
-    private ComboBox<HousingUnit> housingUnitComboBox;
+    private HousingDropDown housingUnitComboBox;
     private ComboBox<Gender> genderComboBox;
     private DatePicker importDate, birthDate;
     private TextField nameField, aliasField;
@@ -65,12 +66,10 @@ public class SubjectForm extends VBox {
         importTimeField.setText(timeFormat.format(h.getStart()));
         nameField.setText(s.getName());
         aliasField.setText(s.getAlias());
-        housingUnitComboBox.getSelectionModel().select(h.getHousing());
-        //housingTable.getSelectionModel().select(h.getHousing());
+        housingUnitComboBox.setHousingUnit(h.getHousing());
     }
 
     private void init() {
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         idLabel = new Label();
         speciesComboBox = new ComboBox<>();
         speciesComboBox.setConverter(new StringConverter<SpeciesType>() {
@@ -108,19 +107,7 @@ public class SubjectForm extends VBox {
                 return null;
             }
         });
-        housingUnitComboBox = new ComboBox<>();
-        housingUnitComboBox.setConverter(new StringConverter<HousingUnit>() {
-            @Override
-            public String toString(HousingUnit object) {
-                return object.getName();
-            }
-
-            @Override
-            public HousingUnit fromString(String string) {
-                return null;
-            }
-        });
-        // housingTable = new HousingTable();
+        housingUnitComboBox = new HousingDropDown();
         genderComboBox = new ComboBox<>();
         genderComboBox.setConverter(new StringConverter<Gender>() {
             @Override
@@ -179,7 +166,6 @@ public class SubjectForm extends VBox {
         Button newHousingUnitButton = new Button("+");
         newHousingUnitButton.setTooltip(new Tooltip("create a new housing unit entry"));
         newHousingUnitButton.setDisable(true);
-
 
         GridPane grid = new GridPane();
         ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
@@ -246,13 +232,11 @@ public class SubjectForm extends VBox {
         List<SpeciesType> species= EntityHelper.getEntityList("from SpeciesType", SpeciesType.class);
         List<SubjectType> types = EntityHelper.getEntityList("from SubjectType", SubjectType.class);
         List<SupplierType> supplier = EntityHelper.getEntityList("from SupplierType", SupplierType.class);
-        List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit", HousingUnit.class);
 
         subjectTypeComboBox.getItems().addAll(types);
         subjectTypeComboBox.getSelectionModel().select(0);
         supplierComboBox.getItems().addAll(supplier);
         speciesComboBox.getItems().addAll(species);
-        housingUnitComboBox.getItems().addAll(housingUnits);
         List<Gender> sexes = new ArrayList<>(4);
         sexes.add(Gender.unknown);
         sexes.add(Gender.female);
@@ -282,7 +266,7 @@ public class SubjectForm extends VBox {
             h = new Housing();
         }
         h.setStart(sd);
-        h.setHousing(housingUnitComboBox.getValue());
+        h.setHousing(housingUnitComboBox.getHousingUnit());
         h.setSubject(subject);
 
         Communicator.pushSaveOrUpdate(subject);

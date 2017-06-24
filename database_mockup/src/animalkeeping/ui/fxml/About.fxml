@@ -36,7 +36,7 @@
       </VBox>
       <ImageView fitHeight="281.0" fitWidth="281.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@resources/ak_icon512.png" />
+            <Image url="@../../../resources/ak_icon.png" />
          </image>
       </ImageView>
       <Label text="This software is open-source, there are no warranties." wrapText="true" />
