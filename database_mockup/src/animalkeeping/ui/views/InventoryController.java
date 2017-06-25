@@ -117,14 +117,18 @@ public class InventoryController extends AbstractView implements Initializable {
         animalUseLabel.setTooltip(new Tooltip("Export excel sheet containing the animal use per license."));
         animalUseLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)) {
+                fireEvent(new ViewEvent(ViewEvent.EXPORTING));
                 XlsxExport.exportAnimalUse();
+                fireEvent(new ViewEvent(ViewEvent.DONE));
             }
         });
         ControlLabel exportStock = new ControlLabel("export stock list", false);
         exportStock.setTooltip(new Tooltip("Export current stock list to excel sheet."));
         exportStock.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
+                fireEvent(new ViewEvent(ViewEvent.EXPORTING));
                 XlsxExport.exportStockList();
+                fireEvent(new ViewEvent(ViewEvent.DONE));
             }
         });
 
