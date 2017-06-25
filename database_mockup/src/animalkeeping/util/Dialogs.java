@@ -2,11 +2,14 @@ package animalkeeping.util;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
-import animalkeeping.ui.*;
+import animalkeeping.ui.Main;
 import animalkeeping.ui.forms.*;
 import animalkeeping.ui.tables.HousingUnitTable;
+import animalkeeping.ui.widgets.HousingDropDown;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.util.Callback;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
@@ -269,10 +272,7 @@ public class Dialogs {
         });
 
         Optional<Pair<Date, Date>> result = dialog.showAndWait();
-        if (!result.isPresent()) {
-            return null;
-        }
-        return result.get();
+        return result.orElse(null);
     }
 
     public static Pair<Date, Date> getDateTimeInterval(Date start, Date end) {
@@ -337,10 +337,7 @@ public class Dialogs {
         });
 
         Optional<Pair<Date, Date>> result = dialog.showAndWait();
-        if (!result.isPresent()) {
-            return null;
-        }
-        return result.get();
+        return result.orElse(null);
     }
 
     public static SubjectType editSubjectTypeDialog(SubjectType type) {
@@ -400,10 +397,7 @@ public class Dialogs {
             return null;
         });
         Optional<SpeciesType> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            return result.get();
-        }
-        return null;
+        return result.orElse(null);
     }
 
 
@@ -427,10 +421,7 @@ public class Dialogs {
             return null;
         });
         Optional<SupplierType> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            return result.get();
-        }
-        return null;
+        return result.orElse(null);
     }
 
     public static Person editPersonDialog(Person person) {
@@ -453,10 +444,7 @@ public class Dialogs {
             return null;
         });
         Optional<Person> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            return result.get();
-        }
-        return null;
+        return result.orElse(null);
     }
 
     public static TreatmentType editTreatmentTypeDialog(TreatmentType type) {
@@ -479,10 +467,7 @@ public class Dialogs {
             return null;
         });
         Optional<TreatmentType> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            return result.get();
-        }
-        return null;
+        return result.orElse(null);
     }
 
     public static Treatment editTreatmentDialog() {
@@ -527,10 +512,7 @@ public class Dialogs {
             return null;
         });
         Optional<Treatment> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            return result.get();
-        }
-        return null;
+        return result.orElse(null);
     }
 
     public static Subject editSubjectDialog(Subject s) {
@@ -595,10 +577,7 @@ public class Dialogs {
             }
         });
         Optional<SubjectNote> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            return result.get();
-        }
-        return null;
+        return result.orElse(null);
     }
 
     public static  Housing editHousing(Housing housing) {
@@ -622,10 +601,7 @@ public class Dialogs {
             return null;
         });
         Optional<Housing> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            return result.get();
-        }
-        return null;
+        return result.orElse(null);
     }
 
     public static Subject reportSubjectDead(Subject s) {
@@ -689,14 +665,11 @@ public class Dialogs {
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
 
-        dialog.setResultConverter(new Callback<ButtonType, Date>() {
-            @Override
-            public Date call(ButtonType b) {
-                if (b == buttonTypeOk) {
-                    return getDateTime(dp.getValue(), timeField.getText());
-                }
-                return null;
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return getDateTime(dp.getValue(), timeField.getText());
             }
+            return null;
         });
         Optional<Date> result = dialog.showAndWait();
         if (result.isPresent() && result.get().after(current_housing.getStart())) {
@@ -754,14 +727,11 @@ public class Dialogs {
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
 
-        dialog.setResultConverter(new Callback<ButtonType, HousingUnit>() {
-            @Override
-            public HousingUnit call(ButtonType b) {
-                if (b == buttonTypeOk) {
-                    return hut.getSelectedUnit();
-                }
-                return null;
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return hut.getSelectedUnit();
             }
+            return null;
         });
         Optional<HousingUnit> result = dialog.showAndWait();
         if (result.isPresent() && result.get() != current_hu) {
@@ -797,6 +767,33 @@ public class Dialogs {
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.show();
+    }
+
+    public static HousingUnit selectHousingUnit() {
+        GridPane grid = new GridPane();
+        HousingDropDown hdd = new HousingDropDown();
+
+        grid.add(hdd, 0, 0);
+
+        Dialog<HousingUnit> dialog = new Dialog<>();
+        dialog.setTitle("Select a housing unit ... ");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setContent(grid);
+        dialog.setWidth(100);
+
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+        dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return hdd.getHousingUnit();
+            }
+            return null;
+        });
+
+        Optional<HousingUnit> result = dialog.showAndWait();
+        return result.orElse(null);
     }
 }
 
