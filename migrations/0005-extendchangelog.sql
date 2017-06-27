@@ -1,6 +1,6 @@
 -- -----------------------------------------------------
--- Table `animal_keeping`.`changelog`
+-- Table `changelog`
 -- -----------------------------------------------------
 
-ALTER TABLE `animal_keeping`.`changelog` ADD `who` VARCHAR(200) NOT NULL;
+ALTER TABLE `changelog` ADD `who` VARCHAR(200) NOT NULL;
 

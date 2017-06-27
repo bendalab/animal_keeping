@@ -1,7 +1,7 @@
 -- -----------------------------------------------------
--- Table `animal_keeping`.`changelog`
+-- Table `changelog`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `animal_keeping`.`changelog` (
+CREATE TABLE IF NOT EXISTS `changelog` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `action` VARCHAR(500) NOT NULL,
   `created_time` DATETIME NOT NULL,
