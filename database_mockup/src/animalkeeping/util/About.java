@@ -64,8 +64,12 @@ public class About extends VBox {
     }
 
     private void setVersion() {
-        Version version = new Version();
-        versionLabel.setText(version.getVersion());
-        migrationLabel.setText(version.getMigrationState());
+        try {
+            Version version = new Version();
+            versionLabel.setText(version.getVersion());
+            migrationLabel.setText(version.getMigrationState());
+        } catch (Exception e) {
+
+        }
     }
 }

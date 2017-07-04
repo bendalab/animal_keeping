@@ -41,7 +41,7 @@
         </Menu>
             <Menu mnemonicParsing="false" text="View">
               <items>
-                <MenuItem fx:id="refreshItem" mnemonicParsing="false" onAction="#refreshView" text="refresh" />
+                <MenuItem fx:id="refreshItem" disable="true" mnemonicParsing="false" onAction="#refreshView" text="refresh" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Misc. entities">
@@ -49,6 +49,13 @@
                   <Menu fx:id="subjectTypeMenu" disable="true" mnemonicParsing="false" text="subject types" />
                   <Menu fx:id="speciesTypeMenu" disable="true" mnemonicParsing="false" text="species" />
                   <Menu fx:id="supplierMenu" disable="true" mnemonicParsing="false" text="supplier" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Reports">
+              <items>
+                <MenuItem fx:id="exportStockListItem" disable="true" mnemonicParsing="false" text="stock list" />
+                  <MenuItem fx:id="exportPopulationItem" disable="true" mnemonicParsing="false" text="animal population" />
+                  <MenuItem fx:id="exportAnimalUseItem" disable="true" mnemonicParsing="false" text="animal use" />
               </items>
             </Menu>
         <Menu mnemonicParsing="false" text="Help">
