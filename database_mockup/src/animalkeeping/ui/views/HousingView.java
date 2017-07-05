@@ -43,7 +43,10 @@ import animalkeeping.ui.tables.HousingTable;
 import animalkeeping.ui.tables.HousingTypeTable;
 import animalkeeping.ui.tables.HousingUnitTable;
 import animalkeeping.ui.widgets.ControlLabel;
+import animalkeeping.util.Dialogs;
+import animalkeeping.util.XlsxExport;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -52,8 +55,12 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Session;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -62,7 +69,7 @@ import static animalkeeping.util.Dialogs.*;
 
 
 public class HousingView extends AbstractView implements Initializable {
-    @FXML ScrollPane tableScrollPane;
+    @FXML private ScrollPane tableScrollPane;
     @FXML private Tab populationTab, historyTab, currentHousingTab;
     @FXML private TabPane plotTabPane;
     @FXML private ScrollPane typesScrollPane;
@@ -77,6 +84,7 @@ public class HousingView extends AbstractView implements Initializable {
     private ControlLabel editUnitLabel, deleteUnitLabel, appendUnitLabel;
     private ControlLabel editTypeLabel, deleteTypeLabel;
     private ControlLabel importSubjectsLabel, batchTreatmentLabel;
+    private ControlLabel exportPopulationLabel;
 
 
     public HousingView () {
@@ -154,6 +162,14 @@ public class HousingView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(deleteUnitLabel);
 
+        exportPopulationLabel = new ControlLabel("export population", "Export the current population as an excel spreadsheet.", true);
+        exportPopulationLabel.setOnMouseClicked(event -> {
+            if(event.getButton().equals(MouseButton.PRIMARY)){
+                exportPopulation();
+            }
+        });
+        controls.getChildren().add(exportPopulationLabel);
+
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
 
         ControlLabel newTypeLabel = new ControlLabel("new housing type", "Create new type of Housing unit.", false);
@@ -196,6 +212,11 @@ public class HousingView extends AbstractView implements Initializable {
             }
         });
         controls.getChildren().add(batchTreatmentLabel);
+
+        MenuItem exportItem = new MenuItem("export population");
+        exportItem.setDisable(true);
+        exportItem.setOnAction(event -> exportPopulation());
+        housingUnitTable.getContextMenu().getItems().add(exportItem);
     }
 
 
@@ -207,6 +228,7 @@ public class HousingView extends AbstractView implements Initializable {
             importSubjectsLabel.setDisable(unit == null);
             batchTreatmentLabel.setDisable(unit == null);
             appendUnitLabel.setDisable(unit == null);
+            exportPopulationLabel.setDisable(unit == null);
             housingTable.setHousingUnit(unit);
         });
     }
@@ -230,11 +252,46 @@ public class HousingView extends AbstractView implements Initializable {
     }
 
 
-
     private void newHousingUnit() {
         housingUnitTable.editHousingUnit(null);
     }
 
+
+    private void exportPopulation() {
+        HousingUnit selectedUnit = housingUnitTable.getSelectedUnit();
+        if (selectedUnit == null) {
+            Dialogs.showInfo("No HousingUnit selected for export!");
+            return;
+        }
+        final XSSFWorkbook[] workbook = new XSSFWorkbook[1];
+        Task<Void> exportTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                Thread.sleep(100);
+                workbook[0] = XlsxExport.exportPopulation(selectedUnit);
+                return  null;
+            }
+        };
+        exportTask.setOnScheduled(event -> fireEvent(new ViewEvent(ViewEvent.EXPORTING)));
+        exportTask.setOnSucceeded(event -> {
+            FileChooser chooser = new FileChooser();
+            chooser.setTitle("Select output file");
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel doc(*.xlsx)", "*.xlsx"));
+            chooser.setInitialFileName(selectedUnit.getName() + "_population.xlsx");
+            File f = chooser.showSaveDialog(Main.getPrimaryStage());
+            if (f != null) {
+                try {
+                    FileOutputStream out = new FileOutputStream(f);
+                    workbook[0].write(out);
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            fireEvent(new ViewEvent(ViewEvent.DONE));
+        });
+        new Thread(exportTask).run();
+    }
 
     private void editHousingType() {
         HousingType ht = housingTypes.getSelectionModel().getSelectedItem();

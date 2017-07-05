@@ -35,14 +35,15 @@
  *****************************************************************************/
 package animalkeeping.ui.views;
 
+import animalkeeping.model.HousingUnit;
 import animalkeeping.model.SpeciesType;
 import animalkeeping.model.SubjectType;
 import animalkeeping.model.SupplierType;
-import animalkeeping.ui.*;
+import animalkeeping.ui.Main;
 import animalkeeping.ui.forms.LoginController;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
-// import com.apple.eawt.*;
+import animalkeeping.util.XlsxExport;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.Event;
@@ -62,9 +63,12 @@ import javafx.util.Pair;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
+
+// import com.apple.eawt.*;
 
 
 public class MainViewController extends VBox implements Initializable{
@@ -90,6 +94,9 @@ public class MainViewController extends VBox implements Initializable{
     @FXML private MenuItem aboutMenuItem;
     @FXML private MenuBar menuBar;
     @FXML private VBox navigationBar;
+    @FXML private MenuItem exportStockListItem;
+    @FXML private MenuItem exportAnimalUseItem;
+    @FXML private MenuItem exportPopulationItem;
 
     private HashMap<String, TitledPane> panes;
     private HashMap<String, AbstractView> views;
@@ -163,6 +170,9 @@ public class MainViewController extends VBox implements Initializable{
             setupTiteldPane(panes.get(alias), t, alias, paneAliasMap.get(t).getValue());
         }
         refreshItem.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN));
+        exportAnimalUseItem.setOnAction(event -> exportAnimalUse());
+        exportStockListItem.setOnAction(event -> exportStockList());
+        exportPopulationItem.setOnAction(event -> exportPopulation());
         views = new HashMap<>();
     }
 
@@ -246,10 +256,12 @@ public class MainViewController extends VBox implements Initializable{
     private void handleViewEvents(Event event) {
         if (event.getEventType() == ViewEvent.REFRESHING) {
             setBusy("Refreshing view ...");
-        } else if (event.getEventType() == ViewEvent.REFRESHED) {
+        } else if (event.getEventType() == ViewEvent.REFRESHED || event.getEventType() == ViewEvent.DONE) {
             setIdle(" ", false);
         } else if (event.getEventType() == ViewEvent.REFRESH_FAIL) {
             setIdle("refreshing failed!", true);
+        } else if (event.getEventType() == ViewEvent.EXPORTING) {
+            setBusy("Exporting data ...");
         }
     }
 
@@ -440,6 +452,10 @@ public class MainViewController extends VBox implements Initializable{
             speciesTypeMenu.setDisable(false);
             supplierMenu.setDisable(false);
             fillMenus();
+            refreshItem.setDisable(false);
+            exportStockListItem.setDisable(false);
+            exportAnimalUseItem.setDisable(false);
+            exportPopulationItem.setDisable(false);
             showView("inventory", true);
             inventoryPane.setExpanded(true);
             setIdle("Successfully connected to database!", false);
@@ -508,6 +524,55 @@ public class MainViewController extends VBox implements Initializable{
         }
     }
     */
+
+    private void exportPopulation() {
+        final HousingUnit unit = Dialogs.selectHousingUnit();
+        Task<Void> exportTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                Thread.sleep(50);
+                XlsxExport.exportPopulation(unit);
+                return null;
+            }
+        };
+        exportTask.setOnScheduled(event -> setBusy("exporting data ..."));
+        exportTask.setOnSucceeded(event -> setIdle("", false));
+        new Thread(exportTask).start();
+    }
+
+
+    private void exportAnimalUse() {
+        final Pair<Date, Date> interval = Dialogs.getDateInterval();
+        Task<Void> exportTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                Thread.sleep(50);
+                XlsxExport.exportAnimalUse(interval);
+                return null;
+            }
+        };
+        exportTask.setOnScheduled(event -> setBusy("exporting data ..."));
+        exportTask.setOnSucceeded(event -> setIdle("", false));
+        new Thread(exportTask).start();
+    }
+
+
+    private void exportStockList() {
+        final Pair<Date, Date> interval = Dialogs.getDateInterval();
+        Task<Void> exportTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                Thread.sleep(50);
+                XlsxExport.exportStockList(interval);
+                return null;
+            }
+        };
+        exportTask.setOnScheduled(event -> setBusy("exporting data ..."));
+        exportTask.setOnSucceeded(event -> setIdle("", false));
+        new Thread(exportTask).start();
+    }
+
+
     private void setBusy(String message) {
         Platform.runLater(() -> {
             progressBar.setProgress(-1.0);

@@ -49,6 +49,10 @@ public class ChangeLog {
     private Long targetId;
     private String who;
 
+    ChangeLog() {
+
+    }
+
     ChangeLog(String action,String type,Long targetId, String who)
     {
         this.typeOfAction = action;
