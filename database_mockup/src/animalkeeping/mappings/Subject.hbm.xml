@@ -28,7 +28,7 @@
             </key>
             <one-to-many class="Treatment" />
         </set>
-        <set name="housings" table="census_housing" cascade="delete"
+        <set name="housings" table="census_housing" cascade="save-update, delete"
              inverse="true" lazy="false" fetch="join" order-by="start_datetime asc">
             <key>
                 <column name="subject_id" not-null="true" />
