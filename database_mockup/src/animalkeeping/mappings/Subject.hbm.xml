@@ -48,5 +48,6 @@
         <property name="exitDate" update="false" insert="false"
                   formula="(SELECT h.end_datetime FROM census_housing h WHERE h.subject_id = id ORDER BY h.start_datetime DESC LIMIT 1)"
                   type="timestamp" />
+        <many-to-one name="responsiblePerson" column="person_id" class="Person" not-null="false"/>
     </class>
 </hibernate-mapping>
