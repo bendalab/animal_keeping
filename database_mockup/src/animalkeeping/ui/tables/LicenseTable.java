@@ -24,7 +24,10 @@ import java.util.List;
 public class LicenseTable extends TableView<License> {
     private MenuItem editLicenseItem;
     private MenuItem deleteLicenseItem;
+    private CheckMenuItem showAllItem;
     private ObservableList<License> masterList = FXCollections.observableArrayList();
+    private FilteredList<License> filteredList;
+
 
     public LicenseTable() {
         super();
@@ -104,7 +107,11 @@ public class LicenseTable extends TableView<License> {
         deleteLicenseItem.setDisable(true);
         deleteLicenseItem.setOnAction(event -> deleteLicense(this.getSelectionModel().getSelectedItem()));
 
-        cmenu.getItems().addAll(newLicenseItem, editLicenseItem, deleteLicenseItem);
+        showAllItem = new CheckMenuItem("show all licenses");
+        showAllItem.setSelected(false);
+        showAllItem.setOnAction(event -> setActiveFilter(showAllItem.isSelected()));
+
+        cmenu.getItems().addAll(newLicenseItem, editLicenseItem, deleteLicenseItem, new SeparatorMenuItem(), showAllItem);
         this.setContextMenu(cmenu);
         this.getSelectionModel().getSelectedItems().addListener((ListChangeListener<License>) c -> {
             int sel_count = c.getList().size();
@@ -124,7 +131,12 @@ public class LicenseTable extends TableView<License> {
                 Platform.runLater(() -> {
                     masterList.clear();
                     masterList.addAll(result);
+                    filteredList = new FilteredList<>(masterList, p -> true);
+                    SortedList<License> sortedList = new SortedList<>(filteredList);
+                    sortedList.comparatorProperty().bind(comparatorProperty());
+                    setItems(sortedList);
                     getSelectionModel().select(l);
+                    setActiveFilter(showAllItem.isSelected());
                 });
                 return null;
             }
@@ -156,5 +168,9 @@ public class LicenseTable extends TableView<License> {
             return;
         }
         Communicator.pushDelete(l);
+    }
+
+    public void setActiveFilter(Boolean showAll) {
+        filteredList.setPredicate(license -> showAll || license.getEndDate().after(new Date()));
     }
 }
