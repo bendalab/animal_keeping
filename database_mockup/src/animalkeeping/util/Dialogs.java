@@ -36,7 +36,7 @@ public class Dialogs {
 
     public static void importSubjectsDialog(HousingUnit unit) {
         AddSubjectsForm htd = new AddSubjectsForm(unit);
-        Dialog<Boolean> dialog = new Dialog<>();
+        Dialog<Integer> dialog = new Dialog<>();
         dialog.setTitle("Import subjects");
         dialog.setResizable(true);
         dialog.getDialogPane().setContent(htd);
@@ -50,15 +50,17 @@ public class Dialogs {
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return htd.persistSubjects();
+            } else if (b == buttonTypeCancel) {
+                return 1;
             }
             return null;
         });
 
-        Optional<Boolean> result = dialog.showAndWait();
-        if (!result.isPresent() && !result.get()) {
+        Optional<Integer> result = dialog.showAndWait();
+        if (!result.isPresent() || result.get() < 0) {
             showInfo("Something went wrong while creating new subjects!");
-        } else {
-            showInfo("Successfully created new subjects!");
+        } else if (result.get() == 0) {
+            showInfo("Successfully created subjects.");
         }
     }
 
