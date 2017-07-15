@@ -2,6 +2,7 @@ package animalkeeping.ui.forms;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.Person;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
@@ -14,6 +15,7 @@ import javafx.scene.layout.VBox;
  */
 public class PersonForm extends VBox {
     private TextField firstnameField, lastnameField, emailField;
+    private CheckBox activeCheckBox;
     private Label idLabel;
     private Person person = null;
 
@@ -36,6 +38,7 @@ public class PersonForm extends VBox {
         firstnameField.setText(p.getFirstName());
         lastnameField.setText(p.getLastName());
         emailField.setText(p.getEmail());
+        activeCheckBox.setSelected(p.getActive());
     }
 
     private void init() {
@@ -43,6 +46,8 @@ public class PersonForm extends VBox {
         firstnameField = new TextField();
         emailField = new TextField();
         lastnameField = new TextField();
+        activeCheckBox = new CheckBox();
+        activeCheckBox.setSelected(true);
 
         GridPane grid = new GridPane();
         ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
@@ -54,6 +59,7 @@ public class PersonForm extends VBox {
         firstnameField.prefWidthProperty().bind(column2.maxWidthProperty());
         lastnameField.prefWidthProperty().bind(column2.maxWidthProperty());
         emailField.prefWidthProperty().bind(column2.maxWidthProperty());
+        activeCheckBox.prefWidthProperty().bind(column2.maxWidthProperty());
 
         grid.setVgap(5);
         grid.setHgap(2);
@@ -69,6 +75,8 @@ public class PersonForm extends VBox {
         grid.add(new Label("E-mail:"), 0, 3);
         grid.add(emailField, 1, 3, 1, 1);
 
+        grid.add(new Label("Active:"), 0, 4);
+        grid.add(activeCheckBox, 1, 4, 1, 1);
         this.getChildren().add(grid);
     }
 
@@ -80,7 +88,7 @@ public class PersonForm extends VBox {
         person.setLastName(lastnameField.getText());
         person.setEmail(emailField.getText());
         person.setFirstName(firstnameField.getText());
-
+        person.setActive(activeCheckBox.isSelected());
         if (Communicator.pushSaveOrUpdate(person))
             return person;
         return null;
