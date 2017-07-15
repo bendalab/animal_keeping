@@ -1,7 +1,7 @@
 package animalkeeping.ui.forms;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
-import animalkeeping.ui.Main;
 import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.EntityHelper;
@@ -12,7 +12,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.StringConverter;
-import org.hibernate.Session;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -203,7 +202,6 @@ public class AddSubjectsForm extends VBox {
         String prefix = String.valueOf(hdate.getYear());
         String name = nameField.getText();
         Integer initial_id = startIdSpinner.getValue();
-        Session session = Main.sessionFactory.openSession();
 
         for (int i = 0; i < countSpinner.getValue(); i++) {
             String full_name = createName(prefix, name, initial_id + i, 4);
@@ -217,16 +215,8 @@ public class AddSubjectsForm extends VBox {
             HashSet<Housing> housings = new HashSet<>(1);
             housings.add(h);
             s.setHousings(housings);
-            try {
-                session.beginTransaction();
-                session.save(s);
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
+            Communicator.pushSaveOrUpdate(s);
         }
-        session.close();
         return true;
     }
 
