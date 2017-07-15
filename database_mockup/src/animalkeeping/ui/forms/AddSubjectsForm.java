@@ -52,6 +52,7 @@ public class AddSubjectsForm extends VBox {
         Date date = new Date();
 
         housingUnitCombo = new HousingDropDown();
+        housingUnitCombo.setHousingUnit(unit);
         supplierComboBox = new ComboBox<>();
         supplierComboBox.setConverter(new StringConverter<SupplierType>() {
             @Override
@@ -116,6 +117,8 @@ public class AddSubjectsForm extends VBox {
         ColumnConstraints column3 = new ColumnConstraints(30, 30, Double.MAX_VALUE);
         column3.setHgrow(Priority.NEVER);
         grid.getColumnConstraints().addAll(column1, column2, column3);
+
+        nameField.prefWidthProperty().bind(column2.maxWidthProperty());
         speciesComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         supplierComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         housingUnitCombo.prefWidthProperty().bind(column2.maxWidthProperty());
@@ -127,7 +130,7 @@ public class AddSubjectsForm extends VBox {
         grid.setVgap(5);
         grid.setHgap(2);
         grid.add(new Label("name pattern(*):"), 0, 0);
-        grid.add(nameField, 1, 0, 1, 1);
+        grid.add(nameField, 1, 0, 2, 1);
 
         grid.add(new Label("housing unit(*):"), 0, 1);
         grid.add(housingUnitCombo, 1, 1, 1, 1 );
@@ -146,13 +149,13 @@ public class AddSubjectsForm extends VBox {
         grid.add(housingDate, 1, 5, 2, 1);
 
         grid.add(new Label("time(*):"), 0, 6);
-        grid.add(timeField, 1, 6, 1, 1);
+        grid.add(timeField, 1, 6, 2, 1);
 
         grid.add(new Label("subject count"), 0, 7);
-        grid.add(countSpinner, 1, 7, 1, 1);
+        grid.add(countSpinner, 1, 7, 2, 1);
 
         grid.add(new Label("start index:"), 0, 8);
-        grid.add(startIdSpinner, 1, 8, 1, 1);
+        grid.add(startIdSpinner, 1, 8, 2, 1);
 
         grid.add(new Label("(*) required"), 0, 9);
 
