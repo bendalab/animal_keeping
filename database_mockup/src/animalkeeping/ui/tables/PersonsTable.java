@@ -30,6 +30,7 @@ public class PersonsTable extends TableView<Person> {
     private MenuItem deleteItem;
     private MenuItem addToDBItem;
     private MenuItem toggleActiveItem;
+    private CheckMenuItem showAllItem;
 
     public PersonsTable() {
         super();
@@ -103,7 +104,11 @@ public class PersonsTable extends TableView<Person> {
         toggleActiveItem.setDisable(true);
         toggleActiveItem.setOnAction(event -> toggleActive(this.getSelectionModel().getSelectedItem()));
 
-        cmenu.getItems().addAll(newItem, editItem, deleteItem, addToDBItem, toggleActiveItem);
+        showAllItem = new CheckMenuItem("show all persons");
+        showAllItem.setSelected(false);
+        showAllItem.setOnAction(event -> setActiveFilter(showAllItem.isSelected()));
+
+        cmenu.getItems().addAll(newItem, editItem, deleteItem, addToDBItem, toggleActiveItem, new SeparatorMenuItem(), showAllItem);
 
         this.setContextMenu(cmenu);
     }
@@ -122,6 +127,7 @@ public class PersonsTable extends TableView<Person> {
                     sortedList.comparatorProperty().bind(comparatorProperty());
                     setItems(sortedList);
                     getSelectionModel().select(p);
+                    setActiveFilter(showAllItem.isSelected());
                 });
                 return null;
             }
@@ -156,6 +162,10 @@ public class PersonsTable extends TableView<Person> {
 
     public void setIdFilter(Long id) {
         filteredList.setPredicate(person -> id == null || id.equals(person.getId()));
+    }
+
+    public void setActiveFilter(Boolean showAll) {
+        filteredList.setPredicate(person -> showAll || person.getActive());
     }
 
     public void setSelectedPerson(Person p) {
