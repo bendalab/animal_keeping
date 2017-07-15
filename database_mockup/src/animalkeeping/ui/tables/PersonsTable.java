@@ -7,6 +7,7 @@ import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import animalkeeping.util.SuperUserDialog;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -16,6 +17,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 
 
 import java.sql.Connection;
@@ -27,6 +29,7 @@ public class PersonsTable extends TableView<Person> {
     private MenuItem editItem;
     private MenuItem deleteItem;
     private MenuItem addToDBItem;
+    private MenuItem toggleActiveItem;
 
     public PersonsTable() {
         super();
@@ -44,9 +47,15 @@ public class PersonsTable extends TableView<Person> {
 
         TableColumn<Person, String> emailCol = new TableColumn<>("email");
         emailCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getEmail()));
-        emailCol.prefWidthProperty().bind(this.widthProperty().multiply(0.50));
+        emailCol.prefWidthProperty().bind(this.widthProperty().multiply(0.45));
 
-        this.getColumns().addAll(idCol, firstNameCol, lastNameCol, emailCol);
+        TableColumn<Person, Boolean> activeCol = new TableColumn<>("active");
+        activeCol.setCellValueFactory(data -> new ReadOnlyBooleanWrapper(data.getValue().getActive()));
+        activeCol.setCellFactory(tc -> new CheckBoxTableCell<>());
+        activeCol.prefWidthProperty().bind(this.widthProperty().multiply(0.05));
+
+        this.getColumns().addAll(idCol, firstNameCol, lastNameCol, emailCol, activeCol);
+
         this.setRowFactory( tv -> {
             TableRow<Person> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -66,6 +75,7 @@ public class PersonsTable extends TableView<Person> {
             int sel_count = c.getList().size();
             editItem.setDisable(sel_count == 0);
             deleteItem.setDisable(sel_count == 0);
+            toggleActiveItem.setDisable(sel_count == 0);
             boolean hasUser = false;
             if (sel_count > 0) {
                 Person p = c.getList().get(0);
@@ -88,7 +98,12 @@ public class PersonsTable extends TableView<Person> {
         addToDBItem = new MenuItem("add database user to person");
         addToDBItem.setDisable(true);
         addToDBItem.setOnAction(event -> addToDatabase(this.getSelectionModel().getSelectedItem()));
-        cmenu.getItems().addAll(newItem, editItem, deleteItem, addToDBItem);
+
+        toggleActiveItem = new MenuItem("toggle active state");
+        toggleActiveItem.setDisable(true);
+        toggleActiveItem.setOnAction(event -> toggleActive(this.getSelectionModel().getSelectedItem()));
+
+        cmenu.getItems().addAll(newItem, editItem, deleteItem, addToDBItem, toggleActiveItem);
 
         this.setContextMenu(cmenu);
     }
@@ -174,5 +189,11 @@ public class PersonsTable extends TableView<Person> {
         AddDatabaseUserDialog.addDatabaseUser(c, p);
         refresh();
         setSelectedPerson(p);
+    }
+
+    private void toggleActive(Person p) {
+        p.setActive(!p.getActive());
+        Communicator.pushSaveOrUpdate(p);
+        refresh();
     }
 }
