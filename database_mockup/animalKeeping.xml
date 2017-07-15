@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="database_mockup" default="all">
-    <property name="version" value="0.5.3"/>
-    <property name="db_migration_state" value="0010-changelogquery.sql"/>
+    <property name="version" value="0.5.4"/>
+    <property name="db_migration_state" value="0011-inactive_person.sql"/>
     <property file="animalKeeping.properties"/>
 
     <!-- Uncomment the following property if no tests compilation is needed -->
