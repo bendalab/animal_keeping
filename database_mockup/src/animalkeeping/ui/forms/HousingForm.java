@@ -4,6 +4,7 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.Housing;
 import animalkeeping.model.HousingUnit;
 import animalkeeping.model.Subject;
+import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.EntityHelper;
@@ -27,7 +28,7 @@ public class HousingForm extends VBox {
     private SpecialTextField startTimeField, endTimeField;
     private TextArea commentArea;
     private ComboBox<Subject> subjectCombo;
-    private ComboBox<HousingUnit> unitCombo;
+    private HousingDropDown unitCombo;
     private Housing housing = null;
 
     public HousingForm() {
@@ -61,18 +62,7 @@ public class HousingForm extends VBox {
                 return null;
             }
         });
-        unitCombo = new ComboBox<>();
-        unitCombo.setConverter(new StringConverter<HousingUnit>() {
-            @Override
-            public String toString(HousingUnit object) {
-                return object.getName();
-            }
-
-            @Override
-            public HousingUnit fromString(String string) {
-                return null;
-            }
-        });
+        unitCombo = new HousingDropDown();
         commentArea = new TextArea();
 
         Button newPersonButton = new Button("+");
@@ -131,9 +121,7 @@ public class HousingForm extends VBox {
         for (Housing h : housings) {
             subjectList.add(h.getSubject());
         }
-        List<HousingUnit> units = EntityHelper.getEntityList("from HousingUnit", HousingUnit.class);
         subjectCombo.getItems().addAll(subjectList);
-        unitCombo.getItems().addAll(units);
     }
 
     private void setHousing(Housing h) {
@@ -148,7 +136,7 @@ public class HousingForm extends VBox {
             subjectCombo.getItems().add(h.getSubject());
             subjectCombo.getSelectionModel().select(0);
         }
-        unitCombo.getSelectionModel().select(h.getHousing());
+        unitCombo.setHousingUnit(h.getHousing());
         startDate.setValue(DateTimeHelper.toLocalDate(h.getStart()));
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         startTimeField.setText(timeFormat.format(h.getStart()));
@@ -162,7 +150,7 @@ public class HousingForm extends VBox {
             this.housing = new Housing();
         }
         housing.setSubject(subjectCombo.getValue());
-        housing.setHousing(unitCombo.getValue());
+        housing.setHousing(unitCombo.getHousingUnit());
         housing.setStart(DateTimeHelper.getDateTime(startDate.getValue(), startTimeField.getText()));
         housing.setComment(commentArea.getText());
         if (endDate.getValue() != null) {
