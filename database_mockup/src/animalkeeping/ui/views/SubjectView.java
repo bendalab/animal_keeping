@@ -66,6 +66,7 @@ public class SubjectView extends AbstractView implements Initializable {
     @FXML private Label idLabel;
     @FXML private Label nameLabel;
     @FXML private Label genderLabel;
+    @FXML private Label personLabel;
     @FXML private Label birthdateLabel;
     @FXML private Label housingStartLabel;
     @FXML private Label housingEndLabel;
@@ -120,6 +121,7 @@ public class SubjectView extends AbstractView implements Initializable {
         idLabel.setText("");
         nameLabel.setText("");
         speciesLabel.setText("");
+        personLabel.setText("");
         originLabel.setText("");
         statusLabel.setText("");
         housingEndLabel.setText("");
@@ -258,6 +260,8 @@ public class SubjectView extends AbstractView implements Initializable {
             birthdateLabel.setText((s.getBirthday() != null ? dateFormat.format(s.getBirthday()) : "unknown") + agestr);
             speciesLabel.setText(s.getSpeciesType().getName());
             originLabel.setText(s.getSupplier().getName());
+            personLabel.setText(s.getResponsiblePerson() != null ? (s.getResponsiblePerson().getFirstName() +
+                    " " + s.getResponsiblePerson().getLastName()) : "");
 
             housingStartLabel.setText(firstHousing != null ? timestampFormat.format(firstHousing.getStart()) : "");
             if (lastHousing != null) {
@@ -289,6 +293,7 @@ public class SubjectView extends AbstractView implements Initializable {
             originLabel.setText("");
             speciesLabel.setText("");
             statusLabel.setText("");
+            personLabel.setText("");
             housingEndLabel.setText("");
             housingStartLabel.setText("");
             treatmentsTable.setTreatments(null);

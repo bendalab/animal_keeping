@@ -8,6 +8,7 @@ import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -30,6 +31,7 @@ public class SubjectForm extends VBox {
     private ComboBox<SpeciesType> speciesComboBox;
     private ComboBox<SubjectType> subjectTypeComboBox;
     private ComboBox<SupplierType> supplierComboBox;
+    private ComboBox<Person> personComboBox;
     private HousingDropDown housingUnitComboBox;
     private ComboBox<Gender> genderComboBox;
     private DatePicker importDate, birthDate;
@@ -59,6 +61,7 @@ public class SubjectForm extends VBox {
         speciesComboBox.getSelectionModel().select(s.getSpeciesType());
         subjectTypeComboBox.getSelectionModel().select(s.getSubjectType());
         genderComboBox.getSelectionModel().select(s.getGender());
+        personComboBox.getSelectionModel().select(s.getResponsiblePerson());
         birthDate.setValue(s.getBirthday() != null ? toLocalDate(s.getBirthday()) : null);
         Housing h = s.getHousings().iterator().next();
         LocalDate sd = DateTimeHelper.toLocalDate(h.getStart());
@@ -126,6 +129,23 @@ public class SubjectForm extends VBox {
                 return Gender.hermaphrodite;
             }
         });
+        personComboBox = new ComboBox<>();
+        personComboBox.setConverter(new StringConverter<Person>() {
+            @Override
+            public String toString(Person object) {
+                return (object.getFirstName() + " " + object.getLastName());
+            }
+
+            @Override
+            public Person fromString(String string) {
+                return null;
+            }
+        });
+        personComboBox.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.BACK_SPACE) {
+                personComboBox.getSelectionModel().select(null);
+            }
+        });
 
         birthDate = new DatePicker();
 
@@ -163,6 +183,11 @@ public class SubjectForm extends VBox {
                 subjectTypeComboBox.getSelectionModel().select(st);
             }
         });
+
+        Button newPersonButton = new Button("+");
+        newPersonButton.setTooltip(new Tooltip("create a new person entry"));
+        newPersonButton.setDisable(true);
+
         Button newHousingUnitButton = new Button("+");
         newHousingUnitButton.setTooltip(new Tooltip("create a new housing unit entry"));
         newHousingUnitButton.setDisable(true);
@@ -175,10 +200,12 @@ public class SubjectForm extends VBox {
         ColumnConstraints column3 = new ColumnConstraints(30, 30, Double.MAX_VALUE);
         column3.setHgrow(Priority.NEVER);
         grid.getColumnConstraints().addAll(column1, column2, column3);
+
         speciesComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         supplierComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         subjectTypeComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         housingUnitComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
+        personComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         importDate.prefWidthProperty().bind(column2.maxWidthProperty());
         importTimeField.prefWidthProperty().bind(column2.maxWidthProperty());
         nameField.prefWidthProperty().bind(column2.maxWidthProperty());
@@ -219,24 +246,32 @@ public class SubjectForm extends VBox {
         grid.add(housingUnitComboBox, 1, 8, 1, 1 );
         grid.add(newHousingUnitButton, 2, 8, 1, 1);
 
-        grid.add(new Label("import date*:"), 0, 9);
-        grid.add(importDate, 1, 9, 2,1);
+        grid.add(new Label("resp. person:"), 0, 9);
+        grid.add(personComboBox, 1, 9, 1, 1 );
+        grid.add(newPersonButton, 2, 9, 1, 1);
 
-        grid.add(new Label("import time*:"), 0, 10);
-        grid.add(importTimeField, 1, 10, 2,1);
 
-        grid.add(new Label("(* required)"), 0, 11);
+        grid.add(new Label("import date*:"), 0, 10);
+        grid.add(importDate, 1, 10, 2,1);
+
+        grid.add(new Label("import time*:"), 0, 11);
+        grid.add(importTimeField, 1, 11, 2,1);
+
+        grid.add(new Label("(* required)"), 0, 12);
 
         this.getChildren().add(grid);
 
         List<SpeciesType> species= EntityHelper.getEntityList("from SpeciesType", SpeciesType.class);
         List<SubjectType> types = EntityHelper.getEntityList("from SubjectType", SubjectType.class);
         List<SupplierType> supplier = EntityHelper.getEntityList("from SupplierType", SupplierType.class);
+        List<Person> persons = EntityHelper.getEntityList("from Person", Person.class);
 
         subjectTypeComboBox.getItems().addAll(types);
         subjectTypeComboBox.getSelectionModel().select(0);
         supplierComboBox.getItems().addAll(supplier);
         speciesComboBox.getItems().addAll(species);
+        personComboBox.getItems().addAll(persons);
+
         List<Gender> sexes = new ArrayList<>(4);
         sexes.add(Gender.unknown);
         sexes.add(Gender.female);
@@ -258,6 +293,7 @@ public class SubjectForm extends VBox {
         subject.setSupplier(supplierComboBox.getValue());
         subject.setSubjectType(subjectTypeComboBox.getValue());
         subject.setGender(genderComboBox.getValue());
+        subject.setResponsiblePerson(personComboBox.getValue());
         subject.setBirthday(birthDate.getValue() != null ? localDateToUtilDate(birthDate.getValue()) : null);
         Housing h;
         if (subject.getHousings().iterator().hasNext()) {
@@ -267,9 +303,10 @@ public class SubjectForm extends VBox {
         }
         h.setStart(sd);
         h.setHousing(housingUnitComboBox.getHousingUnit());
-        h.setSubject(subject);
 
         Communicator.pushSaveOrUpdate(subject);
+        EntityHelper.refreshEntity(subject);
+        h.setSubject(subject);
         Communicator.pushSaveOrUpdate(h);
         return subject;
     }

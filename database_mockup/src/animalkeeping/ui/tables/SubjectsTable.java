@@ -43,6 +43,11 @@ public class SubjectsTable extends TableView<Subject> {
         aliasCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAlias()));
         aliasCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
 
+        TableColumn<Subject, String> personCol = new TableColumn<>("resp. person");
+        personCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getResponsiblePerson() != null ?
+                (data.getValue().getResponsiblePerson().getFirstName() + " " + data.getValue().getResponsiblePerson().getLastName()) : ""));
+        personCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
+
         TableColumn<Subject, String> genderCol = new TableColumn<>("gender");
         genderCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getGender().toString()));
         genderCol.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
@@ -68,7 +73,7 @@ public class SubjectsTable extends TableView<Subject> {
         supplierCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSupplier().getName()));
         supplierCol.prefWidthProperty().bind(this.widthProperty().multiply(0.125));
 
-        this.getColumns().addAll(idCol, nameCol, aliasCol, birthdateCol, genderCol, speciesCol, housingCol, subjectCol, supplierCol);
+        this.getColumns().addAll(idCol, nameCol, aliasCol, birthdateCol, genderCol, speciesCol, personCol, housingCol, subjectCol, supplierCol);
         this.setRowFactory( tv -> {
             TableRow<Subject> row = new TableRow<>();
             row.setOnMouseClicked(event -> {

@@ -1,23 +1,22 @@
 package animalkeeping.ui.forms;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
-import animalkeeping.ui.Main;
+import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.EntityHelper;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.StringConverter;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +25,8 @@ import static animalkeeping.util.Dialogs.editHousingUnitDialog;
 
 
 public class AddSubjectsForm extends VBox {
-    private ComboBox<HousingUnit> housingUnitComboBox;
+    private HousingDropDown housingUnitCombo;
+    private ComboBox<Person> responsiblePersonCombo;
     private ComboBox<SpeciesType> speciesComboBox;
     private ComboBox<SupplierType> supplierComboBox;
     private DatePicker housingDate;
@@ -53,18 +53,8 @@ public class AddSubjectsForm extends VBox {
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         Date date = new Date();
 
-        housingUnitComboBox = new ComboBox<>();
-        housingUnitComboBox.setConverter(new StringConverter<HousingUnit>() {
-            @Override
-            public String toString(HousingUnit object) {
-                return object.getName();
-            }
-
-            @Override
-            public HousingUnit fromString(String string) {
-                return null;
-            }
-        });
+        housingUnitCombo = new HousingDropDown();
+        housingUnitCombo.setHousingUnit(unit);
         supplierComboBox = new ComboBox<>();
         supplierComboBox.setConverter(new StringConverter<SupplierType>() {
             @Override
@@ -89,12 +79,29 @@ public class AddSubjectsForm extends VBox {
                 return null;
             }
         });
+        responsiblePersonCombo = new ComboBox<>();
+        responsiblePersonCombo.setConverter(new StringConverter<Person>() {
+            @Override
+            public String toString(Person object) {
+                return (object.getFirstName() + " " + object.getLastName());
+            }
+
+            @Override
+            public Person fromString(String string) {
+                return null;
+            }
+        });
+        responsiblePersonCombo.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.BACK_SPACE) {
+               responsiblePersonCombo.getSelectionModel().select(null);
+        }
+    });
         housingDate = new DatePicker(LocalDate.now());
         startIdSpinner = new Spinner<>(0, 9999, 0);
         countSpinner = new Spinner<>(0, 9999, 10);
         timeField = new SpecialTextField("##:##:##");
         timeField.setTooltip(new Tooltip("Import time use HH:mm:ss format"));
-        timeField.replaceText(0, 7, timeFormat.format(date));
+        timeField.setText(timeFormat.format(new Date()));
 
         Button newHousingUnit = new Button("+");
         newHousingUnit.setTooltip(new Tooltip("create a new housing unit"));
@@ -108,16 +115,19 @@ public class AddSubjectsForm extends VBox {
         newSupplier.setTooltip(new Tooltip("create a new supplier entry"));
         newSupplier.setDisable(true);
 
-        List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit", HousingUnit.class);
+        Button newPerson = new Button("+");
+        newPerson.setTooltip(new Tooltip("create a new person entry"));
+        newPerson.setDisable(true);
+
         List<SupplierType> supplier = EntityHelper.getEntityList("from SupplierType", SupplierType.class);
         List<SpeciesType> species = EntityHelper.getEntityList("from SpeciesType", SpeciesType.class);
         List<SubjectType> subjectTypes = EntityHelper.getEntityList("from SubjectType where name = 'animal'", SubjectType.class);
+        List<Person> persons = EntityHelper.getEntityList("from Person", Person.class);
 
         st = subjectTypes.get(0);
-        housingUnitComboBox.getItems().addAll(housingUnits);
-        housingUnitComboBox.getSelectionModel().select(unit);
         supplierComboBox.getItems().addAll(supplier);
         speciesComboBox.getItems().addAll(species);
+        responsiblePersonCombo.getItems().addAll(persons);
         nameField = new TextField();
 
         Label heading = new Label("Add subjects:");
@@ -125,16 +135,19 @@ public class AddSubjectsForm extends VBox {
         this.getChildren().add(heading);
 
         GridPane grid = new GridPane();
-        ColumnConstraints column1 = new ColumnConstraints(100,100, Double.MAX_VALUE);
+        ColumnConstraints column1 = new ColumnConstraints(105,105, Double.MAX_VALUE);
         column1.setHgrow(Priority.NEVER);
         ColumnConstraints column2 = new ColumnConstraints(100, 150, Double.MAX_VALUE);
         column2.setHgrow(Priority.ALWAYS);
         ColumnConstraints column3 = new ColumnConstraints(30, 30, Double.MAX_VALUE);
         column3.setHgrow(Priority.NEVER);
         grid.getColumnConstraints().addAll(column1, column2, column3);
+
+        nameField.prefWidthProperty().bind(column2.maxWidthProperty());
         speciesComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         supplierComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
-        housingUnitComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
+        housingUnitCombo.prefWidthProperty().bind(column2.maxWidthProperty());
+        responsiblePersonCombo.prefWidthProperty().bind(column2.maxWidthProperty());
         timeField.prefWidthProperty().bind(column2.maxWidthProperty());
         housingDate.prefWidthProperty().bind(column2.maxWidthProperty());
         startIdSpinner.prefWidthProperty().bind(column2.maxWidthProperty());
@@ -143,33 +156,35 @@ public class AddSubjectsForm extends VBox {
         grid.setVgap(5);
         grid.setHgap(2);
         grid.add(new Label("name pattern(*):"), 0, 0);
-        grid.add(nameField, 1, 0, 1, 1);
+        grid.add(nameField, 1, 0, 2, 1);
 
         grid.add(new Label("housing unit(*):"), 0, 1);
-        grid.add(housingUnitComboBox, 1, 1, 1, 1 );
+        grid.add(housingUnitCombo, 1, 1, 1, 1 );
         grid.add(newHousingUnit, 2, 1, 1, 1);
 
-        grid.add(new Label("supplier(*):"), 0, 2);
-        grid.add(supplierComboBox, 1, 2, 1,1);
-        grid.add(newSupplier, 2, 2, 1, 1);
+        grid.add(new Label("resp. person:"), 0, 2);
+        grid.add(responsiblePersonCombo, 1, 2, 1, 1 );
+        grid.add(newPerson, 2, 2, 1, 1);
 
-        grid.add(new Label("species(*):"), 0,3);
-        grid.add(speciesComboBox, 1,3, 1, 1);
-        grid.add(newSpecies, 2, 3, 1, 1);
+        grid.add(new Label("supplier(*):"), 0, 3);
+        grid.add(supplierComboBox, 1, 3, 1,1);
+        grid.add(newSupplier, 2, 3, 1, 1);
 
+        grid.add(new Label("species(*):"), 0,4);
+        grid.add(speciesComboBox, 1,4, 1, 1);
+        grid.add(newSpecies, 2, 4, 1, 1);
 
         grid.add(new Label("import date(*):"), 0, 5);
         grid.add(housingDate, 1, 5, 2, 1);
 
         grid.add(new Label("time(*):"), 0, 6);
-        grid.add(timeField, 1, 6, 1, 1);
-        //timeField.setText(timeFormat.format(date));
+        grid.add(timeField, 1, 6, 2, 1);
 
         grid.add(new Label("subject count"), 0, 7);
-        grid.add(countSpinner, 1, 7, 1, 1);
+        grid.add(countSpinner, 1, 7, 2, 1);
 
         grid.add(new Label("start index:"), 0, 8);
-        grid.add(startIdSpinner, 1, 8, 1, 1);
+        grid.add(startIdSpinner, 1, 8, 2, 1);
 
         grid.add(new Label("(*) required"), 0, 9);
 
@@ -199,11 +214,11 @@ public class AddSubjectsForm extends VBox {
     }
 
 
-    public Boolean persistSubjects() {
+    public Integer persistSubjects() {
         LocalDate hdate = housingDate.getValue();
         String d = hdate.toString();
         if (!validateTime(timeField.getText())) {
-            return false;
+            return -1;
         }
         String t = timeField.getText();
         String datetimestr = d + " " + t;
@@ -213,13 +228,12 @@ public class AddSubjectsForm extends VBox {
             date = dateTimeFormat.parse(datetimestr);
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return -1;
         }
 
         String prefix = String.valueOf(hdate.getYear());
         String name = nameField.getText();
         Integer initial_id = startIdSpinner.getValue();
-        Session session = Main.sessionFactory.openSession();
 
         for (int i = 0; i < countSpinner.getValue(); i++) {
             String full_name = createName(prefix, name, initial_id + i, 4);
@@ -227,50 +241,23 @@ public class AddSubjectsForm extends VBox {
             s.setName(full_name);
             s.setSpeciesType(speciesComboBox.getValue());
             s.setSupplier(supplierComboBox.getValue());
+            s.setGender(Gender.unknown);
+            s.setResponsiblePerson(responsiblePersonCombo.getValue());
             s.setSubjectType(st);
 
-            Housing h = new Housing(s, housingUnitComboBox.getValue(), date);
+            Housing h = new Housing(s, housingUnitCombo.getHousingUnit(), date);
             HashSet<Housing> housings = new HashSet<>(1);
             housings.add(h);
             s.setHousings(housings);
-            try {
-                session.beginTransaction();
-                session.save(s);
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
+            Communicator.pushSaveOrUpdate(s);
         }
-        session.close();
-        return true;
+        return 0;
     }
-
-
-    private void fillHousingUnitsCombo() { //TODO maybe move all such methods to yet another util class?
-        List<HousingUnit> housingUnits = new ArrayList<>(0);
-        Session session = Main.sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            housingUnits = session.createQuery("from HousingUnit", HousingUnit.class).list();
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
-        }
-        this.housingUnitComboBox.getItems().clear();
-        this.housingUnitComboBox.getItems().addAll(housingUnits);
-    }
-
 
     private void createNewHousingButton() {
-        HousingUnit u = editHousingUnitDialog(null, this.housingUnitComboBox.getValue());
+        HousingUnit u = editHousingUnitDialog(null, this.housingUnitCombo.getHousingUnit());
         if (u != null) {
-            fillHousingUnitsCombo();
-            this.housingUnitComboBox.getSelectionModel().select(u);
+            this.housingUnitCombo.setHousingUnit(u);
         }
     }
 
