@@ -1,8 +1,9 @@
-    package animalkeeping.ui.forms;
+package animalkeeping.ui.forms;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.widgets.SpecialTextField;
+import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.geometry.Orientation;
@@ -11,11 +12,13 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.util.StringConverter;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import static animalkeeping.util.DateTimeHelper.getDateTime;
 
@@ -27,11 +30,13 @@ public class TreatmentForm extends VBox {
     private DatePicker startDate, endDate;
     private SpecialTextField startTimeField, endTimeField;
     private TextField commentNameField;
+    private CheckBox immediateEnd;
     private TextArea commentArea;
     private Subject subject;
     private Treatment treatment;
     private TreatmentType type;
     private Label idLabel;
+    private Preferences prefs;
 
 
     public TreatmentForm() {
@@ -40,6 +45,7 @@ public class TreatmentForm extends VBox {
         this.treatment = null;
         this.type = null;
         this.init();
+        applyPreferences();
     }
 
     public TreatmentForm(Subject s) {
@@ -77,6 +83,8 @@ public class TreatmentForm extends VBox {
     }
 
     private void init() {
+        prefs = Preferences.userNodeForPackage(TreatmentForm.class);
+
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         idLabel = new Label();
         typeComboBox = new ComboBox<>();
@@ -126,7 +134,7 @@ public class TreatmentForm extends VBox {
         commentArea.setWrapText(true);
         commentNameField = new TextField();
 
-        CheckBox immediateEnd = new CheckBox("treatment ends immediately");
+        immediateEnd = new CheckBox("treatment ends immediately");
         immediateEnd.setSelected(false);
         immediateEnd.setOnAction(event -> {
             endDate.setDisable(immediateEnd.isSelected());
@@ -193,22 +201,22 @@ public class TreatmentForm extends VBox {
         grid.add(new Label("ID:"), 0, 0);
         grid.add(idLabel, 1, 0);
 
-        grid.add(new Label("treatment:"), 0, 1);
+        grid.add(new Label("treatment(*):"), 0, 1);
         grid.add(typeComboBox, 1, 1, 1, 1);
         grid.add(newTypeButton, 2, 1, 1, 1);
 
-        grid.add(new Label("subject:"), 0, 2);
+        grid.add(new Label("subject(*):"), 0, 2);
         grid.add(subjectComboBox, 1, 2, 1, 1);
         grid.add(newSubjectButton, 2, 2, 1, 1);
 
-        grid.add(new Label("person:"), 0, 3);
+        grid.add(new Label("person(*):"), 0, 3);
         grid.add(personComboBox, 1, 3, 1, 1 );
         grid.add(newPersonButton, 2, 3, 1, 1);
 
-        grid.add(new Label("start date:"), 0, 4);
+        grid.add(new Label("start date(*):"), 0, 4);
         grid.add(startDate, 1, 4, 2,1);
 
-        grid.add(new Label("start time:"), 0,5);
+        grid.add(new Label("start time(*):"), 0,5);
         grid.add(startTimeField, 1,5, 2, 1);
 
         grid.add(immediateEnd, 1, 6);
@@ -225,7 +233,7 @@ public class TreatmentForm extends VBox {
         grid.add(commentNameField, 1, 10, 2, 1);
         grid.add(new Label("comment:"), 0,11);
         grid.add(commentArea, 0, 12, 3, 3);
-
+        grid.add(new Label("(*required)"), 0, 12);
         this.getChildren().add(grid);
 
         List<Person> persons = EntityHelper.getEntityList("from Person", Person.class);
@@ -281,7 +289,50 @@ public class TreatmentForm extends VBox {
                 return null;
             }
         }
+        storePreferences();
         return treatment;
+    }
+
+    private void applyPreferences() {
+        if (!prefs.get("treatment_type", "").isEmpty()) {
+            List<TreatmentType> sppl = EntityHelper.getEntityList("from TreatmentType where id = " + prefs.get("treatment_type", ""),  TreatmentType.class);
+            typeComboBox.getSelectionModel().select(sppl.get(0));
+        }
+        if (!prefs.get("treatment_person", "").isEmpty()) {
+            List<Person> persons = EntityHelper.getEntityList("from Person where id = " + prefs.get("treatment_person", ""),  Person.class);
+            personComboBox.getSelectionModel().select(persons.get(0));
+        }
+        if (!prefs.get("treatment_subject", "").isEmpty()) {
+            List<Subject> subjects = EntityHelper.getEntityList("from Subject where id = " + prefs.get("treatment_subject", ""),  Subject.class);
+            subjectComboBox.getSelectionModel().select(subjects.get(0));
+        }
+        if (!prefs.get("treatment_startdate", "").isEmpty()) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                startDate.setValue(DateTimeHelper.toLocalDate(dateFormat.parse(prefs.get("treatment_startdate", ""))));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        if (!prefs.get("treatment_enddate", "").isEmpty()) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                endDate.setValue(DateTimeHelper.toLocalDate(dateFormat.parse(prefs.get("treatment_enddate", ""))));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        immediateEnd.setSelected(prefs.getBoolean("treatment_immediate_end", false));
+        immediateEnd.fire();
+    }
+
+    private void storePreferences() {
+        prefs.put("treatment_type", typeComboBox.getValue().getId().toString());
+        prefs.put("treatment_person", personComboBox.getValue().getId().toString());
+        prefs.put("treatment_subject", subjectComboBox.getValue().getId().toString());
+        prefs.put("treatment_startdate", startDate.getValue().toString());
+        prefs.put("treatment_enddate", endDate.getValue().toString());
+        prefs.putBoolean("treatment_immediate_end", immediateEnd.isSelected());
     }
 
 }
