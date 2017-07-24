@@ -450,7 +450,13 @@ public class Dialogs {
     }
 
     public static TreatmentType editTreatmentTypeDialog(TreatmentType type) {
-        TreatmentTypeForm ttf = new TreatmentTypeForm(type);
+        TreatmentTypeForm ttf;
+        if (type == null) {
+            System.out.println("type is null!!!");
+            ttf = new TreatmentTypeForm();
+        }
+        else
+            ttf = new TreatmentTypeForm(type);
         Dialog<TreatmentType> dialog = new Dialog<>();
         dialog.setTitle("Create/edit treatment type...");
         dialog.setResizable(true);
@@ -462,9 +468,10 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        TreatmentTypeForm finalTtf = ttf;
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
-                return ttf.persistType();
+                return finalTtf.persistType();
             }
             return null;
         });
@@ -490,7 +497,11 @@ public class Dialogs {
 
 
     public static Treatment editTreatmentDialog(TreatmentType type) {
-        TreatmentForm tf = new TreatmentForm(type);
+        TreatmentForm tf;
+        if (type == null)
+            tf = new TreatmentForm();
+        else
+            tf = new TreatmentForm(type);
         return editTreatmentDialog(tf);
     }
 
@@ -500,7 +511,7 @@ public class Dialogs {
         dialog.setTitle("Create/edit treatment ...");
         dialog.setResizable(true);
         dialog.getDialogPane().setContent(form);
-        dialog.setWidth(300);
+        dialog.setWidth(350);
         form.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
