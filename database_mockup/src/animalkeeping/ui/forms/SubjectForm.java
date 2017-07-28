@@ -16,11 +16,13 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import static animalkeeping.util.DateTimeHelper.getDateTime;
 import static animalkeeping.util.DateTimeHelper.localDateToUtilDate;
@@ -39,6 +41,8 @@ public class SubjectForm extends VBox {
     private SpecialTextField importTimeField;
     private Label idLabel;
     private Subject subject = null;
+    private Preferences prefs;
+
 
     public SubjectForm() {
         this.setFillWidth(true);
@@ -49,6 +53,7 @@ public class SubjectForm extends VBox {
         this();
         this.subject = s;
         this.init(s);
+        applyPreferences();
     }
 
     private  void init(Subject s) {
@@ -73,6 +78,8 @@ public class SubjectForm extends VBox {
     }
 
     private void init() {
+        prefs = Preferences.userNodeForPackage(SubjectForm.class);
+
         idLabel = new Label();
         speciesComboBox = new ComboBox<>();
         speciesComboBox.setConverter(new StringConverter<SpeciesType>() {
@@ -148,7 +155,11 @@ public class SubjectForm extends VBox {
         });
 
         birthDate = new DatePicker();
-
+        birthDate.getEditor().setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.BACK_SPACE) {
+                birthDate.setValue(null);
+            }
+        });
         importDate = new DatePicker();
         importDate.setValue(LocalDate.now());
         importTimeField = new SpecialTextField("##:##:##");
@@ -303,12 +314,73 @@ public class SubjectForm extends VBox {
         }
         h.setStart(sd);
         h.setHousing(housingUnitComboBox.getHousingUnit());
-
         Communicator.pushSaveOrUpdate(subject);
         EntityHelper.refreshEntity(subject);
         h.setSubject(subject);
         Communicator.pushSaveOrUpdate(h);
+        storePreferences();
         return subject;
+    }
+
+    private void applyPreferences() {
+        String gender = prefs.get("subject_gender", "");
+        if (!gender.isEmpty()) {
+            if (gender.equalsIgnoreCase("female"))
+                genderComboBox.getSelectionModel().select(Gender.female);
+            else if (gender.equalsIgnoreCase("male"))
+                genderComboBox.getSelectionModel().select(Gender.male);
+            else if (gender.equalsIgnoreCase("unknown"))
+                genderComboBox.getSelectionModel().select(Gender.unknown);
+            else
+                genderComboBox.getSelectionModel().select(Gender.hermaphrodite);
+        }
+        if (!prefs.get("subject_person", "").isEmpty()) {
+            List<Person> persons = EntityHelper.getEntityList("from Person where id = " + prefs.get("subject_person", ""),  Person.class);
+            personComboBox.getSelectionModel().select(persons.get(0));
+        }
+        if (!prefs.get("subject_type", "").isEmpty()) {
+            List<SubjectType> types = EntityHelper.getEntityList("from SubjectType where id = " + prefs.get("subject_type", ""),  SubjectType.class);
+            subjectTypeComboBox.getSelectionModel().select(types.get(0));
+        }
+        if (!prefs.get("subject_importdate", "").isEmpty()) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                importDate.setValue(DateTimeHelper.toLocalDate(dateFormat.parse(prefs.get("subject_importdate", ""))));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        if (!prefs.get("subject_birthdate", "").isEmpty()) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                birthDate.setValue(DateTimeHelper.toLocalDate(dateFormat.parse(prefs.get("subject_birthdate", ""))));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        if (!prefs.get("subject_supplier", "").isEmpty()) {
+            List<SupplierType> types = EntityHelper.getEntityList("from SupplierType where id = " + prefs.get("subject_supplier", ""),  SupplierType.class);
+            supplierComboBox.getSelectionModel().select(types.get(0));
+        }
+        if (!prefs.get("subject_species", "").isEmpty()) {
+            List<SpeciesType> types = EntityHelper.getEntityList("from SpeciesType where id = " + prefs.get("subject_species", ""),  SpeciesType.class);
+            speciesComboBox.getSelectionModel().select(types.get(0));
+        }
+        if (!prefs.get("subject_housingunit", "").isEmpty()) {
+            List<HousingUnit> units = EntityHelper.getEntityList("from HousingUnit where id = " + prefs.get("subject_housingunit", ""),  HousingUnit.class);
+            housingUnitComboBox.setHousingUnit(units.get(0));
+        }
+    }
+
+    private void storePreferences() {
+        prefs.put("subject_gender", genderComboBox.getValue().toString());
+        prefs.put("subject_person", personComboBox.getValue().getId().toString());
+        prefs.put("subject_supplier", supplierComboBox.getValue().getId().toString());
+        prefs.put("subject_type", subjectTypeComboBox.getValue().getId().toString());
+        prefs.put("subject_species", speciesComboBox.getValue().getId().toString());
+        prefs.put("subject_housingunit", housingUnitComboBox.getHousingUnit().getId().toString());
+        prefs.put("subject_birthdate", birthDate.getValue() != null ? birthDate.getValue().toString() : "");
+        prefs.put("subject_importdate", importDate.getValue() != null ? importDate.getValue().toString() : "");
     }
 
 }

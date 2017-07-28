@@ -4,6 +4,7 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
+import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.EntityHelper;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
@@ -15,12 +16,14 @@ import javafx.scene.text.Font;
 import javafx.util.StringConverter;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.prefs.Preferences;
 
 import static animalkeeping.util.Dialogs.editHousingUnitDialog;
 
@@ -33,6 +36,7 @@ public class BatchTreatmentForm extends VBox {
     private SpecialTextField startTimeField, endTimeField;
     private TextField commentNameField;
     private TextArea commentArea;
+    private Preferences prefs;
 
     public BatchTreatmentForm() {
         this(null);
@@ -43,13 +47,17 @@ public class BatchTreatmentForm extends VBox {
         super();
         this.setFillWidth(true);
         init(unit);
+        applyPreferences();
     }
 
     private void init(HousingUnit unit) {
+        prefs = Preferences.userNodeForPackage(BatchTreatmentForm.class);
+
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
         Date date = new Date();
 
         housingUnitComboBox = new HousingDropDown();
+        housingUnitComboBox.setHousingUnit(unit);
 
         treatmentComboBox = new ComboBox<>();
         treatmentComboBox.setConverter(new StringConverter<TreatmentType>() {
@@ -235,7 +243,47 @@ public class BatchTreatmentForm extends VBox {
                 Communicator.pushSaveOrUpdate(tn);
             }
         }
+        storePreferences();
         return treatments;
+    }
+
+    private void applyPreferences() {
+        if (housingUnitComboBox.getHousingUnit() == null && !prefs.get("batch_treatment_unit", "").isEmpty()) {
+            List<HousingUnit> hs = EntityHelper.getEntityList("from HousingUnit where id = " + prefs.get("batch_treatment_unit", ""), HousingUnit.class);
+            housingUnitComboBox.setHousingUnit(hs.get(0));
+        }
+        if (!prefs.get("batch_treatment_type", "").isEmpty()) {
+            List<TreatmentType> sppl = EntityHelper.getEntityList("from TreatmentType where id = " + prefs.get("batch_treatment_type", ""),  TreatmentType.class);
+            treatmentComboBox.getSelectionModel().select(sppl.get(0));
+        }
+        if (!prefs.get("batch_treatment_person", "").isEmpty()) {
+            List<Person> persons = EntityHelper.getEntityList("from Person where id = " + prefs.get("batch_treatment_person", ""),  Person.class);
+            personComboBox.getSelectionModel().select(persons.get(0));
+        }
+        if (!prefs.get("batch_treatment_startdate", "").isEmpty()) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                treatmentStartDate.setValue(DateTimeHelper.toLocalDate(dateFormat.parse(prefs.get("batch_treatment_startdate", ""))));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        if (!prefs.get("batch_treatment_enddate", "").isEmpty()) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                treatmentEndDate.setValue(DateTimeHelper.toLocalDate(dateFormat.parse(prefs.get("batch_treatment_enddate", ""))));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void storePreferences() {
+        prefs.put("batch_treatment_unit", housingUnitComboBox.getHousingUnit().getId().toString());
+        prefs.put("batch_treatment_type", treatmentComboBox.getValue().getId().toString());
+        prefs.put("batch_treatment_person", personComboBox.getValue().getId().toString());
+        prefs.put("batch_treatment_startdate", treatmentStartDate.getValue().toString());
+        prefs.put("batch_treatment_enddate", treatmentEndDate.getValue().toString());
     }
 }
 

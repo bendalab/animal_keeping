@@ -4,6 +4,7 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
+import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.EntityHelper;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -15,11 +16,13 @@ import javafx.scene.text.Font;
 import javafx.util.StringConverter;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import static animalkeeping.util.Dialogs.editHousingUnitDialog;
 
@@ -35,6 +38,7 @@ public class AddSubjectsForm extends VBox {
     private TextField nameField;
     private SpecialTextField timeField;
     private SubjectType st;
+    private Preferences prefs;
 
 
     public AddSubjectsForm() {
@@ -46,12 +50,14 @@ public class AddSubjectsForm extends VBox {
         super();
         this.setFillWidth(true);
         init(unit);
+        applyPreferences();
     }
 
 
     private void init(HousingUnit unit) {
+        prefs = Preferences.userNodeForPackage(AddSubjectsForm.class);
+
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        Date date = new Date();
 
         housingUnitCombo = new HousingDropDown();
         housingUnitCombo.setHousingUnit(unit);
@@ -95,7 +101,7 @@ public class AddSubjectsForm extends VBox {
             if (event.getCode() == KeyCode.BACK_SPACE) {
                responsiblePersonCombo.getSelectionModel().select(null);
         }
-    });
+        });
         housingDate = new DatePicker(LocalDate.now());
         startIdSpinner = new Spinner<>(0, 9999, 0);
         countSpinner = new Spinner<>(0, 9999, 10);
@@ -215,6 +221,7 @@ public class AddSubjectsForm extends VBox {
 
 
     public Integer persistSubjects() {
+        Housing h = null;
         LocalDate hdate = housingDate.getValue();
         String d = hdate.toString();
         if (!validateTime(timeField.getText())) {
@@ -245,14 +252,54 @@ public class AddSubjectsForm extends VBox {
             s.setResponsiblePerson(responsiblePersonCombo.getValue());
             s.setSubjectType(st);
 
-            Housing h = new Housing(s, housingUnitCombo.getHousingUnit(), date);
+            h = new Housing(s, housingUnitCombo.getHousingUnit(), date);
             HashSet<Housing> housings = new HashSet<>(1);
             housings.add(h);
             s.setHousings(housings);
             Communicator.pushSaveOrUpdate(s);
         }
+        storePreferences();
         return 0;
     }
+
+    private void applyPreferences() {
+        if (housingUnitCombo.getHousingUnit() == null && !prefs.get("housing_unit", "").isEmpty()) {
+            List<HousingUnit> hs = EntityHelper.getEntityList("from HousingUnit where id = " + prefs.get("housing_unit", ""), HousingUnit.class);
+            housingUnitCombo.setHousingUnit(hs.get(0));
+        }
+        if (!prefs.get("supplier", "").isEmpty()) {
+            List<SupplierType> sppl = EntityHelper.getEntityList("from SupplierType where id = " + prefs.get("supplier", ""),  SupplierType.class);
+            supplierComboBox.getSelectionModel().select(sppl.get(0));
+        }
+        nameField.setText(prefs.get("subject_name", ""));
+        if (!prefs.get("subject_person", "").isEmpty()) {
+            List<Person> persons = EntityHelper.getEntityList("from Person where id = " + prefs.get("subject_person", ""),  Person.class);
+            responsiblePersonCombo.getSelectionModel().select(persons.get(0));
+        }
+        if (!prefs.get("subject_species", "").isEmpty()) {
+            List<SpeciesType> sps = EntityHelper.getEntityList("from SpeciesType where id = " + prefs.get("subject_species", ""),  SpeciesType.class);
+            speciesComboBox.getSelectionModel().select(sps.get(0));
+        }
+        if (!prefs.get("import_date", "").isEmpty()) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                housingDate.setValue(DateTimeHelper.toLocalDate(dateFormat.parse(prefs.get("import_date", ""))));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void storePreferences() {
+        prefs.put("housing_unit", housingUnitCombo.getHousingUnit().getId().toString());
+        prefs.put("supplier", supplierComboBox.getValue().getId().toString());
+        prefs.put("subject_name", nameField.getText());
+        prefs.put("subject_count", ((Integer)(startIdSpinner.getValue() + countSpinner.getValue())).toString());
+        prefs.put("subject_person", responsiblePersonCombo.getValue().getId().toString());
+        prefs.put("subject_species", speciesComboBox.getValue().getId().toString());
+        prefs.put("import_date", housingDate.getValue().toString());
+    }
+
 
     private void createNewHousingButton() {
         HousingUnit u = editHousingUnitDialog(null, this.housingUnitCombo.getHousingUnit());
