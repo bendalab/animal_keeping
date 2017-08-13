@@ -18,32 +18,31 @@ Feel free to try.
 
 ## Features
 
-![](./images/ak_subject_icon128.png)]
 ### Manage animals
+![](./images/ak_subject_icon128.png)
+- Manage animal population in the lab.
 
-Manage animal population in the lab.
-
-![](./images/ak_housing_icon128.png)]
 ### Animal housing
-Track the housing history.
+![](./images/ak_housing_icon128.png)
+- Track the housing history.
 
-![](./images/ak_treatment_icon128.png)] 
 ### Manage treatments
+![](./images/ak_treatment_icon128.png) 
 - Define treaments (experiments/obervations etc.)
 - Track treatment history.
 
-![](./images/ak_license_icon128.png)]
+![](./images/ak_license_icon128.png)
 ### Licenses and permits
 - Manage licenses and permits.
 - Create quotas.
 
-![](./images/ak_population_icon128.png)]
 ### Inventory
+![](./images/ak_population_icon128.png)
 - Get an population overview.
 
-![](./images/ak_export_icon128.png)]
 ### Export reports to spreadsheets
-- create exports of stock lists, animal use and per permit or period.
+![](./images/ak_export_icon128.png)
+- Create exports of stock lists, animal use and per permit or period.
 
 
 
