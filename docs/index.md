@@ -27,7 +27,7 @@ Manage animal population in the lab.
 ### Animal housing
 Track the housing history.
 
-![](./images/ak_treamtent_icon128.png)]
+![](./images/ak_treatment_icon128.png)] 
 ### Manage treatments
 - Define treaments (experiments/obervations etc.)
 - Track treatment history.
