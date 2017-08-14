@@ -11,7 +11,7 @@ the AnimalBase we can store this information in *License* entities.
 * *filing agency:* the agency that files the permit, free text entry
 * *filing number:* the reference number given by the agency
 * *responsible person:* link to a responsible person entity
-* *deputy:* link to a ![person entity](./manager_persons.md)  the deputy of the responsible person
+* *deputy:* link to a [person entity](./manage_persons.md)  the deputy of the responsible person
 * *start date:* start date of the licensed period
 * *end date:* of the licensed period
 

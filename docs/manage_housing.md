@@ -12,6 +12,3 @@ room, which is part of the animal keeping facility...
 * *dimensions:*  size of unit
 * *parent:* to form the tree structure, a housing unit links to a parent unit
 * *type:* link to user-defined types of housing unit (animal facility, room, rack, cage, ...)
-
-
-

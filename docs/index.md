@@ -17,12 +17,12 @@ functionality is implemented.
 Feel free to try.
 
 ## Features
-- Manage animal population in the lab. ![more ...](./manage_subects.md)
-- Track the housing history. ![more ...](./manage_housing.md)
+- Manage animal population in the lab. [more ...](./manage_subects.md)
+- Track the housing history. [more ...](./manage_housing.md)
 - Define treatments and track treatment history ![more ...](./manage_treatments.md)
-- Manage licenses and create quotas ![more ...](./manage_licenses.md)
-- Get an population overview. ![more ...](./inventory.md)
-- Create stock lists, reports of animal use per permit or period ![more ...](./inventory.md)
+- Manage licenses and create quotas [more ...](./manage_licenses.md)
+- Get an population overview. [more ...](./inventory.md)
+- Create stock lists, reports of animal use per permit or period [more ...](./inventory.md)
 
 
 
