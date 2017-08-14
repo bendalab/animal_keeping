@@ -17,32 +17,12 @@ functionality is implemented.
 Feel free to try.
 
 ## Features
-
-### Manage animals
-![](./images/ak_subject_icon128.png)
-- Manage animal population in the lab.
-
-### Animal housing
-![](./images/ak_housing_icon128.png)
-- Track the housing history.
-
-### Manage treatments
-![](./images/ak_treatment_icon128.png) 
-- Define treaments (experiments/obervations etc.)
-- Track treatment history.
-
-![](./images/ak_license_icon128.png)
-### Licenses and permits
-- Manage licenses and permits.
-- Create quotas.
-
-### Inventory
-![](./images/ak_population_icon128.png)
-- Get an population overview.
-
-### Export reports to spreadsheets
-![](./images/ak_export_icon128.png)
-- Create exports of stock lists, animal use and per permit or period.
+- Manage animal population in the lab. ![more ...](./manage_subects.md)
+- Track the housing history. ![more ...](./manage_housing.md)
+- Define treatments and track treatment history ![more ...](./manage_treatments.md)
+- Manage licenses and create quotas ![more ...](./manage_licenses.md)
+- Get an population overview. ![more ...](./inventory.md)
+- Create stock lists, reports of animal use per permit or period ![more ...](./inventory.md)
 
 
 
