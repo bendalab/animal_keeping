@@ -1,11 +1,14 @@
 About
 -----
 
-*Animal keeping* is a tool to keep track of the animal population in a
+*AnimalBase* is a tool to keep track of the animal population in a
  lab. It consists of a mysql database backend to store subject-related
  information and a JavaFX-written graphical interface to
  view/edit/create entries in the database.
 
+ For more information visit the [github pages](https://bendalab.github.io/animal_keeping/).
+ 
+ 
 Features
 --------
  - Manage animal population in the lab.
@@ -26,9 +29,13 @@ Getting Started
 ---------------
 
 **Requirements**
-To run *animal-keeping* you need:
+To run *AnimalBase* you need:
 - A [mysql-server](https://www.mysql.com).
 - The [Java runtime environment](https://www.java.com)
+
+- To set up the database.
+- The desktop app. Installers created with the [multi-platform installer builder](https://www.ej-technologies.com/products/install4j/overview.html)
+![](https://www.ej-technologies.com/images/product_banners/install4j_small.png) can be found in the [releases](https://github.com/bendalab/animal_keeping/releases).
 
 **Installation**
 
