@@ -1,12 +1,12 @@
 # Getting started
 
-AnimalBase contains of the graphical interface written using javafx
+AnimalBase consists of the graphical interface written in java using JavaFX
 and the mysql storage backend.
 
 ### Requirements
 To run *animal-keeping* you need:
 - A [mysql-server](https://www.mysql.com) (MariaDB will work as well)
-- The [Java runtime environment](https://www.java.com)
+- The [Java runtime environment](https://www.java.com) (if you are using linux you may need to install the "original" java runtime, OpenJDK will not do in most cases).
 
 ### Installation
 
