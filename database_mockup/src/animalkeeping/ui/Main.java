@@ -48,12 +48,13 @@ public class Main extends Application {
     private static Boolean connected = false;
     private static Stage primaryStage;
     private static ConnectionDetails connectionDetails = null;
+    protected final static MainViewController mainView = new MainViewController();
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         Main.primaryStage = primaryStage;
-        Main.primaryStage.setTitle("AnimalKeepingDB");
-        MainViewController mainView = new MainViewController();
+        Main.primaryStage.setTitle("AnimalBase");
+        //mainView = new MainViewController();
         mainView.prefHeightProperty().bind(primaryStage.heightProperty());
         mainView.prefWidthProperty().bind(primaryStage.widthProperty());
         Scene scene = new Scene(mainView);
@@ -74,6 +75,9 @@ public class Main extends Application {
         connectionDetails = credentials;
     }
 
+    public static MainViewController getMainView() {
+        return mainView;
+    }
 
     public void stop() {
         if (sessionFactory != null) {
