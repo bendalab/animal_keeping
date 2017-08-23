@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -18,6 +19,7 @@
             <Insets bottom="10.0" />
          </padding>
       </Label>
+      <Hyperlink fx:id="githubLink" text="https://bendalab.github.io/animal_keeping" />
       <VBox>
          <children>
             <HBox alignment="TOP_CENTER">
@@ -39,8 +41,24 @@
             <Image url="@../../../resources/ak_icon.png" />
          </image>
       </ImageView>
-      <Label text="This software is open-source, there are no warranties." wrapText="true" />
-      <Label lineSpacing="1.25" prefHeight="96.0" prefWidth="282.0" text="Copyright (c) 2016/17 Neuroethology Lab, University of Tuebingen www.neuroetho.uni-tuebingen.de" textAlignment="CENTER" wrapText="true" />
-      <Label lineSpacing="1.5" prefHeight="97.0" prefWidth="340.0" text="For reporting bugs, issue tracking, and feature requests please visit https://github.com/bendalab/animalkeeping/issues" textAlignment="CENTER" wrapText="true" />
+      <Label text="This software is open-source, there are no warranties." wrapText="true">
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin></Label>
+      <Label alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.25" prefHeight="26.0" prefWidth="282.0" text="Copyright (c) 2016/17" wrapText="true">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin></Label>
+      <Hyperlink fx:id="neuroethoLink" accessibleText="http://www.mnf.uni-tuebingen.de/fachbereiche/biologie/institute/institut-fuer-neurobiologie/lehrbereiche/neuroethologie.html" text="Neuroethology Lab" />
+      <Label prefHeight="25.0" prefWidth="151.0" text=" University of Tuebingen">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets bottom="5.0" />
+         </padding>
+      </Label>
+      <Label lineSpacing="1.5" prefHeight="54.0" prefWidth="340.0" text="For reporting bugs, issue tracking, and feature requests please visit" textAlignment="CENTER" wrapText="true" />
+      <Hyperlink fx:id="issuesLink" text="https://github.com/bendalab/animal_keeping/issues" />
    </children>
 </VBox>

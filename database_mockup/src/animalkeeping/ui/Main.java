@@ -54,6 +54,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Main.primaryStage = primaryStage;
         Main.primaryStage.setTitle("AnimalBase");
+        Main.primaryStage.getProperties().put("hostServices", this.getHostServices());
         //mainView = new MainViewController();
         mainView.prefHeightProperty().bind(primaryStage.heightProperty());
         mainView.prefWidthProperty().bind(primaryStage.widthProperty());
