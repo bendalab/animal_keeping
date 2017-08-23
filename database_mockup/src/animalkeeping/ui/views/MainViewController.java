@@ -78,6 +78,7 @@ public class MainViewController extends VBox implements Initializable{
     @FXML private TitledPane inventoryPane;
     @FXML private TitledPane subjectsPane;
     @FXML private TitledPane treatmentsPane;
+    @FXML private TitledPane homePane;
     @FXML private TextField idField;
     @FXML private ScrollPane scrollPane;
     @FXML private BorderPane borderPane;
@@ -97,6 +98,7 @@ public class MainViewController extends VBox implements Initializable{
     @FXML private MenuItem exportStockListItem;
     @FXML private MenuItem exportAnimalUseItem;
     @FXML private MenuItem exportPopulationItem;
+    @FXML private Accordion accordion;
 
     private HashMap<String, TitledPane> panes;
     private HashMap<String, AbstractView> views;
@@ -149,7 +151,8 @@ public class MainViewController extends VBox implements Initializable{
         borderPane.prefHeightProperty().bind(this.prefHeightProperty());
         navigationBar.prefHeightProperty().bind(this.prefHeightProperty());
 
-        paneAliasMap = new HashMap<>(6);
+        paneAliasMap = new HashMap<>(7);
+        paneAliasMap.put("Home", new Pair<>("home", QuickActions.getToolTip()));
         paneAliasMap.put("Inventory", new Pair<>("inventory", InventoryController.getToolTip()));
         paneAliasMap.put("Animals", new Pair<>("subject", SubjectView.getToolTip()));
         paneAliasMap.put("Treatments", new Pair<>("treatment", TreatmentsView.getToolTip()));
@@ -157,7 +160,8 @@ public class MainViewController extends VBox implements Initializable{
         paneAliasMap.put("Animal housing", new Pair<>("housing", HousingView.getToolTip()));
         paneAliasMap.put("Licenses", new Pair<>("license", LicenseView.getToolTip()));
 
-        panes = new HashMap<>(6);
+        panes = new HashMap<>(7);
+        panes.put("home", homePane);
         panes.put("inventory", inventoryPane);
         panes.put("subject", subjectsPane);
         panes.put("treatment", treatmentsPane);
@@ -182,7 +186,9 @@ public class MainViewController extends VBox implements Initializable{
         imgLabel.setContentDisplay(ContentDisplay.RIGHT);
         pane.setGraphic(imgLabel);
         pane.setGraphicTextGap(5.0);
-        pane.setOnMouseClicked(event -> showView(alias, pane.isExpanded()));
+        pane.setOnMouseClicked(event -> {
+            showView(alias, pane.isExpanded());
+        });
     }
 
     private Boolean viewIsCached(String name) {
@@ -195,26 +201,30 @@ public class MainViewController extends VBox implements Initializable{
         }
     }
 
-    private void showView(String type, boolean expanded) {
-        if (!type.equals("inventory") && !expanded) {
-            inventoryPane.setExpanded(true);
-            showView("inventory", true);
-            return;
+    protected void showView(String type, Boolean expand) {
+        AbstractView view;
+        if (viewIsCached(type)) {
+            view = views.get(type);
+        } else {
+            view = createView(type);
         }
-        if (expanded && !type.equalsIgnoreCase(currentView)) {
-            AbstractView view;
-            if (viewIsCached(type)) {
-                view = views.get(type);
-            } else {
-                view = createView(type);
+        if (view != null) {
+            this.scrollPane.setContent(null);
+            this.scrollPane.setContent(view);
+            if (!panes.get(type).isExpanded()) {
+                panes.get(type).setExpanded(true);
             }
-            if (view != null) {
-                this.scrollPane.setContent(null);
-                collapsePanes(panes.get(type));
-                this.scrollPane.setContent(view);
-                currentView = type;
-                refreshView();
-                view.requestFocus();
+            currentView = type;
+            refreshView();
+            view.requestFocus();
+            if (type.equalsIgnoreCase("home") && accordion.getExpandedPane() != null) {
+                accordion.getExpandedPane().setExpanded(false);
+            }
+            if (!type.equalsIgnoreCase("home")) {
+                panes.get(type).setExpanded(expand);
+                if (!expand) {
+                    showView("home", true);
+                }
             }
         }
     }
@@ -239,6 +249,9 @@ public class MainViewController extends VBox implements Initializable{
                 break;
             case "housing":
                 view = new HousingView();
+                break;
+            case "home":
+                view = new QuickActions();
                 break;
             default:
                 setIdle("invalid view requested!", true);
@@ -456,21 +469,13 @@ public class MainViewController extends VBox implements Initializable{
             exportStockListItem.setDisable(false);
             exportAnimalUseItem.setDisable(false);
             exportPopulationItem.setDisable(false);
-            showView("inventory", true);
-            inventoryPane.setExpanded(true);
+            showView("home", false);
+            //inventoryPane.setExpanded(true);
             setIdle("Successfully connected to database!", false);
         } else if (event.getEventType() == LoginController.DatabaseEvent.CONNECTING) {
             setBusy("Connecting to database...");
         } else if (event.getEventType() == LoginController.DatabaseEvent.FAILED) {
             setIdle("Connection failed! " + event.getMessage(), true);
-        }
-    }
-
-    private void collapsePanes(TitledPane excludedPane) {
-        for (TitledPane p : panes.values()) {
-            if (p != excludedPane && p.isExpanded()) {
-                p.setExpanded(false);
-            }
         }
     }
 

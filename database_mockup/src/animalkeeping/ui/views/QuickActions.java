@@ -68,7 +68,7 @@ public class QuickActions extends AbstractView implements Initializable {
 
     @FXML
     protected void showSubjectView() {
-        Main.getMainView().showView("subject");
+        Main.getMainView().showView("subject", true);
     }
 
     @FXML
@@ -83,12 +83,12 @@ public class QuickActions extends AbstractView implements Initializable {
 
     @FXML
     protected void showHousingView() {
-        Main.getMainView().showView("housing");
+        Main.getMainView().showView("housing", true);
     }
 
     @FXML
     protected void showTreatmentView() {
-        Main.getMainView().showView("treatment");
+        Main.getMainView().showView("treatment", true);
     }
 
     @FXML
@@ -119,12 +119,12 @@ public class QuickActions extends AbstractView implements Initializable {
 
     @FXML
     protected void showLicenseView() {
-        Main.getMainView().showView("license");
+        Main.getMainView().showView("license", true);
     }
 
     @FXML
     protected void showInventoryView() {
-        Main.getMainView().showView("inventory");
+        Main.getMainView().showView("inventory", true);
     }
 
     @FXML
