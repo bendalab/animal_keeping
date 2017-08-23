@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+
+<HBox alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox alignment="CENTER">
+         <children>
+            <GridPane alignment="TOP_CENTER" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="700.0" vgap="10.0" VBox.vgrow="ALWAYS">
+              <columnConstraints>
+                <ColumnConstraints maxWidth="-Infinity" prefWidth="256.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="256.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="256.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.rowIndex="1">
+                     <children>
+                        <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
+                           <children>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showHousingView" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../resources/ak_subject_io_icon256.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <effect>
+                                    <DropShadow color="#000000cc" offsetX="2.0" offsetY="2.0" />
+                                 </effect>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                        <Label onMouseClicked="#importSubjects" text="import animals">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                        <Label onMouseClicked="#reportDead" text="export animals">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="1">
+                     <children>
+                        <HBox alignment="TOP_CENTER">
+                           <children>
+                              <ImageView fx:id="housingButton" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showHousingView" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../resources/ak_housing_icon256.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <effect>
+                                    <DropShadow color="#000000cc" offsetX="2.0" offsetY="2.0" />
+                                 </effect>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                        <Label text="new housing unit" textAlignment="CENTER">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                        <Label onMouseClicked="#moveSubject" text="move subject">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <children>
+                        <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
+                           <children>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showLicenseView" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../resources/ak_license_icon256.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <effect>
+                                    <DropShadow color="#000000cc" offsetX="2.0" offsetY="2.0" />
+                                 </effect>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                        <Label onMouseClicked="#newLicense" text="new licence" textAlignment="CENTER">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                        <Label onMouseClicked="#newQuota" text="new quota">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.rowIndex="2">
+                     <children>
+                        <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
+                           <children>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showInventoryView" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../resources/ak_export_icon256.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <effect>
+                                    <DropShadow color="#000000cc" offsetX="2.0" offsetY="2.0" />
+                                 </effect>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                        <Label text="export stock list" textAlignment="CENTER">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                        <Label text="animal use report">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
+                     <children>
+                        <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
+                           <children>
+                              <ImageView fx:id="subjectButton" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showSubjectView" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../resources/ak_subject_icon256.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <effect>
+                                    <DropShadow blurType="GAUSSIAN" color="#00000099" offsetX="2.0" offsetY="2.0" />
+                                 </effect>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                        <Label fx:id="newSubjectLabel" onMouseClicked="#newSubject" text="new subject" textAlignment="CENTER">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                        <Label onMouseClicked="#reportDead" text="report dead">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="2">
+                     <children>
+                        <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
+                           <children>
+                              <ImageView fx:id="treatmentButton" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showTreatmentView" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../resources/ak_treatment_icon256.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <effect>
+                                    <DropShadow color="#000000cc" offsetX="2.0" offsetY="2.0" />
+                                 </effect>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                        <Label onMouseClicked="#newTreatment" text="new treatment">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                        <Label onMouseClicked="#newTreatmentType" text="new treatment type" textAlignment="CENTER">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                        <Label onMouseClicked="#newBatchTreatment" text="batch treatment" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
+                           <children>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showInventoryView" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../resources/ak_population_icon256.png" />
+                                 </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <effect>
+                                    <DropShadow color="#000000cc" offsetX="2.0" offsetY="2.0" />
+                                 </effect>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                        <Label onMouseClicked="#showInventoryView" text="inventory overview">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                     </children>
+                  </VBox>
+               </children>
+               <opaqueInsets>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </opaqueInsets>
+            </GridPane>
+         </children>
+      </VBox>
+   </children>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+   <padding>
+      <Insets bottom="25.0" top="25.0" />
+   </padding>
+</HBox>
