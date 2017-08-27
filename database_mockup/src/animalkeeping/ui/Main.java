@@ -34,6 +34,7 @@
 package animalkeeping.ui;
 
 import animalkeeping.ui.views.MainViewController;
+import animalkeeping.util.AppSettings;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -49,6 +50,7 @@ public class Main extends Application {
     private static Stage primaryStage;
     private static ConnectionDetails connectionDetails = null;
     protected final static MainViewController mainView = new MainViewController();
+    private final static AppSettings settings = new AppSettings();
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -100,9 +102,12 @@ public class Main extends Application {
         launch(args);
     }
 
-
     public static Boolean isConnected() {
         return connected;
+    }
+
+    public static AppSettings getSettings() {
+        return settings;
     }
 
     public static class ConnectionDetails {
