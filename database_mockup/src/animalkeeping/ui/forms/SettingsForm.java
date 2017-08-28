@@ -82,12 +82,15 @@ public class SettingsForm extends VBox implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         filterSettings = new FilterSettings(appSettings);
         filterSettings.applySettings();
+        filterSettings.prefWidthProperty().bind(scrollPane.widthProperty());
 
         generalSettings = new GeneralSettings(appSettings);
         generalSettings.applySettings();
+        generalSettings.prefWidthProperty().bind(scrollPane.widthProperty());
 
         storageSettings = new StorageSettings(appSettings);
         storageSettings.applySettings();
+        storageSettings.prefWidthProperty().bind(scrollPane.widthProperty());
 
         splitPane.prefHeightProperty().bind(this.heightProperty());
         splitPane.prefWidthProperty().bind(this.widthProperty());
