@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label text="Filter settings" VBox.vgrow="NEVER">
+         <font>
+            <Font size="16.0" />
+         </font>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </Label>
+      <HBox fillHeight="false" VBox.vgrow="NEVER">
+         <children>
+            <Separator maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="20.0" HBox.hgrow="NEVER">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Separator>
+            <Label minHeight="-Infinity" prefHeight="20.0" text="Persons" />
+            <Separator maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="20.0" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Separator>
+         </children>
+         <VBox.margin>
+            <Insets bottom="5.0" top="20.0" />
+         </VBox.margin>
+      </HBox>
+      <CheckBox fx:id="activePersonsView" mnemonicParsing="false" selected="true" text="show only active persons in person view" />
+      <CheckBox fx:id="activePersonsSelection" mnemonicParsing="false" selected="true" text="offer only active persons in selections" />
+      <HBox fillHeight="false">
+         <children>
+            <Separator maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="20.0" HBox.hgrow="NEVER">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Separator>
+            <Label minHeight="-Infinity" prefHeight="20.0" text="Licenses" />
+            <Separator maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="20.0" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Separator>
+         </children>
+         <VBox.margin>
+            <Insets bottom="5.0" top="20.0" />
+         </VBox.margin>
+      </HBox>
+      <CheckBox fx:id="validLicensesView" mnemonicParsing="false" text="show only currently valid licenses in license view" />
+      <CheckBox fx:id="validLicensesSelection" mnemonicParsing="false" text="offer only valid licenses in selections" />
+      <HBox fillHeight="false">
+         <children>
+            <Separator maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="20.0" HBox.hgrow="NEVER">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Separator>
+            <Label minHeight="-Infinity" prefHeight="20.0" text="Treatments" />
+            <Separator maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="20.0" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Separator>
+         </children>
+         <padding>
+            <Insets bottom="5.0" top="20.0" />
+         </padding>
+      </HBox>
+      <CheckBox fx:id="validTreatmentsView" mnemonicParsing="false" text="show only treatments of valid licenses in treatment view" />
+      <CheckBox fx:id="validTreatmentsSelection" mnemonicParsing="false" text="offer only valid treatments in selections" />
+      <HBox fillHeight="false">
+         <children>
+            <Separator maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="20.0" HBox.hgrow="NEVER">
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Separator>
+            <Label minHeight="-Infinity" prefHeight="20.0" text="Subjects" />
+            <Separator maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="20.0" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Separator>
+         </children>
+         <VBox.margin>
+            <Insets bottom="5.0" top="20.0" />
+         </VBox.margin>
+      </HBox>
+      <CheckBox fx:id="availableSubjectsView" mnemonicParsing="false" text="show only available subjects in subject view" />
+      <CheckBox fx:id="availableSubjectsSelection" mnemonicParsing="false" text="offer only available subjects in selections" />
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</VBox>
