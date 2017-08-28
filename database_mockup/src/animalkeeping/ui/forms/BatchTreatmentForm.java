@@ -2,6 +2,7 @@ package animalkeeping.ui.forms;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
+import animalkeeping.ui.Main;
 import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
@@ -106,8 +107,18 @@ public class BatchTreatmentForm extends VBox {
         newPerson.setTooltip(new Tooltip("create a new supplier entry"));
         newPerson.setDisable(true);
 
-        List<Person> persons = EntityHelper.getEntityList("from Person", Person.class);
-        List<TreatmentType> types = EntityHelper.getEntityList("from TreatmentType", TreatmentType.class);
+        List<Person> persons;
+        if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
+            persons = EntityHelper.getEntityList("from Person where active = True", Person.class);
+        } else {
+            persons = EntityHelper.getEntityList("from Person", Person.class);
+        }
+        List<TreatmentType> types;
+        if (Main.getSettings().getBoolean("app_settings_validTreatmentsSelection", true)) {
+            types = EntityHelper.getEntityList( "from TreatmentType where license_id is NULL OR license_id in (select id from License where end_date > CURDATE() or end_date is NULL)", TreatmentType.class);
+        } else {
+           types = EntityHelper.getEntityList("from TreatmentType", TreatmentType.class);
+        }
 
         personComboBox.getItems().addAll(persons);
         personComboBox.getSelectionModel().select(0);

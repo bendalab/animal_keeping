@@ -2,6 +2,7 @@ package animalkeeping.ui.forms;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
+import animalkeeping.ui.Main;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.Dialogs;
@@ -236,12 +237,27 @@ public class TreatmentForm extends VBox {
         grid.add(new Label("(*required)"), 0, 12);
         this.getChildren().add(grid);
 
-        List<Person> persons = EntityHelper.getEntityList("from Person", Person.class);
-        List<TreatmentType> types = EntityHelper.getEntityList("from TreatmentType", TreatmentType.class);
-        List<Subject> currentSubjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL", Subject.class);
+        List<Person> persons;
+        if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
+            persons = EntityHelper.getEntityList("from Person where active = True", Person.class);
+        } else {
+            persons = EntityHelper.getEntityList("from Person", Person.class);
+        }
+        List<TreatmentType> types;
+        if (Main.getSettings().getBoolean("app_settings_validTreatmentsSelection", true)) {
+            types = EntityHelper.getEntityList( "from TreatmentType where license_id is NULL OR license_id in (select id from License where end_date > CURDATE() or end_date is NULL)", TreatmentType.class);
+        } else {
+            types = EntityHelper.getEntityList("from TreatmentType", TreatmentType.class);
+        }
+        List<Subject> subjects;
+        if (Main.getSettings().getBoolean("app_settings_availableSubjectsSelection", true)) {
+            subjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL", Subject.class);
+        } else {
+            subjects = EntityHelper.getEntityList("FROM Subject", Subject.class);
+        }
         typeComboBox.getItems().addAll(types);
         personComboBox.getItems().addAll(persons);
-        subjectComboBox.getItems().addAll(currentSubjects);
+        subjectComboBox.getItems().addAll(subjects);
     }
 
 

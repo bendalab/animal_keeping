@@ -2,6 +2,7 @@ package animalkeeping.ui.forms;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
+import animalkeeping.ui.Main;
 import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
@@ -104,7 +105,12 @@ public class RelocateSubjectForm extends VBox {
                 return null;
             }
         });
-        List<Subject> subjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL", Subject.class);
+        List<Subject> subjects;
+        if (Main.getSettings().getBoolean("app_settings_availableSubjectsSelection", true)) {
+            subjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL", Subject.class);
+        } else {
+            subjects = EntityHelper.getEntityList("FROM Subject", Subject.class);
+        }
         subjectComboBox.getItems().addAll(subjects);
         housingUnitCombo = new HousingDropDown();
         commentArea = new TextArea();

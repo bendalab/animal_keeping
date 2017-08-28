@@ -4,6 +4,7 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.Housing;
 import animalkeeping.model.HousingUnit;
 import animalkeeping.model.Subject;
+import animalkeeping.ui.Main;
 import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
@@ -116,12 +117,13 @@ public class HousingForm extends VBox {
         grid.add(commentArea, 0, 8, 3, 4);
         this.getChildren().add(grid);
 
-        List<Subject> subjectList = new ArrayList<>();
-        List<Housing> housings = EntityHelper.getEntityList("from Housing where end_datetime is null", Housing.class);
-        for (Housing h : housings) {
-            subjectList.add(h.getSubject());
+        List<Subject> subjects;
+        if (Main.getSettings().getBoolean("app_settings_availableSubjectsSelection", true)) {
+            subjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL", Subject.class);
+        } else {
+            subjects = EntityHelper.getEntityList("FROM Subject", Subject.class);
         }
-        subjectCombo.getItems().addAll(subjectList);
+        subjectCombo.getItems().addAll(subjects);
     }
 
     private void setHousing(Housing h) {

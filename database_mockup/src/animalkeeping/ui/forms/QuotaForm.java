@@ -4,6 +4,7 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.License;
 import animalkeeping.model.Quota;
 import animalkeeping.model.SpeciesType;
+import animalkeeping.ui.Main;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.event.ActionEvent;
@@ -124,7 +125,14 @@ public class QuotaForm extends VBox {
         this.getChildren().add(grid);
 
         List<SpeciesType> species = EntityHelper.getEntityList("From SpeciesType", SpeciesType.class);
-        List<License> licenses = EntityHelper.getEntityList("From License", License.class);
+
+        List<License> licenses;
+        if (Main.getSettings().getBoolean("app_settings_validLicensesSelection", true)) {
+            licenses = EntityHelper.getEntityList("from License where end_date > CURDATE()", License.class);
+        } else {
+            licenses = EntityHelper.getEntityList("from License", License.class);
+        }
+
         speciesCombo.getItems().addAll(species);
         licenseCombo.getItems().addAll(licenses);
     }

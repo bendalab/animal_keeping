@@ -2,6 +2,7 @@ package animalkeeping.ui.forms;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
+import animalkeeping.ui.Main;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.EntityHelper;
@@ -102,7 +103,12 @@ public class ExportSubjectForm extends VBox {
                 return null;
             }
         });
-        List<Person> persons = EntityHelper.getEntityList("from Person", Person.class);
+        List<Person> persons;
+        if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
+            persons = EntityHelper.getEntityList("from Person where active = True", Person.class);
+        } else {
+            persons = EntityHelper.getEntityList("from Person", Person.class);
+        }
         personComboBox.getItems().addAll(persons);
 
         subjectComboBox = new ComboBox<>();
@@ -117,7 +123,12 @@ public class ExportSubjectForm extends VBox {
                 return null;
             }
         });
-        List<Subject> subjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL", Subject.class);
+        List<Subject> subjects;
+        if (Main.getSettings().getBoolean("app_settings_availableSubjectsSelection", true)) {
+            subjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL", Subject.class);
+        } else {
+            subjects = EntityHelper.getEntityList("FROM Subject", Subject.class);
+        }
         subjectComboBox.getItems().addAll(subjects);
 
         commentArea = new TextArea();
