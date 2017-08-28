@@ -87,7 +87,7 @@ public class FilterSettings extends VBox {
         boolValues.put("app_settings_validLicenseView", validLicensesView);
         boolValues.put("app_settings_validLicenseSelection", validLicensesSelection);
         boolValues.put("app_settings_validTreatmentsView", validTreatmentsView);
-        boolValues.put("app_settings_validTreatmentsSelection", validLicensesSelection);
+        boolValues.put("app_settings_validTreatmentsSelection", validTreatmentsSelection);
         boolValues.put("app_settings_availableSubjectsView", availableSubjectsView);
         boolValues.put("app_settings_availableSubjectsSelection", availableSubjectsSelection);
 
