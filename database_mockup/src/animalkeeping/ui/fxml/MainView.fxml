@@ -32,7 +32,10 @@
                      </accelerator>
                   </MenuItem>
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="preferences…" />
+            <MenuItem fx:id="settingsMenuItem" mnemonicParsing="false" onAction="#showSettings" text="preferences">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="COMMA" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                     </accelerator></MenuItem>
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="quitMenuItem" mnemonicParsing="false" onAction="#closeApplication" text="quit">
                      <accelerator>
