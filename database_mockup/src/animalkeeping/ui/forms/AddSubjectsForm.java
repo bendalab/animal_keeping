@@ -168,7 +168,7 @@ public class AddSubjectsForm extends VBox {
         List<SubjectType> subjectTypes = EntityHelper.getEntityList("from SubjectType where name = 'animal'", SubjectType.class);
 
         List<Person> persons;
-        if (Main.getSettings().isActivePersonsSelection()) {
+        if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
             persons = EntityHelper.getEntityList("from Person where active = True", Person.class);
         } else {
             persons = EntityHelper.getEntityList("from Person", Person.class);
