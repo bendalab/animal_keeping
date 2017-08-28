@@ -41,6 +41,7 @@ import animalkeeping.model.SubjectType;
 import animalkeeping.model.SupplierType;
 import animalkeeping.ui.Main;
 import animalkeeping.ui.forms.LoginController;
+import animalkeeping.ui.forms.SettingsForm;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import animalkeeping.util.XlsxExport;
@@ -59,14 +60,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.util.Pair;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 // import com.apple.eawt.*;
 
@@ -99,6 +98,7 @@ public class MainViewController extends VBox implements Initializable{
     @FXML private MenuItem exportAnimalUseItem;
     @FXML private MenuItem exportPopulationItem;
     @FXML private Accordion accordion;
+    @FXML private MenuItem settingsMenuItem;
 
     private HashMap<String, TitledPane> panes;
     private HashMap<String, AbstractView> views;
@@ -598,5 +598,28 @@ public class MainViewController extends VBox implements Initializable{
             messageLabel.setText(message != null ? message : "");
         });
 
+    }
+
+    @FXML
+    private void showSettings() {
+        SettingsForm pf = new SettingsForm(Main.getSettings());
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("AnimalBase Settings");
+        dialog.setResizable(true);
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.getDialogPane().setContent(pf);
+        pf.prefWidthProperty().bind(dialog.widthProperty());
+        pf.prefHeightProperty().bind(dialog.heightProperty());
+        ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(buttonTypeOk, buttonTypeCancel);
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk)
+                pf.storeSettings();
+            return null;
+        });
+        dialog.setWidth(500);
+        dialog.setHeight(400);
+        dialog.showAndWait();
     }
 }
