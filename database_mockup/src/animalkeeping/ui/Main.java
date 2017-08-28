@@ -34,7 +34,6 @@
 package animalkeeping.ui;
 
 import animalkeeping.ui.views.MainViewController;
-import animalkeeping.util.AppSettings;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -43,6 +42,7 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import java.util.HashMap;
+import java.util.prefs.Preferences;
 
 public class Main extends Application {
     public static SessionFactory sessionFactory;
@@ -50,7 +50,7 @@ public class Main extends Application {
     private static Stage primaryStage;
     private static ConnectionDetails connectionDetails = null;
     protected final static MainViewController mainView = new MainViewController();
-    private final static AppSettings settings = new AppSettings();
+    private static Preferences appSettings = Preferences.systemNodeForPackage(Main.class);
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -106,8 +106,8 @@ public class Main extends Application {
         return connected;
     }
 
-    public static AppSettings getSettings() {
-        return settings;
+    public static Preferences getSettings() {
+        return appSettings;
     }
 
     public static class ConnectionDetails {
