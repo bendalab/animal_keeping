@@ -2,6 +2,7 @@ package animalkeeping.ui.tables;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.Person;
+import animalkeeping.ui.Main;
 import animalkeeping.util.AddDatabaseUserDialog;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
@@ -105,7 +106,7 @@ public class PersonsTable extends TableView<Person> {
         toggleActiveItem.setOnAction(event -> toggleActive(this.getSelectionModel().getSelectedItem()));
 
         showAllItem = new CheckMenuItem("show all persons");
-        showAllItem.setSelected(false);
+        showAllItem.setSelected(!Main.getSettings().getBoolean("app_settings_activePersonView", true));
         showAllItem.setOnAction(event -> setActiveFilter(showAllItem.isSelected()));
 
         cmenu.getItems().addAll(newItem, editItem, deleteItem, addToDBItem, toggleActiveItem, new SeparatorMenuItem(), showAllItem);
@@ -127,6 +128,7 @@ public class PersonsTable extends TableView<Person> {
                     sortedList.comparatorProperty().bind(comparatorProperty());
                     setItems(sortedList);
                     getSelectionModel().select(p);
+                    showAllItem.setSelected(!Main.getSettings().getBoolean("app_settings_activePersonView", true));
                     setActiveFilter(showAllItem.isSelected());
                 });
                 return null;
