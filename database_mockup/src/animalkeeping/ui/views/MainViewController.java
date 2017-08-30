@@ -603,7 +603,7 @@ public class MainViewController extends VBox implements Initializable{
     @FXML
     private void showSettings() {
         SettingsForm pf = new SettingsForm(Main.getSettings());
-        Dialog<Void> dialog = new Dialog<>();
+        Dialog<Boolean> dialog = new Dialog<>();
         dialog.setTitle("AnimalBase Settings");
         dialog.setResizable(true);
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -614,12 +614,17 @@ public class MainViewController extends VBox implements Initializable{
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().addAll(buttonTypeOk, buttonTypeCancel);
         dialog.setResultConverter(b -> {
-            if (b == buttonTypeOk)
+            if (b == buttonTypeOk) {
                 pf.storeSettings();
-            return null;
+                return true;
+            }
+            return false;
         });
         dialog.setWidth(500);
         dialog.setHeight(400);
-        dialog.showAndWait();
+        Optional<Boolean> ok = dialog.showAndWait();
+        if (ok.isPresent() && ok.get()) {
+            refreshView();
+        }
     }
 }
