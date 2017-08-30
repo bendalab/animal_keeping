@@ -1,16 +1,22 @@
 package animalkeeping.ui.tables;
 
 import animalkeeping.logging.Communicator;
+import animalkeeping.model.Person;
 import animalkeeping.model.TreatmentType;
+import animalkeeping.ui.Main;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
+import javafx.geometry.HorizontalDirection;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 
@@ -22,6 +28,9 @@ import java.util.List;
  */
 public class TreatmentTypeTable extends TableView<TreatmentType> {
     private MenuItem editItem, deleteItem;
+    private CheckMenuItem showAllItem;
+    private ObservableList<TreatmentType> masterList = FXCollections.observableArrayList();
+    private FilteredList<TreatmentType> filteredList;
 
     public TreatmentTypeTable() {
         super();
@@ -90,7 +99,11 @@ public class TreatmentTypeTable extends TableView<TreatmentType> {
         deleteItem.setDisable(true);
         deleteItem.setOnAction(event -> deleteTreatmentType(this.getSelectionModel().getSelectedItem()));
 
-        cmenu.getItems().addAll(newItem, editItem, deleteItem);
+        showAllItem = new CheckMenuItem("show all types");
+        showAllItem.setSelected(!Main.getSettings().getBoolean("app_settings_validTreatmentsView", true));
+        showAllItem.setOnAction(event -> setValidFilter(showAllItem.isSelected()));
+
+        cmenu.getItems().addAll(newItem, editItem, deleteItem, new SeparatorMenuItem(), showAllItem);
         this.setContextMenu(cmenu);
     }
 
@@ -102,16 +115,21 @@ public class TreatmentTypeTable extends TableView<TreatmentType> {
 
 
     private void init() {
-        TreatmentType t  = getSelectionModel().getSelectedItem();
         Task<Void> refreshTask = new Task<Void>() {
+            TreatmentType t  = getSelectionModel().getSelectedItem();
             @Override
             protected Void call() throws Exception {
                 List<TreatmentType> tts = EntityHelper.getEntityList("from TreatmentType", TreatmentType.class);
-
                 Platform.runLater(() -> {
-                    getItems().clear();
-                    getItems().addAll(tts);
+                    masterList.clear();
+                    masterList.addAll(tts);
+                    filteredList = new FilteredList<>(masterList, p -> true);
+                    SortedList<TreatmentType> sortedList = new SortedList<>(filteredList);
+                    sortedList.comparatorProperty().bind(comparatorProperty());
+                    setItems(sortedList);
                     getSelectionModel().select(t);
+                    showAllItem.setSelected(!Main.getSettings().getBoolean("app_settings_validTreatmentsView", true));
+                    setValidFilter(showAllItem.isSelected());
                 });
                 return null;
             }
@@ -146,6 +164,11 @@ public class TreatmentTypeTable extends TableView<TreatmentType> {
         Communicator.pushDelete(type);
         refresh();
     }
+
+    public void setValidFilter(Boolean showAll) {
+        filteredList.setPredicate(treatmentType -> showAll || treatmentType.isValid());
+    }
+
     /*
     public void setSelectedTreatmentType(TreatmentType treatmentType) {
         System.out.println(this.getItems().contains(treatmentType));
