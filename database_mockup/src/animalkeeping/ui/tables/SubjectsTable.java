@@ -2,6 +2,7 @@ package animalkeeping.ui.tables;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.Subject;
+import animalkeeping.ui.Main;
 import animalkeeping.ui.views.ViewEvent;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
@@ -28,6 +29,7 @@ public class SubjectsTable extends TableView<Subject> {
     private MenuItem reportDeadItem;
     private MenuItem observationItem;
     private MenuItem moveItem;
+    private CheckMenuItem showAllItem;
 
     public SubjectsTable() {
         super();
@@ -132,7 +134,12 @@ public class SubjectsTable extends TableView<Subject> {
         moveItem.setDisable(true);
         moveItem.setOnAction(event -> moveSubject(this.getSelectionModel().getSelectedItem()));
 
-        cmenu.getItems().addAll(newItem, editItem, deleteItem, addTreatmentItem, observationItem, reportDeadItem, moveItem);
+        showAllItem = new CheckMenuItem("show also past subjects");
+        showAllItem.setSelected(!Main.getSettings().getBoolean("app_settings_availableSubjectsView", true));
+        showAllItem.setOnAction(event -> setAliveFilter(!showAllItem.isSelected()));
+
+        cmenu.getItems().addAll(newItem, editItem, deleteItem, new SeparatorMenuItem(), addTreatmentItem, observationItem,
+                new SeparatorMenuItem(), reportDeadItem, moveItem, new SeparatorMenuItem(), showAllItem);
         this.setContextMenu(cmenu);
     }
 
@@ -180,7 +187,8 @@ public class SubjectsTable extends TableView<Subject> {
             SortedList<Subject> sortedList = new SortedList<>(filteredList);
             sortedList.comparatorProperty().bind(comparatorProperty());
             setItems(sortedList);
-            setAliveFilter(true);
+            showAllItem.setSelected(!Main.getSettings().getBoolean("app_settings_availableSubjectsView", true));
+            setAliveFilter(!showAllItem.isSelected());
             fireEvent(new ViewEvent(ViewEvent.REFRESHED));
         });
         new Thread(refresh_task).run();
