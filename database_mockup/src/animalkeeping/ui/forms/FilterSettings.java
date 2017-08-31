@@ -67,8 +67,8 @@ public class FilterSettings extends VBox {
     @FXML private CheckBox validTreatmentsSelection;
 
 
-    public FilterSettings(Preferences settings) {
-        this.settings = settings;
+    public FilterSettings() {
+        this.settings = Preferences.userNodeForPackage(this.getClass());
         URL url = Main.class.getResource("/animalkeeping/ui/fxml/FilterSettings.fxml");
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(url);

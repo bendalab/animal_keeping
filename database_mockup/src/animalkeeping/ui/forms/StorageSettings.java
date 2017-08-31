@@ -60,8 +60,8 @@ public class StorageSettings extends VBox implements Initializable{
     @FXML private ComboBox<String> backendCombo;
 
 
-    public StorageSettings(Preferences settings) {
-        this.settings = settings;
+    public StorageSettings() {
+        this.settings = Preferences.userNodeForPackage(this.getClass());
         URL url = Main.class.getResource("/animalkeeping/ui/fxml/StorageSettings.fxml");
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(url);

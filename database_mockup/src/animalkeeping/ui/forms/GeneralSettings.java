@@ -50,8 +50,8 @@ import java.util.prefs.Preferences;
 public class GeneralSettings extends VBox {
     private Preferences settings;
 
-    public GeneralSettings(Preferences settings) {
-        this.settings = settings;
+    public GeneralSettings() {
+        this.settings = Preferences.userNodeForPackage(this.getClass());
         URL url = Main.class.getResource("/animalkeeping/ui/fxml/GeneralSettings.fxml");
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(url);

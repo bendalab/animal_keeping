@@ -63,8 +63,8 @@ public class SettingsForm extends VBox implements Initializable {
     @FXML private SplitPane splitPane;
     @FXML private TitledPane generalPane;
 
-    public SettingsForm(Preferences appSettings) {
-        this.appSettings = appSettings;
+    public SettingsForm() {
+        this.appSettings = Preferences.userNodeForPackage(this.getClass());
         URL url = Main.class.getResource("/animalkeeping/ui/fxml/Settings.fxml");
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(url);
@@ -80,15 +80,15 @@ public class SettingsForm extends VBox implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        filterSettings = new FilterSettings(appSettings);
+        filterSettings = new FilterSettings();
         filterSettings.applySettings();
         filterSettings.prefWidthProperty().bind(scrollPane.widthProperty());
 
-        generalSettings = new GeneralSettings(appSettings);
+        generalSettings = new GeneralSettings();
         generalSettings.applySettings();
         generalSettings.prefWidthProperty().bind(scrollPane.widthProperty());
 
-        storageSettings = new StorageSettings(appSettings);
+        storageSettings = new StorageSettings();
         storageSettings.applySettings();
         storageSettings.prefWidthProperty().bind(scrollPane.widthProperty());
 

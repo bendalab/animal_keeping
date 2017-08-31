@@ -602,7 +602,7 @@ public class MainViewController extends VBox implements Initializable{
 
     @FXML
     private void showSettings() {
-        SettingsForm pf = new SettingsForm(Main.getSettings());
+        SettingsForm pf = new SettingsForm();
         Dialog<Boolean> dialog = new Dialog<>();
         dialog.setTitle("AnimalBase Settings");
         dialog.setResizable(true);

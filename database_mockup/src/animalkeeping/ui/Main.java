@@ -50,7 +50,7 @@ public class Main extends Application {
     private static Stage primaryStage;
     private static ConnectionDetails connectionDetails = null;
     protected final static MainViewController mainView = new MainViewController();
-    private static Preferences appSettings = Preferences.systemNodeForPackage(Main.class);
+    private static Preferences appSettings = Preferences.userNodeForPackage(Main.class);
 
     @Override
     public void start(Stage primaryStage) throws Exception{
