@@ -17,7 +17,7 @@
             <Insets />
          </VBox.margin>
       </Label>
-      <Label text="--- this is just a stub for general settings ---" />
+      <Label text="--- this is just a stub for general application settings ---" />
       <HBox fillHeight="false" VBox.vgrow="NEVER">
          <children>
             <Separator maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="20.0" HBox.hgrow="NEVER">

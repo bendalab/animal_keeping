@@ -74,7 +74,7 @@ public class HousingUnitTable extends TreeTableView<HousingUnit> {
         typeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("HousingType"));
         typeColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<HousingUnit, String> hu) ->
                 new ReadOnlyStringWrapper(hu.getValue().getValue() != null ? hu.getValue().getValue().getHousingType().getName() : ""));
-        typeColumn.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
+        typeColumn.prefWidthProperty().bind(this.widthProperty().multiply(0.17));
 
         TreeTableColumn<HousingUnit, String> dimensionColumn = new TreeTableColumn<>("dimension");
         dimensionColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("Dimensions"));
@@ -88,6 +88,7 @@ public class HousingUnitTable extends TreeTableView<HousingUnit> {
         populationColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("AllHousings"));
         populationColumn.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
+        this.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
         this.getColumns().addAll(unitsColumn, typeColumn, dimensionColumn, descriptionColumn, populationColumn);
         this.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         this.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
