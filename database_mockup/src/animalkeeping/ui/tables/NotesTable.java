@@ -1,7 +1,6 @@
 package animalkeeping.ui.tables;
 
 import animalkeeping.model.Note;
-import animalkeeping.model.Person;
 import animalkeeping.util.TablePreferences;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -12,7 +11,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 /******************************************************************************

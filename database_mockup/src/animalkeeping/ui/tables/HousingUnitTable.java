@@ -40,17 +40,12 @@ import animalkeeping.model.HousingUnit;
 import animalkeeping.ui.views.ViewEvent;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
-import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Callback;
-
 import java.util.HashMap;
 import java.util.List;
 
@@ -61,7 +56,6 @@ public class HousingUnitTable extends TreeTableView<HousingUnit> {
     private TreeItem<HousingUnit> root = new TreeItem<>();
 
     public HousingUnitTable () {
-        //super();
         initialize();
     }
 

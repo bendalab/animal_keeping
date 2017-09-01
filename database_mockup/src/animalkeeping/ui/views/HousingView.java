@@ -69,10 +69,8 @@ import static animalkeeping.util.Dialogs.*;
 
 
 public class HousingView extends AbstractView implements Initializable {
-   // @FXML private ScrollPane tableScrollPane;
     @FXML private Tab populationTab, historyTab, currentHousingTab;
     @FXML private TabPane plotTabPane;
-    //@FXML private ScrollPane typesScrollPane;
     @FXML private VBox typesBox;
     @FXML private VBox tableBox;
     @FXML private SplitPane unitsSplit;
@@ -97,7 +95,6 @@ public class HousingView extends AbstractView implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        //this.setFillWidth(true);
     }
 
 
@@ -110,8 +107,6 @@ public class HousingView extends AbstractView implements Initializable {
         tabVBox.prefHeightProperty().bind(unitsSplit.prefHeightProperty().subtract(unitsSplit.getDividers().get(0).positionProperty().multiply(unitsSplit.getPrefHeight())));
         housingUnitTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> setSelectedUnit(newSelection != null ? newSelection.getValue() : null));
         housingUnitTable.prefWidthProperty().bind(this.widthProperty().multiply(0.95));
-        //tableScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        //tableScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         plotTabPane.prefWidthProperty().bind(this.widthProperty().multiply(0.95));
         plotTabPane.prefHeightProperty().bind(tabVBox.heightProperty());
@@ -124,11 +119,6 @@ public class HousingView extends AbstractView implements Initializable {
         unitsSplit.prefHeightProperty().bind(this.heightProperty().multiply(0.6));
         unitsSplit.prefWidthProperty().bind(this.widthProperty());
 
-        //typesScrollPane.setContent(null);
-        //typesScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        //typesScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        //typesScrollPane.prefHeightProperty().bind(this.heightProperty().multiply(0.3));
-        //typesScrollPane.prefWidthProperty().bind(this.widthProperty());
         typesBox.prefHeightProperty().bind(this.heightProperty().multiply(0.3));
         typesBox.prefWidthProperty().bind(this.widthProperty());
         housingTypes = new HousingTypeTable();
