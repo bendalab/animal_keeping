@@ -80,8 +80,6 @@ public class LoginController extends FlowPane implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         prefs = Preferences.userNodeForPackage(this.getClass());
-        System.out.println(prefs.name());
-        System.out.println(prefs.absolutePath());
 
         String ID1 = "db_user";
         String ID2 = "db_host";
