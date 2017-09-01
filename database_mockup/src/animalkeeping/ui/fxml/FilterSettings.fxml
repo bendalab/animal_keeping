@@ -8,7 +8,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label text="Filter settings" VBox.vgrow="NEVER">
@@ -66,7 +65,7 @@
                   <Insets right="5.0" />
                </HBox.margin>
             </Separator>
-            <Label minHeight="-Infinity" prefHeight="20.0" text="Treatments" />
+            <Label minHeight="-Infinity" prefHeight="20.0" text="Treatment types" />
             <Separator maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="20.0" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets left="5.0" />
@@ -77,8 +76,8 @@
             <Insets bottom="5.0" top="20.0" />
          </padding>
       </HBox>
-      <CheckBox fx:id="validTreatmentsView" mnemonicParsing="false" text="show only treatments of valid licenses in treatment view" />
-      <CheckBox fx:id="validTreatmentsSelection" mnemonicParsing="false" text="offer only valid treatments in selections" />
+      <CheckBox fx:id="validTreatmentsView" mnemonicParsing="false" text="show only treatment types of valid licenses in treatment view" />
+      <CheckBox fx:id="validTreatmentsSelection" mnemonicParsing="false" text="offer only valid treatment types in selections" />
       <HBox fillHeight="false">
          <children>
             <Separator maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="20.0" HBox.hgrow="NEVER">
