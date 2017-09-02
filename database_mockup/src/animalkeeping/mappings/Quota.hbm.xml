@@ -11,8 +11,14 @@
         </id>
         <property name="number" type="long" column="number" not-null="false"/>
         <property name="used" update="false" insert="false"
-                  formula="(select COUNT(*) from census_subject s, census_treatment t, census_treatmenttype tt, census_quota q WHERE tt.license_id = q.license_id AND t.type_id = tt.id AND q.id = id AND t.subject_id = s.id and s.species_id = q.species_id)"
+                  formula="(select COUNT(*) from census_subject s, census_treatment t, census_treatmenttype tt, census_quota q WHERE tt.license_id = q.license_id AND (q.gender = s.gender OR q.gender='unknown') AND t.type_id = tt.id AND q.id = id AND t.subject_id = s.id and s.species_id = q.species_id)"
                   type="long" />
+        <property name="gender" column="gender">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">animalkeeping.model.Gender</param>
+                <param name="useNamed">true</param>
+            </type>
+        </property>
         <many-to-one name="speciesType" column="species_id" class="SpeciesType" not-null="true"/>
         <many-to-one name="license" column="license_id" class="License" not-null="true"/>
 

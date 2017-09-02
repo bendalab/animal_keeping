@@ -10,6 +10,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 public class Quota extends Entity implements ChangeLogInterface{
     private Long id;
     private Long number;
+    private Gender gender;
     private SpeciesType speciesType;
     private License license;
     private Long used;
@@ -64,6 +65,14 @@ public class Quota extends Entity implements ChangeLogInterface{
 
     public String getType(){
         return this.getClass().toString();
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
     }
 
     public double getAvailableFraction() {
