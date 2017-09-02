@@ -1,6 +1,7 @@
 package animalkeeping.ui.views;
 
 import animalkeeping.logging.Communicator;
+import animalkeeping.model.Gender;
 import animalkeeping.model.License;
 import animalkeeping.model.Quota;
 import animalkeeping.ui.Main;
@@ -65,6 +66,7 @@ public class QuotaView extends VBox implements Initializable {
     @FXML private TableColumn<Quota, Number> numberCol;
     @FXML private TableColumn<Quota, Number> usedCol;
     @FXML private TableColumn<Quota, Double> progressCol;
+    @FXML private TableColumn<Quota, String> genderCol;
     private MenuItem newItem, editItem, deleteItem;
     License license = null;
     private TablePreferences tableLayout;
@@ -88,6 +90,9 @@ public class QuotaView extends VBox implements Initializable {
         speciesCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSpeciesType().getName()));
         speciesCol.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
 
+        genderCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getGender().toString()));
+        genderCol.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
+
         numberCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getNumber() != null ? data.getValue().getNumber() : 0));
         numberCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
@@ -101,8 +106,9 @@ public class QuotaView extends VBox implements Initializable {
             return new ReadOnlyObjectWrapper<>(param.getValue().getAvailableFraction());
         });
         progressCol.setCellFactory(ProgressBarTableCell.forTableColumn());
-        progressCol.prefWidthProperty().bind(this.widthProperty().multiply(0.39));
+        progressCol.prefWidthProperty().bind(this.widthProperty().multiply(0.29));
 
+        quotaTable.prefWidthProperty().bind(this.widthProperty());
         quotaTable.setRowFactory( tv -> {
             TableRow<Quota> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
