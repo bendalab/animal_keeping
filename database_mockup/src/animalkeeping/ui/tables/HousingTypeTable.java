@@ -38,8 +38,10 @@ package animalkeeping.ui.tables;
 import animalkeeping.model.HousingType;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
+import animalkeeping.util.TablePreferences;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.ListChangeListener;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -48,6 +50,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class HousingTypeTable  extends TableView<HousingType> {
+    private TablePreferences tableLayout;
 
     public HousingTypeTable() {
         initTable();
@@ -62,7 +65,7 @@ public class HousingTypeTable  extends TableView<HousingType> {
     private void initTable() {
         TableColumn<HousingType, Number> idCol = new TableColumn<HousingType, Number>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
-        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
+        idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
 
         TableColumn<HousingType, String> nameCol = new TableColumn<HousingType, String>("name");
         nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
@@ -88,6 +91,14 @@ public class HousingTypeTable  extends TableView<HousingType> {
             return row ;
         });
 
+        this.getColumns().addListener((ListChangeListener) c -> tableLayout.storeLayout());
+        this.setTableMenuButtonVisible(true);
+        this.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        for (TableColumn tc : this.getColumns()) {
+            tc.visibleProperty().addListener((observable, oldValue, newValue) -> tableLayout.storeLayout());
+        }
+        this.tableLayout = new TablePreferences(this);
+        tableLayout.applyLayout();
     }
 
     public void setTypes(Collection<HousingType> types) {

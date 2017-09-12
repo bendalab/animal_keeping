@@ -42,18 +42,22 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import java.util.HashMap;
+import java.util.prefs.Preferences;
 
 public class Main extends Application {
     public static SessionFactory sessionFactory;
     private static Boolean connected = false;
     private static Stage primaryStage;
     private static ConnectionDetails connectionDetails = null;
+    protected final static MainViewController mainView = new MainViewController();
+    private static Preferences appSettings = Preferences.userNodeForPackage(Main.class);
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         Main.primaryStage = primaryStage;
-        Main.primaryStage.setTitle("AnimalKeepingDB");
-        MainViewController mainView = new MainViewController();
+        Main.primaryStage.setTitle("AnimalBase");
+        Main.primaryStage.getProperties().put("hostServices", this.getHostServices());
+        //mainView = new MainViewController();
         mainView.prefHeightProperty().bind(primaryStage.heightProperty());
         mainView.prefWidthProperty().bind(primaryStage.widthProperty());
         Scene scene = new Scene(mainView);
@@ -74,6 +78,9 @@ public class Main extends Application {
         connectionDetails = credentials;
     }
 
+    public static MainViewController getMainView() {
+        return mainView;
+    }
 
     public void stop() {
         if (sessionFactory != null) {
@@ -95,9 +102,12 @@ public class Main extends Application {
         launch(args);
     }
 
-
     public static Boolean isConnected() {
         return connected;
+    }
+
+    public static Preferences getSettings() {
+        return appSettings;
     }
 
     public static class ConnectionDetails {

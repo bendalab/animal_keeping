@@ -4,6 +4,7 @@ import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.Main;
 import animalkeeping.util.DateTimeHelper;
+import animalkeeping.util.EntityHelper;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.StringConverter;
@@ -149,18 +150,11 @@ public class LicenseForm extends VBox {
 
         this.getChildren().add(grid);
 
-        Session session = Main.sessionFactory.openSession();
-        List<Person> persons = new ArrayList<>(0);
-        try {
-            session.beginTransaction();
-            persons = session.createQuery("from Person", Person.class).list();
-            session.getTransaction().commit();
-            session.close();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (session.isOpen()) {
-                session.close();
-            }
+        List<Person> persons;
+        if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
+            persons = EntityHelper.getEntityList("from Person where active = True", Person.class);
+        } else {
+            persons = EntityHelper.getEntityList("from Person", Person.class);
         }
         respPersonCombo.getItems().addAll(persons);
         deputyPersonCombo.getItems().addAll(persons);

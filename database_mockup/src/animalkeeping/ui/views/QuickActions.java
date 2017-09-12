@@ -1,18 +1,19 @@
-package animalkeeping.util;
+package animalkeeping.ui.views;
 
 import animalkeeping.ui.Main;
-import javafx.application.HostServices;
+import animalkeeping.util.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
+import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /******************************************************************************
- database_mockup
- animalkeeping.util
+ animalBase
+ animalkeeping.ui.views
 
  Copyright (c) 2017 Neuroethology Lab, University of Tuebingen,
  Jan Grewe <jan.grewe@g-node.org>,
@@ -45,46 +46,108 @@ import java.io.IOException;
  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  DAMAGE.
 
- * Created by jan on 13.05.17.
+ * Created by jan on 20.08.17.
 
  *****************************************************************************/
 
-public class About extends VBox {
-    @FXML private Label versionLabel;
-    @FXML private Label migrationLabel;
-    @FXML private Hyperlink issuesLink;
-    @FXML private Hyperlink githubLink;
-    @FXML private Hyperlink neuroethoLink;
+public class QuickActions extends AbstractView implements Initializable {
 
 
-    public About() {
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/About.fxml"));
+    public QuickActions() {
+        URL url = Main.class.getResource("/animalkeeping/ui/fxml/QuickActions.fxml");
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(url);
         loader.setController(this);
         try {
             this.getChildren().add(loader.load());
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
-        this.setFillWidth(true);
-        setVersion();
-
-        neuroethoLink.setOnAction(event -> visitLink(neuroethoLink.getAccessibleText()));
-        issuesLink.setOnAction(event -> visitLink(issuesLink.getText()));
-        githubLink.setOnAction(event -> visitLink(githubLink.getText()));
     }
 
-    private void setVersion() {
-        try {
-            Version version = new Version();
-            versionLabel.setText(version.getVersion());
-            migrationLabel.setText(version.getMigrationState());
-        } catch (Exception e) {
-
-        }
+    @FXML
+    protected void showSubjectView() {
+        Main.getMainView().showView("subject", true);
     }
 
-    private void visitLink(String link) {
-        HostServices hostServices = (HostServices)Main.getPrimaryStage().getProperties().get("hostServices");
-        hostServices.showDocument(link);
+    @FXML
+    protected void newSubject() {
+        Dialogs.editSubjectDialog(null);
+    }
+
+    @FXML
+    protected void importSubjects() {
+        Dialogs.importSubjectsDialog(null);
+    }
+
+    @FXML
+    protected void showHousingView() {
+        Main.getMainView().showView("housing", true);
+    }
+
+    @FXML
+    protected void showTreatmentView() {
+        Main.getMainView().showView("treatment", true);
+    }
+
+    @FXML
+    protected void newTreatment() {
+        Dialogs.editTreatmentDialog();
+    }
+
+    @FXML
+    protected void newTreatmentType() {
+        Dialogs.editTreatmentTypeDialog(null);
+    }
+
+    @FXML
+    protected void newBatchTreatment() {
+        Dialogs.batchTreatmentDialog(null);
+    }
+
+    @FXML
+    protected void reportDead() {
+        Dialogs.reportSubjectDead(null);
+    }
+
+
+    @FXML
+    protected void moveSubject() {
+        Dialogs.relocateSubjectDialog(null);
+    }
+
+    @FXML
+    protected void showLicenseView() {
+        Main.getMainView().showView("license", true);
+    }
+
+    @FXML
+    protected void showInventoryView() {
+        Main.getMainView().showView("inventory", true);
+    }
+
+    @FXML
+    protected void newLicense() {
+        Dialogs.editLicenseDialog(null);
+    }
+
+    @FXML
+    protected void newQuota() {
+        Dialogs.editQuotaDialog(null, null);
+    }
+    @Override
+    public VBox getControls() {
+        return null;
+    }
+
+    @Override
+    public void refresh() {
+
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
     }
 }

@@ -77,7 +77,6 @@ public class SubjectView extends AbstractView implements Initializable {
     @FXML private Tab observationsTab;
     @FXML private Tab treatmentsTab;
     @FXML private VBox timelineVBox;
-    @FXML private RadioButton deadOrAliveRadioBtn;
 
     private SubjectsTable subjectsTable;
     private HousingTable housingTable;
@@ -98,7 +97,7 @@ public class SubjectView extends AbstractView implements Initializable {
 
 
     public SubjectView() {
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/FishView.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/SubjectView.fxml"));
         loader.setController(this);
         try {
             this.getChildren().add(loader.load());
@@ -338,15 +337,9 @@ public class SubjectView extends AbstractView implements Initializable {
         }
     }
 
-    @FXML
-    private void showAllOrCurrent() {
-        subjectsTable.setAliveFilter(deadOrAliveRadioBtn.isSelected());
-    }
-
     private void deleteSubject() {
         subjectsTable.deleteSubject(subjectsTable.getSelectionModel().getSelectedItem());
     }
-
 
     private void deleteTreatment() {
         treatmentsTable.deleteTreatment(treatmentsTable.getSelectionModel().getSelectedItem());

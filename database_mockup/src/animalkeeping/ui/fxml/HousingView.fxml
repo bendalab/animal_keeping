@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
@@ -11,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label text="Housing units:">
          <font>
@@ -20,7 +19,7 @@
       </Label>
       <SplitPane fx:id="unitsSplit" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
          <items>
-            <ScrollPane fx:id="tableScrollPane" fitToHeight="true" fitToWidth="true" prefHeight="300.0" prefWidth="308.0" />
+            <VBox fx:id="tableBox" prefHeight="200.0" prefWidth="100.0" />
             <VBox fx:id="tabVBox">
                <children>
                   <TabPane fx:id="plotTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
@@ -48,6 +47,6 @@
             <Font size="16.0" style="Bold" />
          </font>
       </Label>
-      <ScrollPane fx:id="typesScrollPane" hbarPolicy="NEVER" />
+      <VBox fx:id="typesBox" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS" />
    </children>
 </VBox>

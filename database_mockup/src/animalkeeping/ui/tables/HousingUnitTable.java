@@ -40,17 +40,12 @@ import animalkeeping.model.HousingUnit;
 import animalkeeping.ui.views.ViewEvent;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
-import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Callback;
-
 import java.util.HashMap;
 import java.util.List;
 
@@ -61,7 +56,6 @@ public class HousingUnitTable extends TreeTableView<HousingUnit> {
     private TreeItem<HousingUnit> root = new TreeItem<>();
 
     public HousingUnitTable () {
-        //super();
         initialize();
     }
 
@@ -74,7 +68,7 @@ public class HousingUnitTable extends TreeTableView<HousingUnit> {
         typeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("HousingType"));
         typeColumn.setCellValueFactory((TreeTableColumn.CellDataFeatures<HousingUnit, String> hu) ->
                 new ReadOnlyStringWrapper(hu.getValue().getValue() != null ? hu.getValue().getValue().getHousingType().getName() : ""));
-        typeColumn.prefWidthProperty().bind(this.widthProperty().multiply(0.2));
+        typeColumn.prefWidthProperty().bind(this.widthProperty().multiply(0.17));
 
         TreeTableColumn<HousingUnit, String> dimensionColumn = new TreeTableColumn<>("dimension");
         dimensionColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("Dimensions"));
@@ -88,6 +82,7 @@ public class HousingUnitTable extends TreeTableView<HousingUnit> {
         populationColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("AllHousings"));
         populationColumn.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
+        this.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
         this.getColumns().addAll(unitsColumn, typeColumn, dimensionColumn, descriptionColumn, populationColumn);
         this.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         this.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {

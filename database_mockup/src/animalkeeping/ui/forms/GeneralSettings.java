@@ -1,18 +1,16 @@
-package animalkeeping.util;
+package animalkeeping.ui.forms;
 
 import animalkeeping.ui.Main;
-import javafx.application.HostServices;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.prefs.Preferences;
 
 /******************************************************************************
- database_mockup
- animalkeeping.util
+ animalBase
+ animalkeeping.ui.forms
 
  Copyright (c) 2017 Neuroethology Lab, University of Tuebingen,
  Jan Grewe <jan.grewe@g-node.org>,
@@ -45,46 +43,33 @@ import java.io.IOException;
  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  DAMAGE.
 
- * Created by jan on 13.05.17.
+ * Created by jan on 28.08.17.
 
  *****************************************************************************/
 
-public class About extends VBox {
-    @FXML private Label versionLabel;
-    @FXML private Label migrationLabel;
-    @FXML private Hyperlink issuesLink;
-    @FXML private Hyperlink githubLink;
-    @FXML private Hyperlink neuroethoLink;
+public class GeneralSettings extends VBox {
+    private Preferences settings;
 
-
-    public About() {
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/About.fxml"));
+    public GeneralSettings() {
+        this.settings = Preferences.userNodeForPackage(this.getClass());
+        URL url = Main.class.getResource("/animalkeeping/ui/fxml/GeneralSettings.fxml");
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(url);
         loader.setController(this);
         try {
             this.getChildren().add(loader.load());
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
-        this.setFillWidth(true);
-        setVersion();
-
-        neuroethoLink.setOnAction(event -> visitLink(neuroethoLink.getAccessibleText()));
-        issuesLink.setOnAction(event -> visitLink(issuesLink.getText()));
-        githubLink.setOnAction(event -> visitLink(githubLink.getText()));
     }
 
-    private void setVersion() {
-        try {
-            Version version = new Version();
-            versionLabel.setText(version.getVersion());
-            migrationLabel.setText(version.getMigrationState());
-        } catch (Exception e) {
+    public void applySettings() {
 
-        }
     }
 
-    private void visitLink(String link) {
-        HostServices hostServices = (HostServices)Main.getPrimaryStage().getProperties().get("hostServices");
-        hostServices.showDocument(link);
+    void storeSettings() {
+
     }
+
 }

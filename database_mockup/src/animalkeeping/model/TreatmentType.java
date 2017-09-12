@@ -4,6 +4,7 @@ import animalkeeping.logging.ChangeLogInterface;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ public class TreatmentType extends Entity implements ChangeLogInterface {
     private License license;
     private Set<Treatment> treatments =
             new HashSet<>(0);
-
+    private Boolean valid;
 
     public TreatmentType() {}
 
@@ -89,6 +90,9 @@ public class TreatmentType extends Entity implements ChangeLogInterface {
         this.treatments = treatments;
     }
 
+    public Boolean isValid() {
+        return (license == null) || (license.getEndDate() == null || license.getEndDate().after(new Date()));
+    }
 
     @Override
     public boolean equals(Object obj) {

@@ -1,9 +1,11 @@
 package animalkeeping.ui.forms;
 
 import animalkeeping.logging.Communicator;
+import animalkeeping.model.Gender;
 import animalkeeping.model.License;
 import animalkeeping.model.Quota;
 import animalkeeping.model.SpeciesType;
+import animalkeeping.ui.Main;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import javafx.event.ActionEvent;
@@ -14,6 +16,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import static animalkeeping.util.Dialogs.showInfo;
@@ -21,6 +25,7 @@ import static animalkeeping.util.Dialogs.showInfo;
 public class QuotaForm extends VBox {
     private ComboBox<License> licenseCombo;
     private ComboBox<SpeciesType> speciesCombo;
+    private ComboBox<Gender> genderComboBox;
     private TextField numberField;
     private Label idLabel;
     private Quota quota;
@@ -48,6 +53,7 @@ public class QuotaForm extends VBox {
         idLabel.setText(q.getId().toString());
         licenseCombo.getSelectionModel().select(q.getLicense());
         speciesCombo.getSelectionModel().select(q.getSpeciesType());
+        genderComboBox.getSelectionModel().select(q.getGender());
         numberField.setText(q.getNumber().toString());
     }
 
@@ -77,6 +83,24 @@ public class QuotaForm extends VBox {
                 return null;
             }
         });
+        genderComboBox = new ComboBox<>();
+        genderComboBox.setConverter(new StringConverter<Gender>() {
+            @Override
+            public String toString(Gender object) {
+                return object.toString();
+            }
+
+            @Override
+            public Gender fromString(String string) {
+                if (string.equals("unknown"))
+                    return Gender.unknown;
+                if (string.equals("female"))
+                    return Gender.female;
+                if (string.equals("male"))
+                    return Gender.male;
+                return Gender.hermaphrodite;
+            }
+        });
         numberField = new TextField();
 
         Button newSpeciesTypeButton = new Button("+");
@@ -104,6 +128,7 @@ public class QuotaForm extends VBox {
         licenseCombo.prefWidthProperty().bind(column2.maxWidthProperty());
         speciesCombo.prefWidthProperty().bind(column2.maxWidthProperty());
         numberField.prefWidthProperty().bind(column2.maxWidthProperty());
+        genderComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
 
         grid.setVgap(5);
         grid.setHgap(2);
@@ -117,16 +142,33 @@ public class QuotaForm extends VBox {
         grid.add(speciesCombo, 1, 2, 1, 1 );
         grid.add(newSpeciesTypeButton, 2, 2, 1, 1);
 
-        grid.add(new Label("count:"), 0,3);
+        grid.add(new Label("gender:"), 0, 3);
+        grid.add(genderComboBox, 1, 3, 2, 1 );
+
+        grid.add(new Label("count:"), 0,4);
         numberField.setTooltip(new Tooltip("Maximum number of granted subjects."));
-        grid.add(numberField, 1,3, 2, 1);
+        grid.add(numberField, 1,4, 2, 1);
 
         this.getChildren().add(grid);
 
         List<SpeciesType> species = EntityHelper.getEntityList("From SpeciesType", SpeciesType.class);
-        List<License> licenses = EntityHelper.getEntityList("From License", License.class);
+
+        List<License> licenses;
+        if (Main.getSettings().getBoolean("app_settings_validLicensesSelection", true)) {
+            licenses = EntityHelper.getEntityList("from License where end_date > CURDATE()", License.class);
+        } else {
+            licenses = EntityHelper.getEntityList("from License", License.class);
+        }
+
         speciesCombo.getItems().addAll(species);
         licenseCombo.getItems().addAll(licenses);
+        List<Gender> sexes = new ArrayList<>(4);
+        sexes.add(Gender.unknown);
+        sexes.add(Gender.female);
+        sexes.add(Gender.male);
+        sexes.add(Gender.hermaphrodite);
+        genderComboBox.getItems().addAll(sexes);
+        genderComboBox.getSelectionModel().select(Gender.unknown);
     }
 
 
@@ -136,6 +178,7 @@ public class QuotaForm extends VBox {
         }
         quota.setNumber(numberField.getText().isEmpty() ? 0 : Long.valueOf(numberField.getText()));
         quota.setLicense(licenseCombo.getValue());
+        quota.setGender(genderComboBox.getValue());
         quota.setSpeciesType(speciesCombo.getValue());
         System.out.println(quota);
         if (!Communicator.pushSaveOrUpdate(quota)) {
