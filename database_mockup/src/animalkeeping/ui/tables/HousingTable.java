@@ -189,7 +189,11 @@ public class HousingTable extends TableView<Housing>{
             setHousings(this.subject.getHousings());
         } else if (this.housingUnit != null) {
             EntityHelper.refreshEntity(this.housingUnit);
-            setHousings(this.housingUnit.getAllHousings(this.showCurrentOnly));
+            if (showCurrentOnly) {
+                setHousings(EntityHelper.getEntityList("From Housing where end_datetime is null and type_id = " + housingUnit.getId(), Housing.class));
+            } else {
+                setHousings(EntityHelper.getEntityList("From Housing where end_datetime is null and type_id = " + housingUnit.getId(), Housing.class));
+            }
         } else {
             setHousings(EntityHelper.getEntityList("From Housing where end_datetime is null", Housing.class));
         }
