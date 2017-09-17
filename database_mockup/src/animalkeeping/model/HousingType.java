@@ -13,6 +13,8 @@ public class HousingType {
     private Long id;
     private String name;
     private String description;
+    private Boolean canHoldSubjects;
+    private Boolean canHaveChildUnits;
     private Set<HousingUnit> housingUnits =
             new HashSet<>(0);
 
@@ -45,6 +47,22 @@ public class HousingType {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getCanHoldSubjects() {
+        return canHoldSubjects;
+    }
+
+    public void setCanHoldSubjects(Boolean canHoldSubjects) {
+        this.canHoldSubjects = canHoldSubjects;
+    }
+
+    public Boolean getCanHaveChildUnits() {
+        return canHaveChildUnits;
+    }
+
+    public void setCanHaveChildUnits(Boolean canHaveChildUnits) {
+        this.canHaveChildUnits = canHaveChildUnits;
     }
 
     public Set<HousingUnit> getHousingUnits() {
