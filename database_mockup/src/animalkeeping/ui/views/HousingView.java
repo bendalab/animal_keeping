@@ -227,9 +227,9 @@ public class HousingView extends AbstractView implements Initializable {
             populationChart.listPopulation(unit);
             deleteUnitLabel.setDisable(unit == null);
             editUnitLabel.setDisable(unit == null);
-            importSubjectsLabel.setDisable(unit == null);
+            importSubjectsLabel.setDisable(unit == null || !unit.getHousingType().getCanHoldSubjects());
             batchTreatmentLabel.setDisable(unit == null);
-            appendUnitLabel.setDisable(unit == null);
+            appendUnitLabel.setDisable(unit == null || !unit.getHousingType().getCanHaveChildUnits());
             exportPopulationLabel.setDisable(unit == null);
             housingTable.setHousingUnit(unit);
         });
