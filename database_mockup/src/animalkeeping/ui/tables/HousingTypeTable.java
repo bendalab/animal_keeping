@@ -39,12 +39,14 @@ import animalkeeping.model.HousingType;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import animalkeeping.util.TablePreferences;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.CheckBoxTableCell;
 
 import java.util.Collection;
 import java.util.List;
@@ -73,9 +75,23 @@ public class HousingTypeTable  extends TableView<HousingType> {
 
         TableColumn<HousingType, String> descriptionCol = new TableColumn<HousingType, String>("description");
         descriptionCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getDescription()));
-        descriptionCol.prefWidthProperty().bind(this.widthProperty().multiply(0.6));
+        descriptionCol.prefWidthProperty().bind(this.widthProperty().multiply(0.5));
 
-        this.getColumns().addAll(idCol, nameCol, descriptionCol);
+        TableColumn<HousingType, Boolean> holdSubjectsCol = new TableColumn<>("allow subjects");
+        holdSubjectsCol.setCellValueFactory(data -> new ReadOnlyBooleanWrapper(data.getValue().getCanHoldSubjects()));
+        holdSubjectsCol.setCellFactory(tc -> new CheckBoxTableCell<>());
+        holdSubjectsCol.setMinWidth(80.);
+        holdSubjectsCol.setMaxWidth(100.);
+        holdSubjectsCol.prefWidthProperty().bind(this.widthProperty().multiply(0.05));
+
+        TableColumn<HousingType, Boolean> subUnitsCol = new TableColumn<>("allow sub-units");
+        subUnitsCol.setCellValueFactory(data -> new ReadOnlyBooleanWrapper(data.getValue().getCanHaveChildUnits()));
+        subUnitsCol.setCellFactory(tc -> new CheckBoxTableCell<>());
+        subUnitsCol.setMinWidth(80.);
+        subUnitsCol.setMaxWidth(100.);
+        subUnitsCol.prefWidthProperty().bind(this.widthProperty().multiply(0.05));
+
+        this.getColumns().addAll(idCol, nameCol, holdSubjectsCol, subUnitsCol, descriptionCol);
         this.setRowFactory( tv -> {
             TableRow<HousingType> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
