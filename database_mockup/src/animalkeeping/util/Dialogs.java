@@ -6,6 +6,7 @@ import animalkeeping.ui.Main;
 import animalkeeping.ui.forms.*;
 import animalkeeping.ui.tables.HousingUnitTable;
 import animalkeeping.ui.widgets.HousingDropDown;
+import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -61,6 +62,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!htd.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return htd.persistSubjects();
