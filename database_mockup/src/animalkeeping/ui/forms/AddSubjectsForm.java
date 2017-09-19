@@ -7,6 +7,8 @@ import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.EntityHelper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
@@ -77,6 +79,7 @@ public class AddSubjectsForm extends VBox {
     private SpecialTextField timeField;
     private SubjectType st;
     private Preferences prefs;
+    private Label previewLabel;
 
 
     public AddSubjectsForm() {
@@ -96,6 +99,9 @@ public class AddSubjectsForm extends VBox {
         prefs = Preferences.userNodeForPackage(AddSubjectsForm.class);
 
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+
+        previewLabel = new Label();
+        previewLabel.setStyle("-fx-text-fill: gray; -fx-font-size: 9;");
 
         housingUnitCombo = new HousingDropDown();
         housingUnitCombo.setHousingUnit(unit);
@@ -179,7 +185,9 @@ public class AddSubjectsForm extends VBox {
         speciesComboBox.getItems().addAll(species);
         responsiblePersonCombo.getItems().addAll(persons);
         nameField = new TextField();
-
+        nameField.textProperty().addListener((observable, oldValue, newValue) -> {
+           createPreview();
+        });
         Label heading = new Label("Add subjects:");
         heading.setFont(new Font(Font.getDefault().getFamily(), 16));
         this.getChildren().add(heading);
@@ -194,6 +202,7 @@ public class AddSubjectsForm extends VBox {
         grid.getColumnConstraints().addAll(column1, column2, column3);
 
         nameField.prefWidthProperty().bind(column2.maxWidthProperty());
+        previewLabel.prefWidthProperty().bind(column2.maxWidthProperty());
         speciesComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         supplierComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         housingUnitCombo.prefWidthProperty().bind(column2.maxWidthProperty());
@@ -208,39 +217,53 @@ public class AddSubjectsForm extends VBox {
         grid.add(new Label("name pattern(*):"), 0, 0);
         grid.add(nameField, 1, 0, 2, 1);
 
-        grid.add(new Label("housing unit(*):"), 0, 1);
-        grid.add(housingUnitCombo, 1, 1, 1, 1 );
-        grid.add(newHousingUnit, 2, 1, 1, 1);
+        grid.add(previewLabel, 1, 1);
 
-        grid.add(new Label("resp. person:"), 0, 2);
-        grid.add(responsiblePersonCombo, 1, 2, 1, 1 );
-        grid.add(newPerson, 2, 2, 1, 1);
+        grid.add(new Label("housing unit(*):"), 0, 2);
+        grid.add(housingUnitCombo, 1, 2, 1, 1 );
+        grid.add(newHousingUnit, 2, 2, 1, 1);
 
-        grid.add(new Label("supplier(*):"), 0, 3);
-        grid.add(supplierComboBox, 1, 3, 1,1);
-        grid.add(newSupplier, 2, 3, 1, 1);
+        grid.add(new Label("resp. person:"), 0, 3);
+        grid.add(responsiblePersonCombo, 1, 3, 1, 1 );
+        grid.add(newPerson, 2, 3, 1, 1);
 
-        grid.add(new Label("species(*):"), 0,4);
-        grid.add(speciesComboBox, 1,4, 1, 1);
-        grid.add(newSpecies, 2, 4, 1, 1);
+        grid.add(new Label("supplier(*):"), 0, 4);
+        grid.add(supplierComboBox, 1, 4, 1,1);
+        grid.add(newSupplier, 2, 4, 1, 1);
 
-        grid.add(new Label("import date(*):"), 0, 5);
-        grid.add(housingDate, 1, 5, 2, 1);
+        grid.add(new Label("species(*):"), 0,5);
+        grid.add(speciesComboBox, 1,5, 1, 1);
+        grid.add(newSpecies, 2, 5, 1, 1);
 
-        grid.add(new Label("time(*):"), 0, 6);
-        grid.add(timeField, 1, 6, 2, 1);
+        grid.add(new Label("import date(*):"), 0, 6);
+        grid.add(housingDate, 1, 6, 2, 1);
 
-        grid.add(new Label("subject count"), 0, 7);
-        grid.add(countSpinner, 1, 7, 2, 1);
+        grid.add(new Label("time(*):"), 0, 7);
+        grid.add(timeField, 1, 7, 2, 1);
 
-        grid.add(new Label("start index:"), 0, 8);
-        grid.add(startIdSpinner, 1, 8, 2, 1);
+        grid.add(new Label("subject count"), 0, 8);
+        grid.add(countSpinner, 1, 8, 2, 1);
 
-        grid.add(new Label("(*) required"), 0, 9);
+        grid.add(new Label("start index:"), 0, 9);
+        grid.add(startIdSpinner, 1, 9, 2, 1);
+        startIdSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            createPreview();
+        });
+
+        grid.add(new Label("(*) required"), 0, 10);
 
         this.getChildren().add(grid);
     }
 
+    private String createPreview() {
+        LocalDate hdate = housingDate.getValue();
+        String prefix = String.valueOf(hdate.getYear());
+        String name = nameField.getText();
+        Integer initial_id = startIdSpinner.getValue();
+        String previewName = createName(prefix, name, initial_id, 4);
+        previewLabel.setText("(preview: " + previewName + ")");
+        return previewName;
+    }
 
     private String createName(String prefix, String name, Integer count, Integer digit_count) {
         String full_name = prefix + name;
