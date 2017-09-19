@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Vector;
 
 import static animalkeeping.util.DateTimeHelper.getDateTime;
 
@@ -30,6 +31,19 @@ public class Dialogs {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information");
         alert.setHeaderText(info);
+        alert.show();
+    }
+
+
+    public static void showErrorMessages(String title, Vector<String> messages) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("ValidationError");
+        alert.setHeaderText(title);
+        String messageText = "";
+        for (String m : messages) {
+            messageText = messageText + m + "\n\n";
+        }
+        alert.setContentText(messageText);
         alert.show();
     }
 
