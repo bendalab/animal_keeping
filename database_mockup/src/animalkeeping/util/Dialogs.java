@@ -1,10 +1,7 @@
 package animalkeeping.util;
 
-import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
-import animalkeeping.ui.Main;
 import animalkeeping.ui.forms.*;
-import animalkeeping.ui.tables.HousingUnitTable;
 import animalkeeping.ui.widgets.HousingDropDown;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
@@ -13,10 +10,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.util.Callback;
 import javafx.util.Pair;
-import javafx.util.StringConverter;
-import org.hibernate.Session;
-
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
@@ -24,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
 
-import static animalkeeping.util.DateTimeHelper.getDateTime;
 
 public class Dialogs {
 
@@ -131,24 +123,12 @@ public class Dialogs {
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
-                return htd.getHousingType();
+                return htd.persist();
             }
             return null;
         });
         Optional<HousingType> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return result.get();
-        }
-        return null;
+        return result.orElse(null);
     }
 
 
@@ -385,20 +365,7 @@ public class Dialogs {
             return null;
         });
         Optional<SubjectType> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-            return result.get();
-        }
-        return null;
+        return result.orElse(null);
     }
 
 
