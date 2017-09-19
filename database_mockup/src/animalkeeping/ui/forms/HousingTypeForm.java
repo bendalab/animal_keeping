@@ -2,12 +2,15 @@ package animalkeeping.ui.forms;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.HousingType;
+import animalkeeping.util.EntityHelper;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+
+import java.util.Vector;
 
 
 public class HousingTypeForm extends VBox {
@@ -102,5 +105,22 @@ public class HousingTypeForm extends VBox {
         HousingType ht = getHousingType();
         Communicator.pushSaveOrUpdate(ht);
         return ht;
+    }
+
+    public boolean validate(Vector<String> messages) {
+        boolean valid = true;
+        if (nameField.getText().isEmpty()) {
+            messages.add("Name must not be empty!");
+            valid = false;
+        }
+        Vector<String> param = new Vector<>();
+        param.add("name");
+        Vector<Object> args = new Vector<>();
+        args.add(nameField.getText());
+        if (EntityHelper.getEntityList("From HousingType where name like :name", param, args, HousingType.class).size() > 0) {
+            messages.add("Name of HousingType is already in use!");
+            valid = false;
+        }
+        return valid;
     }
 }
