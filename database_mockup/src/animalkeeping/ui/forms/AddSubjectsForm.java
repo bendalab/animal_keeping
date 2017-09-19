@@ -17,6 +17,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.StringConverter;
+import org.hibernate.query.Query;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -25,6 +26,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Vector;
 import java.util.prefs.Preferences;
 
 import static animalkeeping.util.Dialogs.editHousingUnitDialog;
@@ -286,7 +288,6 @@ public class AddSubjectsForm extends VBox {
         }
     }
 
-
     public Integer persistSubjects() {
         Housing h = null;
         LocalDate hdate = housingDate.getValue();
@@ -367,7 +368,6 @@ public class AddSubjectsForm extends VBox {
         prefs.put("import_date", housingDate.getValue().toString());
     }
 
-
     private void createNewHousingButton() {
         HousingUnit u = editHousingUnitDialog(null, this.housingUnitCombo.getHousingUnit());
         if (u != null) {
@@ -375,4 +375,41 @@ public class AddSubjectsForm extends VBox {
         }
     }
 
+    public boolean validate(Vector<String> messages) {
+        boolean valid = true;
+        if (!housingUnitCombo.getHousingUnit().getHousingType().getCanHoldSubjects()) {
+            messages.add("The selected housing unit can not hold subjects!");
+            valid = false;
+        }
+        if (nameField.getText().isEmpty()) {
+            messages.add("The Name must not be empty!");
+            valid = false;
+        }
+        if (responsiblePersonCombo.getValue() != null && !responsiblePersonCombo.getValue().getActive()) {
+            messages.add("The selected responsible person must not be marked inactive. Cross check with the person info.");
+            valid = false;
+        }
+        if (supplierComboBox.getValue() == null) {
+            messages.add("An animal supplier must be given.");
+            valid = false;
+        }
+        if (speciesComboBox.getValue() == null) {
+            messages.add("Species information must not be empty!");
+            valid = false;
+        }
+        if (housingDate.getValue() == null) {
+            messages.add("Import date must not be null!");
+            valid = false;
+        }
+        String firstName = createPreview();
+        Vector<String> params = new Vector<>();
+        params.add("name");
+        Vector<Object> objects = new Vector<>();
+        objects.add(firstName);
+        if (EntityHelper.getEntityList("From Subject where name like :name", params, objects, Subject.class) != null) {
+            messages.add("Subject name is already used! Select another name pattern, or increase start index!");
+            valid = false;
+        }
+        return valid;
+    }
 }
