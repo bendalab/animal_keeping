@@ -1,5 +1,6 @@
 package animalkeeping.ui.forms;
 
+import animalkeeping.logging.Communicator;
 import animalkeeping.model.HousingType;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -95,5 +96,11 @@ public class HousingTypeForm extends VBox {
         type.setCanHaveChildUnits(canHaveSubunits.isSelected());
         type.setCanHoldSubjects(canHoldSubjects.isSelected());
         return type;
+    }
+
+    public HousingType persist() {
+        HousingType ht = getHousingType();
+        Communicator.pushSaveOrUpdate(ht);
+        return ht;
     }
 }
