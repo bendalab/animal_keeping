@@ -202,6 +202,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!lf.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return lf.persistLicense();
