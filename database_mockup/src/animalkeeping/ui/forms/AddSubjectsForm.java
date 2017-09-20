@@ -83,7 +83,6 @@ public class AddSubjectsForm extends VBox {
     private Preferences prefs;
     private Label previewLabel;
 
-
     public AddSubjectsForm() {
         this(null);
     }
@@ -386,8 +385,10 @@ public class AddSubjectsForm extends VBox {
             valid = false;
         }
         if (responsiblePersonCombo.getValue() != null && !responsiblePersonCombo.getValue().getActive()) {
-            messages.add("The selected responsible person must not be marked inactive. Cross check with the person info.");
-            valid = false;
+            if (!housingDate.getValue().isBefore(LocalDate.now().minusDays(7))) {
+                messages.add("The selected responsible person must not be marked inactive. Cross check with the person info.");
+                valid = false;
+            }
         }
         if (supplierComboBox.getValue() == null) {
             messages.add("An animal supplier must be given.");
