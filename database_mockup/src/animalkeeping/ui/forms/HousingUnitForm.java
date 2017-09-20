@@ -1,3 +1,39 @@
+/******************************************************************************
+ animalBase
+ animalkeeping.ui.forms
+
+ Copyright (c) 2017 Neuroethology Lab, University of Tuebingen,
+ Jan Grewe <jan.grewe@g-node.org>,
+ Dennis Huben <dennis.huben@rwth-aachen.de>
+
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without modification,
+ are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this list
+ of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce the above copyright notice, this
+ list of conditions and the following disclaimer in the documentation and/or other
+ materials provided with the distribution.
+
+ 3. Neither the name of the copyright holder nor the names of its contributors may
+ be used to endorse or promote products derived from this software without specific
+ prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ DAMAGE.
+
+ *****************************************************************************/
 package animalkeeping.ui.forms;
 
 import animalkeeping.logging.Communicator;
@@ -16,6 +52,7 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 import java.util.List;
+import java.util.Vector;
 
 
 public class HousingUnitForm extends VBox {
@@ -152,5 +189,32 @@ public class HousingUnitForm extends VBox {
         HousingUnit unit = getHousingUnit();
         Communicator.pushSaveOrUpdate(unit);
         return unit;
+    }
+
+    public boolean validate(Vector<String> messages) {
+        boolean valid = true;
+        if (parentUnitComboBox.getHousingUnit() != null && !parentUnitComboBox.getHousingUnit().getHousingType().getCanHaveChildUnits()) {
+            messages.add("The selected parent unit can not have sub-units!");
+            valid = false;
+        }
+        if (nameField.getText().isEmpty()) {
+            messages.add("The name of the housing unit must not be empty!");
+            valid = false;
+        }
+        if (typeComboBox.getValue() == null) {
+            messages.add("The type of the Housing unit must be specified, please select an existing, or create a new!");
+            valid = false;
+        }
+        if (!nameField.getText().isEmpty()) {
+            Vector<String> params = new Vector<>();
+            params.add("name");
+            Vector<Object> objects = new Vector<>();
+            objects.add(nameField.getText());
+            if (EntityHelper.getEntityList("From HousingUnit where name like :name", params, objects, HousingUnit.class).size() > 0) {
+                messages.add("HousingUnit name is already used! Select another name!");
+                valid = false;
+            }
+        }
+        return valid;
     }
 }
