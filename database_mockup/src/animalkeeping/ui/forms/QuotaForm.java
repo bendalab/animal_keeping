@@ -19,6 +19,7 @@ import javafx.util.StringConverter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import static animalkeeping.util.Dialogs.showInfo;
 
@@ -180,11 +181,38 @@ public class QuotaForm extends VBox {
         quota.setLicense(licenseCombo.getValue());
         quota.setGender(genderComboBox.getValue());
         quota.setSpeciesType(speciesCombo.getValue());
-        System.out.println(quota);
         if (!Communicator.pushSaveOrUpdate(quota)) {
             showInfo("Error: Quota entry could not be persisted! Missing required information?");
             return null;
         }
         return quota;
+    }
+
+    public boolean validate(Vector<String> messages) {
+        boolean valid = true;
+        if (licenseCombo.getValue() == null) {
+            messages.add("A license must be selected to create a quota entry!");
+            valid = false;
+        }
+        if (speciesCombo.getValue() == null) {
+            messages.add("A species must be selected!");
+            valid = false;
+        }
+        if (numberField.getText().isEmpty()) {
+            messages.add("Specify the number of permitted subjects!");
+            valid = false;
+        } else {
+            try {
+                Long l = Long.valueOf(numberField.getText());
+                if (l < 0) {
+                    messages.add("Negative number for count was given!");
+                    valid = false;
+                }
+            } catch (Exception e) {
+                messages.add("Count entry could not be converted to a number!");
+                valid = false;
+            }
+        }
+        return valid;
     }
 }
