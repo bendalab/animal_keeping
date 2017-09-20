@@ -7,8 +7,6 @@ import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.EntityHelper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
@@ -17,7 +15,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.StringConverter;
-import org.hibernate.query.Query;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -186,9 +183,7 @@ public class AddSubjectsForm extends VBox {
         speciesComboBox.getItems().addAll(species);
         responsiblePersonCombo.getItems().addAll(persons);
         nameField = new TextField();
-        nameField.textProperty().addListener((observable, oldValue, newValue) -> {
-           createPreview();
-        });
+        nameField.textProperty().addListener((observable, oldValue, newValue) -> createPreview());
         Label heading = new Label("Add subjects:");
         heading.setFont(new Font(Font.getDefault().getFamily(), 16));
         this.getChildren().add(heading);
@@ -247,9 +242,7 @@ public class AddSubjectsForm extends VBox {
 
         grid.add(new Label("start index:"), 0, 9);
         grid.add(startIdSpinner, 1, 9, 2, 1);
-        startIdSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            createPreview();
-        });
+        startIdSpinner.valueProperty().addListener((observable, oldValue, newValue) -> createPreview());
 
         grid.add(new Label("(*) required"), 0, 10);
 
@@ -288,7 +281,7 @@ public class AddSubjectsForm extends VBox {
     }
 
     public Integer persistSubjects() {
-        Housing h = null;
+        Housing h;
         LocalDate hdate = housingDate.getValue();
         String d = hdate.toString();
         if (!validateTime(timeField.getText())) {
@@ -407,7 +400,7 @@ public class AddSubjectsForm extends VBox {
         params.add("name");
         Vector<Object> objects = new Vector<>();
         objects.add(firstName);
-        if (EntityHelper.getEntityList("From Subject where name like :name", params, objects, Subject.class) != null) {
+        if (EntityHelper.getEntityList("From Subject where name like :name", params, objects, Subject.class).size() > 0) {
             messages.add("Subject name is already used! Select another name pattern, or increase start index!");
             valid = false;
         }
