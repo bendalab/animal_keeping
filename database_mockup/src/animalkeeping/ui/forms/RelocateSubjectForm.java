@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 import java.util.prefs.Preferences;
 
 /******************************************************************************
@@ -210,6 +211,31 @@ public class RelocateSubjectForm extends VBox {
         prefs.put("relocation_comment", commentArea.getText());
     }
 
+
+    public boolean validate(Vector<String> messages) {
+        boolean valid = true;
+        if (subjectComboBox.getValue() == null) {
+            messages.add("Subject must not be empty!");
+            valid = false;
+        }
+        if (subjectComboBox.getValue() != null && subjectComboBox.getValue().getExitDate() != null) {
+            messages.add("Selected subject is not available in the lab!");
+            valid = false;
+        }
+        if (housingUnitCombo.getHousingUnit() == null) {
+            messages.add("You must select a destination housing unit!");
+            valid = false;
+        }
+        if (housingUnitCombo.getHousingUnit() != null && !housingUnitCombo.getHousingUnit().getHousingType().getCanHoldSubjects()) {
+            messages.add("The selected housing unit can not hold subjects!");
+            valid = false;
+        }
+        if (subjectComboBox.getValue()!= null && dp.getValue().isBefore(DateTimeHelper.toLocalDate(subjectComboBox.getValue().getImportDate()))) {
+            messages.add("Selected date is before subject import date!");
+            valid = false;
+        }
+        return valid;
+    }
 }
 
 
