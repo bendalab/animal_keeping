@@ -52,6 +52,7 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 
@@ -62,6 +63,7 @@ public class HousingUnitForm extends VBox {
     private HousingDropDown parentUnitComboBox;
     private ComboBox<HousingType> typeComboBox;
     private HousingUnit unit;
+    private boolean isEdit;
 
 
     public HousingUnitForm() {
@@ -69,11 +71,13 @@ public class HousingUnitForm extends VBox {
         this.setFillWidth(true);
         this.unit = new HousingUnit();
         init();
+        this.isEdit = false;
     }
 
     public HousingUnitForm(HousingUnit unit) {
         this();
         setHousingUnit(unit);
+        this.isEdit = unit != null;
     }
 
     private void init() {
@@ -205,13 +209,20 @@ public class HousingUnitForm extends VBox {
             messages.add("The type of the Housing unit must be specified, please select an existing, or create a new!");
             valid = false;
         }
-        if (!nameField.getText().isEmpty()) {
+        if (!nameField.getText().isEmpty() && !isEdit) {
             Vector<String> params = new Vector<>();
             params.add("name");
             Vector<Object> objects = new Vector<>();
             objects.add(nameField.getText());
             if (EntityHelper.getEntityList("From HousingUnit where name like :name", params, objects, HousingUnit.class).size() > 0) {
                 messages.add("HousingUnit name is already used! Select another name!");
+                valid = false;
+            }
+        }
+        if (parentUnitComboBox.getHousingUnit() != null) {
+            Set<HousingUnit> child_units = getHousingUnit().getChildHousingUnits(true);
+            if (child_units.contains(parentUnitComboBox.getHousingUnit())) {
+                messages.add("A Housing unit can not be child of it's own child units!");
                 valid = false;
             }
         }
