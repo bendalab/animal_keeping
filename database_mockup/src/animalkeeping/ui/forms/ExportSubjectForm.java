@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 import java.util.prefs.Preferences;
 
 /******************************************************************************
@@ -219,4 +220,19 @@ public class ExportSubjectForm extends VBox {
         prefs.put("export_comment", commentArea.getText());
     }
 
+    public boolean validate(Vector<String> messages) {
+        boolean valid = true;
+        if (subjectComboBox.getValue() == null) {
+            messages.add("Subject entry must not be empty!");
+            valid = false;
+        } else if (subjectComboBox.getValue().getExitDate() != null){
+            messages.add("Selected subject is no longer available!");
+            valid = false;
+        }
+        if (subjectComboBox.getValue() != null && dp.getValue().isBefore(DateTimeHelper.toLocalDate(subjectComboBox.getValue().getImportDate()))) {
+            messages.add("Export date is before import date of the selected subject!");
+            valid = false;
+        }
+        return valid;
+    }
 }
