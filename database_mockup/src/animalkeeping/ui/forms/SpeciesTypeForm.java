@@ -2,6 +2,7 @@ package animalkeeping.ui.forms;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.SpeciesType;
+import animalkeeping.util.EntityHelper;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
@@ -11,6 +12,8 @@ import javafx.scene.layout.VBox;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import java.util.Vector;
+
 import static animalkeeping.util.Dialogs.showInfo;
 
 
@@ -19,17 +22,19 @@ public class SpeciesTypeForm extends VBox {
     private Label idLabel;
     private TextField trivialField;
     private SpeciesType speciesType = null;
-
+    private boolean isEdit;
 
     public SpeciesTypeForm() {
         this.setFillWidth(true);
         this.init();
+        this.isEdit = false;
     }
 
     public SpeciesTypeForm(SpeciesType st) {
         this();
         this.speciesType = st;
         this.init(st);
+        this.isEdit = st != null;
     }
 
     private  void init(SpeciesType st) {
@@ -80,5 +85,25 @@ public class SpeciesTypeForm extends VBox {
             return speciesType;
         }
         return null;
+    }
+
+    public boolean validate(Vector<String> messages) {
+        boolean valid = true;
+        if (nameField.getText().isEmpty()) {
+            messages.add("Name must not be empty!");
+            valid = false;
+        } else {
+            if (!isEdit) {
+                Vector<String> params = new Vector<>();
+                params.add("name");
+                Vector<Object> objects = new Vector<>();
+                objects.add(nameField.getText());
+                if (EntityHelper.getEntityList("From SupplierType where name like :name", params, objects, SpeciesType.class).size() > 0) {
+                    messages.add("Name is already used! Select another name.");
+                    valid = false;
+                }
+            }
+        }
+        return valid;
     }
 }
