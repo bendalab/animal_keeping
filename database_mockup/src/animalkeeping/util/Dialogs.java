@@ -27,19 +27,19 @@ public class Dialogs {
         alert.show();
     }
 
-
     public static void showErrorMessages(String title, Vector<String> messages) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("ValidationError");
         alert.setHeaderText(title);
-        String messageText = "";
+        StringBuilder messageText = new StringBuilder();
+        int count = 1;
         for (String m : messages) {
-            messageText = messageText + m + "\n\n";
+            messageText.append(count).append(") ").append(m).append("\n\n");
+            count++;
         }
-        alert.setContentText(messageText);
+        alert.setContentText(messageText.toString());
         alert.show();
     }
-
 
     public static void importSubjectsDialog(HousingUnit unit) {
         AddSubjectsForm htd = new AddSubjectsForm(unit);
@@ -79,7 +79,6 @@ public class Dialogs {
         }
     }
 
-
     public static void batchTreatmentDialog(HousingUnit unit) {
         BatchTreatmentForm btf = new BatchTreatmentForm(unit);
         Dialog<List<Treatment>> dialog = new Dialog<>();
@@ -115,7 +114,6 @@ public class Dialogs {
         }
     }
 
-
     public static HousingType editHousingTypeDialog(HousingType type) {
         HousingTypeForm htd = new HousingTypeForm(type);
         Dialog<HousingType> dialog = new Dialog<>();
@@ -147,11 +145,9 @@ public class Dialogs {
         return result.orElse(null);
     }
 
-
     public static HousingUnit editHousingUnitDialog(HousingUnit unit) {
         return editHousingUnitDialog(unit, unit != null ? unit.getParentUnit() : null);
     }
-
 
     public static HousingUnit editHousingUnitDialog(HousingUnit unit, HousingUnit parent) {
         HousingUnitForm hud = new HousingUnitForm(unit);
@@ -187,7 +183,6 @@ public class Dialogs {
         Optional<HousingUnit> result = dialog.showAndWait();
         return result.orElse(null);
     }
-
 
     public static License editLicenseDialog(License l) {
         LicenseForm lf = new LicenseForm(l);
@@ -266,7 +261,6 @@ public class Dialogs {
         Optional<Quota> result = dialog.showAndWait();
         return result.orElse(null);
     }
-
 
     public static Pair<Date, Date> getDateInterval() {
         Label startLabel = new Label("Start date:");
@@ -408,7 +402,6 @@ public class Dialogs {
         return result.orElse(null);
     }
 
-
     public static SpeciesType editSpeciesTypeDialog(SpeciesType type) {
         SpeciesTypeForm std = new SpeciesTypeForm(type);
         Dialog<SpeciesType> dialog = new Dialog<>();
@@ -431,7 +424,6 @@ public class Dialogs {
         Optional<SpeciesType> result = dialog.showAndWait();
         return result.orElse(null);
     }
-
 
     public static SupplierType editSupplierTypeDialog(SupplierType type) {
         SupplierTypeForm std = new SupplierTypeForm(type);
@@ -527,12 +519,10 @@ public class Dialogs {
         return editTreatmentDialog(tf);
     }
 
-
     public static Treatment editTreatmentDialog(Subject subject) {
         TreatmentForm tf = new TreatmentForm(subject);
         return editTreatmentDialog(tf);
     }
-
 
     public static Treatment editTreatmentDialog(TreatmentType type) {
         TreatmentForm tf;
@@ -542,7 +532,6 @@ public class Dialogs {
             tf = new TreatmentForm(type);
         return editTreatmentDialog(tf);
     }
-
 
     public static Treatment editTreatmentDialog(TreatmentForm form) {
         Dialog<Treatment> dialog = new Dialog<>();
