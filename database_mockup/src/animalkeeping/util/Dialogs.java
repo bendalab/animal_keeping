@@ -515,6 +515,14 @@ public class Dialogs {
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
         TreatmentTypeForm finalTtf = ttf;
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!ttf.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return finalTtf.persistType();

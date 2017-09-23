@@ -14,6 +14,7 @@ import javafx.util.StringConverter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by jan on 04.03.17.
@@ -27,17 +28,20 @@ public class TreatmentTypeForm extends VBox {
     private CheckBox isFinalBox;
     private TreatmentType type;
     private Label idLabel;
+    private boolean isEdit;
 
     public TreatmentTypeForm() {
         super();
         this.setFillWidth(true);
         this.init();
+        this.isEdit = false;
     }
 
     public TreatmentTypeForm(TreatmentType t) {
         this();
         this.init(t);
         this.type = t;
+        this.isEdit = t != null;
     }
 
 
@@ -146,6 +150,26 @@ public class TreatmentTypeForm extends VBox {
             return type;
         }
         return null;
+    }
+
+    public boolean validate(Vector<String> messages) {
+        boolean valid = true;
+        if (nameField.getText().isEmpty()) {
+            messages.add("Name must not be empty!");
+            valid = false;
+        } else {
+            if (!isEdit) {
+                Vector<String> params = new Vector<>();
+                params.add("name");
+                Vector<Object> objects = new Vector<>();
+                objects.add(nameField.getText());
+                if (EntityHelper.getEntityList("From TreatmentType where name like :name", params, objects, TreatmentType.class).size() > 0) {
+                    messages.add("Name is already used! Select another name.");
+                    valid = false;
+                }
+            }
+        }
+        return valid;
     }
 }
 
