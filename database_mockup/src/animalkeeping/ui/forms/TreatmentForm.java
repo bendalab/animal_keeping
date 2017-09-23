@@ -227,30 +227,31 @@ public class TreatmentForm extends VBox {
 
         grid.add(new Label("end time:"), 0, 8);
         grid.add(endTimeField, 1, 8, 2, 1);
+        grid.add(new Label("(*required)"), 0, 9);
 
-        grid.add(new Separator(Orientation.HORIZONTAL), 0, 9, 3, 1);
+        grid.add(new Separator(Orientation.HORIZONTAL), 0, 10, 3, 1);
 
-        grid.add(new Label("comment title:"), 0, 10);
-        grid.add(commentNameField, 1, 10, 2, 1);
-        grid.add(new Label("comment:"), 0,11);
-        grid.add(commentArea, 0, 12, 3, 3);
-        grid.add(new Label("(*required)"), 0, 12);
+        grid.add(new Label("comment title:"), 0, 11);
+        grid.add(commentNameField, 1, 11, 2, 1);
+        grid.add(new Label("comment:"), 0,12);
+        grid.add(commentArea, 0, 13, 3, 3);
         this.getChildren().add(grid);
 
+        Preferences settings = Preferences.userNodeForPackage(FilterSettings.class);
         List<Person> persons;
-        if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
+        if (settings.getBoolean("app_settings_activePersonSelection", true)) {
             persons = EntityHelper.getEntityList("from Person where active = True", Person.class);
         } else {
             persons = EntityHelper.getEntityList("from Person", Person.class);
         }
         List<TreatmentType> types;
-        if (Main.getSettings().getBoolean("app_settings_validTreatmentsSelection", true)) {
+        if (settings.getBoolean("app_settings_validTreatmentsSelection", true)) {
             types = EntityHelper.getEntityList( "from TreatmentType where license_id is NULL OR license_id in (select id from License where end_date > CURDATE() or end_date is NULL)", TreatmentType.class);
         } else {
             types = EntityHelper.getEntityList("from TreatmentType", TreatmentType.class);
         }
         List<Subject> subjects;
-        if (Main.getSettings().getBoolean("app_settings_availableSubjectsSelection", true)) {
+        if (settings.getBoolean("app_settings_availableSubjectsSelection", true)) {
             subjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL", Subject.class);
         } else {
             subjects = EntityHelper.getEntityList("FROM Subject", Subject.class);
