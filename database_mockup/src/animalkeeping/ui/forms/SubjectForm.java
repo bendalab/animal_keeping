@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 import java.util.prefs.Preferences;
 
 import static animalkeeping.util.DateTimeHelper.getDateTime;
@@ -80,18 +81,20 @@ public class SubjectForm extends VBox {
     private Label idLabel;
     private Subject subject = null;
     private Preferences prefs;
-
+    private boolean isEdit;
 
     public SubjectForm() {
         this.setFillWidth(true);
         this.init();
+        this.isEdit = false;
     }
 
     public SubjectForm(Subject s) {
         this();
         this.subject = s;
-        this.init(s);
         applyPreferences();
+        this.init(s);
+        this.isEdit = s != null;
     }
 
     private  void init(Subject s) {
@@ -425,4 +428,54 @@ public class SubjectForm extends VBox {
         prefs.put("subject_importdate", importDate.getValue() != null ? importDate.getValue().toString() : "");
     }
 
+
+    public boolean validate(Vector<String> messages) {
+        boolean valid = true;
+        if (nameField.getText().isEmpty()) {
+            messages.add("Subject name must not be empty!");
+            valid = false;
+        } else {
+            if (!isEdit) {
+                Vector<String> params = new Vector<>();
+                params.add("name");
+                Vector<Object> objects = new Vector<>();
+                objects.add(nameField.getText());
+                if (EntityHelper.getEntityList("From Subject where name like :name", params, objects, Subject.class).size() > 0) {
+                    messages.add("Subject name is already used! Select another name.");
+                    valid = false;
+                }
+            }
+        }
+        if (importDate.getValue() == null) {
+            messages.add("An import date must be given!");
+            valid = false;
+        } else if (birthDate.getValue() != null && birthDate.getValue().isAfter(importDate.getValue())) {
+            messages.add("Import date is before subject birth date!");
+            valid = false;
+        }
+        if (speciesComboBox.getValue() == null) {
+            messages.add("Species information must be given!");
+            valid = false;
+        }
+        if (subjectTypeComboBox.getValue() == null) {
+            messages.add("Subject type must be given!");
+            valid = false;
+        }
+        if (supplierComboBox.getValue() == null) {
+            messages.add("Supplier information must be provided!");
+            valid = false;
+        }
+        if (housingUnitComboBox.getHousingUnit() == null) {
+            messages.add("A Housing unit must be selected!");
+            valid = false;
+        } else if (!housingUnitComboBox.getHousingUnit().getHousingType().getCanHoldSubjects()) {
+            messages.add("The selected housing unit can not hold subjects!");
+            valid = false;
+        }
+        if (personComboBox.getValue() != null && !personComboBox.getValue().getActive()) {
+            messages.add("The selected responsible person is marked inactive!");
+            valid = false;
+        }
+        return  valid;
+    }
 }

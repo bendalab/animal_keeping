@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="database_mockup" default="all">
-    <property name="version" value="0.5.5"/>
-    <property name="db_migration_state" value="0012-quotagender.sql"/>
+    <property name="version" value="0.5.6"/>
+    <property name="db_migration_state" value="0013-housingunits.sql"/>
     <property file="animalKeeping.properties"/>
 
     <!-- Uncomment the following property if no tests compilation is needed -->

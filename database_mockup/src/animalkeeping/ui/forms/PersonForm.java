@@ -2,6 +2,7 @@ package animalkeeping.ui.forms;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.Person;
+import animalkeeping.util.EntityHelper;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -9,6 +10,8 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+
+import java.util.Vector;
 
 /**
  * Created by jan on 02.03.17.
@@ -18,19 +21,22 @@ public class PersonForm extends VBox {
     private CheckBox activeCheckBox;
     private Label idLabel;
     private Person person = null;
+    private boolean isEdit;
 
     public PersonForm() {
         this.setFillWidth(true);
         this.init();
+        isEdit = false;
     }
 
     public PersonForm(Person p) {
         this();
         this.person = p;
         this.init(p);
+        isEdit = p != null;
     }
 
-    private  void init(Person p) {
+    private void init(Person p) {
         if (p == null) {
             return;
         }
@@ -92,5 +98,32 @@ public class PersonForm extends VBox {
         if (Communicator.pushSaveOrUpdate(person))
             return person;
         return null;
+    }
+
+    public boolean validate(Vector<String> messages) {
+        boolean valid = true;
+        if (firstnameField.getText().isEmpty()) {
+            messages.add("First name must not be empty!");
+            valid = false;
+        }
+        if (lastnameField.getText().isEmpty()) {
+            messages.add("Last name must not be empty!");
+            valid = false;
+        }
+        if (!firstnameField.getText().isEmpty() && !lastnameField.getText().isEmpty() && !isEdit) {
+            System.out.println("ping");
+            Vector<Object> args = new Vector<>();
+            args.add(firstnameField.getText());
+            args.add(lastnameField.getText());
+            Vector<String> params = new Vector<>();
+            params.add("firstName");
+            params.add("lastName");
+            if (EntityHelper.getEntityList("FROM Person WHERE firstName like :firstName AND lastName like :lastName",
+                                            params, args, Person.class).size() > 0) {
+                messages.add("A Person with this name already exists in the database!");
+                valid = false;
+            }
+        }
+        return valid;
     }
 }

@@ -1,5 +1,6 @@
 package animalkeeping.model;
 
+import animalkeeping.logging.ChangeLogInterface;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -9,10 +10,11 @@ import java.util.Set;
 /**
  * Created by jan on 28.12.16.
  */
-public class HousingType {
-    private Long id;
+public class HousingType extends Entity implements ChangeLogInterface {
     private String name;
     private String description;
+    private Boolean canHoldSubjects;
+    private Boolean canHaveChildUnits;
     private Set<HousingUnit> housingUnits =
             new HashSet<>(0);
 
@@ -21,14 +23,6 @@ public class HousingType {
     public HousingType(String name, String description) {
         this.name = name;
         this.description = description;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -45,6 +39,22 @@ public class HousingType {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getCanHoldSubjects() {
+        return canHoldSubjects;
+    }
+
+    public void setCanHoldSubjects(Boolean canHoldSubjects) {
+        this.canHoldSubjects = canHoldSubjects;
+    }
+
+    public Boolean getCanHaveChildUnits() {
+        return canHaveChildUnits;
+    }
+
+    public void setCanHaveChildUnits(Boolean canHaveChildUnits) {
+        this.canHaveChildUnits = canHaveChildUnits;
     }
 
     public Set<HousingUnit> getHousingUnits() {
@@ -80,9 +90,14 @@ public class HousingType {
     @Override
     public String toString() {
         return "HousingType{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 '}';
+    }
+
+    @Override
+    public String getType() {
+        return this.getClass().toString();
     }
 }

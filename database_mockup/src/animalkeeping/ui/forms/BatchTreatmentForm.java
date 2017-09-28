@@ -20,10 +20,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.prefs.Preferences;
 
 import static animalkeeping.util.Dialogs.editHousingUnitDialog;
@@ -295,6 +292,25 @@ public class BatchTreatmentForm extends VBox {
         prefs.put("batch_treatment_person", personComboBox.getValue().getId().toString());
         prefs.put("batch_treatment_startdate", treatmentStartDate.getValue().toString());
         prefs.put("batch_treatment_enddate", treatmentEndDate.getValue().toString());
+    }
+
+
+    public boolean validate(Vector<String> messages) {
+        boolean valid = true;
+        if (!housingUnitComboBox.getHousingUnit().getHousingType().getCanHoldSubjects()) {
+            messages.add("The selected housing unit can not hold subjects!");
+            valid = false;
+        }
+        if (housingUnitComboBox.getHousingUnit().getPopulation() == 0 &&
+                treatmentComboBox.getValue().getTarget() == TreatmentTarget.subject) {
+            messages.add("The selected housing unit does not hold any subjects!");
+            valid = false;
+        }
+        if (!personComboBox.getValue().getActive() && treatmentStartDate.getValue().isBefore(LocalDate.now().minusDays(7))) {
+            messages.add("The selected responsible person must not be marked inactive. Cross check with the person info.");
+            valid = false;
+        }
+        return valid;
     }
 }
 

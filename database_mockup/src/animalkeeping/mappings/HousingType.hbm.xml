@@ -11,6 +11,8 @@
         </id>
         <property name="name" type="string" column="name" not-null="true" unique="true"/>
         <property name="description" type="string" column="description" not-null="false"/>
+        <property name="canHaveChildUnits"  type="boolean" column="can_have_child_units" not-null="true"/>
+        <property name="canHoldSubjects"  type="boolean" column="can_hold_subjects" not-null="true"/>
         <set name="housingUnits" table="census_housingunits"
              inverse="true" lazy="true" fetch="select">
             <key>

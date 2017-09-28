@@ -19,7 +19,9 @@ import javafx.util.StringConverter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by jan on 19.04.17.
@@ -162,5 +164,36 @@ public class HousingForm extends VBox {
             return housing;
         }
         return null;
+    }
+
+    public boolean validate(Vector<String> messages) {
+        boolean valid = true;
+        if (subjectCombo.getValue() == null) {
+            messages.add("Subject can not be empty!");
+            valid = false;
+        }
+        if (endDate.getValue() != null && endDate.getValue().isBefore(startDate.getValue())) {
+            messages.add("End date can not be before start date!");
+            valid = false;
+        }
+        if (!unitCombo.getHousingUnit().getHousingType().getCanHoldSubjects()) {
+            messages.add("Selected housing unit can not hold subjects!");
+            valid = false;
+        }
+        if (endDate.getValue() != null && endDate.getValue().isEqual(startDate.getValue())) {
+            if (!endTimeField.getText().isEmpty()) {
+                SimpleDateFormat tf = new SimpleDateFormat("hh:mm:ss");
+                try {
+                    Date d = tf.parse(endTimeField.getText());
+                    Date d2 = tf.parse(startTimeField.getText());
+                    if (d.before(d2)) {
+                        messages.add("End time can not be before start time!");
+                    }
+                } catch (Exception ee) {
+                    ee.printStackTrace();
+                }
+            }
+        }
+        return valid;
     }
 }

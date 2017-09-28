@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 import java.util.prefs.Preferences;
 
 import static animalkeeping.util.DateTimeHelper.getDateTime;
@@ -38,6 +39,7 @@ public class TreatmentForm extends VBox {
     private TreatmentType type;
     private Label idLabel;
     private Preferences prefs;
+    private boolean isEdit;
 
 
     public TreatmentForm() {
@@ -47,16 +49,19 @@ public class TreatmentForm extends VBox {
         this.type = null;
         this.init();
         applyPreferences();
+        this.isEdit = false;
     }
 
     public TreatmentForm(Subject s) {
         this();
         setSubject(s);
+        this.isEdit = false;
     }
 
     public TreatmentForm(Treatment t) {
         this();
         this.setTreatment(t);
+        this.isEdit = t != null;
     }
 
     public TreatmentForm(TreatmentType type) {
@@ -227,30 +232,31 @@ public class TreatmentForm extends VBox {
 
         grid.add(new Label("end time:"), 0, 8);
         grid.add(endTimeField, 1, 8, 2, 1);
+        grid.add(new Label("(*required)"), 0, 9);
 
-        grid.add(new Separator(Orientation.HORIZONTAL), 0, 9, 3, 1);
+        grid.add(new Separator(Orientation.HORIZONTAL), 0, 10, 3, 1);
 
-        grid.add(new Label("comment title:"), 0, 10);
-        grid.add(commentNameField, 1, 10, 2, 1);
-        grid.add(new Label("comment:"), 0,11);
-        grid.add(commentArea, 0, 12, 3, 3);
-        grid.add(new Label("(*required)"), 0, 12);
+        grid.add(new Label("comment title:"), 0, 11);
+        grid.add(commentNameField, 1, 11, 2, 1);
+        grid.add(new Label("comment:"), 0,12);
+        grid.add(commentArea, 0, 13, 3, 3);
         this.getChildren().add(grid);
 
+        Preferences settings = Preferences.userNodeForPackage(FilterSettings.class);
         List<Person> persons;
-        if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
+        if (settings.getBoolean("app_settings_activePersonSelection", true)) {
             persons = EntityHelper.getEntityList("from Person where active = True", Person.class);
         } else {
             persons = EntityHelper.getEntityList("from Person", Person.class);
         }
         List<TreatmentType> types;
-        if (Main.getSettings().getBoolean("app_settings_validTreatmentsSelection", true)) {
+        if (settings.getBoolean("app_settings_validTreatmentsSelection", true)) {
             types = EntityHelper.getEntityList( "from TreatmentType where license_id is NULL OR license_id in (select id from License where end_date > CURDATE() or end_date is NULL)", TreatmentType.class);
         } else {
             types = EntityHelper.getEntityList("from TreatmentType", TreatmentType.class);
         }
         List<Subject> subjects;
-        if (Main.getSettings().getBoolean("app_settings_availableSubjectsSelection", true)) {
+        if (settings.getBoolean("app_settings_availableSubjectsSelection", true)) {
             subjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL", Subject.class);
         } else {
             subjects = EntityHelper.getEntityList("FROM Subject", Subject.class);
@@ -351,4 +357,49 @@ public class TreatmentForm extends VBox {
         prefs.putBoolean("treatment_immediate_end", immediateEnd.isSelected());
     }
 
+
+    public boolean validate(Vector<String> messages) {
+        boolean valid = true;
+        if (subjectComboBox.getValue() == null) {
+            messages.add("A subject must be selected!");
+            valid = false;
+        } else {
+            if (subjectComboBox.getValue().getExitDate() != null && startDate.getValue() != null &&
+                    subjectComboBox.getValue().getExitDate().before(DateTimeHelper.localDateToUtilDate(startDate.getValue())) ) {
+                messages.add("Subject is no longer available!");
+                valid = false;
+            }
+            if (startDate.getValue().isBefore(DateTimeHelper.toLocalDate(subjectComboBox.getValue().getImportDate()))) {
+                messages.add("Treatment date is before subject import date!");
+                valid = false;
+            }
+        }
+        if (typeComboBox.getValue() == null) {
+            messages.add("A Treatment type must be selected!");
+            valid = false;
+        } else {
+            if (!typeComboBox.getValue().isValid(DateTimeHelper.localDateToUtilDate(startDate.getValue()))) {
+                messages.add("License related to the selected treatment type is no longer valid!");
+                valid = false;
+            }
+        }
+        if (startDate.getValue() != null && endDate.getValue() != null) {
+            Date start = DateTimeHelper.getDateTime(startDate.getValue(), startTimeField.getText());
+            Date end = DateTimeHelper.getDateTime(endDate.getValue(), endTimeField.getText());
+            if (start.after(end)) {
+                messages.add("Strart date is after end date!");
+                valid = false;
+            }
+        }
+        if (personComboBox.getValue() == null) {
+            messages.add("A treating person must be selected!");
+            valid = false;
+        } else {
+            if (!personComboBox.getValue().getActive()) {
+                messages.add("The selected person is marked inactive!");
+                valid = false;
+            }
+        }
+        return valid;
+    }
 }

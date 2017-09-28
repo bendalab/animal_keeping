@@ -1,28 +1,22 @@
 package animalkeeping.util;
 
-import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
-import animalkeeping.ui.Main;
 import animalkeeping.ui.forms.*;
-import animalkeeping.ui.tables.HousingUnitTable;
 import animalkeeping.ui.widgets.HousingDropDown;
+import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.util.Callback;
 import javafx.util.Pair;
-import javafx.util.StringConverter;
-import org.hibernate.Session;
-
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Vector;
 
-import static animalkeeping.util.DateTimeHelper.getDateTime;
 
 public class Dialogs {
 
@@ -33,6 +27,19 @@ public class Dialogs {
         alert.show();
     }
 
+    public static void showErrorMessages(String title, Vector<String> messages) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("ValidationError");
+        alert.setHeaderText(title);
+        StringBuilder messageText = new StringBuilder();
+        int count = 1;
+        for (String m : messages) {
+            messageText.append(count).append(") ").append(m).append("\n\n");
+            count++;
+        }
+        alert.setContentText(messageText.toString());
+        alert.show();
+    }
 
     public static void importSubjectsDialog(HousingUnit unit) {
         AddSubjectsForm htd = new AddSubjectsForm(unit);
@@ -47,6 +54,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!htd.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return htd.persistSubjects();
@@ -64,7 +79,6 @@ public class Dialogs {
         }
     }
 
-
     public static void batchTreatmentDialog(HousingUnit unit) {
         BatchTreatmentForm btf = new BatchTreatmentForm(unit);
         Dialog<List<Treatment>> dialog = new Dialog<>();
@@ -79,6 +93,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!btf.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return btf.persist();
@@ -91,7 +113,6 @@ public class Dialogs {
             showInfo("Successfully created a batch treatment!");
         }
     }
-
 
     public static HousingType editHousingTypeDialog(HousingType type) {
         HousingTypeForm htd = new HousingTypeForm(type);
@@ -106,33 +127,27 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!htd.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
-                return htd.getHousingType();
+                return htd.persist();
             }
             return null;
         });
         Optional<HousingType> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return result.get();
-        }
-        return null;
+        return result.orElse(null);
     }
-
 
     public static HousingUnit editHousingUnitDialog(HousingUnit unit) {
         return editHousingUnitDialog(unit, unit != null ? unit.getParentUnit() : null);
     }
-
 
     public static HousingUnit editHousingUnitDialog(HousingUnit unit, HousingUnit parent) {
         HousingUnitForm hud = new HousingUnitForm(unit);
@@ -151,6 +166,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!hud.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return hud.persistHousingUnit();
@@ -160,7 +183,6 @@ public class Dialogs {
         Optional<HousingUnit> result = dialog.showAndWait();
         return result.orElse(null);
     }
-
 
     public static License editLicenseDialog(License l) {
         LicenseForm lf = new LicenseForm(l);
@@ -175,6 +197,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!lf.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return lf.persistLicense();
@@ -213,6 +243,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!qf.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return qf.persistQuota();
@@ -223,7 +261,6 @@ public class Dialogs {
         Optional<Quota> result = dialog.showAndWait();
         return result.orElse(null);
     }
-
 
     public static Pair<Date, Date> getDateInterval() {
         Label startLabel = new Label("Start date:");
@@ -355,6 +392,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!std.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return std.persistSubjectType();
@@ -362,22 +407,8 @@ public class Dialogs {
             return null;
         });
         Optional<SubjectType> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            try {
-                Session session = Main.sessionFactory.openSession();
-                session.beginTransaction();
-                session.saveOrUpdate(result.get());
-                session.getTransaction().commit();
-                session.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-            return result.get();
-        }
-        return null;
+        return result.orElse(null);
     }
-
 
     public static SpeciesType editSpeciesTypeDialog(SpeciesType type) {
         SpeciesTypeForm std = new SpeciesTypeForm(type);
@@ -392,6 +423,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!std.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return std.persistSpeciesType();
@@ -401,7 +440,6 @@ public class Dialogs {
         Optional<SpeciesType> result = dialog.showAndWait();
         return result.orElse(null);
     }
-
 
     public static SupplierType editSupplierTypeDialog(SupplierType type) {
         SupplierTypeForm std = new SupplierTypeForm(type);
@@ -416,6 +454,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!std.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return std.persistSupplierType();
@@ -439,6 +485,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!pf.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return pf.persistPerson();
@@ -469,6 +523,14 @@ public class Dialogs {
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
         TreatmentTypeForm finalTtf = ttf;
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!ttf.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return finalTtf.persistType();
@@ -489,12 +551,10 @@ public class Dialogs {
         return editTreatmentDialog(tf);
     }
 
-
     public static Treatment editTreatmentDialog(Subject subject) {
         TreatmentForm tf = new TreatmentForm(subject);
         return editTreatmentDialog(tf);
     }
-
 
     public static Treatment editTreatmentDialog(TreatmentType type) {
         TreatmentForm tf;
@@ -504,7 +564,6 @@ public class Dialogs {
             tf = new TreatmentForm(type);
         return editTreatmentDialog(tf);
     }
-
 
     public static Treatment editTreatmentDialog(TreatmentForm form) {
         Dialog<Treatment> dialog = new Dialog<>();
@@ -518,6 +577,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!form.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return form.persistTreatment();
@@ -543,7 +610,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
-
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!sf.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return sf.persistSubject();
@@ -607,6 +681,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!form.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return form.persistHousing();
@@ -631,6 +713,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!esf.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return esf.persist();
@@ -655,6 +745,14 @@ public class Dialogs {
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
+        final Button btOk = (Button) dialog.getDialogPane().lookupButton(buttonTypeOk);
+        btOk.addEventFilter(ActionEvent.ACTION, event -> {
+            Vector<String> messages = new Vector<>();
+            if (!rsf.validate(messages)) {
+                Dialogs.showErrorMessages("Input not valid.", messages);
+                event.consume();
+            }
+        });
         dialog.setResultConverter(b -> {
             if (b == buttonTypeOk) {
                 return rsf.persist();

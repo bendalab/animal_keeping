@@ -105,7 +105,6 @@ public class HousingUnit extends Entity implements ChangeLogInterface {
                 allHousings.addAll(child.getAllHousings(current));
             }
         }
-
         return allHousings;
     }
 
@@ -114,7 +113,19 @@ public class HousingUnit extends Entity implements ChangeLogInterface {
     }
 
     public Set<HousingUnit> getChildHousingUnits() {
-        return childHousingUnits;
+        return getChildHousingUnits(false);
+    }
+
+    public Set<HousingUnit> getChildHousingUnits(boolean recursive) {
+        if (!recursive) {
+            return childHousingUnits;
+        }
+        Set<HousingUnit> children = new HashSet<>();
+        children.addAll(childHousingUnits);
+        for (HousingUnit hu : childHousingUnits) {
+            children.addAll(hu.getChildHousingUnits(recursive));
+        }
+        return children;
     }
 
     public void setChildHousingUnits(Set<HousingUnit> childHousingUnits) {

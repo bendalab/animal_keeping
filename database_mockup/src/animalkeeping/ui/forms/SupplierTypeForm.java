@@ -2,6 +2,8 @@ package animalkeeping.ui.forms;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.SupplierType;
+import animalkeeping.model.TreatmentType;
+import animalkeeping.util.EntityHelper;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -12,6 +14,8 @@ import javafx.scene.layout.VBox;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import java.util.Vector;
+
 import static animalkeeping.util.Dialogs.showInfo;
 
 
@@ -20,17 +24,19 @@ public class SupplierTypeForm extends VBox {
     private Label idLabel;
     private TextArea addressArea;
     private SupplierType supplierType = null;
-
+    private boolean isEdit;
 
     public SupplierTypeForm() {
         this.setFillWidth(true);
         this.init();
+        this.isEdit = false;
     }
 
     public SupplierTypeForm(SupplierType st) {
         this();
         this.supplierType = st;
         this.init(st);
+        this.isEdit = st != null;
     }
 
     private  void init(SupplierType st) {
@@ -82,5 +88,25 @@ public class SupplierTypeForm extends VBox {
         }
 
         return null;
+    }
+
+    public boolean validate(Vector<String> messages) {
+        boolean valid = true;
+        if (nameField.getText().isEmpty()) {
+            messages.add("Name must not be empty!");
+            valid = false;
+        } else {
+            if (!isEdit) {
+                Vector<String> params = new Vector<>();
+                params.add("name");
+                Vector<Object> objects = new Vector<>();
+                objects.add(nameField.getText());
+                if (EntityHelper.getEntityList("From SupplierType where name like :name", params, objects, SupplierType.class).size() > 0) {
+                    messages.add("Name is already used! Select another name.");
+                    valid = false;
+                }
+            }
+        }
+        return valid;
     }
 }
