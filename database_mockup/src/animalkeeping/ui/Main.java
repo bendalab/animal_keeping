@@ -49,11 +49,12 @@ public class Main extends Application {
     private static Boolean connected = false;
     private static Stage primaryStage;
     private static ConnectionDetails connectionDetails = null;
-    protected final static MainViewController mainView = new MainViewController();
+    protected static MainViewController mainView;// = new MainViewController();
     private static Preferences appSettings = Preferences.userNodeForPackage(Main.class);
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        mainView = new MainViewController();
         Main.primaryStage = primaryStage;
         Main.primaryStage.setTitle("AnimalBase");
         Main.primaryStage.getProperties().put("hostServices", this.getHostServices());
