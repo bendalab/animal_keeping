@@ -136,6 +136,10 @@ public class QuickActions extends AbstractView implements Initializable {
     protected void newQuota() {
         Dialogs.editQuotaDialog(null, null);
     }
+
+    @FXML
+    protected void exportStockList() {Main.getMainView().exportStockList();}
+
     @Override
     public VBox getControls() {
         return null;
