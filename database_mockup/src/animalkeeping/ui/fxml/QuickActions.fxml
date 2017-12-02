@@ -12,7 +12,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-
 <HBox alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox alignment="CENTER">
@@ -133,12 +132,17 @@
                               </ImageView>
                            </children>
                         </HBox>
-                        <Label text="export stock list" textAlignment="CENTER">
+                        <Label onMouseClicked="#exportStockList" text="export stock list" textAlignment="CENTER">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </Label>
-                        <Label text="animal use report">
+                        <Label onMouseClicked="#animalUseReport" text="animal use report">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                        <Label onMouseClicked="#populationReport" text="population report">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>

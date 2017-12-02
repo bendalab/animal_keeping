@@ -52,7 +52,6 @@ import java.util.ResourceBundle;
 
 public class QuickActions extends AbstractView implements Initializable {
 
-
     public QuickActions() {
         URL url = Main.class.getResource("/animalkeeping/ui/fxml/QuickActions.fxml");
         FXMLLoader loader = new FXMLLoader();
@@ -136,6 +135,16 @@ public class QuickActions extends AbstractView implements Initializable {
     protected void newQuota() {
         Dialogs.editQuotaDialog(null, null);
     }
+
+    @FXML
+    protected void exportStockList() { Main.getMainView().exportStockList(); }
+
+    @FXML
+    protected void animalUseReport() { Main.getMainView().exportAnimalUse(); }
+
+    @FXML
+    protected void populationReport() { Main.getMainView().exportPopulation(); }
+
     @Override
     public VBox getControls() {
         return null;

@@ -530,7 +530,7 @@ public class MainViewController extends VBox implements Initializable{
     }
     */
 
-    private void exportPopulation() {
+    protected void exportPopulation() {
         final HousingUnit unit = Dialogs.selectHousingUnit();
         Task<Void> exportTask = new Task<Void>() {
             @Override
@@ -546,7 +546,7 @@ public class MainViewController extends VBox implements Initializable{
     }
 
 
-    private void exportAnimalUse() {
+    protected void exportAnimalUse() {
         final Pair<Date, Date> interval = Dialogs.getDateInterval();
         Task<Void> exportTask = new Task<Void>() {
             @Override
@@ -562,7 +562,7 @@ public class MainViewController extends VBox implements Initializable{
     }
 
 
-    private void exportStockList() {
+    protected void exportStockList() {
         final Pair<Date, Date> interval = Dialogs.getDateInterval();
         Task<Void> exportTask = new Task<Void>() {
             @Override
