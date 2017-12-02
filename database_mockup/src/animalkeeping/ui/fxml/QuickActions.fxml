@@ -137,7 +137,7 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </Label>
-                        <Label text="animal use report">
+                        <Label onMouseClicked="#animalUseReport" text="animal use report">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>

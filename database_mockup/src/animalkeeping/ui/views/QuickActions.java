@@ -138,7 +138,10 @@ public class QuickActions extends AbstractView implements Initializable {
     }
 
     @FXML
-    protected void exportStockList() {Main.getMainView().exportStockList();}
+    protected void exportStockList() { Main.getMainView().exportStockList(); }
+    
+    @FXML
+    protected void  animalUseReport() { Main.getMainView().exportAnimalUse(); }
 
     @Override
     public VBox getControls() {
