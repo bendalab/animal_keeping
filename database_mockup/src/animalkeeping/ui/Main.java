@@ -145,6 +145,10 @@ public class Main extends Application {
             cred.put("hibernate.connection.username", getUser());
             cred.put("hibernate.connection.password", getPasswd());
             cred.put("hibernate.connection.url", getHostUrl());
+            cred.put("hibernate.generate_statistics", "false");
+            cred.put("hibernate.show_sql", "false");
+            cred.put("hibernate.connection.pool_size", "1");
+            cred.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
             return  cred;
 		}
 

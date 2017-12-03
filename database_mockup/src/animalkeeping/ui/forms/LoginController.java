@@ -142,7 +142,8 @@ public class LoginController extends FlowPane implements Initializable{
 
         @Override
         protected Void call() throws Exception {
-            String host = "jdbc:mysql://" + hostField.getText() + "/" + databaseField.getText() + "?serverTimezone=UTC";
+            String host = "jdbc:mysql://" + hostField.getText() + "/" + databaseField.getText() + "?serverTimezone=UTC" +
+                    "&useSSL=false";
             Main.ConnectionDetails credentials = new Main.ConnectionDetails(userField.getText(), passwordField.getText(),
                     hostField.getText(), databaseField.getText(), host);
             Main.connectToDatabase(credentials);
