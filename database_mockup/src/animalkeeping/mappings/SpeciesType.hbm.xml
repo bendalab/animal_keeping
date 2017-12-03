@@ -11,10 +11,10 @@
         </id>
         <property name="name" type="string" column="name" not-null="true"/>
         <property name="trivial" type="string" column="trivial" not-null="false"/>
-        <property name="count" update="false" insert="false"
+        <property name="count" update="false" insert="false" lazy="true"
                   formula="(SELECT COUNT(*) FROM census_subject s, census_housing h WHERE s.species_id = id AND h.subject_id = s.id AND h.end_datetime IS NULL)"
                   type="integer"  />
-        <property name="allTimeCount" update="false" insert="false"
+        <property name="allTimeCount" update="false" insert="false" lazy="true"
                   formula="(SELECT COUNT(*) FROM census_subject s WHERE s.species_id = id)" type="integer" />
     </class>
 </hibernate-mapping>

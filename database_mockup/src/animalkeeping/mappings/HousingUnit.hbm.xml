@@ -5,7 +5,7 @@
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="animalkeeping.model">
-    <class name="HousingUnit" table="census_housingunit">
+    <class name="HousingUnit" table="census_housingunit" batch-size="50">
         <id name="id" column="id">
             <generator class="increment"/>
         </id>
@@ -15,8 +15,8 @@
         <property name="population" update="false" insert="false"
                   formula="(SELECT COUNT(*) FROM census_housing h WHERE h.type_id = id AND h.end_datetime IS NULL)"
                   type="integer" />
-        <many-to-one name="housingType" column="type_id" class="HousingType" not-null="true"/>
-        <many-to-one name="parentUnit" column="parent_unit_id" class="HousingUnit" not-null="false"/>
+        <many-to-one name="housingType" column="type_id" class="HousingType" not-null="true" fetch="join"/>
+        <many-to-one name="parentUnit" column="parent_unit_id" class="HousingUnit" not-null="false" fetch="join"/>
         <set name="housings" table="census_housing"
              inverse="true" lazy="true" fetch="select">
             <key>

@@ -22,32 +22,32 @@
         <many-to-one name="speciesType" column="species_id" class="SpeciesType" lazy="false" not-null="true" fetch="join"/>
         <many-to-one name="supplier" column="source_id" class="SupplierType" lazy="false" not-null="false" fetch="join"/>
         <set name="treatments" table="census_treatment" cascade="delete"
-             inverse="true" lazy="false" fetch="join" order-by="start_datetime asc">
+             inverse="true" lazy="true" fetch="join" order-by="start_datetime asc">
             <key>
                 <column name="subject_id" not-null="false" />
             </key>
             <one-to-many class="Treatment" />
         </set>
         <set name="housings" table="census_housing" cascade="save-update, delete"
-             inverse="true" lazy="false" fetch="join" order-by="start_datetime asc">
+             inverse="true" lazy="true" fetch="join" order-by="start_datetime asc">
             <key>
                 <column name="subject_id" not-null="true" />
             </key>
             <one-to-many class="Housing" />
         </set>
         <set name="notes" table="census_subjectnote" cascade="delete"
-             inverse="true" lazy="false" fetch="join" batch-size="20" order-by="date asc">
+             inverse="true" lazy="true" fetch="join" batch-size="20" order-by="date asc">
             <key>
                 <column name="subject_id" not-null="true" />
             </key>
             <one-to-many class="SubjectNote" />
         </set>
-        <property name="importDate" update="false" insert="false"
+        <property name="importDate" update="false" insert="false" lazy="true"
                   formula="(SELECT h.start_datetime FROM census_housing h WHERE h.subject_id = id ORDER BY h.start_datetime ASC LIMIT 1)"
                   type="timestamp" />
-        <property name="exitDate" update="false" insert="false"
+        <property name="exitDate" update="false" insert="false" lazy="true"
                   formula="(SELECT h.end_datetime FROM census_housing h WHERE h.subject_id = id ORDER BY h.start_datetime DESC LIMIT 1)"
                   type="timestamp" />
-        <many-to-one name="responsiblePerson" column="person_id" class="Person" not-null="false"/>
+        <many-to-one name="responsiblePerson" column="person_id" class="Person" not-null="false" lazy="no-proxy"/>
     </class>
 </hibernate-mapping>
