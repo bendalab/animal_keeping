@@ -225,7 +225,7 @@ public class SubjectsTable extends TableView<Subject> {
         Task<Void> refresh_task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                masterList.addAll(EntityHelper.getEntityList("from Subject", Subject.class));
+                masterList.addAll(EntityHelper.getEntityList("SELECT s from Subject s JOIN FETCH s.housings", Subject.class));
                 Thread.sleep(100);
                 return null;
             }
