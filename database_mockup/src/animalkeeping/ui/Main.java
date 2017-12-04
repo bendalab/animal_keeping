@@ -147,8 +147,10 @@ public class Main extends Application {
             cred.put("hibernate.connection.url", getHostUrl());
             cred.put("hibernate.generate_statistics", "false");
             cred.put("hibernate.show_sql", "false");
+            cred.put("hibernate.format_sql", "true");
             cred.put("hibernate.connection.pool_size", "1");
-            cred.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+            cred.put("hibernate.dialect", "org.hibernate.dialect.MySQLInnoDBDialect");
+            cred.put("hibernate.temp.use_jdbc_metadata_defaults", "false");
             return  cred;
 		}
 
