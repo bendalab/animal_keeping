@@ -2,7 +2,6 @@ package animalkeeping.ui.widgets;
 
 
 import animalkeeping.model.Treatment;
-import animalkeeping.ui.widgets.DateAxis;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,10 +15,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 public class TimelineController extends VBox implements Initializable {
 
@@ -59,7 +55,7 @@ public class TimelineController extends VBox implements Initializable {
     }
 
 
-    public void setTreatments(Set<Treatment> treatments) {
+    public void setTreatments(Collection<Treatment> treatments) {
         if (treatments == null) {
             timelineChart.setData(null);
             return;
