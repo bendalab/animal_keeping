@@ -14,7 +14,7 @@
         <property name="dimensions" type="string" column="dimensions" not-null="false"/>
         <property name="population" update="false" insert="false"
                   formula="(SELECT COUNT(*) FROM census_housing h WHERE h.type_id = id AND h.end_datetime IS NULL)"
-                  type="integer" />
+                  type="integer" lazy="true" />
         <many-to-one name="housingType" column="type_id" class="HousingType" not-null="true" fetch="join"/>
         <many-to-one name="parentUnit" column="parent_unit_id" class="HousingUnit" not-null="false" fetch="join"/>
         <set name="housings" table="census_housing"

@@ -18,9 +18,9 @@
                 <param name="useNamed">true</param>
             </type>
         </property>
-        <many-to-one name="subjectType" column="type_id" class="SubjectType" lazy="false" not-null="true" fetch="join"/>
-        <many-to-one name="speciesType" column="species_id" class="SpeciesType" lazy="false" not-null="true" fetch="join"/>
-        <many-to-one name="supplier" column="source_id" class="SupplierType" lazy="false" not-null="false" fetch="join"/>
+        <many-to-one name="subjectType" column="type_id" class="SubjectType" not-null="true" fetch="join"/>
+        <many-to-one name="speciesType" column="species_id" class="SpeciesType" not-null="true" fetch="join"/>
+        <many-to-one name="supplier" column="source_id" class="SupplierType" not-null="false" fetch="join"/>
         <set name="treatments" table="census_treatment" cascade="delete"
              inverse="true" lazy="true" fetch="join" order-by="start_datetime asc">
             <key>
@@ -48,6 +48,6 @@
         <property name="exitDate" update="false" insert="false" lazy="true"
                   formula="(SELECT h.end_datetime FROM census_housing h WHERE h.subject_id = id ORDER BY h.start_datetime DESC LIMIT 1)"
                   type="timestamp" />
-        <many-to-one name="responsiblePerson" column="person_id" class="Person" not-null="false" lazy="no-proxy"/>
+        <many-to-one name="responsiblePerson" column="person_id" class="Person" not-null="false"/>
     </class>
 </hibernate-mapping>
