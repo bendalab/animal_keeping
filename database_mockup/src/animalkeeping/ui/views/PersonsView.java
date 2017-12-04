@@ -37,6 +37,7 @@ package animalkeeping.ui.views;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.Person;
+import animalkeeping.model.Treatment;
 import animalkeeping.ui.widgets.ControlLabel;
 import animalkeeping.ui.Main;
 import animalkeeping.ui.widgets.TimelineController;
@@ -44,8 +45,11 @@ import animalkeeping.ui.tables.PersonsTable;
 import animalkeeping.ui.tables.TreatmentsTable;
 import animalkeeping.util.AddDatabaseUserDialog;
 import animalkeeping.util.Dialogs;
+import animalkeeping.util.EntityHelper;
 import animalkeeping.util.SuperUserDialog;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -166,8 +170,18 @@ public class PersonsView  extends AbstractView implements Initializable {
             emailLabel.setText(p.getEmail());
             usernameLabel.setText(p.getUser() != null ? p.getUser().getName() : "");
             userroleLabel.setText(p.getUser() != null ? p.getUser().getType().getName() : "");
-            treatmentsTable.setTreatments(p.getTreatments());
-            timeline.setTreatments(p.getTreatments());
+            Task<Void> refreshTask = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    Platform.runLater(() -> {
+                        List<Treatment> result = EntityHelper.getEntityList("SELECT t FROM Treatment t JOIN FETCH t.subject WHERE t.person.id = " + p.getId(), Treatment.class);
+                        treatmentsTable.setTreatments(result);
+                        timeline.setTreatments(result);
+                    });
+                    return null;
+                }
+            };
+            new Thread(refreshTask).start();
         } else {
             idLabel.setText("");
             firstnameLabel.setText("");
