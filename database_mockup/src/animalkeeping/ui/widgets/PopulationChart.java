@@ -123,9 +123,9 @@ public class PopulationChart extends VBox implements Initializable {
     void collectSubjects(Set<Subject> subjects, HousingUnit h, Boolean currentOnly, Boolean recursive) {
         List<Housing> l;
         if (currentOnly) {
-            l = EntityHelper.getEntityList("from Housing where end_datetime is null and type_id = " + h.getId(), Housing.class);
+            l = EntityHelper.getEntityList("SELECT h from Housing h JOIN FETCH h.subject where h.end is null and h.housing.id = " + h.getId(), Housing.class);
         } else {
-            l = EntityHelper.getEntityList("from Housing where type_id = " + h.getId(), Housing.class);
+            l = EntityHelper.getEntityList("SELECT h from Housing h JOIN FETCH h.subject where h.housing.id = " + h.getId(), Housing.class);
         }
         for (Housing hs : l) {
             subjects.add(hs.getSubject());
