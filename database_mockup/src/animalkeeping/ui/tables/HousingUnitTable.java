@@ -133,13 +133,14 @@ public class HousingUnitTable extends TreeTableView<HousingUnit> {
         Task<Void> refresh_task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                List<HousingUnit> housingUnits = EntityHelper.getEntityList("from HousingUnit where parentUnit is null", HousingUnit.class);
+                List<HousingUnit> housingUnits = EntityHelper.getEntityList("SELECT hu FROM HousingUnit hu JOIN FETCH hu.housingType " +
+                        "WHERE hu.parentUnit IS NULL", HousingUnit.class);
                 for (HousingUnit hu : housingUnits) {
                     TreeItem<HousingUnit> child = new TreeItem<>(hu);
                     root.getChildren().add(child);
                     fillRecursive(hu, child);
                 }
-                return  null;
+                return null;
             }
         };
         refresh_task.setOnSucceeded(event -> {

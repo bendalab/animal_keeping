@@ -190,9 +190,9 @@ public class HousingTable extends TableView<Housing>{
         } else if (this.housingUnit != null) {
             EntityHelper.refreshEntity(this.housingUnit);
             if (showCurrentOnly) {
-                setHousings(EntityHelper.getEntityList("From Housing where end_datetime is null and type_id = " + housingUnit.getId(), Housing.class));
+                setHousings(EntityHelper.getEntityList("SELECT h From Housing h JOIN FETCH h.subject s JOIN FETCH s.speciesType WHERE h.end is null AND h.housing.id = " + housingUnit.getId(), Housing.class));
             } else {
-                setHousings(EntityHelper.getEntityList("From Housing where end_datetime is null and type_id = " + housingUnit.getId(), Housing.class));
+                setHousings(EntityHelper.getEntityList("SELECT h From Housing h JOIN FETCH h.subject s JOIN FETCH s.speciesType WHERE h.housing.id = " + housingUnit.getId(), Housing.class));
             }
         } else {
             setHousings(EntityHelper.getEntityList("From Housing where end_datetime is null", Housing.class));

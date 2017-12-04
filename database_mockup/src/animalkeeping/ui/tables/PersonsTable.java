@@ -165,8 +165,8 @@ public class PersonsTable extends TableView<Person> {
             Person p = getSelectionModel().getSelectedItem();
             @Override
             protected Void call() throws Exception {
-                List<Person> result = EntityHelper.getEntityList("from Person", Person.class);
                 Platform.runLater(() -> {
+                    List<Person> result = EntityHelper.getEntityList("SELECT p FROM Person p LEFT JOIN FETCH p.user", Person.class);
                     masterList.clear();
                     masterList.addAll(result);
                     filteredList = new FilteredList<>(masterList, p -> true);
