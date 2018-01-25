@@ -24,13 +24,13 @@
                <children>
                   <TabPane fx:id="plotTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
-                      <Tab fx:id="populationTab" text="Overview" />
-                        <Tab fx:id="currentHousingTab" text="Current Population">
+                      <Tab fx:id="populationTab" closable="false" text="Overview" />
+                        <Tab fx:id="currentHousingTab" closable="false" text="Current Population">
                           <content>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                           </content>
                         </Tab>
-                      <Tab text="History" />
+                      <Tab closable="false" text="History" />
                     </tabs>
                   </TabPane>
                </children>

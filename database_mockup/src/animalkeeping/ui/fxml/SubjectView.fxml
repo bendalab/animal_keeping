@@ -23,7 +23,7 @@
          <children>
             <TabPane minHeight="200.0" prefHeight="259.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <tabs>
-                  <Tab text="Subject Info">
+                  <Tab closable="false" text="Subject Info">
                      <content>
                         <VBox maxHeight="-Infinity">
                            <children>

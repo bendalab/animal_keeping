@@ -20,7 +20,7 @@
          <children>
             <TabPane fx:id="tabPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <tabs>
-                  <Tab text="License info">
+                  <Tab closable="false" text="License info">
                      <content>
                         <VBox maxHeight="-Infinity" prefHeight="200.0">
                            <children>

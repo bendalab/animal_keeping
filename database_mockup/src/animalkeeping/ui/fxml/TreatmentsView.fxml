@@ -19,7 +19,7 @@
          <children>
             <TabPane fx:id="tabPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <tabs>
-                  <Tab text="Treatment type information">
+                  <Tab closable="false" text="Treatment type information">
                      <content>
                         <VBox maxHeight="-Infinity">
                            <children>
