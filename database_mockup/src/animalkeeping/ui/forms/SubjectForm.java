@@ -316,15 +316,15 @@ public class SubjectForm extends VBox {
 
         this.getChildren().add(grid);
 
-        List<SpeciesType> species= EntityHelper.getEntityList("from SpeciesType", SpeciesType.class);
-        List<SubjectType> types = EntityHelper.getEntityList("from SubjectType", SubjectType.class);
-        List<SupplierType> supplier = EntityHelper.getEntityList("from SupplierType", SupplierType.class);
+        List<SpeciesType> species= EntityHelper.getEntityList("from SpeciesType order by name asc", SpeciesType.class);
+        List<SubjectType> types = EntityHelper.getEntityList("from SubjectType order by name asc", SubjectType.class);
+        List<SupplierType> supplier = EntityHelper.getEntityList("from SupplierType order by name asc", SupplierType.class);
         List<Person> persons;
 
         if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
-            persons = EntityHelper.getEntityList("from Person where active = True", Person.class);
+            persons = EntityHelper.getEntityList("from Person where active = True order by lastName asc", Person.class);
         } else {
-            persons = EntityHelper.getEntityList("from Person", Person.class);
+            persons = EntityHelper.getEntityList("from Person order by lastName asc", Person.class);
         }
         Person p = new Person();
         persons.add(p);

@@ -170,15 +170,15 @@ public class AddSubjectsForm extends VBox {
         newPerson.setTooltip(new Tooltip("create a new person entry"));
         newPerson.setDisable(true);
 
-        List<SupplierType> supplier = EntityHelper.getEntityList("from SupplierType", SupplierType.class);
-        List<SpeciesType> species = EntityHelper.getEntityList("from SpeciesType", SpeciesType.class);
+        List<SupplierType> supplier = EntityHelper.getEntityList("from SupplierType order by name asc", SupplierType.class);
+        List<SpeciesType> species = EntityHelper.getEntityList("from SpeciesType order by name asc", SpeciesType.class);
         List<SubjectType> subjectTypes = EntityHelper.getEntityList("from SubjectType where name = 'animal'", SubjectType.class);
 
         List<Person> persons;
         if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
-            persons = EntityHelper.getEntityList("from Person where active = True", Person.class);
+            persons = EntityHelper.getEntityList("from Person where active = True order by lastName asc", Person.class);
         } else {
-            persons = EntityHelper.getEntityList("from Person", Person.class);
+            persons = EntityHelper.getEntityList("from Person order by lastName asc", Person.class);
         }
         Person p = new Person();
         persons.add(p);
