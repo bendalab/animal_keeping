@@ -134,7 +134,7 @@ public class HousingDropDown extends Button {
         final TreeItem<HousingUnit> root = new TreeItem<>();
         root.setExpanded(true);
         tree.setRoot(root);
-        List<HousingUnit> units = EntityHelper.getEntityList("from HousingUnit where parentUnit = null", HousingUnit.class);
+        List<HousingUnit> units = EntityHelper.getEntityList("from HousingUnit where parentUnit = null order by name asc", HousingUnit.class);
         for (HousingUnit hu : units) {
             TreeItem<HousingUnit> child = new TreeItem<>(hu);
 

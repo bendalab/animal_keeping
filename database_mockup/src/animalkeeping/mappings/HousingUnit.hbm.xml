@@ -25,7 +25,7 @@
             <one-to-many class="Housing" />
         </set>
         <set name="childHousingUnits" table="census_housingunit"
-             inverse="true" lazy="true" fetch="select">
+             inverse="true" lazy="true" fetch="select" order-by="name asc">
             <key>
                 <column name="parent_unit_id" not-null="false" />
             </key>
