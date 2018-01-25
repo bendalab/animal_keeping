@@ -131,6 +131,9 @@ public class AddSubjectsForm extends VBox {
         responsiblePersonCombo.setConverter(new StringConverter<Person>() {
             @Override
             public String toString(Person object) {
+                if (object.getId() == null) {
+                    return "None";
+                }
                 return (object.getFirstName() + " " + object.getLastName());
             }
 
@@ -177,6 +180,8 @@ public class AddSubjectsForm extends VBox {
         } else {
             persons = EntityHelper.getEntityList("from Person", Person.class);
         }
+        Person p = new Person();
+        persons.add(p);
 
         st = subjectTypes.get(0);
         supplierComboBox.getItems().addAll(supplier);
@@ -309,7 +314,7 @@ public class AddSubjectsForm extends VBox {
             s.setSpeciesType(speciesComboBox.getValue());
             s.setSupplier(supplierComboBox.getValue());
             s.setGender(Gender.unknown);
-            s.setResponsiblePerson(responsiblePersonCombo.getValue());
+            s.setResponsiblePerson(responsiblePersonCombo.getId() != null ? responsiblePersonCombo.getValue() : null);
             s.setSubjectType(st);
 
             h = new Housing(s, housingUnitCombo.getHousingUnit(), date);
@@ -355,7 +360,8 @@ public class AddSubjectsForm extends VBox {
         prefs.put("supplier", supplierComboBox.getValue().getId().toString());
         prefs.put("subject_name", nameField.getText());
         prefs.put("subject_count", ((Integer)(startIdSpinner.getValue() + countSpinner.getValue())).toString());
-        prefs.put("subject_person", responsiblePersonCombo.getValue().getId().toString());
+        prefs.put("subject_person", (responsiblePersonCombo.getValue() != null && responsiblePersonCombo.getValue().getId() != null)
+                ? responsiblePersonCombo.getValue().getId().toString() : "");
         prefs.put("subject_species", speciesComboBox.getValue().getId().toString());
         prefs.put("import_date", housingDate.getValue().toString());
     }
@@ -377,7 +383,8 @@ public class AddSubjectsForm extends VBox {
             messages.add("The Name must not be empty!");
             valid = false;
         }
-        if (responsiblePersonCombo.getValue() != null && !responsiblePersonCombo.getValue().getActive()) {
+        if (responsiblePersonCombo.getValue() != null && responsiblePersonCombo.getValue().getId() != null &&
+                !responsiblePersonCombo.getValue().getActive()) {
             if (!housingDate.getValue().isBefore(LocalDate.now().minusDays(7))) {
                 messages.add("The selected responsible person must not be marked inactive. Cross check with the person info.");
                 valid = false;
