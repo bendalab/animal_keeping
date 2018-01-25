@@ -98,7 +98,7 @@ public class SpeciesTypeForm extends VBox {
                 params.add("name");
                 Vector<Object> objects = new Vector<>();
                 objects.add(nameField.getText());
-                if (EntityHelper.getEntityList("From SupplierType where name like :name", params, objects, SpeciesType.class).size() > 0) {
+                if (EntityHelper.getEntityList("From SpeciesType where name like :name", params, objects, SpeciesType.class).size() > 0) {
                     messages.add("Name is already used! Select another name.");
                     valid = false;
                 }
