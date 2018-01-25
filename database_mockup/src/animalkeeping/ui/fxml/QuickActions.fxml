@@ -11,12 +11,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <HBox alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox alignment="CENTER">
          <children>
-            <GridPane alignment="TOP_CENTER" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="700.0" vgap="10.0" VBox.vgrow="ALWAYS">
+            <GridPane alignment="TOP_CENTER" hgap="15.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="700.0" vgap="15.0" VBox.vgrow="ALWAYS">
               <columnConstraints>
                 <ColumnConstraints maxWidth="-Infinity" prefWidth="256.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="256.0" />
@@ -30,8 +31,13 @@
                <children>
                   <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.rowIndex="1">
                      <children>
-                        <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
+                        <VBox alignment="TOP_CENTER">
                            <children>
+                              <Label text="Animal import/export" underline="true">
+                                 <font>
+                                    <Font size="19.0" />
+                                 </font>
+                              </Label>
                               <ImageView fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showHousingView" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../../resources/ak_subject_io_icon256.png" />
@@ -44,7 +50,7 @@
                                  </effect>
                               </ImageView>
                            </children>
-                        </HBox>
+                        </VBox>
                         <Label onMouseClicked="#importSubjects" text="import animals">
                            <cursor>
                               <Cursor fx:constant="HAND" />
@@ -59,8 +65,13 @@
                   </VBox>
                   <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="1">
                      <children>
-                        <HBox alignment="TOP_CENTER">
+                        <VBox alignment="TOP_CENTER">
                            <children>
+                              <Label text="Animal housing" underline="true">
+                                 <font>
+                                    <Font size="19.0" />
+                                 </font>
+                              </Label>
                               <ImageView fx:id="housingButton" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showHousingView" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../../resources/ak_housing_icon256.png" />
@@ -73,7 +84,7 @@
                                  </effect>
                               </ImageView>
                            </children>
-                        </HBox>
+                        </VBox>
                         <Label text="new housing unit" textAlignment="CENTER">
                            <cursor>
                               <Cursor fx:constant="HAND" />
@@ -88,8 +99,13 @@
                   </VBox>
                   <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <children>
-                        <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
+                        <VBox alignment="TOP_CENTER">
                            <children>
+                              <Label text="Licenses" underline="true">
+                                 <font>
+                                    <Font size="19.0" />
+                                 </font>
+                              </Label>
                               <ImageView fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showLicenseView" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../../resources/ak_license_icon256.png" />
@@ -102,7 +118,7 @@
                                  </effect>
                               </ImageView>
                            </children>
-                        </HBox>
+                        </VBox>
                         <Label onMouseClicked="#newLicense" text="new licence" textAlignment="CENTER">
                            <cursor>
                               <Cursor fx:constant="HAND" />
@@ -117,8 +133,13 @@
                   </VBox>
                   <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.rowIndex="2">
                      <children>
-                        <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
+                        <VBox alignment="TOP_CENTER">
                            <children>
+                              <Label text="Reporting" underline="true">
+                                 <font>
+                                    <Font size="19.0" />
+                                 </font>
+                              </Label>
                               <ImageView fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showInventoryView" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../../resources/ak_export_icon256.png" />
@@ -131,7 +152,7 @@
                                  </effect>
                               </ImageView>
                            </children>
-                        </HBox>
+                        </VBox>
                         <Label onMouseClicked="#exportStockList" text="export stock list" textAlignment="CENTER">
                            <cursor>
                               <Cursor fx:constant="HAND" />
@@ -151,8 +172,13 @@
                   </VBox>
                   <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
                      <children>
-                        <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
+                        <VBox alignment="TOP_CENTER">
                            <children>
+                              <Label text="Animals" underline="true">
+                                 <font>
+                                    <Font size="19.0" />
+                                 </font>
+                              </Label>
                               <ImageView fx:id="subjectButton" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showSubjectView" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../../resources/ak_subject_icon256.png" />
@@ -165,7 +191,7 @@
                                  </effect>
                               </ImageView>
                            </children>
-                        </HBox>
+                        </VBox>
                         <Label fx:id="newSubjectLabel" onMouseClicked="#newSubject" text="new subject" textAlignment="CENTER">
                            <cursor>
                               <Cursor fx:constant="HAND" />
@@ -180,8 +206,13 @@
                   </VBox>
                   <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="2">
                      <children>
-                        <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
+                        <VBox alignment="TOP_CENTER">
                            <children>
+                              <Label text="Treatments" underline="true">
+                                 <font>
+                                    <Font size="19.0" />
+                                 </font>
+                              </Label>
                               <ImageView fx:id="treatmentButton" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showTreatmentView" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../../resources/ak_treatment_icon256.png" />
@@ -194,7 +225,7 @@
                                  </effect>
                               </ImageView>
                            </children>
-                        </HBox>
+                        </VBox>
                         <Label onMouseClicked="#newTreatment" text="new treatment">
                            <cursor>
                               <Cursor fx:constant="HAND" />
@@ -210,8 +241,13 @@
                   </VBox>
                   <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
-                        <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
+                        <VBox alignment="TOP_CENTER">
                            <children>
+                              <Label text="Inventory" underline="true">
+                                 <font>
+                                    <Font size="19.0" />
+                                 </font>
+                              </Label>
                               <ImageView fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showInventoryView" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../../resources/ak_population_icon256.png" />
@@ -224,7 +260,7 @@
                                  </effect>
                               </ImageView>
                            </children>
-                        </HBox>
+                        </VBox>
                         <Label onMouseClicked="#showInventoryView" text="inventory overview">
                            <cursor>
                               <Cursor fx:constant="HAND" />
