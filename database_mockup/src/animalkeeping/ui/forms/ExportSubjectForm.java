@@ -188,9 +188,9 @@ public class ExportSubjectForm extends VBox {
 
 
     private void applyPreferences() {
-        if (!prefs.get("export_comment", "").isEmpty()) {
+        /*if (!prefs.get("export_comment", "").isEmpty()) {
             commentArea.setText(prefs.get("export_comment",""));
-        }
+        }*/
         if (!prefs.get("export_date", "").isEmpty()) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             try {
@@ -217,7 +217,7 @@ public class ExportSubjectForm extends VBox {
         prefs.put("export_date", dp.getValue().toString());
         prefs.put("export_time", tf.getText());
         prefs.put("export_person", personComboBox.getValue().getId().toString());
-        prefs.put("export_comment", commentArea.getText());
+        //prefs.put("export_comment", commentArea.getText());
     }
 
     public boolean validate(Vector<String> messages) {
