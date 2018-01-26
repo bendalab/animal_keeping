@@ -131,6 +131,9 @@ public class AddSubjectsForm extends VBox {
         responsiblePersonCombo.setConverter(new StringConverter<Person>() {
             @Override
             public String toString(Person object) {
+                if (object.getId() == null) {
+                    return "None";
+                }
                 return (object.getFirstName() + " " + object.getLastName());
             }
 
@@ -145,7 +148,7 @@ public class AddSubjectsForm extends VBox {
         }
         });
         housingDate = new DatePicker(LocalDate.now());
-        startIdSpinner = new Spinner<>(0, 9999, 0);
+        startIdSpinner = new Spinner<>(0, 9999, 1);
         countSpinner = new Spinner<>(0, 9999, 10);
         timeField = new SpecialTextField("##:##:##");
         timeField.setTooltip(new Tooltip("Import time use HH:mm:ss format"));
@@ -167,16 +170,18 @@ public class AddSubjectsForm extends VBox {
         newPerson.setTooltip(new Tooltip("create a new person entry"));
         newPerson.setDisable(true);
 
-        List<SupplierType> supplier = EntityHelper.getEntityList("from SupplierType", SupplierType.class);
-        List<SpeciesType> species = EntityHelper.getEntityList("from SpeciesType", SpeciesType.class);
+        List<SupplierType> supplier = EntityHelper.getEntityList("from SupplierType order by name asc", SupplierType.class);
+        List<SpeciesType> species = EntityHelper.getEntityList("from SpeciesType order by name asc", SpeciesType.class);
         List<SubjectType> subjectTypes = EntityHelper.getEntityList("from SubjectType where name = 'animal'", SubjectType.class);
 
         List<Person> persons;
         if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
-            persons = EntityHelper.getEntityList("from Person where active = True", Person.class);
+            persons = EntityHelper.getEntityList("from Person where active = True order by lastName asc", Person.class);
         } else {
-            persons = EntityHelper.getEntityList("from Person", Person.class);
+            persons = EntityHelper.getEntityList("from Person order by lastName asc", Person.class);
         }
+        Person p = new Person();
+        persons.add(p);
 
         st = subjectTypes.get(0);
         supplierComboBox.getItems().addAll(supplier);
@@ -309,7 +314,7 @@ public class AddSubjectsForm extends VBox {
             s.setSpeciesType(speciesComboBox.getValue());
             s.setSupplier(supplierComboBox.getValue());
             s.setGender(Gender.unknown);
-            s.setResponsiblePerson(responsiblePersonCombo.getValue());
+            s.setResponsiblePerson(responsiblePersonCombo.getId() != null ? responsiblePersonCombo.getValue() : null);
             s.setSubjectType(st);
 
             h = new Housing(s, housingUnitCombo.getHousingUnit(), date);
@@ -355,7 +360,8 @@ public class AddSubjectsForm extends VBox {
         prefs.put("supplier", supplierComboBox.getValue().getId().toString());
         prefs.put("subject_name", nameField.getText());
         prefs.put("subject_count", ((Integer)(startIdSpinner.getValue() + countSpinner.getValue())).toString());
-        prefs.put("subject_person", responsiblePersonCombo.getValue().getId().toString());
+        prefs.put("subject_person", (responsiblePersonCombo.getValue() != null && responsiblePersonCombo.getValue().getId() != null)
+                ? responsiblePersonCombo.getValue().getId().toString() : "");
         prefs.put("subject_species", speciesComboBox.getValue().getId().toString());
         prefs.put("import_date", housingDate.getValue().toString());
     }
@@ -377,7 +383,8 @@ public class AddSubjectsForm extends VBox {
             messages.add("The Name must not be empty!");
             valid = false;
         }
-        if (responsiblePersonCombo.getValue() != null && !responsiblePersonCombo.getValue().getActive()) {
+        if (responsiblePersonCombo.getValue() != null && responsiblePersonCombo.getValue().getId() != null &&
+                !responsiblePersonCombo.getValue().getActive()) {
             if (!housingDate.getValue().isBefore(LocalDate.now().minusDays(7))) {
                 messages.add("The selected responsible person must not be marked inactive. Cross check with the person info.");
                 valid = false;

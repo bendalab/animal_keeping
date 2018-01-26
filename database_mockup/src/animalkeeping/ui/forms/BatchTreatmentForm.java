@@ -106,15 +106,15 @@ public class BatchTreatmentForm extends VBox {
 
         List<Person> persons;
         if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
-            persons = EntityHelper.getEntityList("from Person where active = True", Person.class);
+            persons = EntityHelper.getEntityList("from Person where active = True order by lastName asc", Person.class);
         } else {
-            persons = EntityHelper.getEntityList("from Person", Person.class);
+            persons = EntityHelper.getEntityList("from Person order by lastName asc", Person.class);
         }
         List<TreatmentType> types;
         if (Main.getSettings().getBoolean("app_settings_validTreatmentsSelection", true)) {
-            types = EntityHelper.getEntityList( "from TreatmentType where license_id is NULL OR license_id in (select id from License where end_date > CURDATE() or end_date is NULL)", TreatmentType.class);
+            types = EntityHelper.getEntityList( "from TreatmentType where license_id is NULL OR license_id in (select id from License where end_date > CURDATE() or end_date is NULL) order by name asc", TreatmentType.class);
         } else {
-           types = EntityHelper.getEntityList("from TreatmentType", TreatmentType.class);
+           types = EntityHelper.getEntityList("from TreatmentType order by name asc", TreatmentType.class);
         }
 
         personComboBox.getItems().addAll(persons);

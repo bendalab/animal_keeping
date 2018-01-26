@@ -3,6 +3,7 @@ package animalkeeping.ui.forms;
 import animalkeeping.model.Entity;
 import animalkeeping.model.Note;
 import animalkeeping.model.Person;
+import animalkeeping.ui.Main;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.EntityHelper;
@@ -113,8 +114,12 @@ public abstract class NotesFrom<T extends Note, E extends Entity> extends VBox {
         grid.add(commentArea, 0, 6, 2, 4);
 
         this.getChildren().add(grid);
-
-        List<Person> persons = EntityHelper.getEntityList("From Person", Person.class);
+        List<Person> persons;
+        if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
+            persons = EntityHelper.getEntityList("from Person where active = True order by lastName asc", Person.class);
+        } else {
+            persons = EntityHelper.getEntityList("from Person order by lastName asc", Person.class);
+        }
         personComboBox.getItems().addAll(persons);
     }
 

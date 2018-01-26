@@ -7,6 +7,8 @@ import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -131,8 +133,24 @@ public class TreatmentForm extends VBox {
         });
         startDate = new DatePicker();
         startDate.setValue(LocalDate.now());
+        startDate.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if (!newValue && immediateEnd.isSelected()) {
+                    endDate.setValue(startDate.getValue());
+                }
+            }
+        });
         startTimeField = new SpecialTextField("##:##:##");
         startTimeField.setText(timeFormat.format(new Date()));
+        startTimeField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if (!newValue && immediateEnd.isSelected()) {
+                    endTimeField.setText(startTimeField.getText());
+                }
+            }
+        });
         endDate = new DatePicker();
         endTimeField = new SpecialTextField("##:##:##");
         endDate.setOnAction(event -> endTimeField.setText(timeFormat.format(new Date())));
@@ -145,8 +163,10 @@ public class TreatmentForm extends VBox {
         immediateEnd.setOnAction(event -> {
             endDate.setDisable(immediateEnd.isSelected());
             endTimeField.setDisable(immediateEnd.isSelected());
-            endDate.setValue(startDate.getValue());
-            endTimeField.setText(startTimeField.getText());
+            if (immediateEnd.isSelected()) {
+                endDate.setValue(startDate.getValue());
+                endTimeField.setText(startTimeField.getText());
+            }
         });
 
         Button newTypeButton = new Button("+");
@@ -154,7 +174,7 @@ public class TreatmentForm extends VBox {
         newTypeButton.setOnAction(event -> {
             TreatmentType treatmentType = Dialogs.editTreatmentTypeDialog(null);
             if (treatmentType != null) {
-                List<TreatmentType> types = EntityHelper.getEntityList("From TreatmentType", TreatmentType.class);
+                List<TreatmentType> types = EntityHelper.getEntityList("From TreatmentType order by name asc", TreatmentType.class);
                 typeComboBox.getItems().clear();
                 typeComboBox.getItems().addAll(types);
                 typeComboBox.getSelectionModel().select(treatmentType);
@@ -165,7 +185,7 @@ public class TreatmentForm extends VBox {
         newPersonButton.setOnAction(event -> {
             Person p = Dialogs.editPersonDialog(null);
             if (p != null) {
-                List<Person> persons = EntityHelper.getEntityList("From Person", Person.class);
+                List<Person> persons = EntityHelper.getEntityList("From Person order by name asc", Person.class);
                 personComboBox.getItems().clear();
                 personComboBox.getItems().addAll(persons);
                 personComboBox.getSelectionModel().select(p);
@@ -176,7 +196,7 @@ public class TreatmentForm extends VBox {
         newSubjectButton.setOnAction(event -> {
             Subject s = Dialogs.editSubjectDialog(null);
             if(s != null) {
-                List<Subject> subjects = EntityHelper.getEntityList("From Subject", Subject.class);
+                List<Subject> subjects = EntityHelper.getEntityList("From Subject order by name asc", Subject.class);
                 subjectComboBox.getItems().clear();
                 subjectComboBox.getItems().addAll(subjects);
                 subjectComboBox.getSelectionModel().select(s);
@@ -245,21 +265,21 @@ public class TreatmentForm extends VBox {
         Preferences settings = Preferences.userNodeForPackage(FilterSettings.class);
         List<Person> persons;
         if (settings.getBoolean("app_settings_activePersonSelection", true)) {
-            persons = EntityHelper.getEntityList("from Person where active = True", Person.class);
+            persons = EntityHelper.getEntityList("from Person where active = True order by lastName asc", Person.class);
         } else {
-            persons = EntityHelper.getEntityList("from Person", Person.class);
+            persons = EntityHelper.getEntityList("from Person order by lastName asc", Person.class);
         }
         List<TreatmentType> types;
         if (settings.getBoolean("app_settings_validTreatmentsSelection", true)) {
-            types = EntityHelper.getEntityList( "from TreatmentType where license_id is NULL OR license_id in (select id from License where end_date > CURDATE() or end_date is NULL)", TreatmentType.class);
+            types = EntityHelper.getEntityList( "from TreatmentType where license_id is NULL OR license_id in (select id from License where end_date > CURDATE() or end_date is NULL) order by name asc", TreatmentType.class);
         } else {
-            types = EntityHelper.getEntityList("from TreatmentType", TreatmentType.class);
+            types = EntityHelper.getEntityList("from TreatmentType order by name asc", TreatmentType.class);
         }
         List<Subject> subjects;
         if (settings.getBoolean("app_settings_availableSubjectsSelection", true)) {
-            subjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL", Subject.class);
+            subjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL order by name asc", Subject.class);
         } else {
-            subjects = EntityHelper.getEntityList("FROM Subject", Subject.class);
+            subjects = EntityHelper.getEntityList("FROM Subject order by name asc", Subject.class);
         }
         typeComboBox.getItems().addAll(types);
         personComboBox.getItems().addAll(persons);

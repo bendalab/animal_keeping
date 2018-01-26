@@ -164,7 +164,7 @@ public class HousingView extends AbstractView implements Initializable {
         });
         controls.getChildren().add(deleteUnitLabel);
 
-        exportPopulationLabel = new ControlLabel("export population", "Export the current population as an excel spreadsheet.", true);
+        exportPopulationLabel = new ControlLabel("population report", "Export the current population as an excel spreadsheet.", true);
         exportPopulationLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
                 exportPopulation();

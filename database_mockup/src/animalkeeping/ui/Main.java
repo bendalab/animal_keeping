@@ -63,8 +63,8 @@ public class Main extends Application {
         mainView.prefWidthProperty().bind(primaryStage.widthProperty());
         Scene scene = new Scene(mainView);
         primaryStage.setScene(scene);
-        primaryStage.setWidth(1024);
-        primaryStage.setHeight(768);
+        primaryStage.setWidth(1280);
+        primaryStage.setHeight(800);
         primaryStage.show();
     }
 

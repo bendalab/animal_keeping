@@ -181,7 +181,11 @@ public class SubjectForm extends VBox {
         personComboBox.setConverter(new StringConverter<Person>() {
             @Override
             public String toString(Person object) {
-                return (object.getFirstName() + " " + object.getLastName());
+                if (object.getId() == null) {
+                    return "None";
+                } else {
+                    return (object.getFirstName() + " " + object.getLastName());
+                }
             }
 
             @Override
@@ -312,16 +316,19 @@ public class SubjectForm extends VBox {
 
         this.getChildren().add(grid);
 
-        List<SpeciesType> species= EntityHelper.getEntityList("from SpeciesType", SpeciesType.class);
-        List<SubjectType> types = EntityHelper.getEntityList("from SubjectType", SubjectType.class);
-        List<SupplierType> supplier = EntityHelper.getEntityList("from SupplierType", SupplierType.class);
+        List<SpeciesType> species= EntityHelper.getEntityList("from SpeciesType order by name asc", SpeciesType.class);
+        List<SubjectType> types = EntityHelper.getEntityList("from SubjectType order by name asc", SubjectType.class);
+        List<SupplierType> supplier = EntityHelper.getEntityList("from SupplierType order by name asc", SupplierType.class);
         List<Person> persons;
 
         if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
-            persons = EntityHelper.getEntityList("from Person where active = True", Person.class);
+            persons = EntityHelper.getEntityList("from Person where active = True order by lastName asc", Person.class);
         } else {
-            persons = EntityHelper.getEntityList("from Person", Person.class);
+            persons = EntityHelper.getEntityList("from Person order by lastName asc", Person.class);
         }
+        Person p = new Person();
+        persons.add(p);
+
         subjectTypeComboBox.getItems().addAll(types);
         subjectTypeComboBox.getSelectionModel().select(0);
         supplierComboBox.getItems().addAll(supplier);
@@ -349,7 +356,8 @@ public class SubjectForm extends VBox {
         subject.setSupplier(supplierComboBox.getValue());
         subject.setSubjectType(subjectTypeComboBox.getValue());
         subject.setGender(genderComboBox.getValue());
-        subject.setResponsiblePerson(personComboBox.getValue());
+        subject.setResponsiblePerson((personComboBox.getValue() != null && personComboBox.getValue().getId() != null) ?
+                personComboBox.getValue() : null);
         subject.setBirthday(birthDate.getValue() != null ? localDateToUtilDate(birthDate.getValue()) : null);
         Housing h;
         if (subject.getHousings().iterator().hasNext()) {
@@ -419,7 +427,8 @@ public class SubjectForm extends VBox {
 
     private void storePreferences() {
         prefs.put("subject_gender", genderComboBox.getValue().toString());
-        prefs.put("subject_person", personComboBox.getValue().getId().toString());
+        prefs.put("subject_person", (personComboBox.getValue() != null && personComboBox.getValue().getId() != null) ?
+                personComboBox.getValue().getId().toString() : "");
         prefs.put("subject_supplier", supplierComboBox.getValue().getId().toString());
         prefs.put("subject_type", subjectTypeComboBox.getValue().getId().toString());
         prefs.put("subject_species", speciesComboBox.getValue().getId().toString());
@@ -472,7 +481,8 @@ public class SubjectForm extends VBox {
             messages.add("The selected housing unit can not hold subjects!");
             valid = false;
         }
-        if (personComboBox.getValue() != null && !personComboBox.getValue().getActive()) {
+        if ((personComboBox.getValue() != null) && (personComboBox.getValue().getId() != null) &&
+                !personComboBox.getValue().getActive()) {
             messages.add("The selected responsible person is marked inactive!");
             valid = false;
         }

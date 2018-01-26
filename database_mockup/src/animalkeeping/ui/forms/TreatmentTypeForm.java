@@ -69,7 +69,10 @@ public class TreatmentTypeForm extends VBox {
         licenseComboBox.setConverter(new StringConverter<License>() {
             @Override
             public String toString(License object) {
-                return object.getName();
+                if (object.getId() == null)
+                    return "None";
+                else
+                    return object.getName();
             }
 
             @Override
@@ -126,13 +129,16 @@ public class TreatmentTypeForm extends VBox {
 
         this.getChildren().add(grid);
 
-        List<License> licenses = EntityHelper.getEntityList("from License", License.class);
+        List<License> licenses = EntityHelper.getEntityList("from License order by name asc", License.class);
+        License l = new License();
+        licenses.add(l);
         licenseComboBox.getItems().addAll(licenses);
 
         List<TreatmentTarget> targets = new ArrayList<>(2);
         targets.add(TreatmentTarget.subject);
         targets.add(TreatmentTarget.housing);
         targetComboBox.getItems().addAll(targets);
+        targetComboBox.getSelectionModel().select(TreatmentTarget.subject);
     }
 
     public TreatmentType persistType() {
@@ -144,7 +150,8 @@ public class TreatmentTypeForm extends VBox {
         type.setFinalExperiment(isFinalBox.isSelected());
         type.setTarget(targetComboBox.getValue());
         type.setDescription(descriptionArea.getText());
-        type.setLicense(licenseComboBox.getValue());
+        type.setLicense((licenseComboBox.getValue()!= null && licenseComboBox.getValue().getId() != null) ?
+                licenseComboBox.getValue() : null);
 
         if (Communicator.pushSaveOrUpdate(type)) {
             return type;
@@ -168,6 +175,10 @@ public class TreatmentTypeForm extends VBox {
                     valid = false;
                 }
             }
+        }
+        if (targetComboBox.getValue() == null) {
+            messages.add("Treatment target must not be empty!");
+            valid = false;
         }
         return valid;
     }
