@@ -148,7 +148,7 @@ public class AddSubjectsForm extends VBox {
         }
         });
         housingDate = new DatePicker(LocalDate.now());
-        startIdSpinner = new Spinner<>(0, 9999, 0);
+        startIdSpinner = new Spinner<>(0, 9999, 1);
         countSpinner = new Spinner<>(0, 9999, 10);
         timeField = new SpecialTextField("##:##:##");
         timeField.setTooltip(new Tooltip("Import time use HH:mm:ss format"));
