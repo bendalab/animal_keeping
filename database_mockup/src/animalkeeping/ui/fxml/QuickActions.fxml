@@ -37,6 +37,9 @@
                                  <font>
                                     <Font size="19.0" />
                                  </font>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Label>
                               <ImageView fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showHousingView" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -71,6 +74,9 @@
                                  <font>
                                     <Font size="19.0" />
                                  </font>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Label>
                               <ImageView fx:id="housingButton" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showHousingView" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -105,6 +111,9 @@
                                  <font>
                                     <Font size="19.0" />
                                  </font>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Label>
                               <ImageView fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showLicenseView" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -139,6 +148,9 @@
                                  <font>
                                     <Font size="19.0" />
                                  </font>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Label>
                               <ImageView fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showInventoryView" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -178,6 +190,9 @@
                                  <font>
                                     <Font size="19.0" />
                                  </font>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Label>
                               <ImageView fx:id="subjectButton" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showSubjectView" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -212,6 +227,9 @@
                                  <font>
                                     <Font size="19.0" />
                                  </font>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Label>
                               <ImageView fx:id="treatmentButton" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showTreatmentView" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -247,6 +265,9 @@
                                  <font>
                                     <Font size="19.0" />
                                  </font>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Label>
                               <ImageView fitHeight="150.0" fitWidth="200.0" focusTraversable="true" onMouseClicked="#showInventoryView" pickOnBounds="true" preserveRatio="true">
                                  <image>
