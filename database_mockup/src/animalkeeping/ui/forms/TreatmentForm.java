@@ -7,6 +7,8 @@ import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -131,8 +133,24 @@ public class TreatmentForm extends VBox {
         });
         startDate = new DatePicker();
         startDate.setValue(LocalDate.now());
+        startDate.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if (!newValue && immediateEnd.isSelected()) {
+                    endDate.setValue(startDate.getValue());
+                }
+            }
+        });
         startTimeField = new SpecialTextField("##:##:##");
         startTimeField.setText(timeFormat.format(new Date()));
+        startTimeField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if (!newValue && immediateEnd.isSelected()) {
+                    endTimeField.setText(startTimeField.getText());
+                }
+            }
+        });
         endDate = new DatePicker();
         endTimeField = new SpecialTextField("##:##:##");
         endDate.setOnAction(event -> endTimeField.setText(timeFormat.format(new Date())));
@@ -145,8 +163,10 @@ public class TreatmentForm extends VBox {
         immediateEnd.setOnAction(event -> {
             endDate.setDisable(immediateEnd.isSelected());
             endTimeField.setDisable(immediateEnd.isSelected());
-            endDate.setValue(startDate.getValue());
-            endTimeField.setText(startTimeField.getText());
+            if (immediateEnd.isSelected()) {
+                endDate.setValue(startDate.getValue());
+                endTimeField.setText(startTimeField.getText());
+            }
         });
 
         Button newTypeButton = new Button("+");
