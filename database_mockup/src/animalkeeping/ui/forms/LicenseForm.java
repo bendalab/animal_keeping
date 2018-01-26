@@ -121,7 +121,10 @@ public class LicenseForm extends VBox {
         deputyPersonCombo.setConverter(new StringConverter<Person>() {
             @Override
             public String toString(Person object) {
-                return object.getLastName() + ", " + object.getFirstName();
+                if (object.getId() == null)
+                    return "None";
+                else
+                    return object.getLastName() + ", " + object.getFirstName();
             }
 
             @Override
@@ -198,7 +201,10 @@ public class LicenseForm extends VBox {
             persons = EntityHelper.getEntityList("from Person order by lastName asc", Person.class);
         }
         respPersonCombo.getItems().addAll(persons);
-        deputyPersonCombo.getItems().addAll(persons);
+        List<Person> persons_copy = new ArrayList<>(persons);
+        Person p = new Person();
+        persons_copy.add(p);
+        deputyPersonCombo.getItems().addAll(persons_copy);
     }
 
 
@@ -212,7 +218,8 @@ public class LicenseForm extends VBox {
         license.setAgency(agencyField.getText());
         license.setNumber(fileNoField.getText().isEmpty() ? null : fileNoField.getText());
         license.setResponsiblePerson(respPersonCombo.getValue());
-        license.setDeputy(deputyPersonCombo.getValue());
+        license.setDeputy((deputyPersonCombo.getValue() != null && deputyPersonCombo.getValue().getId() != null ) ?
+                deputyPersonCombo.getValue() : null);
         license.setStartDate(sd);
         license.setEndDate(ed);
 
@@ -241,7 +248,7 @@ public class LicenseForm extends VBox {
                 valid = false;
             }
         }
-        if (deputyPersonCombo.getValue() != null && !isEdit && !deputyPersonCombo.getValue().getActive()) {
+        if (deputyPersonCombo.getValue() != null && deputyPersonCombo.getValue().getId() != null && !isEdit && !deputyPersonCombo.getValue().getActive()) {
             messages.add("Selected deputy person is marked inactive!");
             valid = false;
         }
