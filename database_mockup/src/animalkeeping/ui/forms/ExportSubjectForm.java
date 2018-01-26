@@ -106,9 +106,9 @@ public class ExportSubjectForm extends VBox {
         });
         List<Person> persons;
         if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
-            persons = EntityHelper.getEntityList("from Person where active = True", Person.class);
+            persons = EntityHelper.getEntityList("from Person where active = True order by lastName asc", Person.class);
         } else {
-            persons = EntityHelper.getEntityList("from Person", Person.class);
+            persons = EntityHelper.getEntityList("from Person order by lastName asc", Person.class);
         }
         personComboBox.getItems().addAll(persons);
 
@@ -126,9 +126,9 @@ public class ExportSubjectForm extends VBox {
         });
         List<Subject> subjects;
         if (Main.getSettings().getBoolean("app_settings_availableSubjectsSelection", true)) {
-            subjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL", Subject.class);
+            subjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL order by s.name asc", Subject.class);
         } else {
-            subjects = EntityHelper.getEntityList("FROM Subject", Subject.class);
+            subjects = EntityHelper.getEntityList("FROM Subject order by name asc", Subject.class);
         }
         subjectComboBox.getItems().addAll(subjects);
 

@@ -121,9 +121,9 @@ public class HousingForm extends VBox {
 
         List<Subject> subjects;
         if (Main.getSettings().getBoolean("app_settings_availableSubjectsSelection", true)) {
-            subjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL", Subject.class);
+            subjects = EntityHelper.getEntityList("SELECT s FROM Subject s, Housing h WHERE h.subject = s and h.end IS NULL order by s.name asc", Subject.class);
         } else {
-            subjects = EntityHelper.getEntityList("FROM Subject", Subject.class);
+            subjects = EntityHelper.getEntityList("FROM Subject order by name asc", Subject.class);
         }
         subjectCombo.getItems().addAll(subjects);
     }

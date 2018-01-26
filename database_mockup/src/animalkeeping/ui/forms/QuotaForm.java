@@ -111,7 +111,7 @@ public class QuotaForm extends VBox {
             public void handle(ActionEvent event) {
                 SpeciesType st = Dialogs.editSpeciesTypeDialog(null);
                 if (st != null) {
-                    List<SpeciesType> species = EntityHelper.getEntityList("From SpeciesType", SpeciesType.class);
+                    List<SpeciesType> species = EntityHelper.getEntityList("From SpeciesType order by name asc", SpeciesType.class);
                     speciesCombo.getItems().clear();
                     speciesCombo.getItems().addAll(species);
                     speciesCombo.getSelectionModel().select(st);
@@ -152,13 +152,13 @@ public class QuotaForm extends VBox {
 
         this.getChildren().add(grid);
 
-        List<SpeciesType> species = EntityHelper.getEntityList("From SpeciesType", SpeciesType.class);
+        List<SpeciesType> species = EntityHelper.getEntityList("From SpeciesType order by name asc", SpeciesType.class);
 
         List<License> licenses;
         if (Main.getSettings().getBoolean("app_settings_validLicensesSelection", true)) {
-            licenses = EntityHelper.getEntityList("from License where end_date > CURDATE()", License.class);
+            licenses = EntityHelper.getEntityList("from License where end_date > CURDATE() order by name asc", License.class);
         } else {
-            licenses = EntityHelper.getEntityList("from License", License.class);
+            licenses = EntityHelper.getEntityList("from License order by name asc", License.class);
         }
 
         speciesCombo.getItems().addAll(species);

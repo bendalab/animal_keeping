@@ -117,7 +117,7 @@ public class HousingUnitForm extends VBox {
                 return null;
             }
         });
-        List<HousingType> housingTypes = EntityHelper.getEntityList("from HousingType", HousingType.class);
+        List<HousingType> housingTypes = EntityHelper.getEntityList("from HousingType order by name asc", HousingType.class);
         typeComboBox.getItems().addAll(housingTypes);
 
         GridPane grid = new GridPane();

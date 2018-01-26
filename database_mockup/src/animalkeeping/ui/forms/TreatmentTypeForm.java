@@ -126,7 +126,7 @@ public class TreatmentTypeForm extends VBox {
 
         this.getChildren().add(grid);
 
-        List<License> licenses = EntityHelper.getEntityList("from License", License.class);
+        List<License> licenses = EntityHelper.getEntityList("from License order by name asc", License.class);
         licenseComboBox.getItems().addAll(licenses);
 
         List<TreatmentTarget> targets = new ArrayList<>(2);

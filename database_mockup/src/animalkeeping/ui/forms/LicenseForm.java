@@ -193,9 +193,9 @@ public class LicenseForm extends VBox {
 
         List<Person> persons;
         if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
-            persons = EntityHelper.getEntityList("from Person where active = True", Person.class);
+            persons = EntityHelper.getEntityList("from Person where active = True order by lastName asc", Person.class);
         } else {
-            persons = EntityHelper.getEntityList("from Person", Person.class);
+            persons = EntityHelper.getEntityList("from Person order by lastName asc", Person.class);
         }
         respPersonCombo.getItems().addAll(persons);
         deputyPersonCombo.getItems().addAll(persons);
