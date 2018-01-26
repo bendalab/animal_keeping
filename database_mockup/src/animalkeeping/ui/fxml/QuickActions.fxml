@@ -33,7 +33,7 @@
                      <children>
                         <VBox alignment="TOP_CENTER">
                            <children>
-                              <Label text="Animal import/export" underline="true">
+                              <Label onMouseClicked="#showHousingView" text="Animal import/export" underline="true">
                                  <font>
                                     <Font size="19.0" />
                                  </font>
@@ -67,7 +67,7 @@
                      <children>
                         <VBox alignment="TOP_CENTER">
                            <children>
-                              <Label text="Animal housing" underline="true">
+                              <Label onMouseClicked="#showHousingView" text="Animal housing" underline="true">
                                  <font>
                                     <Font size="19.0" />
                                  </font>
@@ -101,7 +101,7 @@
                      <children>
                         <VBox alignment="TOP_CENTER">
                            <children>
-                              <Label text="Licenses" underline="true">
+                              <Label onMouseClicked="#showLicenseView" text="Licenses" underline="true">
                                  <font>
                                     <Font size="19.0" />
                                  </font>
@@ -135,7 +135,7 @@
                      <children>
                         <VBox alignment="TOP_CENTER">
                            <children>
-                              <Label text="Reporting" underline="true">
+                              <Label onMouseClicked="#showInventoryView" text="Reporting" underline="true">
                                  <font>
                                     <Font size="19.0" />
                                  </font>
@@ -174,7 +174,7 @@
                      <children>
                         <VBox alignment="TOP_CENTER">
                            <children>
-                              <Label text="Animals" underline="true">
+                              <Label onMouseClicked="#showSubjectView" text="Animals" underline="true">
                                  <font>
                                     <Font size="19.0" />
                                  </font>
@@ -208,7 +208,7 @@
                      <children>
                         <VBox alignment="TOP_CENTER">
                            <children>
-                              <Label text="Treatments" underline="true">
+                              <Label onMouseClicked="#showTreatmentView" text="Treatments" underline="true">
                                  <font>
                                     <Font size="19.0" />
                                  </font>
@@ -243,7 +243,7 @@
                      <children>
                         <VBox alignment="TOP_CENTER">
                            <children>
-                              <Label text="Inventory" underline="true">
+                              <Label onMouseClicked="#showInventoryView" text="Inventory" underline="true">
                                  <font>
                                     <Font size="19.0" />
                                  </font>
