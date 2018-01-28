@@ -629,16 +629,16 @@ public class Dialogs {
     }
 
     public static SubjectNote editSubjectNoteDialog(SubjectNote note, Subject subject) {
-        SubjectNotesForm snf = new SubjectNotesForm(note, subject);
+        SubjectNoteForm snf = new SubjectNoteForm(note, subject);
         return editSubjectNoteDialog(snf);
     }
 
     public static SubjectNote editSubjectNoteDialog(Subject subject) {
-        SubjectNotesForm snf = new SubjectNotesForm(subject);
+        SubjectNoteForm snf = new SubjectNoteForm(subject);
         return editSubjectNoteDialog(snf);
     }
 
-    public static SubjectNote editSubjectNoteDialog(SubjectNotesForm snf) {
+    public static SubjectNote editSubjectNoteDialog(SubjectNoteForm snf) {
         if (snf == null) {
             return null;
         }

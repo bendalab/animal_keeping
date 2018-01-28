@@ -11,15 +11,15 @@ import static animalkeeping.util.DateTimeHelper.getDateTime;
 /**
  * Created by grewe on 2/15/17.
  */
-public class SubjectNotesForm extends NotesFrom<SubjectNote, Subject> {
+public class SubjectNoteForm extends NoteFrom<SubjectNote, Subject> {
 
 
-    public SubjectNotesForm(Subject s) {
+    public SubjectNoteForm(Subject s) {
         super(s);
 
     }
 
-    public SubjectNotesForm(SubjectNote sn, Subject s) {
+    public SubjectNoteForm(SubjectNote sn, Subject s) {
         super(sn, s);
     }
 

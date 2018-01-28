@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public abstract class NotesFrom<T extends Note, E extends Entity> extends VBox {
+public abstract class NoteFrom<T extends Note, E extends Entity> extends VBox {
     protected E entity;
     protected T note_entity;
     protected TextField nameField;
@@ -31,12 +31,12 @@ public abstract class NotesFrom<T extends Note, E extends Entity> extends VBox {
     private Label idLabel;
     protected TextArea commentArea;
 
-    NotesFrom(E entity){
+    NoteFrom(E entity){
         init();
         this.entity = entity;
     }
 
-    NotesFrom(T note, E entity) {
+    NoteFrom(T note, E entity) {
         this(entity);
         this.note_entity = note;
         set_defaults();
