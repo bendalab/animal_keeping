@@ -157,9 +157,11 @@ public class LicenseForm extends VBox {
         ColumnConstraints column3 = new ColumnConstraints(30, 30, Double.MAX_VALUE);
         column3.setHgrow(Priority.NEVER);
         grid.getColumnConstraints().addAll(column1, column2, column3);
+
         respPersonCombo.prefWidthProperty().bind(column2.maxWidthProperty());
         deputyPersonCombo.prefWidthProperty().bind(column2.maxWidthProperty());
         startDate.prefWidthProperty().bind(column2.maxWidthProperty());
+        endDate.prefWidthProperty().bind(column2.maxWidthProperty());
         fileNoField.prefWidthProperty().bind(column2.maxWidthProperty());
         nameField.prefWidthProperty().bind(column2.maxWidthProperty());
         agencyField.prefWidthProperty().bind(column2.maxWidthProperty());

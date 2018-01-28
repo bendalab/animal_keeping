@@ -96,7 +96,7 @@ public abstract class NotesFrom<T extends Note, E extends Entity> extends VBox {
         grid.setVgap(5);
         grid.setHgap(2);
         grid.add(new Label("ID:"), 0, 0);
-        grid.add(idLabel, 0, 0);
+        grid.add(idLabel, 1, 0);
 
         grid.add(new Label("name:"), 0,1);
         grid.add(nameField, 1,1, 1, 1);

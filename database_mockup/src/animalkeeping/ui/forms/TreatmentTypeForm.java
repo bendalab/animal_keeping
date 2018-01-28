@@ -101,6 +101,7 @@ public class TreatmentTypeForm extends VBox {
         column2.setHgrow(Priority.ALWAYS);
         grid.getColumnConstraints().addAll(column1, column2);
 
+        targetComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         licenseComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         nameField.prefWidthProperty().bind(column2.maxWidthProperty());
         invasiveBox.prefWidthProperty().bind(column2.maxWidthProperty());

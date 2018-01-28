@@ -83,6 +83,7 @@ public class HousingForm extends VBox {
         ColumnConstraints column3 = new ColumnConstraints(30, 30, Double.MAX_VALUE);
         column3.setHgrow(Priority.NEVER);
         grid.getColumnConstraints().addAll(column1, column2, column3);
+
         subjectCombo.prefWidthProperty().bind(column2.maxWidthProperty());
         unitCombo.prefWidthProperty().bind(column2.maxWidthProperty());
         startDate.prefWidthProperty().bind(column2.maxWidthProperty());
@@ -106,10 +107,10 @@ public class HousingForm extends VBox {
         grid.add(startDate, 1, 3, 2, 1);
 
         grid.add(new Label("from time:"), 0, 4);
-        grid.add(startTimeField, 1, 4, 1, 1 );
+        grid.add(startTimeField, 1, 4, 2, 1 );
 
         grid.add(new Label("end date:"), 0, 5);
-        grid.add(endDate, 1, 5, 1, 1 );
+        grid.add(endDate, 1, 5, 2, 1 );
         //grid.add(newPersonButton2, 2, 5, 1, 1);
 
         grid.add(new Label("end time:"), 0, 6);
