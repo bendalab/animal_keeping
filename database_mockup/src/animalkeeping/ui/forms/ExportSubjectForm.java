@@ -140,6 +140,8 @@ public class ExportSubjectForm extends VBox {
         ColumnConstraints column2 = new ColumnConstraints(100, 150, Double.MAX_VALUE);
         column2.setHgrow(Priority.ALWAYS);
         grid.getColumnConstraints().addAll(column1, column2);
+
+        subjectComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         dp.prefWidthProperty().bind(column2.maxWidthProperty());
         tf.prefWidthProperty().bind(column2.maxWidthProperty());
         personComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
