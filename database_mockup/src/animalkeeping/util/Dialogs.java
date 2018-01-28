@@ -45,9 +45,9 @@ public class Dialogs {
         AddSubjectsForm htd = new AddSubjectsForm(unit);
         Dialog<Integer> dialog = new Dialog<>();
         dialog.setTitle("Import subjects");
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(htd);
-        dialog.setWidth(300);
+        dialog.setWidth(400);
         htd.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -84,9 +84,9 @@ public class Dialogs {
         Dialog<List<Treatment>> dialog = new Dialog<>();
 
         dialog.setTitle("Batch Treatment");
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(btf);
-        dialog.setWidth(300);
+        dialog.setWidth(400);
         btf.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -118,9 +118,9 @@ public class Dialogs {
         HousingTypeForm htd = new HousingTypeForm(type);
         Dialog<HousingType> dialog = new Dialog<>();
         dialog.setTitle("Housing type");
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(htd);
-        dialog.setWidth(300);
+        dialog.setWidth(350);
         htd.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -156,10 +156,10 @@ public class Dialogs {
         }
         Dialog<HousingUnit> dialog = new Dialog<>();
         dialog.setTitle("Housing unit");
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(hud);
         hud.prefWidthProperty().bind(dialog.widthProperty());
-        dialog.setWidth(200);
+        dialog.setWidth(400);
         dialog.setHeight(500);
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -188,9 +188,9 @@ public class Dialogs {
         LicenseForm lf = new LicenseForm(l);
         Dialog<License> dialog = new Dialog<>();
         dialog.setTitle("Add/Edit licence... ");
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(lf);
-        dialog.setWidth(200);
+        dialog.setWidth(400);
         lf.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -234,9 +234,9 @@ public class Dialogs {
             qf = new QuotaForm();
         Dialog<Quota> dialog = new Dialog<>();
         dialog.setTitle("Add/Edit quota ... ");
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(qf);
-        dialog.setWidth(200);
+        dialog.setWidth(400);
         qf.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -288,9 +288,9 @@ public class Dialogs {
 
         Dialog<Pair<Date, Date>> dialog = new Dialog<>();
         dialog.setTitle("Specify a time interval ... ");
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(grid);
-        dialog.setWidth(100);
+        dialog.setWidth(300);
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -353,9 +353,9 @@ public class Dialogs {
 
         Dialog<Pair<Date, Date>> dialog = new Dialog<>();
         dialog.setTitle("Specify a time interval ... ");
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(grid);
-        dialog.setWidth(100);
+        dialog.setWidth(300);
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
         ButtonType buttonTypeCancel = new ButtonType("cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -414,9 +414,9 @@ public class Dialogs {
         SpeciesTypeForm std = new SpeciesTypeForm(type);
         Dialog<SpeciesType> dialog = new Dialog<>();
         dialog.setTitle("Species type");
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(std);
-        dialog.setWidth(200);
+        dialog.setWidth(350);
         std.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -476,9 +476,9 @@ public class Dialogs {
         PersonForm pf = new PersonForm(person);
         Dialog<Person> dialog = new Dialog<>();
         dialog.setTitle("Create/edit person...");
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(pf);
-        dialog.setWidth(300);
+        dialog.setWidth(400);
         pf.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -513,9 +513,9 @@ public class Dialogs {
             ttf = new TreatmentTypeForm(type);
         Dialog<TreatmentType> dialog = new Dialog<>();
         dialog.setTitle("Create/edit treatment type...");
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(ttf);
-        dialog.setWidth(300);
+        dialog.setWidth(350);
         ttf.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -568,9 +568,9 @@ public class Dialogs {
     public static Treatment editTreatmentDialog(TreatmentForm form) {
         Dialog<Treatment> dialog = new Dialog<>();
         dialog.setTitle("Create/edit treatment ...");
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(form);
-        dialog.setWidth(350);
+        dialog.setWidth(400);
         form.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -600,9 +600,9 @@ public class Dialogs {
 
         Dialog<Subject> dialog = new Dialog<>();
         dialog.setTitle("Add/edit subject ...");
-        dialog.setHeight(200);
+        dialog.setHeight(300);
         dialog.setWidth(400);
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(sf);
         sf.prefWidthProperty().bind(dialog.widthProperty());
 
@@ -644,9 +644,9 @@ public class Dialogs {
         }
         Dialog<SubjectNote> dialog = new Dialog<>();
         dialog.setTitle("Add/edit note ...");
-        dialog.setHeight(300);
+        dialog.setHeight(400);
         dialog.setWidth(400);
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(snf);
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -672,9 +672,9 @@ public class Dialogs {
 
         Dialog<Housing> dialog = new Dialog<>();
         dialog.setTitle("Create/edit housing ...");
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(form);
-        dialog.setWidth(300);
+        dialog.setWidth(400);
         form.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);
@@ -704,7 +704,7 @@ public class Dialogs {
 
         Dialog<Subject> dialog = new Dialog<>();
         dialog.setTitle("Remove subject from stock ...");
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(esf);
         dialog.setWidth(300);
         esf.prefWidthProperty().bind(dialog.widthProperty());
@@ -736,7 +736,7 @@ public class Dialogs {
 
         Dialog<Subject> dialog = new Dialog<>();
         dialog.setTitle("Relocate subject ...");
-        dialog.setResizable(true);
+        dialog.setResizable(false);
         dialog.getDialogPane().setContent(rsf);
         dialog.setWidth(300);
         rsf.prefWidthProperty().bind(dialog.widthProperty());
