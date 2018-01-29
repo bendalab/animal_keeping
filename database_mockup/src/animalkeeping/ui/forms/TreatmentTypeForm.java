@@ -41,7 +41,7 @@ public class TreatmentTypeForm extends VBox {
         this();
         this.init(t);
         this.type = t;
-        this.isEdit = t != null;
+        this.isEdit = (t != null) && (t.getId() != null);
     }
 
 

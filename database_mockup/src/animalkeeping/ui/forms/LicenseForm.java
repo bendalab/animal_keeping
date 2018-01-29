@@ -80,7 +80,7 @@ public class LicenseForm extends VBox {
         this();
         this.license = l;
         this.init(l);
-        this.isEdit = l != null;
+        this.isEdit = (l != null) && (l.getId() != null);
     }
 
     private  void init(License l) {

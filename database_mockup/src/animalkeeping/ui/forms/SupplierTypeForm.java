@@ -36,7 +36,7 @@ public class SupplierTypeForm extends VBox {
         this();
         this.supplierType = st;
         this.init(st);
-        this.isEdit = st != null;
+        this.isEdit = (st != null) && (st.getId() !=null);
     }
 
     private  void init(SupplierType st) {
