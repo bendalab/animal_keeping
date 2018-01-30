@@ -69,6 +69,7 @@ import static animalkeeping.util.Dialogs.editHousingUnitDialog;
 public class AddSubjectsForm extends VBox {
     private HousingDropDown housingUnitCombo;
     private ComboBox<Person> responsiblePersonCombo;
+    private ComboBox<SubjectType> subjectTypeComboBox;
     private ComboBox<SpeciesType> speciesComboBox;
     private ComboBox<SupplierType> supplierComboBox;
     private DatePicker housingDate;
@@ -147,6 +148,18 @@ public class AddSubjectsForm extends VBox {
                responsiblePersonCombo.getSelectionModel().select(null);
         }
         });
+        subjectTypeComboBox = new ComboBox<>();
+        subjectTypeComboBox.setConverter(new StringConverter<SubjectType>() {
+            @Override
+            public String toString(SubjectType object) {
+                return object.getName();
+            }
+
+            @Override
+            public SubjectType fromString(String string) {
+                return null;
+            }
+        });
         housingDate = new DatePicker(LocalDate.now());
         startIdSpinner = new Spinner<>(0, 9999, 1);
         countSpinner = new Spinner<>(0, 9999, 10);
@@ -161,6 +174,10 @@ public class AddSubjectsForm extends VBox {
         Button newSpecies = new Button("+");
         newSpecies.setTooltip(new Tooltip("create a new species entry"));
         newSpecies.setDisable(true);
+        
+        Button newSubjectType = new Button("+");
+        newSubjectType.setTooltip(new Tooltip("create a new subject type entry"));
+        newSubjectType.setDisable(true);
 
         Button newSupplier = new Button("+");
         newSupplier.setTooltip(new Tooltip("create a new supplier entry"));
@@ -172,8 +189,7 @@ public class AddSubjectsForm extends VBox {
 
         List<SupplierType> supplier = EntityHelper.getEntityList("from SupplierType order by name asc", SupplierType.class);
         List<SpeciesType> species = EntityHelper.getEntityList("from SpeciesType order by name asc", SpeciesType.class);
-        List<SubjectType> subjectTypes = EntityHelper.getEntityList("from SubjectType where name = 'animal'", SubjectType.class);
-
+        List<SubjectType> subjectTypes = EntityHelper.getEntityList("from SubjectType order by name asc", SubjectType.class);
         List<Person> persons;
         if (Main.getSettings().getBoolean("app_settings_activePersonSelection", true)) {
             persons = EntityHelper.getEntityList("from Person where active = True order by lastName asc", Person.class);
@@ -183,7 +199,7 @@ public class AddSubjectsForm extends VBox {
         Person p = new Person();
         persons.add(p);
 
-        st = subjectTypes.get(0);
+        subjectTypeComboBox.getItems().addAll(subjectTypes);
         supplierComboBox.getItems().addAll(supplier);
         speciesComboBox.getItems().addAll(species);
         responsiblePersonCombo.getItems().addAll(persons);
@@ -206,6 +222,7 @@ public class AddSubjectsForm extends VBox {
         previewLabel.prefWidthProperty().bind(column2.maxWidthProperty());
         speciesComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         supplierComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
+        subjectTypeComboBox.prefWidthProperty().bind(column2.maxWidthProperty());
         housingUnitCombo.prefWidthProperty().bind(column2.maxWidthProperty());
         responsiblePersonCombo.prefWidthProperty().bind(column2.maxWidthProperty());
         timeField.prefWidthProperty().bind(column2.maxWidthProperty());
@@ -236,20 +253,24 @@ public class AddSubjectsForm extends VBox {
         grid.add(speciesComboBox, 1,5, 1, 1);
         grid.add(newSpecies, 2, 5, 1, 1);
 
-        grid.add(new Label("import date(*):"), 0, 6);
-        grid.add(housingDate, 1, 6, 2, 1);
+        grid.add(new Label("subject type(*):"), 0,6);
+        grid.add(subjectTypeComboBox, 1,6, 1, 1);
+        grid.add(newSubjectType, 2, 6, 1, 1);
 
-        grid.add(new Label("time(*):"), 0, 7);
-        grid.add(timeField, 1, 7, 2, 1);
+        grid.add(new Label("import date(*):"), 0, 7);
+        grid.add(housingDate, 1, 7, 2, 1);
 
-        grid.add(new Label("subject count"), 0, 8);
-        grid.add(countSpinner, 1, 8, 2, 1);
+        grid.add(new Label("time(*):"), 0, 8);
+        grid.add(timeField, 1, 8, 2, 1);
 
-        grid.add(new Label("start index:"), 0, 9);
-        grid.add(startIdSpinner, 1, 9, 2, 1);
+        grid.add(new Label("subject count"), 0, 9);
+        grid.add(countSpinner, 1, 9, 2, 1);
+
+        grid.add(new Label("start index:"), 0, 10);
+        grid.add(startIdSpinner, 1, 10, 2, 1);
         startIdSpinner.valueProperty().addListener((observable, oldValue, newValue) -> createPreview());
 
-        grid.add(new Label("(*) required"), 0, 10);
+        grid.add(new Label("(*) required"), 0, 11);
 
         this.getChildren().add(grid);
     }
@@ -315,7 +336,7 @@ public class AddSubjectsForm extends VBox {
             s.setSupplier(supplierComboBox.getValue());
             s.setGender(Gender.unknown);
             s.setResponsiblePerson(responsiblePersonCombo.getId() != null ? responsiblePersonCombo.getValue() : null);
-            s.setSubjectType(st);
+            s.setSubjectType(subjectTypeComboBox.getValue());
 
             h = new Housing(s, housingUnitCombo.getHousingUnit(), date);
             HashSet<Housing> housings = new HashSet<>(1);
@@ -341,6 +362,10 @@ public class AddSubjectsForm extends VBox {
             List<Person> persons = EntityHelper.getEntityList("from Person where id = " + prefs.get("subject_person", ""),  Person.class);
             responsiblePersonCombo.getSelectionModel().select(persons.get(0));
         }
+        if (!prefs.get("subject_subjecttype", "").isEmpty()) {
+            List<SubjectType> sts = EntityHelper.getEntityList("from SubjectType where id = " + prefs.get("subject_subjecttype", ""),  SubjectType.class);
+            subjectTypeComboBox.getSelectionModel().select(sts.get(0));
+        }
         if (!prefs.get("subject_species", "").isEmpty()) {
             List<SpeciesType> sps = EntityHelper.getEntityList("from SpeciesType where id = " + prefs.get("subject_species", ""),  SpeciesType.class);
             speciesComboBox.getSelectionModel().select(sps.get(0));
@@ -363,6 +388,7 @@ public class AddSubjectsForm extends VBox {
         prefs.put("subject_person", (responsiblePersonCombo.getValue() != null && responsiblePersonCombo.getValue().getId() != null)
                 ? responsiblePersonCombo.getValue().getId().toString() : "");
         prefs.put("subject_species", speciesComboBox.getValue().getId().toString());
+        prefs.put("subject_subjecttype", subjectTypeComboBox.getValue().getId().toString());
         prefs.put("import_date", housingDate.getValue().toString());
     }
 
@@ -396,6 +422,10 @@ public class AddSubjectsForm extends VBox {
         }
         if (speciesComboBox.getValue() == null) {
             messages.add("Species information must not be empty!");
+            valid = false;
+        }
+        if (subjectTypeComboBox.getValue() == null) {
+            messages.add("A subject type must be given.");
             valid = false;
         }
         if (housingDate.getValue() == null) {
