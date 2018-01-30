@@ -16,6 +16,8 @@
                   formula="(SELECT COUNT(*) FROM census_housing h WHERE h.type_id = id AND h.end_datetime IS NULL)"
                   type="integer" lazy="true" />
         <many-to-one name="housingType" column="type_id" class="HousingType" not-null="true" fetch="join"/>
+        <property name="childUnitCount" type="integer"
+                  formula="(SELECT COUNT(*) FROM census_housingunit h WHERE h.parent_unit_id = id)"/>
         <many-to-one name="parentUnit" column="parent_unit_id" class="HousingUnit" not-null="false" fetch="join"/>
         <set name="housings" table="census_housing"
              inverse="true" lazy="true" fetch="select">

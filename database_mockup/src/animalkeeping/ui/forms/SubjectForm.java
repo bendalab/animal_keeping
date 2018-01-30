@@ -94,7 +94,7 @@ public class SubjectForm extends VBox {
         this.subject = s;
         applyPreferences();
         this.init(s);
-        this.isEdit = s != null;
+        this.isEdit = s != null && s.getId() != null;
     }
 
     private  void init(Subject s) {

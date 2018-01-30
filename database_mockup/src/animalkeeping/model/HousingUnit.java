@@ -3,7 +3,6 @@ package animalkeeping.model;
 import animalkeeping.logging.ChangeLogInterface;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,6 +18,7 @@ public class HousingUnit extends Entity implements ChangeLogInterface {
     private Integer population;
     private Set<Housing> housings =
             new HashSet<Housing>(0);
+    private Integer childUnitCount;
     private Set<HousingUnit> childHousingUnits =
             new HashSet<HousingUnit>(0);
 
@@ -110,6 +110,14 @@ public class HousingUnit extends Entity implements ChangeLogInterface {
 
     public void setHousings(Set<Housing> housings) {
         this.housings = housings;
+    }
+
+    public Integer getChildUnitCount() {
+        return childUnitCount;
+    }
+
+    public void setChildUnitCount(Integer childUnitCount) {
+        this.childUnitCount = childUnitCount;
     }
 
     public Set<HousingUnit> getChildHousingUnits() {

@@ -36,7 +36,7 @@ public class SubjectTypeForm extends VBox {
         this();
         this.subjectType = st;
         this.init(st);
-        this.isEdit = st != null;
+        this.isEdit = (st != null) && (st.getId() != null);
     }
 
     private  void init(SubjectType st) {

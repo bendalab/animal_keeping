@@ -42,6 +42,7 @@ import animalkeeping.model.HousingUnit;
 import animalkeeping.ui.Main;
 import animalkeeping.util.EntityHelper;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
@@ -52,6 +53,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Popup;
 import javafx.util.StringConverter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -93,6 +95,7 @@ public class HousingDropDown extends Button {
                 tree.getSelectionModel().clearSelection();
             }
         });
+
         popup.setHideOnEscape(true);
         popup.setAutoFix(true);
         popup.setAutoHide(true);
@@ -126,7 +129,6 @@ public class HousingDropDown extends Button {
             text = text.concat("    ");
             i++;
         }
-
         this.setText(text);
     }
 
@@ -136,20 +138,8 @@ public class HousingDropDown extends Button {
         tree.setRoot(root);
         List<HousingUnit> units = EntityHelper.getEntityList("from HousingUnit where parentUnit = null order by name asc", HousingUnit.class);
         for (HousingUnit hu : units) {
-            TreeItem<HousingUnit> child = new TreeItem<>(hu);
-
+            HousingUnitTreeItem child = new HousingUnitTreeItem(hu);
             root.getChildren().add(child);
-            fillRecursive(hu, child);
-        }
-
-    }
-
-
-    private void fillRecursive(HousingUnit unit, TreeItem<HousingUnit> item) {
-        for (HousingUnit hu : unit.getChildHousingUnits()) {
-            TreeItem<HousingUnit> it = new TreeItem<>(hu);
-            item.getChildren().add(it);
-            fillRecursive(hu, it);
         }
     }
 
@@ -163,4 +153,36 @@ public class HousingDropDown extends Button {
         return selectedUnit;
     }
 
+    public static class HousingUnitTreeItem extends TreeItem<HousingUnit> {
+        private boolean childrenLoaded = false;
+
+        HousingUnitTreeItem(HousingUnit value) {
+            super(value);
+        }
+
+        @Override
+        public boolean isLeaf() {
+            return childrenLoaded && getChildren().isEmpty();
+        }
+
+        @Override
+        public ObservableList<TreeItem<HousingUnit>> getChildren() {
+            if (childrenLoaded) {
+                return super.getChildren();
+            }
+            if (getValue().getChildUnitCount() > 0) {
+                List<HousingUnitTreeItem> children = new ArrayList<>();
+                for (HousingUnit hu : getValue().getChildHousingUnits()) {
+                    HousingUnitTreeItem it = new HousingUnitTreeItem(hu);
+                    children.add(it);
+                }
+                super.getChildren().addAll(children);
+            } else {
+                //super.getChildren().add(null);
+                super.getChildren().clear();
+            }
+            childrenLoaded = true;
+            return super.getChildren() ;
+        }
+    }
 }

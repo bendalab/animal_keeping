@@ -34,7 +34,7 @@ public class SpeciesTypeForm extends VBox {
         this();
         this.speciesType = st;
         this.init(st);
-        this.isEdit = st != null;
+        this.isEdit = (st != null) && (st.getId() != null);
     }
 
     private  void init(SpeciesType st) {

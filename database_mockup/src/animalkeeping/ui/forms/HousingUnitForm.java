@@ -77,7 +77,7 @@ public class HousingUnitForm extends VBox {
     public HousingUnitForm(HousingUnit unit) {
         this();
         setHousingUnit(unit);
-        this.isEdit = unit != null;
+        this.isEdit = (unit != null) && (unit.getId() != null);
     }
 
     private void init() {

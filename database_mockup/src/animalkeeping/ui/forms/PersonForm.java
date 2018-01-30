@@ -33,7 +33,7 @@ public class PersonForm extends VBox {
         this();
         this.person = p;
         this.init(p);
-        isEdit = p != null;
+        isEdit = (p != null) && (p.getId() != null);
     }
 
     private void init(Person p) {
@@ -111,7 +111,6 @@ public class PersonForm extends VBox {
             valid = false;
         }
         if (!firstnameField.getText().isEmpty() && !lastnameField.getText().isEmpty() && !isEdit) {
-            System.out.println("ping");
             Vector<Object> args = new Vector<>();
             args.add(firstnameField.getText());
             args.add(lastnameField.getText());

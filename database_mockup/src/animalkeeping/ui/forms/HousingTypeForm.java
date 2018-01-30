@@ -19,6 +19,7 @@ public class HousingTypeForm extends VBox {
     private TextArea descriptionArea;
     private HousingType type;
     private CheckBox canHoldSubjects, canHaveSubunits;
+    private boolean isEdit;
 
 
     public HousingTypeForm() {
@@ -26,12 +27,14 @@ public class HousingTypeForm extends VBox {
         this.setFillWidth(true);
         this.type = new HousingType();
         init();
+        this.isEdit = false;
     }
 
 
     public HousingTypeForm(HousingType type) {
         this();
         setHousingType(type);
+        this.isEdit = (type != null) && (type.getId()!= null);
     }
 
 
@@ -117,7 +120,7 @@ public class HousingTypeForm extends VBox {
         param.add("name");
         Vector<Object> args = new Vector<>();
         args.add(nameField.getText());
-        if (EntityHelper.getEntityList("From HousingType where name like :name", param, args, HousingType.class).size() > 0) {
+        if (!isEdit && EntityHelper.getEntityList("From HousingType where name like :name", param, args, HousingType.class).size() > 0) {
             messages.add("Name of HousingType is already in use!");
             valid = false;
         }
