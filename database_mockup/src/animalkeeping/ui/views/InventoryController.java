@@ -35,17 +35,20 @@
  *****************************************************************************/
 package animalkeeping.ui.views;
 
-import animalkeeping.model.*;
+import animalkeeping.model.Housing;
+import animalkeeping.model.HousingUnit;
+import animalkeeping.model.Subject;
+import animalkeeping.model.Treatment;
 import animalkeeping.ui.Main;
 import animalkeeping.ui.tables.HousingTable;
 import animalkeeping.ui.tables.TreatmentsTable;
 import animalkeeping.ui.widgets.ControlLabel;
+import animalkeeping.ui.widgets.PopulationChart;
+import animalkeeping.ui.widgets.PopulationStackedChart;
 import animalkeeping.util.EntityHelper;
 import animalkeeping.util.XlsxExport;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.Event;
@@ -54,22 +57,29 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Orientation;
-import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 public class InventoryController extends AbstractView implements Initializable {
-    @FXML private PieChart populationChart;
     @FXML private VBox unitsBox;
     @FXML private ListView<String> unitsList;
     @FXML private VBox chartVbox;
+    @FXML private VBox popHistoryVBox;
     @FXML private VBox currentHousingsBox;
     @FXML private ScrollPane tableScrollPane;
+    @FXML private Tab populationHistory;
+    @FXML private Tab populationPieTab;
+
+    private PopulationStackedChart stackedChart;
+    private PopulationChart populationChart;
     private HousingTable housingTable;
     private TreatmentsTable treatmentsTable;
     private VBox controls;
@@ -143,6 +153,13 @@ public class InventoryController extends AbstractView implements Initializable {
         controls.getChildren().add(exportStock);
         controls.getChildren().add(new Separator(Orientation.HORIZONTAL));
         controls.getChildren().add(endTreatmentLabel);
+
+        populationChart = new PopulationChart();
+        populationPieTab.setContent(populationChart);
+
+        stackedChart = new PopulationStackedChart();
+        populationHistory.setContent(stackedChart);
+        stackedChart.setFillWidth(true);
     }
 
     private void fillList() {
@@ -183,27 +200,7 @@ public class InventoryController extends AbstractView implements Initializable {
 
     @FXML
     private void listAllPopulation() {
-        final Integer[] total_count = {0};
-        Task<Void> task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                List<SpeciesType> result = EntityHelper.getEntityList("from SpeciesType", SpeciesType.class);
-                ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-                if (result != null) {
-                    for (SpeciesType st : result) {
-                        total_count[0] += st.getCount();
-                        pieChartData.add(new PieChart.Data(st.getName() + " (" + st.getCount() + ")", st.getCount()));
-                    }
-                }
-                Platform.runLater(() -> {
-                    populationChart.setTitle("Total population: " + total_count[0].toString());
-                    populationChart.setData(pieChartData);
-                    housingTable.setSubject(null);
-                });
-                return null;
-            }
-        };
-        new Thread(task).start();
+        populationChart.listPopulation(null);
     }
 
 
@@ -213,27 +210,7 @@ public class InventoryController extends AbstractView implements Initializable {
             return;
         }
         HousingUnit housingUnit = unitsHashMap.get(unitName);
-        Set<Subject> subjects = new HashSet<>();
-        collectSubjects(subjects, housingUnit, true);
-
-        HashMap<String, Integer> counts = new HashMap<>();
-        for (Subject s : subjects) {
-            if (counts.containsKey(s.getSpeciesType().getName())) {
-                Integer c = counts.get(s.getSpeciesType().getName());
-                c += 1;
-                counts.put(s.getSpeciesType().getName(), c);
-            } else {
-                counts.put(s.getSpeciesType().getName(), 1);
-            }
-        }
-
-        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        for (String st : counts.keySet()) {
-            pieChartData.add(new PieChart.Data(st + " (" + counts.get(st) + ")", counts.get(st)));
-        }
-
-        populationChart.setTitle(housingUnit.getName() + ": " + subjects.size());
-        populationChart.setData(pieChartData);
+        populationChart.listPopulation(housingUnit);
         housingTable.setHousingUnit(housingUnit);
     }
 
