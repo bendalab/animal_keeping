@@ -38,80 +38,94 @@ package animalkeeping.ui.widgets;
 import animalkeeping.model.Housing;
 import animalkeeping.model.HousingUnit;
 import animalkeeping.model.Subject;
-import animalkeeping.ui.Main;
 import animalkeeping.util.EntityHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
+import javafx.concurrent.Task;
+import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-public class PopulationChart extends VBox implements Initializable {
-    @FXML private VBox chartBox;
+public class PopulationChart extends VBox {
+    private VBox vbox;
+    private StackPane pane;
+    private ProgressIndicator indicator;
     private PieChart populationChart;
     private Label label;
 
     public PopulationChart() {
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/populationChart.fxml"));
-        loader.setController(this);
-        try {
-            this.getChildren().add(loader.load());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        this.setFillWidth(true);
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
         label = new Label("There is no population to show...");
         label.setVisible(true);
+
         populationChart = new PieChart();
         populationChart.setLegendSide(Side.RIGHT);
         populationChart.prefHeightProperty().bind(this.prefHeightProperty());
         populationChart.prefWidthProperty().bind(this.prefWidthProperty());
-        this.getChildren().clear();
-        this.getChildren().add(label);
+
+        indicator = new ProgressIndicator();
+        indicator.setProgress(-1.0);
+
+        vbox = new VBox();
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setDisable(true);
+        vbox.getChildren().add(indicator);
+        vbox.setVisible(false);
+
+        pane = new StackPane();
+        pane.getChildren().addAll(populationChart, vbox);
+        this.getChildren().add(pane);
     }
 
 
     public void listPopulation(HousingUnit housingUnit) {
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        if (housingUnit == null) {
-            populationChart.setData(pieChartData);
-            return;
-        }
         Set<Subject> subjects = new HashSet<>();
-        collectSubjects(subjects, housingUnit);
-
         HashMap<String, Integer> counts = new HashMap<>();
-        for (Subject s : subjects) {
-            if (counts.containsKey(s.getSpeciesType().getName())) {
-                counts.put(s.getSpeciesType().getName(), counts.get(s.getSpeciesType().getName()) + 1);
-            } else {
-                counts.put(s.getSpeciesType().getName(), 1);
-            }
-        }
 
-        for (String st : counts.keySet()) {
-            pieChartData.add(new PieChart.Data(st + " (" + counts.get(st) + ")", counts.get(st)));
-        }
-        populationChart.setTitle(housingUnit.getName() + ": " + subjects.size());
-        populationChart.setData(pieChartData);
-        this.getChildren().clear();
-        if (pieChartData.isEmpty()) {
-            this.getChildren().add(label);
-        } else {
-            this.getChildren().add(populationChart);
-        }
+        Task<Void> refresh_task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                collectSubjects(subjects, housingUnit);
+                for (Subject s : subjects) {
+                    if (counts.containsKey(s.getSpeciesType().getName())) {
+                        counts.put(s.getSpeciesType().getName(), counts.get(s.getSpeciesType().getName()) + 1);
+                    } else {
+                        counts.put(s.getSpeciesType().getName(), 1);
+                    }
+                }
+                return null;
+            }
+        };
+        refresh_task.setOnSucceeded(event -> {
+            for (String st : counts.keySet()) {
+                pieChartData.add(new PieChart.Data(st + " (" + counts.get(st) + ")", counts.get(st)));
+            }
+            String title = "";
+            if (housingUnit == null) {
+                title = "Total Population: " + subjects.size();
+            } else {
+                title = housingUnit.getName() + ": " + subjects.size();
+            }
+            populationChart.setTitle(title);
+            populationChart.setData(pieChartData);
+            this.getChildren().clear();
+            if (pieChartData.isEmpty()) {
+                this.getChildren().add(label);
+            } else {
+                this.getChildren().add(populationChart);
+            }
+        });
+        vbox.visibleProperty().bind(refresh_task.runningProperty());
+        new Thread(refresh_task).start();
     }
 
 
@@ -122,15 +136,20 @@ public class PopulationChart extends VBox implements Initializable {
 
     void collectSubjects(Set<Subject> subjects, HousingUnit h, Boolean currentOnly, Boolean recursive) {
         List<Housing> l;
+        String query = "SELECT h FROM Housing h JOIN FETCH h.subject WHERE";
         if (currentOnly) {
-            l = EntityHelper.getEntityList("SELECT h from Housing h JOIN FETCH h.subject where h.end is null and h.housing.id = " + h.getId(), Housing.class);
-        } else {
-            l = EntityHelper.getEntityList("SELECT h from Housing h JOIN FETCH h.subject where h.housing.id = " + h.getId(), Housing.class);
+            query = query.concat(" h.end is null");
         }
+        if (h != null) {
+            query = query.concat(currentOnly ? " AND " : "");
+            query = query.concat("h.housing.id = " + h.getId());
+        }
+        l = EntityHelper.getEntityList(query, Housing.class);
+
         for (Housing hs : l) {
             subjects.add(hs.getSubject());
         }
-        if (recursive) {
+        if (h != null && recursive) {
             for (HousingUnit hu : h.getChildHousingUnits())
                 collectSubjects(subjects, hu, currentOnly, recursive);
         }
