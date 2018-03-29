@@ -1,4 +1,5 @@
 package animalkeeping.ui.widgets;
+import animalkeeping.model.Housing;
 import animalkeeping.model.SpeciesType;
 import animalkeeping.ui.Main;
 import animalkeeping.util.DateTimeHelper;
@@ -14,9 +15,18 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -66,9 +76,8 @@ public class PopulationStackedChart extends VBox {
     private StackedAreaChart<String, Number> chart;
     private DatePicker startDate, endDate;
     private ComboBox<String> intervalCombo;
-    private Button exportBtn, updateBtn;
+    private Button exportBtn;
     private ProgressIndicator busy;
-    private StackPane spane;
     private VBox vbox;
 
     public PopulationStackedChart() {
@@ -99,14 +108,15 @@ public class PopulationStackedChart extends VBox {
 
         this.busy = new ProgressIndicator();
         this.busy.setProgress(0.0);
+        this.busy.setPrefSize(75, 75);
         this.startDate = new DatePicker(java.time.LocalDate.now().minusYears(1));
         this.endDate = new DatePicker(DateTimeHelper.toLocalDate(new Date()));
         this.intervalCombo = new ComboBox<>();
         this.exportBtn = new Button("export");
         this.exportBtn.setDisable(true);
         this.exportBtn.setOnAction(event -> exportPopulationCounts());
-        this.updateBtn = new Button("update");
-        this.updateBtn.setOnAction(event -> getPupulationCounts());
+        Button updateBtn = new Button("update");
+        updateBtn.setOnAction(event -> getPupulationCounts());
         this.intervalCombo.getItems().addAll("monthly");
         this.intervalCombo.getSelectionModel().select(0);
         this.intervalCombo.prefWidthProperty().bind(column3.maxWidthProperty());
@@ -121,16 +131,16 @@ public class PopulationStackedChart extends VBox {
         grid.add(this.endDate, 1,1);
         grid.add(new Label("Interval:"), 2, 0);
         grid.add(this.intervalCombo, 2, 1);
-        grid.add(this.updateBtn, 4, 0);
+        grid.add(updateBtn, 4, 0);
         grid.add(this.exportBtn, 4, 1);
-        //grid.add(this.busy, 3, 0);
 
         vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
         vbox.getChildren().add(busy);
+        vbox.setDisable(true);
         vbox.setVisible(false);
 
-        spane = new StackPane();
+        StackPane spane = new StackPane();
         spane.getChildren().addAll(chart, vbox);
 
         BorderPane pane = new BorderPane();
@@ -146,7 +156,7 @@ public class PopulationStackedChart extends VBox {
         LocalDate start = startDate.getValue();
         LocalDate end = endDate.getValue();
         Vector<Date> dueDates = new Vector<>();
-
+        //  FIXME the due dates are not correct!
         if (intervalCombo.getValue().equalsIgnoreCase("monthly")) {
             start = start.plusMonths(1);
             start = start.minusDays(start.getDayOfMonth());
@@ -169,7 +179,7 @@ public class PopulationStackedChart extends VBox {
         Vector<Date> dueDates = getDueDates();
         List<SpeciesType> species = EntityHelper.getEntityList("FROM SpeciesType", SpeciesType.class);
         Vector<XYChart.Series> series = new Vector<>();
-        vbox.setDisable(true);
+
         Task<Void> refresh_task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -227,6 +237,59 @@ public class PopulationStackedChart extends VBox {
     }
 
     private void exportPopulationCounts() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet overviewsheet = workbook.createSheet("Population history");
+        XSSFRow row = overviewsheet.createRow(0);
+        XSSFCell cell = null;
 
+        for (int i = 0; i < chart.getData().size(); i++) {
+            XYChart.Series s = chart.getData().get(i);
+            if (row.getRowNum() > 0) {
+                row = overviewsheet.getRow(0);
+            }
+            row.createCell(i + 1).setCellValue(s.getName());
+            int totalCount = 0;
+            for ( int j = 0; j < s.getData().size(); j++) {
+                if (i == 0) {
+                    row = overviewsheet.createRow(j + 1);
+                } else {
+                    row = overviewsheet.getRow(j + 1);
+                }
+                XYChart.Data<String, Number> d = (XYChart.Data<String, Number>) s.getData().get(j);
+                if (i == 0) {
+                    row.createCell(0).setCellValue(d.getXValue());
+                }
+                cell = row.createCell(i + 1);
+                cell.setCellValue(d.getYValue().intValue());
+                totalCount += d.getYValue().intValue();
+            }
+            if (i == 0) {
+                row = overviewsheet.createRow(s.getData().size() + 1);
+                row.createCell(0).setCellValue("Average:");
+            } else {
+                row = overviewsheet.getRow(s.getData().size() + 1);
+            }
+            XSSFCell avgcell = row.createCell(i + 1);
+            avgcell.setCellValue(totalCount/s.getData().size());
+            overviewsheet.autoSizeColumn(i);
+        }
+
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Select output file");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel doc(*.xlsx)", "*.xlsx"));
+        chooser.setInitialFileName("populationHistory.xlsx");
+        File f = chooser.showSaveDialog(Main.getPrimaryStage());
+        if (f != null) {
+            try {
+                FileOutputStream out = new FileOutputStream(f);
+                workbook.write(out);
+                out.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
+
+    //FIXME should be able to show the history of a single housing unit.
+    //FIXME add option to create a simple population plot, irrespective of species
 }
