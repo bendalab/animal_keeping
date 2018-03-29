@@ -1,5 +1,4 @@
 package animalkeeping.ui.widgets;
-import animalkeeping.model.Housing;
 import animalkeeping.model.SpeciesType;
 import animalkeeping.ui.Main;
 import animalkeeping.util.DateTimeHelper;
@@ -16,9 +15,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
-import org.apache.poi.ss.formula.eval.FunctionEval;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -110,21 +107,27 @@ public class PopulationStackedChart extends VBox {
         this.busy = new ProgressIndicator();
         this.busy.setProgress(0.0);
         this.busy.setPrefSize(75, 75);
+
         this.startDate = new DatePicker(java.time.LocalDate.now().minusYears(1));
+        this.startDate.prefWidthProperty().bind(column1.maxWidthProperty());
+
         this.endDate = new DatePicker(DateTimeHelper.toLocalDate(new Date()));
+        this.endDate.prefWidthProperty().bind(column2.maxWidthProperty());
+
         this.intervalCombo = new ComboBox<>();
-        this.exportBtn = new Button("export");
-        this.exportBtn.setDisable(true);
-        this.exportBtn.setOnAction(event -> exportPopulationCounts());
-        Button updateBtn = new Button("update");
-        updateBtn.setOnAction(event -> getPupulationCounts());
         this.intervalCombo.getItems().addAll("monthly");
         this.intervalCombo.getSelectionModel().select(0);
         this.intervalCombo.prefWidthProperty().bind(column3.maxWidthProperty());
-        this.startDate.prefWidthProperty().bind(column1.maxWidthProperty());
-        this.endDate.prefWidthProperty().bind(column2.maxWidthProperty());
+
+        this.exportBtn = new Button("export");
+        this.exportBtn.setDisable(true);
+        this.exportBtn.setOnAction(event -> exportPopulationCounts());
         this.exportBtn.prefWidthProperty().bind(column5.maxWidthProperty());
-        
+
+        Button updateBtn = new Button("update");
+        updateBtn.setOnAction(event -> getPupulationCounts());
+        updateBtn.prefWidthProperty().bind(column5.maxWidthProperty());
+
         grid.setHgap(5);
         grid.add(new Label("Start date:"), 0, 0);
         grid.add(this.startDate, 0, 1);
@@ -231,6 +234,8 @@ public class PopulationStackedChart extends VBox {
             for (XYChart.Series s : series)
                 this.chart.getData().add(s);
         });
+        busy.progressProperty().unbind();
+        vbox.visibleProperty().unbind();
         vbox.visibleProperty().bind(refresh_task.runningProperty());
         busy.progressProperty().bind(refresh_task.progressProperty());
         exportBtn.disableProperty().bind(refresh_task.runningProperty());
@@ -238,71 +243,96 @@ public class PopulationStackedChart extends VBox {
     }
 
     private void exportPopulationCounts() {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Population history");
-        XSSFRow row = sheet.createRow(0);
-        XSSFCell cell = null;
-        String firstCellAddr = "", lastCellAddr;
+        final XSSFWorkbook workbook = new XSSFWorkbook();
 
-        for (int i = 0; i < chart.getData().size(); i++) {
-            XYChart.Series s = chart.getData().get(i);
-            if (row.getRowNum() > 0) {
-                row = sheet.getRow(0);
-            }
-            row.createCell(i + 1).setCellValue(s.getName());
-            for ( int j = 0; j < s.getData().size(); j++) {
-                if (i == 0) {
-                    row = sheet.createRow(j + 1);
-                } else {
-                    row = sheet.getRow(j + 1);
+        Task<Void> export_task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                double progress = 0.0;
+                double maxWork = chart.getData().size() * chart.getData().get(0).getData().size() +
+                        chart.getData().get(0).getData().size();
+                updateProgress(progress, maxWork);
+                XSSFSheet sheet = workbook.createSheet("Population history");
+                XSSFRow row = sheet.createRow(0);
+                XSSFCell cell = null;
+                String firstCellAddr = "", lastCellAddr;
+
+                for (int i = 0; i < chart.getData().size(); i++) {
+                    XYChart.Series s = chart.getData().get(i);
+                    if (row.getRowNum() > 0) {
+                        row = sheet.getRow(0);
+                    }
+                    row.createCell(i + 1).setCellValue(s.getName());
+                    for ( int j = 0; j < s.getData().size(); j++) {
+                        XYChart.Data<String, Number> d = (XYChart.Data<String, Number>) s.getData().get(j);
+                        if (i == 0) {
+                            row = sheet.createRow(j + 1);
+                            row.createCell(0).setCellValue(d.getXValue());
+                        } else {
+                            row = sheet.getRow(j + 1);
+                        }
+                        cell = row.createCell(i + 1);
+                        cell.setCellValue(d.getYValue().intValue());
+                        if (j == 0) {
+                            firstCellAddr = row.getCell(i + 1).getAddress().toString();
+                        }
+                        progress++;
+                        updateProgress(progress, maxWork);
+                    }
+                    lastCellAddr = cell.getAddress().toString();
+
+                    if (i == 0) {
+                        row = sheet.createRow(s.getData().size() + 1);
+                        row.createCell(0).setCellValue("Average");
+                    } else {
+                        row = sheet.getRow(s.getData().size() + 1);
+                    }
+
+                    cell = row.createCell(i + 1);
+                    cell.setCellType(CellType.FORMULA);
+                    cell.setCellFormula("AVERAGEA(" + firstCellAddr + ":" + lastCellAddr  + ")");
+                    sheet.autoSizeColumn(i);
+                    progress++;
+                    updateProgress(progress, maxWork);
+                    Thread.sleep(25);
                 }
-                XYChart.Data<String, Number> d = (XYChart.Data<String, Number>) s.getData().get(j);
-                if (i == 0) {
-                    row.createCell(0).setCellValue(d.getXValue());
+                for (int i = 1; i < sheet.getLastRowNum(); i++) {
+                    row = sheet.getRow(i);
+                    cell = row.createCell(row.getLastCellNum());
+                    cell.setCellType(CellType.FORMULA);
+                    firstCellAddr = row.getCell(1).getAddress().toString();
+                    lastCellAddr = row.getCell(cell.getColumnIndex()-1).getAddress().toString();
+                    cell.setCellFormula("SUM(" + firstCellAddr + ":" + lastCellAddr + ")");
+                    progress++;
+                    updateProgress(progress, maxWork);
                 }
-                cell = row.createCell(i + 1);
-                cell.setCellValue(d.getYValue().intValue());
-                if (j == 0) {
-                    firstCellAddr = row.getCell(i + 1).getAddress().toString();
+                updateProgress(maxWork, maxWork);
+                return null;
+            }
+        };
+
+        export_task.setOnSucceeded(event -> {
+            FileChooser chooser = new FileChooser();
+            chooser.setTitle("Select output file");
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel doc(*.xlsx)", "*.xlsx"));
+            chooser.setInitialFileName("populationHistory.xlsx");
+            File f = chooser.showSaveDialog(Main.getPrimaryStage());
+            if (f != null) {
+                try {
+                    FileOutputStream out = new FileOutputStream(f);
+                    workbook.write(out);
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
-            lastCellAddr = cell.getAddress().toString();
+        });
 
-            if (i == 0) {
-                row = sheet.createRow(s.getData().size() + 1);
-                row.createCell(0).setCellValue("Average:");
-            } else {
-                row = sheet.getRow(s.getData().size() + 1);
-            }
-
-            XSSFCell avgcell = row.createCell(i + 1);
-            avgcell.setCellType(CellType.FORMULA);
-            avgcell.setCellFormula("AVERAGEA(" + firstCellAddr + ":" + lastCellAddr  + ")");
-            sheet.autoSizeColumn(i);
-        }
-        for (int i = 1; i < sheet.getLastRowNum(); i++) {
-            row = sheet.getRow(i);
-            cell = row.createCell(row.getLastCellNum());
-            cell.setCellType(CellType.FORMULA);
-            firstCellAddr = row.getCell(1).getAddress().toString();
-            lastCellAddr = row.getCell(cell.getColumnIndex()-1).getAddress().toString();
-            cell.setCellFormula("SUM(" + firstCellAddr + ":" + lastCellAddr + ")");
-        }
-
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Select output file");
-        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel doc(*.xlsx)", "*.xlsx"));
-        chooser.setInitialFileName("populationHistory.xlsx");
-        File f = chooser.showSaveDialog(Main.getPrimaryStage());
-        if (f != null) {
-            try {
-                FileOutputStream out = new FileOutputStream(f);
-                workbook.write(out);
-                out.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        busy.progressProperty().unbind();
+        vbox.visibleProperty().unbind();
+        vbox.visibleProperty().bind(export_task.runningProperty());
+        busy.progressProperty().bind(export_task.progressProperty());
+        new Thread(export_task).start();
     }
 
     //FIXME should be able to show the history of a single housing unit.
