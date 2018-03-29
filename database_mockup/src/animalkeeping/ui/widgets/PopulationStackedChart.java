@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
+import org.apache.poi.ss.formula.eval.FunctionEval;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -238,22 +239,22 @@ public class PopulationStackedChart extends VBox {
 
     private void exportPopulationCounts() {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet overviewsheet = workbook.createSheet("Population history");
-        XSSFRow row = overviewsheet.createRow(0);
+        XSSFSheet sheet = workbook.createSheet("Population history");
+        XSSFRow row = sheet.createRow(0);
         XSSFCell cell = null;
+        String firstCellAddr = "", lastCellAddr;
 
         for (int i = 0; i < chart.getData().size(); i++) {
             XYChart.Series s = chart.getData().get(i);
             if (row.getRowNum() > 0) {
-                row = overviewsheet.getRow(0);
+                row = sheet.getRow(0);
             }
             row.createCell(i + 1).setCellValue(s.getName());
-            int totalCount = 0;
             for ( int j = 0; j < s.getData().size(); j++) {
                 if (i == 0) {
-                    row = overviewsheet.createRow(j + 1);
+                    row = sheet.createRow(j + 1);
                 } else {
-                    row = overviewsheet.getRow(j + 1);
+                    row = sheet.getRow(j + 1);
                 }
                 XYChart.Data<String, Number> d = (XYChart.Data<String, Number>) s.getData().get(j);
                 if (i == 0) {
@@ -261,17 +262,31 @@ public class PopulationStackedChart extends VBox {
                 }
                 cell = row.createCell(i + 1);
                 cell.setCellValue(d.getYValue().intValue());
-                totalCount += d.getYValue().intValue();
+                if (j == 0) {
+                    firstCellAddr = row.getCell(i + 1).getAddress().toString();
+                }
             }
+            lastCellAddr = cell.getAddress().toString();
+
             if (i == 0) {
-                row = overviewsheet.createRow(s.getData().size() + 1);
+                row = sheet.createRow(s.getData().size() + 1);
                 row.createCell(0).setCellValue("Average:");
             } else {
-                row = overviewsheet.getRow(s.getData().size() + 1);
+                row = sheet.getRow(s.getData().size() + 1);
             }
+
             XSSFCell avgcell = row.createCell(i + 1);
-            avgcell.setCellValue(totalCount/s.getData().size());
-            overviewsheet.autoSizeColumn(i);
+            avgcell.setCellType(CellType.FORMULA);
+            avgcell.setCellFormula("AVERAGEA(" + firstCellAddr + ":" + lastCellAddr  + ")");
+            sheet.autoSizeColumn(i);
+        }
+        for (int i = 1; i < sheet.getLastRowNum(); i++) {
+            row = sheet.getRow(i);
+            cell = row.createCell(row.getLastCellNum());
+            cell.setCellType(CellType.FORMULA);
+            firstCellAddr = row.getCell(1).getAddress().toString();
+            lastCellAddr = row.getCell(cell.getColumnIndex()-1).getAddress().toString();
+            cell.setCellFormula("SUM(" + firstCellAddr + ":" + lastCellAddr + ")");
         }
 
         FileChooser chooser = new FileChooser();
