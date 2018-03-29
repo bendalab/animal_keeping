@@ -57,31 +57,29 @@ import java.util.Set;
 
 public class PopulationChart extends VBox {
     private VBox vbox;
-    private StackPane pane;
-    private ProgressIndicator indicator;
     private PieChart populationChart;
     private Label label;
 
     public PopulationChart() {
         label = new Label("There is no population to show...");
-        label.setVisible(true);
+        label.setVisible(false);
 
         populationChart = new PieChart();
         populationChart.setLegendSide(Side.RIGHT);
         populationChart.prefHeightProperty().bind(this.prefHeightProperty());
         populationChart.prefWidthProperty().bind(this.prefWidthProperty());
 
-        indicator = new ProgressIndicator();
+        ProgressIndicator indicator = new ProgressIndicator();
+        indicator.setPrefSize(75, 75);
         indicator.setProgress(-1.0);
 
         vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
-        vbox.setDisable(true);
         vbox.getChildren().add(indicator);
         vbox.setVisible(false);
 
-        pane = new StackPane();
-        pane.getChildren().addAll(populationChart, vbox);
+        StackPane pane = new StackPane();
+        pane.getChildren().addAll(populationChart, vbox, label);
         this.getChildren().add(pane);
     }
 
@@ -104,12 +102,39 @@ public class PopulationChart extends VBox {
                 }
                 return null;
             }
+
+            private void collectSubjects(Set<Subject> subjects, HousingUnit h) {
+                collectSubjects(subjects, h, true, true);
+            }
+
+
+            private void collectSubjects(Set<Subject> subjects, HousingUnit h, Boolean currentOnly, Boolean recursive) {
+                List<Housing> l;
+                String query = "SELECT h FROM Housing h JOIN FETCH h.subject WHERE";
+                if (currentOnly) {
+                    query = query.concat(" h.end is null");
+                }
+                if (h != null) {
+                    query = query.concat(currentOnly ? " AND " : "");
+                    query = query.concat("h.housing.id = " + h.getId());
+                }
+                l = EntityHelper.getEntityList(query, Housing.class);
+
+                for (Housing hs : l) {
+                    subjects.add(hs.getSubject());
+                }
+                if (h != null && recursive) {
+                    for (HousingUnit hu : h.getChildHousingUnits())
+                        collectSubjects(subjects, hu, currentOnly, true);
+                }
+            }
+
         };
         refresh_task.setOnSucceeded(event -> {
             for (String st : counts.keySet()) {
                 pieChartData.add(new PieChart.Data(st + " (" + counts.get(st) + ")", counts.get(st)));
             }
-            String title = "";
+            String title;
             if (housingUnit == null) {
                 title = "Total Population: " + subjects.size();
             } else {
@@ -117,42 +142,11 @@ public class PopulationChart extends VBox {
             }
             populationChart.setTitle(title);
             populationChart.setData(pieChartData);
-            this.getChildren().clear();
-            if (pieChartData.isEmpty()) {
-                this.getChildren().add(label);
-            } else {
-                this.getChildren().add(populationChart);
-            }
+            label.setVisible(pieChartData.isEmpty());
         });
+
         vbox.visibleProperty().bind(refresh_task.runningProperty());
         new Thread(refresh_task).start();
-    }
-
-
-    private void collectSubjects(Set<Subject> subjects, HousingUnit h) {
-        collectSubjects(subjects, h, true, true);
-    }
-
-
-    void collectSubjects(Set<Subject> subjects, HousingUnit h, Boolean currentOnly, Boolean recursive) {
-        List<Housing> l;
-        String query = "SELECT h FROM Housing h JOIN FETCH h.subject WHERE";
-        if (currentOnly) {
-            query = query.concat(" h.end is null");
-        }
-        if (h != null) {
-            query = query.concat(currentOnly ? " AND " : "");
-            query = query.concat("h.housing.id = " + h.getId());
-        }
-        l = EntityHelper.getEntityList(query, Housing.class);
-
-        for (Housing hs : l) {
-            subjects.add(hs.getSubject());
-        }
-        if (h != null && recursive) {
-            for (HousingUnit hu : h.getChildHousingUnits())
-                collectSubjects(subjects, hu, currentOnly, recursive);
-        }
     }
 
 }
