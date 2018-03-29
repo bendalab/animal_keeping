@@ -141,7 +141,6 @@ public class PopulationStackedChart extends VBox {
         vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
         vbox.getChildren().add(busy);
-        vbox.setDisable(true);
         vbox.setVisible(false);
 
         StackPane spane = new StackPane();
@@ -160,17 +159,19 @@ public class PopulationStackedChart extends VBox {
         LocalDate start = startDate.getValue();
         LocalDate end = endDate.getValue();
         Vector<Date> dueDates = new Vector<>();
-        //  FIXME the due dates are not correct!
         if (intervalCombo.getValue().equalsIgnoreCase("monthly")) {
-            start = start.plusMonths(1);
-            start = start.minusDays(start.getDayOfMonth());
+            start = start.plusDays(start.lengthOfMonth() - start.getDayOfMonth());
         } else if (intervalCombo.getValue().equalsIgnoreCase("weekly")) {
             start.plusDays(DayOfWeek.SUNDAY.getValue() - start.getDayOfWeek().getValue());
         }
         dueDates.add(DateTimeHelper.localDateToUtilDate(start));
         while (start.isBefore(end)) {
-            start = intervalCombo.getValue().equalsIgnoreCase("monthly") ? start.plusMonths(1): start.plusWeeks(1);
-
+            if (intervalCombo.getValue().equalsIgnoreCase("weekly")) {
+                start = start.plusWeeks(1);
+            } else if (intervalCombo.getValue().equalsIgnoreCase("monthly")) {
+                start = start.plusMonths(1);
+                start = start.plusDays(start.lengthOfMonth() - start.getDayOfMonth());
+            }
             dueDates.add(DateTimeHelper.localDateToUtilDate(start));
         }
         return dueDates;
@@ -291,7 +292,6 @@ public class PopulationStackedChart extends VBox {
                     cell = row.createCell(i + 1);
                     cell.setCellType(CellType.FORMULA);
                     cell.setCellFormula("AVERAGEA(" + firstCellAddr + ":" + lastCellAddr  + ")");
-                    sheet.autoSizeColumn(i);
                     progress++;
                     updateProgress(progress, maxWork);
                     Thread.sleep(25);
@@ -305,6 +305,9 @@ public class PopulationStackedChart extends VBox {
                     cell.setCellFormula("SUM(" + firstCellAddr + ":" + lastCellAddr + ")");
                     progress++;
                     updateProgress(progress, maxWork);
+                }
+                for (int i = 0; i < row.getLastCellNum(); i ++) {
+                    sheet.autoSizeColumn(i);
                 }
                 updateProgress(maxWork, maxWork);
                 return null;
