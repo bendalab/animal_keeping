@@ -1,7 +1,6 @@
 package animalkeeping.ui.widgets;
 import animalkeeping.model.HousingUnit;
 import animalkeeping.model.SpeciesType;
-import animalkeeping.model.Subject;
 import animalkeeping.ui.Main;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.EntityHelper;
@@ -196,107 +195,13 @@ public class PopulationStackedChart extends VBox {
         this.xAxis.getCategories().clear();
         Vector<Date> dueDates = getDueDates();
         Vector<XYChart.Series> series = new Vector<>();
-        SimpleDateFormat fmt = new SimpleDateFormat("MM.yyyy");
 
-        Task<Void> refresh_task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                if (housingUnit == null) {
-                    populationHistory();
-                } else {
-                    populationHistoryOfHousingUnit();
-                }
-                return null;
-            }
-
-            private void populationHistory() {
-                List<SpeciesType> species = EntityHelper.getEntityList("FROM SpeciesType", SpeciesType.class);
-                int maxWork = dueDates.size() * species.size();
-                updateProgress(0, maxWork);
-                Session session = Main.sessionFactory.openSession();
-                String q = "SELECT COUNT(distinct(s.id)) FROM census_subject s, census_housing h, census_speciestype st " +
-                        "where h.subject_id = s.id AND s.species_id = st.id AND st.id = :species " +
-                        "AND h.start_datetime < :end AND (h.end_datetime is null OR h.end_datetime > :end)";
-                Query query = session.createNativeQuery(q);
-                int progress = 0;
-                for (int i = 0; i < dueDates.size(); i++) {
-                    Date d = dueDates.get(i);
-                    for (int j = 0; j < species.size(); j++) {
-                        SpeciesType sp = species.get(j);
-                        XYChart.Series s;
-                        if (i == 0) {
-                            s = new XYChart.Series();
-                            s.setName(sp.getName());
-                            series.add(s);
-                        } else {
-                            s = series.get(j);
-                        }
-                        query.setParameter("species", sp.getId());
-                        query.setParameter("end", d);
-                        Number count = (Number) query.getSingleResult();
-                        s.getData().add(new XYChart.Data<>(fmt.format(d), count));
-                        progress++;
-                        updateProgress(progress, maxWork);
-                    }
-                }
-                session.close();
-                updateProgress(maxWork, maxWork);
-            }
-
-            private void populationHistoryOfHousingUnit() {
-                updateProgress(0, 3);
-                Set<HousingUnit> units = housingUnit.getChildHousingUnits(true);
-                updateProgress(2, 3);
-
-                List<Long> ids = units.stream().map(HousingUnit::getId).collect(Collectors.toList());
-                ids.add(housingUnit.getId());
-                String q = "SELECT DISTINCT(st) FROM Subject s, SpeciesType st, Housing h, HousingUnit hu WHERE s.speciesType.id = st.id AND " +
-                        "h.subject.id = s.id AND hu.id = h.housing.id AND h.housing.id IN :housings";
-                Vector<String> params = new Vector<>();
-                params.add("housings");
-                Vector<Object> values = new Vector<>();
-                values.add(ids);
-                List<SpeciesType> species = EntityHelper.getEntityList(q, params, values, SpeciesType.class);
-
-                int maxWork = dueDates.size() * species.size();
-                updateProgress(3, maxWork);
-                int progress = 3;
-                q = "SELECT COUNT(distinct(s.id)) FROM census_subject s, census_housing h, census_speciestype st " +
-                        "where h.subject_id = s.id AND s.species_id = st.id AND st.id = :species " +
-                        "AND h.start_datetime < :end AND (h.end_datetime is null OR h.end_datetime > :end) AND "
-                        + "h.type_id IN :housings";
-                Session session = Main.sessionFactory.openSession();
-                Query query = session.createNativeQuery(q);
-                query.setParameter("housings", ids);
-
-                for (int i = 0; i < dueDates.size(); i++) {
-                    Date d = dueDates.get(i);
-                    for (int j = 0; j < species.size(); j++) {
-                        SpeciesType sp = species.get(j);
-                        XYChart.Series s;
-                        if (i == 0) {
-                            s = new XYChart.Series();
-                            s.setName(sp.getName());
-                            series.add(s);
-                        } else {
-                            s = series.get(j);
-                        }
-                        query.setParameter("species", sp.getId());
-                        query.setParameter("end", d);
-                        Number count = (Number) query.getSingleResult();
-                        s.getData().add(new XYChart.Data<String, Number>(fmt.format(d), count));
-                        progress++;
-                        updateProgress(progress, maxWork);
-                    }
-                }
-                updateProgress(maxWork, maxWork);
-            }
-        };
+        RefreshTask refresh_task = new RefreshTask(dueDates, series);
 
         refresh_task.setOnSucceeded(event -> {
             ArrayList<String> dates = new ArrayList<>();
-            for (Date d : dueDates) {
-                dates.add(fmt.format(d));
+            for (Date d : refresh_task.dueDates) {
+                dates.add(refresh_task.fmt.format(d));
             }
             this.xAxis.getCategories().addAll(dates);
             for (XYChart.Series s : series)
@@ -409,4 +314,112 @@ public class PopulationStackedChart extends VBox {
         new Thread(export_task).start();
     }
     //FIXME add option to create a simple population plot, irrespective of species
+
+
+     class RefreshTask extends Task<Void> {
+         private Vector<Date> dueDates = new Vector<>();
+         private Vector<XYChart.Series> series = new Vector<>();
+         private SimpleDateFormat fmt = new SimpleDateFormat("MM.yyyy");
+
+         RefreshTask(Vector<Date> dueDates, Vector<XYChart.Series> series) {
+             super();
+             this.dueDates = dueDates;
+             this.series = series;
+         }
+
+         @Override
+        protected Void call() throws Exception {
+            if (housingUnit == null) {
+                populationHistory();
+            } else {
+                populationHistoryOfHousingUnit();
+            }
+            return null;
+        }
+
+        private void populationHistory() {
+            List<SpeciesType> species = EntityHelper.getEntityList("FROM SpeciesType", SpeciesType.class);
+            int maxWork = dueDates.size() * species.size();
+            updateProgress(0, maxWork);
+            Session session = Main.sessionFactory.openSession();
+            String q = "SELECT COUNT(distinct(s.id)) FROM census_subject s, census_housing h, census_speciestype st " +
+                    "where h.subject_id = s.id AND s.species_id = st.id AND st.id = :species " +
+                    "AND h.start_datetime < :end AND (h.end_datetime is null OR h.end_datetime > :end)";
+            Query query = session.createNativeQuery(q);
+            int progress = 0;
+            for (int i = 0; i < dueDates.size(); i++) {
+                Date d = dueDates.get(i);
+                for (int j = 0; j < species.size(); j++) {
+                    SpeciesType sp = species.get(j);
+                    XYChart.Series s;
+                    if (i == 0) {
+                        s = new XYChart.Series();
+                        s.setName(sp.getName());
+                        series.add(s);
+                    } else {
+                        s = series.get(j);
+                    }
+                    query.setParameter("species", sp.getId());
+                    query.setParameter("end", d);
+                    Number count = (Number) query.getSingleResult();
+                    s.getData().add(new XYChart.Data<>(fmt.format(d), count));
+                    progress++;
+                    updateProgress(progress, maxWork);
+                }
+            }
+            session.close();
+            updateProgress(maxWork, maxWork);
+        }
+
+        private void populationHistoryOfHousingUnit() {
+            Session session = Main.sessionFactory.openSession();
+            updateProgress(0, 3);
+            HousingUnit hu = session.get(HousingUnit.class, housingUnit.getId());
+            Set<HousingUnit> units = hu.getChildHousingUnits(true);
+
+            List<Long> ids = units.stream().map(HousingUnit::getId).collect(Collectors.toList());
+            ids.add(hu.getId());
+            String q = "SELECT DISTINCT(st) FROM Subject s, SpeciesType st, Housing h, HousingUnit hu WHERE s.speciesType.id = st.id AND " +
+                    "h.subject.id = s.id AND hu.id = h.housing.id AND h.housing.id IN :housings";
+            Vector<String> params = new Vector<>();
+            params.add("housings");
+            Vector<Object> values = new Vector<>();
+            values.add(ids);
+            List<SpeciesType> species = EntityHelper.getEntityList(q, params, values, SpeciesType.class);
+
+            int maxWork = dueDates.size() * species.size();
+            updateProgress(3, maxWork);
+            int progress = 3;
+            q = "SELECT COUNT(distinct(s.id)) FROM census_subject s, census_housing h, census_speciestype st " +
+                    "where h.subject_id = s.id AND s.species_id = st.id AND st.id = :species " +
+                    "AND h.start_datetime < :end AND (h.end_datetime is null OR h.end_datetime > :end) AND "
+                    + "h.type_id IN :housings";
+            Query query = session.createNativeQuery(q);
+            query.setParameter("housings", ids);
+
+            for (int i = 0; i < dueDates.size(); i++) {
+                Date d = dueDates.get(i);
+                for (int j = 0; j < species.size(); j++) {
+                    SpeciesType sp = species.get(j);
+                    XYChart.Series s;
+                    if (i == 0) {
+                        s = new XYChart.Series();
+                        s.setName(sp.getName());
+                        series.add(s);
+                    } else {
+                        s = series.get(j);
+                    }
+                    query.setParameter("species", sp.getId());
+                    query.setParameter("end", d);
+                    Number count = (Number) query.getSingleResult();
+                    s.getData().add(new XYChart.Data<String, Number>(fmt.format(d), count));
+                    progress++;
+                    updateProgress(progress, maxWork);
+                }
+            }
+            updateProgress(maxWork, maxWork);
+            session.close();
+        }
+    }
+
 }
