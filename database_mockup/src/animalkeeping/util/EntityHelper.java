@@ -94,6 +94,7 @@ public class EntityHelper {
             session.delete(entity);
             session.getTransaction().commit();
         } catch (Exception e) {
+            session.getTransaction().rollback();
             success = false;
             e.printStackTrace();
         } finally {
@@ -111,6 +112,7 @@ public class EntityHelper {
             session.refresh(entity);
             session.getTransaction().commit();
         } catch (Exception e) {
+            session.getTransaction().rollback();
             e.printStackTrace();
         } finally {
             session.close();
