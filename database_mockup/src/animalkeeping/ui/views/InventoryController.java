@@ -35,10 +35,7 @@
  *****************************************************************************/
 package animalkeeping.ui.views;
 
-import animalkeeping.model.Housing;
-import animalkeeping.model.HousingUnit;
-import animalkeeping.model.Subject;
-import animalkeeping.model.Treatment;
+import animalkeeping.model.*;
 import animalkeeping.ui.Main;
 import animalkeeping.ui.tables.HousingTable;
 import animalkeeping.ui.tables.TreatmentsTable;
@@ -63,10 +60,8 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class InventoryController extends AbstractView implements Initializable {
     @FXML private VBox unitsBox;
@@ -78,7 +73,7 @@ public class InventoryController extends AbstractView implements Initializable {
     @FXML private Tab populationHistory;
     @FXML private Tab populationPieTab;
 
-    private PopulationStackedChart stackedChart;
+    private PopulationStackedChart populationHistoryChart;
     private PopulationChart populationChart;
     private HousingTable housingTable;
     private TreatmentsTable treatmentsTable;
@@ -157,9 +152,9 @@ public class InventoryController extends AbstractView implements Initializable {
         populationChart = new PopulationChart();
         populationPieTab.setContent(populationChart);
 
-        stackedChart = new PopulationStackedChart();
-        populationHistory.setContent(stackedChart);
-        stackedChart.setFillWidth(true);
+        populationHistoryChart = new PopulationStackedChart();
+        populationHistory.setContent(populationHistoryChart);
+        populationHistoryChart.setFillWidth(true);
     }
 
     private void fillList() {
@@ -201,6 +196,7 @@ public class InventoryController extends AbstractView implements Initializable {
     @FXML
     private void listAllPopulation() {
         populationChart.listPopulation(null);
+        populationHistoryChart.setHousingUnit(null);
     }
 
 
@@ -210,6 +206,7 @@ public class InventoryController extends AbstractView implements Initializable {
             return;
         }
         HousingUnit housingUnit = unitsHashMap.get(unitName);
+        populationHistoryChart.setHousingUnit(housingUnit);
         populationChart.listPopulation(housingUnit);
         housingTable.setHousingUnit(housingUnit);
     }
@@ -221,17 +218,9 @@ public class InventoryController extends AbstractView implements Initializable {
 
     @Override
     public void refresh() {
-        Task<Void> refreshTask = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-            fillList();
-            refreshOpenTreatments();
-            listAllPopulation();
-            return null;
-            }
-        };
-        refreshTask.addEventHandler(EventType.ROOT, this::handleEvents);
-        new Thread(refreshTask).start();
+        fillList();
+        refreshOpenTreatments();
+        listAllPopulation();
     }
 
     private void handleEvents(Event event) {

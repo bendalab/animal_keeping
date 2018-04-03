@@ -28,17 +28,17 @@
       <Separator maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
       <TabPane>
          <tabs>
-            <Tab fx:id="populationPieTab" text="Population chart">
+            <Tab fx:id="populationPieTab" closable="false" text="Population chart">
                <content>
                   <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                </content>
             </Tab>
-            <Tab text="Current population">
+            <Tab closable="false" text="Current population">
                <content>
                   <VBox fx:id="currentHousingsBox" prefHeight="200.0" prefWidth="100.0" />
                </content>
             </Tab>
-            <Tab fx:id="populationHistory" text="Population history">
+            <Tab fx:id="populationHistory" closable="false" text="Population history">
                <content>
                   <VBox fx:id="popHistoryVBox" prefHeight="200.0" prefWidth="100.0" />
                </content>
