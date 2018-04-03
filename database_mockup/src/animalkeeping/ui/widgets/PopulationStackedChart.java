@@ -5,6 +5,7 @@ import animalkeeping.ui.Main;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.EntityHelper;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -81,6 +82,7 @@ public class PopulationStackedChart extends VBox {
     private ProgressIndicator busy;
     private VBox vbox;
     private HousingUnit housingUnit = null;
+    private SimpleBooleanProperty refreshRunning = new SimpleBooleanProperty(false);
 
     public PopulationStackedChart() {
         this.xAxis.setCategories(FXCollections.observableArrayList
@@ -189,6 +191,9 @@ public class PopulationStackedChart extends VBox {
 
 
     private void getPupulationCounts() {
+        if (refreshRunning.get()) {
+            return;
+        }
         chart.setAnimated(false);
         chart.getData().clear();
 
@@ -211,9 +216,11 @@ public class PopulationStackedChart extends VBox {
         Platform.runLater(() -> {
             busy.progressProperty().unbind();
             vbox.visibleProperty().unbind();
+            refreshRunning.unbind();
             vbox.visibleProperty().bind(refresh_task.runningProperty());
             busy.progressProperty().bind(refresh_task.progressProperty());
             exportBtn.disableProperty().bind(refresh_task.runningProperty());
+            refreshRunning.bind(refresh_task.runningProperty());
         });
 
         new Thread(refresh_task).start();
