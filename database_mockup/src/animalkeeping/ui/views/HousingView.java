@@ -43,6 +43,7 @@ import animalkeeping.ui.tables.HousingTable;
 import animalkeeping.ui.tables.HousingTypeTable;
 import animalkeeping.ui.tables.HousingUnitTable;
 import animalkeeping.ui.widgets.ControlLabel;
+import animalkeeping.ui.widgets.PopulationStackedChart;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.XlsxExport;
 import javafx.application.Platform;
@@ -77,6 +78,7 @@ public class HousingView extends AbstractView implements Initializable {
     @FXML private VBox tabVBox;
 
     private PopulationChart populationChart;
+    private PopulationStackedChart populationHistory;
     private HousingTypeTable housingTypes;
     private HousingUnitTable housingUnitTable;
     private HousingTable housingTable;
@@ -219,20 +221,25 @@ public class HousingView extends AbstractView implements Initializable {
         exportItem.setDisable(true);
         exportItem.setOnAction(event -> exportPopulation());
         housingUnitTable.getContextMenu().getItems().add(exportItem);
+
+        populationHistory = new PopulationStackedChart();
+        historyTab.setContent(populationHistory);
     }
 
 
     private void setSelectedUnit(HousingUnit unit) {
         Platform.runLater(() -> {
-            populationChart.listPopulation(unit);
             deleteUnitLabel.setDisable(unit == null);
             editUnitLabel.setDisable(unit == null);
             importSubjectsLabel.setDisable(unit == null || !unit.getHousingType().getCanHoldSubjects());
             batchTreatmentLabel.setDisable(unit == null);
             appendUnitLabel.setDisable(unit == null || !unit.getHousingType().getCanHaveChildUnits());
             exportPopulationLabel.setDisable(unit == null);
-            housingTable.setHousingUnit(unit);
+
         });
+        populationChart.listPopulation(unit);
+        housingTable.setHousingUnit(unit);
+        populationHistory.setHousingUnit(unit);
     }
 
 
