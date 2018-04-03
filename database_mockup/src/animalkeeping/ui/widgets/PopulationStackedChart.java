@@ -249,6 +249,7 @@ public class PopulationStackedChart extends VBox {
                 updateProgress(2, 3);
 
                 List<Long> ids = units.stream().map(HousingUnit::getId).collect(Collectors.toList());
+                ids.add(housingUnit.getId());
                 String q = "SELECT DISTINCT(st) FROM Subject s, SpeciesType st, Housing h, HousingUnit hu WHERE s.speciesType.id = st.id AND " +
                         "h.subject.id = s.id AND hu.id = h.housing.id AND h.housing.id IN :housings";
                 Vector<String> params = new Vector<>();
