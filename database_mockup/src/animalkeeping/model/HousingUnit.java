@@ -160,7 +160,7 @@ public class HousingUnit extends Entity implements ChangeLogInterface {
         return new HashCodeBuilder(17, 31).
                 append(getId()).
                 append(getName()).
-                append(getHousingType().getName()).
+                append(getHousingType() != null ? getHousingType().getName() : "").
                 toHashCode();
     }
 
