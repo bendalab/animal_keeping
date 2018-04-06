@@ -205,7 +205,7 @@ public class PopulationStackedChart extends VBox {
 
         this.xAxis.getCategories().clear();
         Vector<Date> dueDates = getDueDates();
-        Vector<XYChart.Series> series = new Vector<>();
+        Vector<XYChart.Series<String, Number>> series = new Vector<>();
 
         RefreshTask refresh_task = new RefreshTask(dueDates, series);
 
@@ -215,7 +215,7 @@ public class PopulationStackedChart extends VBox {
                 dates.add(refresh_task.fmt.format(d));
             }
             this.xAxis.getCategories().addAll(dates);
-            for (XYChart.Series s : series)
+            for (XYChart.Series<String, Number> s : series)
                 this.chart.getData().add(s);
         });
 
@@ -248,13 +248,13 @@ public class PopulationStackedChart extends VBox {
                 String firstCellAddr = "", lastCellAddr;
 
                 for (int i = 0; i < chart.getData().size(); i++) {
-                    XYChart.Series s = chart.getData().get(i);
+                    XYChart.Series<String, Number> s = chart.getData().get(i);
                     if (row.getRowNum() > 0) {
                         row = sheet.getRow(0);
                     }
                     row.createCell(i + 1).setCellValue(s.getName());
                     for ( int j = 0; j < s.getData().size(); j++) {
-                        XYChart.Data<String, Number> d = (XYChart.Data<String, Number>) s.getData().get(j);
+                        XYChart.Data<String, Number> d = s.getData().get(j);
                         if (i == 0) {
                             row = sheet.createRow(j + 1);
                             row.createCell(0).setCellValue(d.getXValue());
@@ -269,7 +269,7 @@ public class PopulationStackedChart extends VBox {
                         progress++;
                         updateProgress(progress, maxWork);
                     }
-                    lastCellAddr = cell.getAddress().toString();
+                    lastCellAddr = cell != null ? cell.getAddress().toString() : "";
 
                     if (i == 0) {
                         row = sheet.createRow(s.getData().size() + 1);
@@ -331,10 +331,10 @@ public class PopulationStackedChart extends VBox {
 
      class RefreshTask extends Task<Void> {
          private Vector<Date> dueDates = new Vector<>();
-         private Vector<XYChart.Series> series = new Vector<>();
+         private Vector<XYChart.Series<String, Number>> series = new Vector<>();
          private SimpleDateFormat fmt = new SimpleDateFormat("MM.yyyy");
 
-         RefreshTask(Vector<Date> dueDates, Vector<XYChart.Series> series) {
+         RefreshTask(Vector<Date> dueDates, Vector<XYChart.Series<String, Number>> series) {
              super();
              this.dueDates = dueDates;
              this.series = series;
@@ -351,8 +351,8 @@ public class PopulationStackedChart extends VBox {
         }
 
         private void populationHistory() {
-            String q = "";
-            List<SpeciesType> species = null;
+            String q;
+            List<SpeciesType> species = new LinkedList<>();
             int maxWork = dueDates.size();
             if (resolveSpecies.isSelected()) {
                 species = EntityHelper.getEntityList("FROM SpeciesType", SpeciesType.class);
@@ -373,9 +373,9 @@ public class PopulationStackedChart extends VBox {
             for (int i = 0; i < dueDates.size(); i++) {
                 Date d = dueDates.get(i);
                 if (!resolveSpecies.isSelected()) {
-                    XYChart.Series s;
+                    XYChart.Series<String, Number> s;
                     if (i == 0) {
-                        s = new XYChart.Series();
+                        s = new XYChart.Series<>();
                         s.setName("all species");
                         series.add(s);
                     } else {
@@ -390,9 +390,9 @@ public class PopulationStackedChart extends VBox {
                 } else {
                     for (int j = 0; j < species.size(); j++) {
                         SpeciesType sp = species.get(j);
-                        XYChart.Series s;
+                        XYChart.Series<String, Number> s;
                         if (i == 0) {
-                            s = new XYChart.Series();
+                            s = new XYChart.Series<>();
                             s.setName(sp.getName());
                             series.add(s);
                         } else {
@@ -419,9 +419,9 @@ public class PopulationStackedChart extends VBox {
             Set<HousingUnit> units = hu.getChildHousingUnits(true);
             List<Long> ids = units.stream().map(HousingUnit::getId).collect(Collectors.toList());
             ids.add(hu.getId());
-            List<SpeciesType> species = null;
+            List<SpeciesType> species = new LinkedList<>();
             int progress = 0;
-            String q = "";
+            String q;
 
             if (resolveSpecies.isSelected()) {
                 q = "SELECT DISTINCT(st) FROM Subject s, SpeciesType st, Housing h, HousingUnit hu WHERE s.speciesType.id = st.id AND " +
@@ -455,9 +455,9 @@ public class PopulationStackedChart extends VBox {
                 if (resolveSpecies.isSelected()) {
                     for (int j = 0; j < species.size(); j++) {
                         SpeciesType sp = species.get(j);
-                        XYChart.Series s;
+                        XYChart.Series<String, Number> s;
                         if (i == 0) {
-                            s = new XYChart.Series();
+                            s = new XYChart.Series<>();
                             s.setName(sp.getName());
                             series.add(s);
                         } else {
@@ -466,14 +466,14 @@ public class PopulationStackedChart extends VBox {
                         query.setParameter("species", sp.getId());
                         query.setParameter("end", d);
                         Number count = (Number) query.getSingleResult();
-                        s.getData().add(new XYChart.Data<String, Number>(fmt.format(d), count));
+                        s.getData().add(new XYChart.Data<>(fmt.format(d), count));
                         progress++;
                         updateProgress(progress, maxWork);
                     }
                 } else {
-                    XYChart.Series s;
+                    XYChart.Series<String, Number> s;
                     if (i == 0) {
-                        s = new XYChart.Series();
+                        s = new XYChart.Series<>();
                         s.setName("all species");
                         series.add(s);
                     } else {
@@ -481,7 +481,7 @@ public class PopulationStackedChart extends VBox {
                     }
                     query.setParameter("end", d);
                     Number count = (Number) query.getSingleResult();
-                    s.getData().add(new XYChart.Data<String, Number>(fmt.format(d), count));
+                    s.getData().add(new XYChart.Data<>(fmt.format(d), count));
                     progress++;
                     updateProgress(progress, maxWork);
                 }
