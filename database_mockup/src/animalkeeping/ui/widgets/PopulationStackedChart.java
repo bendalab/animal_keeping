@@ -7,6 +7,7 @@ import animalkeeping.util.EntityHelper;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,6 +19,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -25,6 +27,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.controlsfx.control.CheckComboBox;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -84,6 +87,7 @@ public class PopulationStackedChart extends VBox {
     private HousingUnit housingUnit = null;
     private CheckBox resolveSpecies;
     private SimpleBooleanProperty refreshRunning = new SimpleBooleanProperty(false);
+    private CheckComboBox<SpeciesType> speciesTypeCheckComboBox;
 
     public PopulationStackedChart() {
         this.xAxis.setCategories(FXCollections.observableArrayList
@@ -126,7 +130,7 @@ public class PopulationStackedChart extends VBox {
         this.intervalCombo.getSelectionModel().select(0);
         this.intervalCombo.prefWidthProperty().bind(column3.maxWidthProperty());
 
-        this.resolveSpecies = new CheckBox("split species");
+        this.resolveSpecies = new CheckBox("select species");
         this.resolveSpecies.setSelected(false);
         this.resolveSpecies.prefWidthProperty().bind(column5.maxWidthProperty());
 
@@ -139,6 +143,24 @@ public class PopulationStackedChart extends VBox {
         updateBtn.setOnAction(event -> getPupulationCounts());
         updateBtn.prefWidthProperty().bind(column5.maxWidthProperty());
 
+        ObservableList<SpeciesType> speciesTypes = FXCollections.observableArrayList();
+        List<SpeciesType> sp = EntityHelper.getEntityList("FROM SpeciesType ORDER BY name ASC", SpeciesType.class);
+        speciesTypes.addAll(sp);
+        this.speciesTypeCheckComboBox = new CheckComboBox<>(speciesTypes);
+        this.speciesTypeCheckComboBox.setConverter(new StringConverter<SpeciesType>() {
+            @Override
+            public String toString(SpeciesType object) {
+                return object.getName() + ": " + object.getTrivial();
+            }
+
+            @Override
+            public SpeciesType fromString(String string) {
+                return null;
+            }
+        });
+        speciesTypeCheckComboBox.prefWidthProperty().bind(column3.maxWidthProperty());
+        speciesTypeCheckComboBox.disableProperty().bind(resolveSpecies.selectedProperty().not());
+
         grid.setHgap(5);
         grid.add(new Label("Start date:"), 0, 0);
         grid.add(this.startDate, 0, 1);
@@ -146,7 +168,8 @@ public class PopulationStackedChart extends VBox {
         grid.add(this.endDate, 1,1);
         grid.add(new Label("Interval:"), 2, 0);
         grid.add(this.intervalCombo, 2, 1);
-        grid.add(this.resolveSpecies, 3, 1);
+        grid.add(this.resolveSpecies, 3, 0);
+        grid.add(this.speciesTypeCheckComboBox, 3, 1);
         grid.add(updateBtn, 4, 0);
         grid.add(this.exportBtn, 4, 1);
 
@@ -206,8 +229,9 @@ public class PopulationStackedChart extends VBox {
         this.xAxis.getCategories().clear();
         Vector<Date> dueDates = getDueDates();
         Vector<XYChart.Series<String, Number>> series = new Vector<>();
+        ObservableList<SpeciesType> selection = speciesTypeCheckComboBox.getCheckModel().getCheckedItems();
 
-        RefreshTask refresh_task = new RefreshTask(dueDates, series);
+        RefreshTask refresh_task = new RefreshTask(dueDates, series, selection);
 
         refresh_task.setOnSucceeded(event -> {
             ArrayList<String> dates = new ArrayList<>();
@@ -326,18 +350,19 @@ public class PopulationStackedChart extends VBox {
         busy.progressProperty().bind(export_task.progressProperty());
         new Thread(export_task).start();
     }
-    //FIXME add option to create a simple population plot, irrespective of species
 
 
      class RefreshTask extends Task<Void> {
          private Vector<Date> dueDates = new Vector<>();
          private Vector<XYChart.Series<String, Number>> series = new Vector<>();
          private SimpleDateFormat fmt = new SimpleDateFormat("MM.yyyy");
+         private ObservableList<SpeciesType> selection = null;
 
-         RefreshTask(Vector<Date> dueDates, Vector<XYChart.Series<String, Number>> series) {
+         RefreshTask(Vector<Date> dueDates, Vector<XYChart.Series<String, Number>> series, ObservableList<SpeciesType> selection) {
              super();
              this.dueDates = dueDates;
              this.series = series;
+             this.selection = selection;
          }
 
          @Override
@@ -388,8 +413,12 @@ public class PopulationStackedChart extends VBox {
                     progress++;
                     updateProgress(progress, maxWork);
                 } else {
-                    for (int j = 0; j < species.size(); j++) {
-                        SpeciesType sp = species.get(j);
+                    for (int j = 0; j < selection.size(); j++) {
+                        SpeciesType sp = selection.get(j);
+                        if (!species.contains(sp)) {
+                            progress++;
+                            updateProgress(progress, maxWork);
+                        }
                         XYChart.Series<String, Number> s;
                         if (i == 0) {
                             s = new XYChart.Series<>();
@@ -449,12 +478,16 @@ public class PopulationStackedChart extends VBox {
             }
             Query query = session.createNativeQuery(q);
             query.setParameter("housings", ids);
-
             for (int i = 0; i < dueDates.size(); i++) {
                 Date d = dueDates.get(i);
                 if (resolveSpecies.isSelected()) {
-                    for (int j = 0; j < species.size(); j++) {
-                        SpeciesType sp = species.get(j);
+                    for (int j = 0; j < selection.size(); j++) {
+                        SpeciesType sp = selection.get(j);
+                        if (!selection.contains(sp)) {
+                            progress++;
+                            updateProgress(progress, maxWork);
+                            continue;
+                        }
                         XYChart.Series<String, Number> s;
                         if (i == 0) {
                             s = new XYChart.Series<>();
