@@ -264,12 +264,12 @@ public class PopulationStackedChart extends VBox {
             protected Void call() throws Exception {
                 double progress = 0.0;
                 double maxWork = chart.getData().size() * chart.getData().get(0).getData().size() +
-                        chart.getData().get(0).getData().size();
+                        chart.getData().get(0).getData().size() + chart.getData().size();
                 updateProgress(progress, maxWork);
                 XSSFSheet sheet = workbook.createSheet("Population history");
                 XSSFRow row = sheet.createRow(0);
-                XSSFCell cell = null;
-                String firstCellAddr = "", lastCellAddr;
+                XSSFCell cell;
+                String firstCellAddr, lastCellAddr;
 
                 for (int i = 0; i < chart.getData().size(); i++) {
                     XYChart.Series<String, Number> s = chart.getData().get(i);
@@ -287,28 +287,14 @@ public class PopulationStackedChart extends VBox {
                         }
                         cell = row.createCell(i + 1);
                         cell.setCellValue(d.getYValue().intValue());
-                        if (j == 0) {
-                            firstCellAddr = row.getCell(i + 1).getAddress().toString();
-                        }
                         progress++;
                         updateProgress(progress, maxWork);
                     }
-                    lastCellAddr = cell != null ? cell.getAddress().toString() : "";
-
-                    if (i == 0) {
-                        row = sheet.createRow(s.getData().size() + 1);
-                        row.createCell(0).setCellValue("Average");
-                    } else {
-                        row = sheet.getRow(s.getData().size() + 1);
-                    }
-
-                    cell = row.createCell(i + 1);
-                    cell.setCellType(CellType.FORMULA);
-                    cell.setCellFormula("AVERAGEA(" + firstCellAddr + ":" + lastCellAddr  + ")");
-                    progress++;
-                    updateProgress(progress, maxWork);
                     Thread.sleep(25);
                 }
+                // sum of counts in each row
+                row = sheet.getRow(0);
+                row.createCell(row.getLastCellNum()).setCellValue("Total");
                 for (int i = 1; i < sheet.getLastRowNum(); i++) {
                     row = sheet.getRow(i);
                     cell = row.createCell(row.getLastCellNum());
@@ -319,10 +305,30 @@ public class PopulationStackedChart extends VBox {
                     progress++;
                     updateProgress(progress, maxWork);
                 }
+                Thread.sleep(25);
+
+                // add row for averages
+                XSSFRow firstRow = sheet.getRow(1);
+                XSSFRow lastRow = sheet.getRow(sheet.getLastRowNum() - 1);
+                row = sheet.createRow(sheet.getLastRowNum());
+                row.createCell(0).setCellValue("Average");
+                for (int i = 1; i < lastRow.getLastCellNum(); i++) {
+                    firstCellAddr = firstRow.getCell(i).getAddress().toString();
+                    lastCellAddr = lastRow.getCell(i).getAddress().toString();
+
+                    cell = row.createCell(i);
+                    cell.setCellType(CellType.FORMULA);
+                    cell.setCellFormula("AVERAGEA(" + firstCellAddr + ":" + lastCellAddr + ")");
+                    progress++;
+                    updateProgress(progress, maxWork);
+                }
+                Thread.sleep(25);
+
                 for (int i = 0; i < row.getLastCellNum(); i ++) {
                     sheet.autoSizeColumn(i);
                 }
                 updateProgress(maxWork, maxWork);
+                Thread.sleep(25);
                 return null;
             }
         };
@@ -352,20 +358,20 @@ public class PopulationStackedChart extends VBox {
     }
 
 
-     class RefreshTask extends Task<Void> {
-         private Vector<Date> dueDates = new Vector<>();
-         private Vector<XYChart.Series<String, Number>> series = new Vector<>();
-         private SimpleDateFormat fmt = new SimpleDateFormat("MM.yyyy");
-         private ObservableList<SpeciesType> selection = null;
+    class RefreshTask extends Task<Void> {
+        private Vector<Date> dueDates = new Vector<>();
+        private Vector<XYChart.Series<String, Number>> series = new Vector<>();
+        private SimpleDateFormat fmt = new SimpleDateFormat("MM.yyyy");
+        private ObservableList<SpeciesType> selection = null;
 
-         RefreshTask(Vector<Date> dueDates, Vector<XYChart.Series<String, Number>> series, ObservableList<SpeciesType> selection) {
-             super();
-             this.dueDates = dueDates;
-             this.series = series;
-             this.selection = selection;
-         }
+        RefreshTask(Vector<Date> dueDates, Vector<XYChart.Series<String, Number>> series, ObservableList<SpeciesType> selection) {
+            super();
+            this.dueDates = dueDates;
+            this.series = series;
+            this.selection = selection;
+        }
 
-         @Override
+        @Override
         protected Void call() throws Exception {
             if (housingUnit == null) {
                 populationHistory();
