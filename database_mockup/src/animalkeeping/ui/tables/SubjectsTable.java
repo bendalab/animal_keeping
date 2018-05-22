@@ -7,9 +7,13 @@ import animalkeeping.ui.views.ViewEvent;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
 import animalkeeping.util.TablePreferences;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -17,7 +21,13 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.scene.control.*;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 /******************************************************************************
  animalBase
  animalkeeping.util
@@ -58,7 +68,7 @@ import java.util.Date;
  *****************************************************************************/
 
 public class SubjectsTable extends TableView<Subject> {
-    private ObservableList<Subject> masterList = FXCollections.observableArrayList();
+    private final ObservableList<Subject> masterList = FXCollections.observableArrayList();
     private FilteredList<Subject> filteredList;
     private MenuItem editItem;
     private MenuItem deleteItem;
@@ -68,6 +78,7 @@ public class SubjectsTable extends TableView<Subject> {
     private MenuItem moveItem;
     private CheckMenuItem showAllItem;
     private TablePreferences tableLayout;
+    private SimpleBooleanProperty refreshRunning = new SimpleBooleanProperty(false);
 
 
     public SubjectsTable() {
@@ -221,6 +232,40 @@ public class SubjectsTable extends TableView<Subject> {
 
 
     public void refresh() {
+        if (refreshRunning.get()) {
+            return;
+        }
+        masterList.clear();
+        RefreshTask refresh_task = new RefreshTask();
+
+        refresh_task.setOnSucceeded(event -> {
+            filteredList = new FilteredList<>(masterList, p -> true);
+            SortedList<Subject> sortedList = new SortedList<>(filteredList);
+            sortedList.comparatorProperty().bind(comparatorProperty());
+            setItems(sortedList);
+            System.out.println(masterList.size());
+            showAllItem.setSelected(!Main.getSettings().getBoolean("app_settings_availableSubjectsView", true));
+            setAliveFilter(!showAllItem.isSelected());
+            fireEvent(new ViewEvent(ViewEvent.REFRESHED));
+        });
+
+        Platform.runLater(() -> {
+            //busy.progressProperty().unbind();
+            //vbox.visibleProperty().unbind();
+            refreshRunning.unbind();
+            //vbox.visibleProperty().bind(refresh_task.runningProperty());
+            //busy.progressProperty().bind(refresh_task.progressProperty());
+            refreshRunning.bind(refresh_task.runningProperty());
+        });
+        refresh_task.progressProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                System.out.println(newValue);
+            }
+        });
+
+        new Thread(refresh_task).start();
+        /*
         masterList.clear();
         Task<Void> refresh_task = new Task<Void>() {
             @Override
@@ -232,15 +277,10 @@ public class SubjectsTable extends TableView<Subject> {
             }
         };
         refresh_task.setOnSucceeded(event -> {
-            filteredList = new FilteredList<>(masterList, p -> true);
-            SortedList<Subject> sortedList = new SortedList<>(filteredList);
-            sortedList.comparatorProperty().bind(comparatorProperty());
-            setItems(sortedList);
-            showAllItem.setSelected(!Main.getSettings().getBoolean("app_settings_availableSubjectsView", true));
-            setAliveFilter(!showAllItem.isSelected());
-            fireEvent(new ViewEvent(ViewEvent.REFRESHED));
+
         });
         new Thread(refresh_task).run();
+        */
     }
 
 
@@ -304,6 +344,49 @@ public class SubjectsTable extends TableView<Subject> {
         if (subject != null) {
             refresh();
             setSelectedSubject(subject);
+        }
+    }
+
+
+    class RefreshTask extends Task<Void> {
+
+        RefreshTask() {
+            super();
+        }
+
+        @Override
+        protected Void call() throws Exception {
+            System.out.println("Refresh!!!");
+
+            Session session = Main.sessionFactory.openSession();
+            Query countQuery = session.createQuery("SELECT COUNT(*) from Subject s");
+            Number maxCount = (Number)countQuery.getSingleResult();
+
+            //Query<Subject> q = session.createQuery("SELECT DISTINCT(s) from Subject s JOIN FETCH s.speciesType " +
+            //        "JOIN FETCH s.housings JOIN FETCH s.supplier LEFT JOIN FETCH s.responsiblePerson", Subject.class);
+            Query<Subject> q = session.createQuery("SELECT DISTINCT(s) from Subject s, Person p WHERE s.responsiblePerson = p", Subject.class);
+
+            //Number maxCount = (Number) query.getSingleResult();
+            System.out.println(maxCount);
+            int offset = 0, count = 0;
+            int steps = 20;
+            for (int i = 0; i <= (maxCount.intValue() / steps); i++) {
+                if (isCancelled())
+                    return null;
+                offset = i * steps;
+                count = steps * i < maxCount.intValue() ? steps : (maxCount.intValue() % steps);
+                q.setFirstResult(offset);
+                q.setMaxResults(count);
+                final List<Subject> l = q.getResultList();
+                Platform.runLater(() -> masterList.addAll(l));
+                updateProgress(i, (maxCount.intValue() / steps));
+            }
+            //masterList.addAll(EntityHelper.getEntityList("SELECT DISTINCT(s) from Subject s JOIN FETCH s.speciesType " +
+            //        "JOIN FETCH s.housings JOIN FETCH s.supplier LEFT JOIN FETCH s.responsiblePerson", Subject.class));
+            //Thread.sleep(100);
+            //return null;
+            session.close();
+            return null;
         }
     }
 }
