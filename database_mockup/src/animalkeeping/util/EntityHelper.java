@@ -104,18 +104,29 @@ public class EntityHelper {
     }
 
     public static <T> void refreshEntity(T entity) {
+        Session session = Main.sessionFactory.openSession();
+        refreshEntity(entity, session);
+    }
+
+    public static <T> void refreshEntity(T entity, Session s) {
         if (entity == null)
             return;
-        Session session = Main.sessionFactory.openSession();
+        if (s == null || !s.isOpen())
+            s = Main.sessionFactory.openSession();
+        if (s.getEntityManagerFactory().createEntityManager().contains(entity)) {
+            s.close();
+            return;
+        }
         try {
-            session.beginTransaction();
-            session.refresh(entity);
-            session.getTransaction().commit();
+            s.beginTransaction();
+            s.refresh(entity);
+            s.getTransaction().commit();
         } catch (Exception e) {
-            session.getTransaction().rollback();
+            s.getTransaction().rollback();
             e.printStackTrace();
         } finally {
-            session.close();
+            s.close();
         }
     }
+
 }
