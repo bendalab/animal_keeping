@@ -21,9 +21,12 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.scene.control.*;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,9 +70,9 @@ import java.util.List;
 
  *****************************************************************************/
 
-public class SubjectsTable extends TableView<Subject> {
-    private final ObservableList<Subject> masterList = FXCollections.observableArrayList();
-    private FilteredList<Subject> filteredList;
+public class SubjectsTable extends TableView<SubjectsTable.SubjectTableItem> {
+    private final ObservableList<SubjectTableItem> masterList = FXCollections.observableArrayList();
+    private FilteredList<SubjectTableItem> filteredList;
     private MenuItem editItem;
     private MenuItem deleteItem;
     private MenuItem addTreatmentItem;
@@ -79,80 +82,78 @@ public class SubjectsTable extends TableView<Subject> {
     private CheckMenuItem showAllItem;
     private TablePreferences tableLayout;
     private SimpleBooleanProperty refreshRunning = new SimpleBooleanProperty(false);
-
+    private final Session session = Main.sessionFactory.openSession();
 
     public SubjectsTable() {
         super();
-        TableColumn<Subject, Number> idCol = new TableColumn<>("id");
+        TableColumn<SubjectTableItem, Number> idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(data -> new ReadOnlyLongWrapper(data.getValue().getId()));
         idCol.prefWidthProperty().bind(this.widthProperty().multiply(0.03));
 
-        TableColumn<Subject, String> nameCol = new TableColumn<>("name");
+        TableColumn<SubjectTableItem, String> nameCol = new TableColumn<>("name");
         nameCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
         nameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
-        TableColumn<Subject, String> aliasCol = new TableColumn<>("alias");
+        TableColumn<SubjectTableItem, String> aliasCol = new TableColumn<>("alias");
         aliasCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAlias()));
         aliasCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
 
-        TableColumn<Subject, String> personCol = new TableColumn<>("resp. person");
-        personCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getResponsiblePerson() != null ?
-                (data.getValue().getResponsiblePerson().getFirstName() + " " + data.getValue().getResponsiblePerson().getLastName()) : ""));
+        TableColumn<SubjectTableItem, String> personCol = new TableColumn<>("resp. person");
+        personCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getResponsiblePerson()));
         personCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
 
-        TableColumn<Subject, String> genderCol = new TableColumn<>("gender");
-        genderCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getGender().toString()));
+        TableColumn<SubjectTableItem, String> genderCol = new TableColumn<>("gender");
+        genderCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getGender()));
         genderCol.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
 
-        TableColumn<Subject, Date> birthdateCol = new TableColumn<>("birth date");
-        birthdateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getBirthday()));
+        TableColumn<SubjectTableItem, String> birthdateCol = new TableColumn<>("birth date");
+        birthdateCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getBirth()));
         birthdateCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
 
-        TableColumn<Subject, String> speciesCol = new TableColumn<>("species");
-        speciesCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSpeciesType().getName()));
+        TableColumn<SubjectTableItem, String> speciesCol = new TableColumn<>("species");
+        speciesCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSpecies()));
         speciesCol.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
 
-        TableColumn<Subject, String> housingCol = new TableColumn<>("housing");
-        housingCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getCurrentHousing() != null ?
-                data.getValue().getCurrentHousing().getHousing().getName() : ""));
+        TableColumn<SubjectTableItem, String> housingCol = new TableColumn<>("housing");
+        housingCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getCurrentHousingUnit()));
         housingCol.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
 
-        TableColumn<Subject, String> subjectCol = new TableColumn<>("type");
-        subjectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubjectType().getName()));
+        TableColumn<SubjectTableItem, String> subjectCol = new TableColumn<>("type");
+        subjectCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSubjectType()));
         subjectCol.prefWidthProperty().bind(this.widthProperty().multiply(0.08));
 
-        TableColumn<Subject, String> supplierCol = new TableColumn<>("supplier");
-        supplierCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSupplier().getName()));
+        TableColumn<SubjectTableItem, String> supplierCol = new TableColumn<>("supplier");
+        supplierCol.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSupplierName()));
         supplierCol.prefWidthProperty().bind(this.widthProperty().multiply(0.125));
 
         this.getColumns().addAll(idCol, nameCol, aliasCol, birthdateCol, genderCol, speciesCol, personCol, housingCol, subjectCol, supplierCol);
         this.setRowFactory( tv -> {
-            TableRow<Subject> row = new TableRow<>();
+            TableRow<SubjectTableItem> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    Subject s = row.getItem();
-                    s = Dialogs.editSubjectDialog(s);
-                    if (s != null) {
-                        refresh();
-                        setSelectedSubject(s);
-                    }
+                    //Subject s = row.getItem();
+                    //s = Dialogs.editSubjectDialog(s);
+                    //if (s != null) {
+                    //    refresh();
+                    //    setSelectedSubject(s);
+                    //} FIXME
                 }
             });
             return row ;
         });
 
-        this.getSelectionModel().getSelectedItems().addListener((ListChangeListener<Subject>) c -> {
+        this.getSelectionModel().getSelectedItems().addListener((ListChangeListener<SubjectTableItem>) c -> {
             int sel_count = c.getList().size();
             editItem.setDisable(sel_count == 0);
             deleteItem.setDisable(sel_count == 0);
             addTreatmentItem.setDisable(sel_count == 0);
             observationItem.setDisable(sel_count == 0);
             if (sel_count > 0) {
-                Subject s = c.getList().get(0);
-                boolean alive = s.getCurrentHousing() != null;
-                moveItem.setDisable(!alive);
-                addTreatmentItem.setDisable(!alive);
-                reportDeadItem.setDisable(!alive);
+                //Subject s = c.getList().get(0);
+                //boolean alive = s.getCurrentHousing() != null;
+                //moveItem.setDisable(!alive);
+                //addTreatmentItem.setDisable(!alive);
+                //reportDeadItem.setDisable(!alive); FIXME
             }
         });
 
@@ -162,27 +163,27 @@ public class SubjectsTable extends TableView<Subject> {
 
         editItem = new MenuItem("edit subject");
         editItem.setDisable(true);
-        editItem.setOnAction(event -> editSubject(this.getSelectionModel().getSelectedItem()));
+        //editItem.setOnAction(event -> editSubject(this.getSelectionModel().getSelectedItem()));
 
         deleteItem = new MenuItem("delete subject");
         deleteItem.setDisable(true);
-        deleteItem.setOnAction(event -> deleteSubject(this.getSelectionModel().getSelectedItem()));
+        //deleteItem.setOnAction(event -> deleteSubject(this.getSelectionModel().getSelectedItem()));
 
         addTreatmentItem = new MenuItem("add treatment");
         addTreatmentItem.setDisable(true);
-        addTreatmentItem.setOnAction(event -> addTreatment(this.getSelectionModel().getSelectedItem()));
+        //addTreatmentItem.setOnAction(event -> addTreatment(this.getSelectionModel().getSelectedItem()));
 
         observationItem = new MenuItem("add observation");
         observationItem.setDisable(true);
-        observationItem.setOnAction(event -> addObservation(this.getSelectionModel().getSelectedItem()));
+        //observationItem.setOnAction(event -> addObservation(this.getSelectionModel().getSelectedItem()));
 
         reportDeadItem = new MenuItem("report subject dead");
         reportDeadItem.setDisable(true);
-        reportDeadItem.setOnAction(event -> reportSubjectDead(this.getSelectionModel().getSelectedItem()));
+        //reportDeadItem.setOnAction(event -> reportSubjectDead(this.getSelectionModel().getSelectedItem()));
 
         moveItem = new MenuItem("move subject");
         moveItem.setDisable(true);
-        moveItem.setOnAction(event -> moveSubject(this.getSelectionModel().getSelectedItem()));
+        //moveItem.setOnAction(event -> moveSubject(this.getSelectionModel().getSelectedItem()));
 
         showAllItem = new CheckMenuItem("show also past subjects");
         showAllItem.setSelected(!Main.getSettings().getBoolean("app_settings_availableSubjectsView", true));
@@ -202,14 +203,17 @@ public class SubjectsTable extends TableView<Subject> {
         tableLayout.applyLayout();
     }
 
-    public SubjectsTable(ObservableList<Subject> items) {
-        this();
-        this.setItems(items);
+    public Long getSelectedSubjectId() {
+        if (! getSelectionModel().isEmpty()) {
+            return getSelectionModel().getSelectedItem().getId();
+        }
+        return null;
     }
+
 
     public void setAliveFilter(Boolean set) {
         if (set) {
-            filteredList.setPredicate(subject -> subject.getCurrentHousing() != null);
+            filteredList.setPredicate(subject -> !subject.getCurrentHousingUnit().isEmpty());
         } else {
             filteredList.setPredicate(null);
         }
@@ -236,56 +240,29 @@ public class SubjectsTable extends TableView<Subject> {
             return;
         }
         masterList.clear();
-        RefreshTask refresh_task = new RefreshTask();
+        filteredList = new FilteredList<>(masterList, p -> true);
+        SortedList<SubjectTableItem> sortedList = new SortedList<>(filteredList);
+        sortedList.comparatorProperty().bind(comparatorProperty());
+        setItems(sortedList);
+        showAllItem.setSelected(!Main.getSettings().getBoolean("app_settings_availableSubjectsView", true));
+        setAliveFilter(!showAllItem.isSelected());
 
+        RefreshTask refresh_task = new RefreshTask();
         refresh_task.setOnSucceeded(event -> {
-            filteredList = new FilteredList<>(masterList, p -> true);
-            SortedList<Subject> sortedList = new SortedList<>(filteredList);
-            sortedList.comparatorProperty().bind(comparatorProperty());
-            setItems(sortedList);
-            System.out.println(masterList.size());
-            showAllItem.setSelected(!Main.getSettings().getBoolean("app_settings_availableSubjectsView", true));
-            setAliveFilter(!showAllItem.isSelected());
             fireEvent(new ViewEvent(ViewEvent.REFRESHED));
         });
 
         Platform.runLater(() -> {
-            //busy.progressProperty().unbind();
-            //vbox.visibleProperty().unbind();
             refreshRunning.unbind();
-            //vbox.visibleProperty().bind(refresh_task.runningProperty());
-            //busy.progressProperty().bind(refresh_task.progressProperty());
             refreshRunning.bind(refresh_task.runningProperty());
-        });
-        refresh_task.progressProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                System.out.println(newValue);
-            }
         });
 
         new Thread(refresh_task).start();
-        /*
-        masterList.clear();
-        Task<Void> refresh_task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                masterList.addAll(EntityHelper.getEntityList("SELECT DISTINCT(s) from Subject s JOIN FETCH s.speciesType " +
-                        "JOIN FETCH s.housings JOIN FETCH s.supplier LEFT JOIN FETCH s.responsiblePerson", Subject.class));
-                Thread.sleep(100);
-                return null;
-            }
-        };
-        refresh_task.setOnSucceeded(event -> {
-
-        });
-        new Thread(refresh_task).run();
-        */
     }
 
 
     public void setSelectedSubject(Subject s) {
-        this.getSelectionModel().select(s);
+        //this.getSelectionModel().select(s); FIXME
     }
 
 
@@ -356,37 +333,95 @@ public class SubjectsTable extends TableView<Subject> {
 
         @Override
         protected Void call() throws Exception {
-            System.out.println("Refresh!!!");
-
             Session session = Main.sessionFactory.openSession();
             Query countQuery = session.createQuery("SELECT COUNT(*) from Subject s");
             Number maxCount = (Number)countQuery.getSingleResult();
 
-            //Query<Subject> q = session.createQuery("SELECT DISTINCT(s) from Subject s JOIN FETCH s.speciesType " +
-            //        "JOIN FETCH s.housings JOIN FETCH s.supplier LEFT JOIN FETCH s.responsiblePerson", Subject.class);
-            Query<Subject> q = session.createQuery("SELECT DISTINCT(s) from Subject s, Person p WHERE s.responsiblePerson = p", Subject.class);
-
-            //Number maxCount = (Number) query.getSingleResult();
-            System.out.println(maxCount);
-            int offset = 0, count = 0;
-            int steps = 20;
-            for (int i = 0; i <= (maxCount.intValue() / steps); i++) {
-                if (isCancelled())
-                    return null;
-                offset = i * steps;
-                count = steps * i < maxCount.intValue() ? steps : (maxCount.intValue() % steps);
-                q.setFirstResult(offset);
-                q.setMaxResults(count);
-                final List<Subject> l = q.getResultList();
-                Platform.runLater(() -> masterList.addAll(l));
-                updateProgress(i, (maxCount.intValue() / steps));
+            Query<Subject> q = session.createQuery("SELECT DISTINCT(s) from Subject s JOIN FETCH s.speciesType " +
+                    "JOIN FETCH s.housings JOIN FETCH s.supplier LEFT JOIN FETCH s.responsiblePerson", Subject.class);
+            System.out.println("refreshing!");
+            q.setReadOnly(true);
+            q.setCacheable(false);
+            List<Subject> ls = q.getResultList();
+            int no_fetched = 0;
+            for (Subject s : ls) {
+                no_fetched++;
+                final SubjectTableItem si = new SubjectTableItem(s);
+                Platform.runLater(() -> masterList.add(si));
+                updateProgress(no_fetched, maxCount.intValue());
             }
-            //masterList.addAll(EntityHelper.getEntityList("SELECT DISTINCT(s) from Subject s JOIN FETCH s.speciesType " +
-            //        "JOIN FETCH s.housings JOIN FETCH s.supplier LEFT JOIN FETCH s.responsiblePerson", Subject.class));
-            //Thread.sleep(100);
-            //return null;
             session.close();
             return null;
+        }
+    }
+
+    public class SubjectTableItem {
+        private String currentHousingUnit;
+        private String supplierName;
+        private String responsiblePerson;
+        private String species;
+        private String name;
+        private Long id;
+        private String alias;
+        private String subjectType;
+        private String birth;
+        private String gender;
+        private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-DD");
+
+        SubjectTableItem(Subject s) {
+
+            this.alias = s.getAlias();
+            this.name = s.getName();
+            this.birth = s.getBirthday() != null ? sdf.format(s.getBirthday()) : "";
+            this.supplierName = s.getSupplier().getName();
+            this.species = s.getSpeciesType().getName();
+            this.subjectType = s.getType();
+            this.id = s.getId();
+            this.responsiblePerson = s.getResponsiblePerson() != null ?
+                    (s.getResponsiblePerson().getFirstName() + " " +
+                    s.getResponsiblePerson().getLastName()) : "";
+            this.currentHousingUnit = s.getCurrentHousing() != null ? s.getCurrentHousing().getHousing().getName() : "";
+            this.gender = s.getGender().toString();
+        }
+
+        String getCurrentHousingUnit() {
+            return currentHousingUnit;
+        }
+
+        String getSupplierName() {
+            return supplierName;
+        }
+
+        String getResponsiblePerson() {
+            return responsiblePerson;
+        }
+
+        public String getSpecies() {
+            return species;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public String getAlias() {
+            return alias;
+        }
+
+        String getSubjectType() {
+            return subjectType;
+        }
+
+        String getBirth() {
+            return birth;
+        }
+
+        public String getGender() {
+            return gender;
         }
     }
 }
