@@ -46,6 +46,7 @@ import animalkeeping.ui.tables.SubjectsTable;
 import animalkeeping.ui.tables.TreatmentsTable;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.Dialogs;
+import animalkeeping.util.EntityHelper;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -54,6 +55,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
+import org.hibernate.Session;
 
 import java.io.IOException;
 import java.net.URL;
@@ -94,7 +96,8 @@ public class SubjectView extends AbstractView implements Initializable {
     private ControlLabel editComment;
     private ControlLabel deleteComment;
     private VBox controls;
-
+    private Session session;
+    private Subject selectedSubject = null;
 
     public SubjectView() {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/animalkeeping/ui/fxml/SubjectView.fxml"));
@@ -104,12 +107,23 @@ public class SubjectView extends AbstractView implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        session = Main.sessionFactory.openSession();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         subjectsTable = new SubjectsTable();
-        subjectsTable.getSelectionModel().getSelectedItems().addListener(new FishTableListChangeListener());
+        subjectsTable.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<SubjectsTable.SubjectTableItem>() {
+            @Override
+            public void onChanged(Change<? extends SubjectsTable.SubjectTableItem> c) {
+                if (!subjectsTable.getSelectionModel().isEmpty()) {
+                    Subject s = session.get(Subject.class, subjectsTable.getSelectedSubjectId());
+                    subjectSelected(s);
+                } else {
+                    subjectSelected(null);
+                }
+            }
+        });
         //subjectsTable.setAliveFilter(true);
         timeline = new TimelineController();
 
@@ -148,7 +162,7 @@ public class SubjectView extends AbstractView implements Initializable {
         editSubjectLabel = new ControlLabel("edit subject", "Edit the selected subject's information", true);
         editSubjectLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
-                editSubject(subjectsTable.getSelectionModel().getSelectedItem());
+                editSubject(selectedSubject);
             }
         });
         controls.getChildren().add(editSubjectLabel);
@@ -166,7 +180,7 @@ public class SubjectView extends AbstractView implements Initializable {
         addTreatmentLabel = new ControlLabel("new treatment", "Add a treatment entry for the selected subject", true);
         addTreatmentLabel.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
-                addTreatment(subjectsTable.getSelectionModel().getSelectedItem());
+                addTreatment(selectedSubject);
                 treatmentsTable.refresh();
             }
         });
@@ -192,7 +206,7 @@ public class SubjectView extends AbstractView implements Initializable {
         newComment = new ControlLabel("add observation", "Add an observation note to the selected subject.", true);
         newComment.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
-                newSubjectObservation(subjectsTable.getSelectionModel().getSelectedItem());
+                newSubjectObservation(selectedSubject);
             }
         });
         controls.getChildren().add(newComment);
@@ -215,7 +229,7 @@ public class SubjectView extends AbstractView implements Initializable {
         moveSubjectLabel = new ControlLabel("move subject", "Relocate the selected subject to a different housing unit.", true);
         moveSubjectLabel.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
-                moveSubject(subjectsTable.getSelectionModel().getSelectedItem());
+                moveSubject(selectedSubject);
             }
         });
         controls.getChildren().add(moveSubjectLabel);
@@ -223,7 +237,7 @@ public class SubjectView extends AbstractView implements Initializable {
         reportDead = new ControlLabel("report dead",  "Report that the selected subject deceased.", true);
         reportDead.setOnMouseClicked(event -> {
             if(event.getButton().equals(MouseButton.PRIMARY)){
-                reportDead(subjectsTable.getSelectionModel().getSelectedItem());
+                reportDead(selectedSubject);
             }
         });
         controls.getChildren().add(reportDead);
@@ -231,11 +245,12 @@ public class SubjectView extends AbstractView implements Initializable {
 
 
     private void subjectSelected(Subject s) {
+        selectedSubject = s;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat timestampFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-        if (s != null) {
-            Iterator<Housing> iter = s.getHousings().iterator();
+        if (selectedSubject != null) {
+            Iterator<Housing> iter = selectedSubject.getHousings().iterator();
             Housing firstHousing = null;
             Housing lastHousing = null;
             if (iter.hasNext()) {
@@ -244,23 +259,23 @@ public class SubjectView extends AbstractView implements Initializable {
             while (iter.hasNext()) {
                 lastHousing = iter.next();
             }
-            idLabel.setText(s.getId().toString());
-            String alias = s.getAlias() != null ? " (" + s.getAlias() + ")" : "";
-            nameLabel.setText(s.getName() + alias);
-            genderLabel.setText(s.getGender().toString());
+            idLabel.setText(selectedSubject.getId().toString());
+            String alias = selectedSubject.getAlias() != null ? " (" + selectedSubject.getAlias() + ")" : "";
+            nameLabel.setText(selectedSubject.getName() + alias);
+            genderLabel.setText(selectedSubject.getGender().toString());
             String agestr = "";
-            if (s.getBirthday() != null) {
+            if (selectedSubject.getBirthday() != null) {
                 LocalDate ld = LocalDate.now();
                 if (lastHousing != null && lastHousing.getEnd() != null)
                     ld = DateTimeHelper.toLocalDate(lastHousing.getEnd());
-                DateTimeHelper.Age age = DateTimeHelper.age(DateTimeHelper.toLocalDate(s.getBirthday()), ld);
+                DateTimeHelper.Age age = DateTimeHelper.age(DateTimeHelper.toLocalDate(selectedSubject.getBirthday()), ld);
                 agestr = " ("+ age.getYears() + "|" + age.getMonths() + "|" + age.getDays() + ")";
             }
-            birthdateLabel.setText((s.getBirthday() != null ? dateFormat.format(s.getBirthday()) : "unknown") + agestr);
-            speciesLabel.setText(s.getSpeciesType().getName());
-            originLabel.setText(s.getSupplier().getName());
-            personLabel.setText(s.getResponsiblePerson() != null ? (s.getResponsiblePerson().getFirstName() +
-                    " " + s.getResponsiblePerson().getLastName()) : "");
+            birthdateLabel.setText((selectedSubject.getBirthday() != null ? dateFormat.format(selectedSubject.getBirthday()) : "unknown") + agestr);
+            speciesLabel.setText(selectedSubject.getSpeciesType().getName());
+            originLabel.setText(selectedSubject.getSupplier().getName());
+            personLabel.setText(selectedSubject.getResponsiblePerson() != null ? (selectedSubject.getResponsiblePerson().getFirstName() +
+                    " " + selectedSubject.getResponsiblePerson().getLastName()) : "");
 
             housingStartLabel.setText(firstHousing != null ? timestampFormat.format(firstHousing.getStart()) : "");
             if (lastHousing != null) {
@@ -268,22 +283,22 @@ public class SubjectView extends AbstractView implements Initializable {
             } else {
                 housingEndLabel.setText(firstHousing.getEnd() != null ? timestampFormat.format(firstHousing.getEnd()) : "");
             }
-            Iterator<Treatment> titer = s.getTreatments().iterator();
+            Iterator<Treatment> titer = selectedSubject.getTreatments().iterator();
             Treatment t = null;
             while (titer.hasNext()) {
                 t = titer.next();
             }
             if (t != null && t.getEnd() == null) {
                 statusLabel.setText("In treatment: " + t.getTreatmentType().getName());
-            } else if (s.getCurrentHousing() != null) {
-                statusLabel.setText("Available: " + s.getCurrentHousing().getHousing().getName());
+            } else if (selectedSubject.getCurrentHousing() != null) {
+                statusLabel.setText("Available: " + selectedSubject.getCurrentHousing().getHousing().getName());
             } else {
                 statusLabel.setText("Unavailable");
             }
-            treatmentsTable.setSubject(s);
-            timeline.setTreatments(s.getTreatments());
-            housingTable.setSubject(s);
-            notesTable.setNotes(s.getNotes());
+            treatmentsTable.setSubject(selectedSubject);
+            timeline.setTreatments(selectedSubject.getTreatments());
+            housingTable.setSubject(selectedSubject);
+            notesTable.setNotes(selectedSubject.getNotes());
         } else {
             idLabel.setText("");
             nameLabel.setText("");
@@ -300,12 +315,12 @@ public class SubjectView extends AbstractView implements Initializable {
             housingTable.clear();
             notesTable.setNotes(null);
         }
-        moveSubjectLabel.setDisable(s == null);
-        deleteSubjectLabel.setDisable(s == null);
-        editSubjectLabel.setDisable(s == null);
-        reportDead.setDisable(s == null);
-        addTreatmentLabel.setDisable(s==null);
-        newComment.setDisable(s==null);
+        moveSubjectLabel.setDisable(selectedSubject == null);
+        deleteSubjectLabel.setDisable(selectedSubject == null);
+        editSubjectLabel.setDisable(selectedSubject == null);
+        reportDead.setDisable(selectedSubject == null);
+        addTreatmentLabel.setDisable(selectedSubject==null);
+        newComment.setDisable(selectedSubject==null);
     }
 
     private void treatmentSelected(Treatment t) {
@@ -328,17 +343,8 @@ public class SubjectView extends AbstractView implements Initializable {
         this.subjectsTable.setIdFilter(id);
     }
 
-    private class FishTableListChangeListener implements ListChangeListener<Subject> {
-        @Override
-        public void onChanged(Change<? extends Subject> c) {
-            if (c.getList().size() > 0) {
-                subjectSelected(c.getList().get(0));
-            }
-        }
-    }
-
     private void deleteSubject() {
-        subjectsTable.deleteSubject(subjectsTable.getSelectionModel().getSelectedItem());
+        subjectsTable.deleteSubject(selectedSubject);
     }
 
     private void deleteTreatment() {
@@ -394,15 +400,14 @@ public class SubjectView extends AbstractView implements Initializable {
     @Override
     public void refresh() {
         fireEvent(new ViewEvent(ViewEvent.REFRESHING));
-        Subject s = subjectsTable.getSelectionModel().getSelectedItem();
         subjectsTable.addEventHandler(ViewEvent.REFRESHED, event -> {
             if (event.getEventType()== ViewEvent.REFRESHED) {
-                subjectsTable.getSelectionModel().select(s);
+                subjectsTable.setSelectedSubject(selectedSubject);
                 fireEvent(new ViewEvent(ViewEvent.REFRESHED));
             }
         });
+        selectedSubject = null;
         subjectsTable.refresh();
-        //treatmentsTable.refresh();
     }
 
     public static Tooltip getToolTip() {
