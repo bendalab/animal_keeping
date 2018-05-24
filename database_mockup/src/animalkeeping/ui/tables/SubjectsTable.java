@@ -239,6 +239,8 @@ public class SubjectsTable extends TableView<SubjectsTable.SubjectTableItem> {
         if (refreshRunning.get()) {
             return;
         }
+        fireEvent(new ViewEvent(ViewEvent.REFRESHING));
+
         masterList.clear();
         filteredList = new FilteredList<>(masterList, p -> true);
         SortedList<SubjectTableItem> sortedList = new SortedList<>(filteredList);
@@ -336,20 +338,28 @@ public class SubjectsTable extends TableView<SubjectsTable.SubjectTableItem> {
             Session session = Main.sessionFactory.openSession();
             Query countQuery = session.createQuery("SELECT COUNT(*) from Subject s");
             Number maxCount = (Number)countQuery.getSingleResult();
-
-            Query<Subject> q = session.createQuery("SELECT DISTINCT(s) from Subject s JOIN FETCH s.speciesType " +
-                    "JOIN FETCH s.housings JOIN FETCH s.supplier LEFT JOIN FETCH s.responsiblePerson", Subject.class);
-            System.out.println("refreshing!");
+            Query idQuery = session.createQuery("SELECT MAX(s.id) from Subject s");
+            Number max_id = (Number)idQuery.getSingleResult();
+            int batchSize = 50, min_id = 0;
+            Query<Subject> q = session.createQuery("FROM Subject s WHERE s.id > :min_id AND s.id <= :max_id", Subject.class);
             q.setReadOnly(true);
             q.setCacheable(false);
-            List<Subject> ls = q.getResultList();
             int no_fetched = 0;
-            for (Subject s : ls) {
-                no_fetched++;
-                final SubjectTableItem si = new SubjectTableItem(s);
-                Platform.runLater(() -> masterList.add(si));
-                updateProgress(no_fetched, maxCount.intValue());
+            for (int i=0; i < max_id.intValue() / batchSize; i++) {
+                min_id = i * batchSize;
+                q.setParameter("min_id", (long)min_id);
+                q.setParameter("max_id", (long)(min_id + batchSize));
+
+                List<Subject> ls = q.getResultList();
+
+                for (Subject s : ls) {
+                    no_fetched++;
+                    final SubjectTableItem si = new SubjectTableItem(s);
+                    Platform.runLater(() -> masterList.add(si));
+                    updateProgress(no_fetched, maxCount.intValue());
+                }
             }
+
             session.close();
             return null;
         }
