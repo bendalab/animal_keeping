@@ -367,8 +367,8 @@ public class TreatmentForm extends VBox {
                 e.printStackTrace();
             }
         }
-        immediateEnd.setSelected(prefs.getBoolean("treatment_immediate_end", false));
-        immediateEnd.fire();
+        //immediateEnd.setSelected(prefs.getBoolean("treatment_immediate_end", false));
+        //immediateEnd.fire();
     }
 
     private void storePreferences() {
@@ -377,7 +377,7 @@ public class TreatmentForm extends VBox {
         prefs.put("treatment_subject", subjectComboBox.getValue().getId().toString());
         prefs.put("treatment_startdate", startDate.getValue().toString());
         prefs.put("treatment_enddate", endDate.getValue().toString());
-        prefs.putBoolean("treatment_immediate_end", immediateEnd.isSelected());
+        //prefs.putBoolean("treatment_immediate_end", immediateEnd.isSelected());
     }
 
 
