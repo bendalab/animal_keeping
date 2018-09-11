@@ -351,24 +351,29 @@ public class AddSubjectsForm extends VBox {
     private void applyPreferences() {
         if (housingUnitCombo.getHousingUnit() == null && !prefs.get("housing_unit", "").isEmpty()) {
             List<HousingUnit> hs = EntityHelper.getEntityList("from HousingUnit where id = " + prefs.get("housing_unit", ""), HousingUnit.class);
-            housingUnitCombo.setHousingUnit(hs.get(0));
+            if (hs.size() > 0)
+                housingUnitCombo.setHousingUnit(hs.get(0));
         }
         if (!prefs.get("supplier", "").isEmpty()) {
             List<SupplierType> sppl = EntityHelper.getEntityList("from SupplierType where id = " + prefs.get("supplier", ""),  SupplierType.class);
-            supplierComboBox.getSelectionModel().select(sppl.get(0));
+            if (sppl.size() > 0)
+                supplierComboBox.getSelectionModel().select(sppl.get(0));
         }
         nameField.setText(prefs.get("subject_name", ""));
         if (!prefs.get("subject_person", "").isEmpty()) {
             List<Person> persons = EntityHelper.getEntityList("from Person where id = " + prefs.get("subject_person", ""),  Person.class);
-            responsiblePersonCombo.getSelectionModel().select(persons.get(0));
+            if (persons.size() > 0)
+                responsiblePersonCombo.getSelectionModel().select(persons.get(0));
         }
         if (!prefs.get("subject_subjecttype", "").isEmpty()) {
             List<SubjectType> sts = EntityHelper.getEntityList("from SubjectType where id = " + prefs.get("subject_subjecttype", ""),  SubjectType.class);
-            subjectTypeComboBox.getSelectionModel().select(sts.get(0));
+            if (sts.size() > 0)
+                subjectTypeComboBox.getSelectionModel().select(sts.get(0));
         }
         if (!prefs.get("subject_species", "").isEmpty()) {
             List<SpeciesType> sps = EntityHelper.getEntityList("from SpeciesType where id = " + prefs.get("subject_species", ""),  SpeciesType.class);
-            speciesComboBox.getSelectionModel().select(sps.get(0));
+            if (sps.size() > 0)
+                speciesComboBox.getSelectionModel().select(sps.get(0));
         }
         if (!prefs.get("import_date", "").isEmpty()) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

@@ -211,7 +211,8 @@ public class ExportSubjectForm extends VBox {
         }
         if (!prefs.get("export_person", "").isEmpty()) {
             List<Person> persons = EntityHelper.getEntityList("from Person where id = " + prefs.get("export_person", ""),  Person.class);
-            personComboBox.getSelectionModel().select(persons.get(0));
+            if (persons.size() > 0)
+                personComboBox.getSelectionModel().select(persons.get(0));
         }
     }
 

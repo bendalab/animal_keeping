@@ -389,11 +389,13 @@ public class SubjectForm extends VBox {
         }
         if (!prefs.get("subject_person", "").isEmpty()) {
             List<Person> persons = EntityHelper.getEntityList("from Person where id = " + prefs.get("subject_person", ""),  Person.class);
-            personComboBox.getSelectionModel().select(persons.get(0));
+            if (persons.size() > 0)
+                personComboBox.getSelectionModel().select(persons.get(0));
         }
         if (!prefs.get("subject_type", "").isEmpty()) {
             List<SubjectType> types = EntityHelper.getEntityList("from SubjectType where id = " + prefs.get("subject_type", ""),  SubjectType.class);
-            subjectTypeComboBox.getSelectionModel().select(types.get(0));
+            if (types.size() > 0)
+                subjectTypeComboBox.getSelectionModel().select(types.get(0));
         }
         if (!prefs.get("subject_importdate", "").isEmpty()) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -413,15 +415,18 @@ public class SubjectForm extends VBox {
         }
         if (!prefs.get("subject_supplier", "").isEmpty()) {
             List<SupplierType> types = EntityHelper.getEntityList("from SupplierType where id = " + prefs.get("subject_supplier", ""),  SupplierType.class);
-            supplierComboBox.getSelectionModel().select(types.get(0));
+            if (types.size() > 0)
+                supplierComboBox.getSelectionModel().select(types.get(0));
         }
         if (!prefs.get("subject_species", "").isEmpty()) {
             List<SpeciesType> types = EntityHelper.getEntityList("from SpeciesType where id = " + prefs.get("subject_species", ""),  SpeciesType.class);
-            speciesComboBox.getSelectionModel().select(types.get(0));
+            if (types.size() > 0)
+                speciesComboBox.getSelectionModel().select(types.get(0));
         }
         if (!prefs.get("subject_housingunit", "").isEmpty()) {
             List<HousingUnit> units = EntityHelper.getEntityList("from HousingUnit where id = " + prefs.get("subject_housingunit", ""),  HousingUnit.class);
-            housingUnitComboBox.setHousingUnit(units.get(0));
+            if (units.size() > 0)
+                housingUnitComboBox.setHousingUnit(units.get(0));
         }
     }
 

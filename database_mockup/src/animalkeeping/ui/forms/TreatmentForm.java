@@ -185,7 +185,7 @@ public class TreatmentForm extends VBox {
         newPersonButton.setOnAction(event -> {
             Person p = Dialogs.editPersonDialog(null);
             if (p != null) {
-                List<Person> persons = EntityHelper.getEntityList("From Person order by name asc", Person.class);
+                List<Person> persons = EntityHelper.getEntityList("From Person order by lastName asc", Person.class);
                 personComboBox.getItems().clear();
                 personComboBox.getItems().addAll(persons);
                 personComboBox.getSelectionModel().select(p);
@@ -338,15 +338,18 @@ public class TreatmentForm extends VBox {
     private void applyPreferences() {
         if (!prefs.get("treatment_type", "").isEmpty()) {
             List<TreatmentType> sppl = EntityHelper.getEntityList("from TreatmentType where id = " + prefs.get("treatment_type", ""),  TreatmentType.class);
-            typeComboBox.getSelectionModel().select(sppl.get(0));
+            if (sppl.size() > 0)
+                typeComboBox.getSelectionModel().select(sppl.get(0));
         }
         if (!prefs.get("treatment_person", "").isEmpty()) {
             List<Person> persons = EntityHelper.getEntityList("from Person where id = " + prefs.get("treatment_person", ""),  Person.class);
-            personComboBox.getSelectionModel().select(persons.get(0));
+            if (persons.size() > 0)
+                personComboBox.getSelectionModel().select(persons.get(0));
         }
         if (!prefs.get("treatment_subject", "").isEmpty()) {
             List<Subject> subjects = EntityHelper.getEntityList("from Subject where id = " + prefs.get("treatment_subject", ""),  Subject.class);
-            subjectComboBox.getSelectionModel().select(subjects.get(0));
+            if (subjects.size() > 0)
+                subjectComboBox.getSelectionModel().select(subjects.get(0));
         }
         if (!prefs.get("treatment_startdate", "").isEmpty()) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

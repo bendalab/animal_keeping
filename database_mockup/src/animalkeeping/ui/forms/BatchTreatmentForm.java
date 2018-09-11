@@ -258,15 +258,18 @@ public class BatchTreatmentForm extends VBox {
     private void applyPreferences() {
         if (housingUnitComboBox.getHousingUnit() == null && !prefs.get("batch_treatment_unit", "").isEmpty()) {
             List<HousingUnit> hs = EntityHelper.getEntityList("from HousingUnit where id = " + prefs.get("batch_treatment_unit", ""), HousingUnit.class);
-            housingUnitComboBox.setHousingUnit(hs.get(0));
+            if (hs.size() > 0)
+                housingUnitComboBox.setHousingUnit(hs.get(0));
         }
         if (!prefs.get("batch_treatment_type", "").isEmpty()) {
             List<TreatmentType> sppl = EntityHelper.getEntityList("from TreatmentType where id = " + prefs.get("batch_treatment_type", ""),  TreatmentType.class);
-            treatmentComboBox.getSelectionModel().select(sppl.get(0));
+            if (sppl.size() > 0)
+                treatmentComboBox.getSelectionModel().select(sppl.get(0));
         }
         if (!prefs.get("batch_treatment_person", "").isEmpty()) {
             List<Person> persons = EntityHelper.getEntityList("from Person where id = " + prefs.get("batch_treatment_person", ""),  Person.class);
-            personComboBox.getSelectionModel().select(persons.get(0));
+            if (persons.size() > 0)
+                personComboBox.getSelectionModel().select(persons.get(0));
         }
         if (!prefs.get("batch_treatment_startdate", "").isEmpty()) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
