@@ -49,6 +49,7 @@ import animalkeeping.ui.widgets.ControlLabel;
 import animalkeeping.ui.widgets.TimelineController;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.Dialogs;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -303,20 +304,22 @@ public class SubjectView extends AbstractView implements Initializable {
             housingTable.setSubject(selectedSubject);
             notesTable.setNotes(selectedSubject.getNotes());
         } else {
-            idLabel.setText("");
-            nameLabel.setText("");
-            genderLabel.setText("");
-            birthdateLabel.setText("");
-            originLabel.setText("");
-            speciesLabel.setText("");
-            statusLabel.setText("");
-            personLabel.setText("");
-            housingEndLabel.setText("");
-            housingStartLabel.setText("");
-            treatmentsTable.setTreatments(null);
-            timeline.setTreatments(null);
-            housingTable.clear();
-            notesTable.setNotes(null);
+            Platform.runLater(()->{
+                idLabel.setText("");
+                nameLabel.setText("");
+                genderLabel.setText("");
+                birthdateLabel.setText("");
+                originLabel.setText("");
+                speciesLabel.setText("");
+                statusLabel.setText("");
+                personLabel.setText("");
+                housingEndLabel.setText("");
+                housingStartLabel.setText("");
+                treatmentsTable.setTreatments(null);
+                timeline.setTreatments(null);
+                housingTable.clear();
+                notesTable.setNotes(null);
+            });
         }
         Boolean alive = selectedSubject != null && selectedSubject.getCurrentHousing() != null;
         moveSubjectLabel.setDisable(selectedSubject == null || !alive);

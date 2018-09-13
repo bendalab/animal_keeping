@@ -5,15 +5,11 @@ import animalkeeping.model.Subject;
 import animalkeeping.ui.Main;
 import animalkeeping.ui.views.ViewEvent;
 import animalkeeping.util.Dialogs;
-import animalkeeping.util.EntityHelper;
 import animalkeeping.util.TablePreferences;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyLongWrapper;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -21,14 +17,10 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.scene.control.*;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /******************************************************************************
@@ -131,29 +123,31 @@ public class SubjectsTable extends TableView<SubjectsTable.SubjectTableItem> {
             TableRow<SubjectTableItem> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    //Subject s = row.getItem();
-                    //s = Dialogs.editSubjectDialog(s);
-                    //if (s != null) {
-                    //    refresh();
-                    //    setSelectedSubject(s);
-                    //} FIXME
+                    Subject s = row.getItem().get();
+                    s = Dialogs.editSubjectDialog(s);
+                    if (s != null) {
+                        refresh();
+                        setSelectedSubject(s);
+                    }
                 }
             });
             return row ;
         });
 
         this.getSelectionModel().getSelectedItems().addListener((ListChangeListener<SubjectTableItem>) c -> {
-            int sel_count = c.getList().size();
-            editItem.setDisable(sel_count == 0);
-            deleteItem.setDisable(sel_count == 0);
-            addTreatmentItem.setDisable(sel_count == 0);
-            observationItem.setDisable(sel_count == 0);
-            if (sel_count > 0) {
-                //Subject s = c.getList().get(0);
-                //boolean alive = s.getCurrentHousing() != null;
-                //moveItem.setDisable(!alive);
-                //addTreatmentItem.setDisable(!alive);
-                //reportDeadItem.setDisable(!alive); FIXME
+            if (c.getList().size() > 0) {
+                Subject s = c.getList().get(0).get();
+                boolean alive = s.getCurrentHousing() != null;
+                moveItem.setDisable(true);
+                addTreatmentItem.setDisable(!alive);
+                reportDeadItem.setDisable(!alive);
+            } else {
+                editItem.setDisable(true);
+                deleteItem.setDisable(true);
+                addTreatmentItem.setDisable(true);
+                observationItem.setDisable(true);
+                moveItem.setDisable(true);
+                reportDeadItem.setDisable(true);
             }
         });
 
@@ -163,27 +157,27 @@ public class SubjectsTable extends TableView<SubjectsTable.SubjectTableItem> {
 
         editItem = new MenuItem("edit subject");
         editItem.setDisable(true);
-        //editItem.setOnAction(event -> editSubject(this.getSelectionModel().getSelectedItem()));
+        editItem.setOnAction(event -> editSubject(this.getSelectionModel().getSelectedItem().get()));
 
         deleteItem = new MenuItem("delete subject");
         deleteItem.setDisable(true);
-        //deleteItem.setOnAction(event -> deleteSubject(this.getSelectionModel().getSelectedItem()));
+        deleteItem.setOnAction(event -> deleteSubject(this.getSelectionModel().getSelectedItem().get()));
 
         addTreatmentItem = new MenuItem("add treatment");
         addTreatmentItem.setDisable(true);
-        //addTreatmentItem.setOnAction(event -> addTreatment(this.getSelectionModel().getSelectedItem()));
+        addTreatmentItem.setOnAction(event -> addTreatment(this.getSelectionModel().getSelectedItem().get()));
 
         observationItem = new MenuItem("add observation");
         observationItem.setDisable(true);
-        //observationItem.setOnAction(event -> addObservation(this.getSelectionModel().getSelectedItem()));
+        observationItem.setOnAction(event -> addObservation(this.getSelectionModel().getSelectedItem().get()));
 
         reportDeadItem = new MenuItem("report subject dead");
         reportDeadItem.setDisable(true);
-        //reportDeadItem.setOnAction(event -> reportSubjectDead(this.getSelectionModel().getSelectedItem()));
+        reportDeadItem.setOnAction(event -> reportSubjectDead(this.getSelectionModel().getSelectedItem().get()));
 
         moveItem = new MenuItem("move subject");
         moveItem.setDisable(true);
-        //moveItem.setOnAction(event -> moveSubject(this.getSelectionModel().getSelectedItem()));
+        moveItem.setOnAction(event -> moveSubject(this.getSelectionModel().getSelectedItem().get()));
 
         showAllItem = new CheckMenuItem("show also past subjects");
         showAllItem.setSelected(!Main.getSettings().getBoolean("app_settings_availableSubjectsView", true));
@@ -236,11 +230,11 @@ public class SubjectsTable extends TableView<SubjectsTable.SubjectTableItem> {
 
 
     public void refresh() {
+        getSelectionModel().clearSelection();
         if (refreshRunning.get()) {
             return;
         }
         fireEvent(new ViewEvent(ViewEvent.REFRESHING));
-
         masterList.clear();
         filteredList = new FilteredList<>(masterList, p -> true);
         SortedList<SubjectTableItem> sortedList = new SortedList<>(filteredList);
@@ -258,13 +252,13 @@ public class SubjectsTable extends TableView<SubjectsTable.SubjectTableItem> {
             refreshRunning.unbind();
             refreshRunning.bind(refresh_task.runningProperty());
         });
-
         new Thread(refresh_task).start();
     }
 
 
     public void setSelectedSubject(Subject s) {
-        //this.getSelectionModel().select(s); FIXME
+        SubjectTableItem it = new SubjectTableItem(s);
+        this.getSelectionModel().select(it);
     }
 
 
@@ -379,19 +373,20 @@ public class SubjectsTable extends TableView<SubjectsTable.SubjectTableItem> {
         private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-DD");
 
         SubjectTableItem(Subject s) {
-
-            this.alias = s.getAlias();
-            this.name = s.getName();
-            this.birth = s.getBirthday() != null ? sdf.format(s.getBirthday()) : "";
-            this.supplierName = s.getSupplier().getName();
-            this.species = s.getSpeciesType().getName();
-            this.subjectType = s.getType();
-            this.id = s.getId();
-            this.responsiblePerson = s.getResponsiblePerson() != null ?
-                    (s.getResponsiblePerson().getFirstName() + " " +
-                    s.getResponsiblePerson().getLastName()) : "";
-            this.currentHousingUnit = s.getCurrentHousing() != null ? s.getCurrentHousing().getHousing().getName() : "";
-            this.gender = s.getGender().toString();
+            if (s != null) {
+                this.alias = s.getAlias();
+                this.name = s.getName();
+                this.birth = s.getBirthday() != null ? sdf.format(s.getBirthday()) : "";
+                this.supplierName = s.getSupplier().getName();
+                this.species = s.getSpeciesType().getName();
+                this.subjectType = s.getType();
+                this.id = s.getId();
+                this.responsiblePerson = s.getResponsiblePerson() != null ?
+                        (s.getResponsiblePerson().getFirstName() + " " +
+                                s.getResponsiblePerson().getLastName()) : "";
+                this.currentHousingUnit = s.getCurrentHousing() != null ? s.getCurrentHousing().getHousing().getName() : "";
+                this.gender = s.getGender().toString();
+            }
         }
 
         String getCurrentHousingUnit() {
@@ -432,6 +427,10 @@ public class SubjectsTable extends TableView<SubjectsTable.SubjectTableItem> {
 
         public String getGender() {
             return gender;
+        }
+
+        public Subject get() {
+            return session.get(Subject.class, this.id);
         }
     }
 }
