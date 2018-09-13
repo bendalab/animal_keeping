@@ -90,11 +90,11 @@ public class LicenseTable extends TableView<License> {
         nameCol.prefWidthProperty().bind(this.widthProperty().multiply(0.149));
 
         TableColumn<License, Date> startDateCol = new TableColumn<>("from");
-        startDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getStartDate()));
+        startDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getStartDate()));
         startDateCol.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
 
         TableColumn<License, Date> endDateCol = new TableColumn<>("until");
-        endDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<Date>(data.getValue().getEndDate()));
+        endDateCol.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getEndDate()));
         endDateCol.prefWidthProperty().bind(this.widthProperty().multiply(0.1));
 
         TableColumn<License, String> agencyCol = new TableColumn<>("filing agency");
@@ -215,7 +215,7 @@ public class LicenseTable extends TableView<License> {
         Communicator.pushDelete(l);
     }
 
-    public void setActiveFilter(Boolean showAll) {
+    private void setActiveFilter(Boolean showAll) {
         filteredList.setPredicate(license -> showAll || license.getEndDate() == null || (license.getEndDate() != null && license.getEndDate().after(new Date())));
     }
 }
