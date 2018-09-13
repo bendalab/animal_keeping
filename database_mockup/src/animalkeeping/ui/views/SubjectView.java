@@ -36,17 +36,19 @@
 package animalkeeping.ui.views;
 
 import animalkeeping.logging.Communicator;
-import animalkeeping.model.*;
-import animalkeeping.ui.widgets.ControlLabel;
+import animalkeeping.model.Housing;
+import animalkeeping.model.Subject;
+import animalkeeping.model.SubjectNote;
+import animalkeeping.model.Treatment;
 import animalkeeping.ui.Main;
-import animalkeeping.ui.widgets.TimelineController;
 import animalkeeping.ui.tables.HousingTable;
 import animalkeeping.ui.tables.NotesTable;
 import animalkeeping.ui.tables.SubjectsTable;
 import animalkeeping.ui.tables.TreatmentsTable;
+import animalkeeping.ui.widgets.ControlLabel;
+import animalkeeping.ui.widgets.TimelineController;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.Dialogs;
-import animalkeeping.util.EntityHelper;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -61,7 +63,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Iterator;
+import java.util.ResourceBundle;
 
 public class SubjectView extends AbstractView implements Initializable {
     @FXML private ScrollPane tableScrollPane;
@@ -280,7 +283,7 @@ public class SubjectView extends AbstractView implements Initializable {
             housingStartLabel.setText(firstHousing != null ? timestampFormat.format(firstHousing.getStart()) : "");
             if (lastHousing != null) {
                 housingEndLabel.setText(lastHousing.getEnd() != null ? timestampFormat.format(lastHousing.getEnd()) : "");
-            } else {
+            } else if (firstHousing != null){
                 housingEndLabel.setText(firstHousing.getEnd() != null ? timestampFormat.format(firstHousing.getEnd()) : "");
             }
             Iterator<Treatment> titer = selectedSubject.getTreatments().iterator();
@@ -315,11 +318,12 @@ public class SubjectView extends AbstractView implements Initializable {
             housingTable.clear();
             notesTable.setNotes(null);
         }
-        moveSubjectLabel.setDisable(selectedSubject == null);
-        deleteSubjectLabel.setDisable(selectedSubject == null);
+        Boolean alive = selectedSubject != null && selectedSubject.getCurrentHousing() != null;
+        moveSubjectLabel.setDisable(selectedSubject == null || !alive);
+        deleteSubjectLabel.setDisable(selectedSubject == null ||!alive) ;
         editSubjectLabel.setDisable(selectedSubject == null);
-        reportDead.setDisable(selectedSubject == null);
-        addTreatmentLabel.setDisable(selectedSubject==null);
+        reportDead.setDisable(selectedSubject == null || !alive);
+        addTreatmentLabel.setDisable(selectedSubject==null || !alive);
         newComment.setDisable(selectedSubject==null);
     }
 
