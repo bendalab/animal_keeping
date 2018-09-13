@@ -7,6 +7,8 @@ import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.EntityHelper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
@@ -20,10 +22,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 import java.util.prefs.Preferences;
 
 import static animalkeeping.util.Dialogs.editHousingUnitDialog;
@@ -80,6 +79,7 @@ public class AddSubjectsForm extends VBox {
     private SubjectType st;
     private Preferences prefs;
     private Label previewLabel;
+    private ListView<String> previewList;
 
     public AddSubjectsForm() {
         this(null);
@@ -187,6 +187,10 @@ public class AddSubjectsForm extends VBox {
         newPerson.setTooltip(new Tooltip("create a new person entry"));
         newPerson.setDisable(true);
 
+        previewList = new ListView<>();
+        previewList.setEditable(false);
+        previewList.setPrefHeight(100);
+
         List<SupplierType> supplier = EntityHelper.getEntityList("from SupplierType order by name asc", SupplierType.class);
         List<SpeciesType> species = EntityHelper.getEntityList("from SpeciesType order by name asc", SpeciesType.class);
         List<SubjectType> subjectTypes = EntityHelper.getEntityList("from SubjectType order by name asc", SubjectType.class);
@@ -265,13 +269,15 @@ public class AddSubjectsForm extends VBox {
 
         grid.add(new Label("subject count"), 0, 9);
         grid.add(countSpinner, 1, 9, 2, 1);
+        countSpinner.valueProperty().addListener(((observable, oldValue, newValue) -> updatePreviewList()));
 
         grid.add(new Label("start index:"), 0, 10);
         grid.add(startIdSpinner, 1, 10, 2, 1);
         startIdSpinner.valueProperty().addListener((observable, oldValue, newValue) -> createPreview());
 
-        grid.add(new Label("(*) required"), 0, 11);
-
+        grid.add(new Label("preview:"), 0, 11);
+        grid.add(previewList, 0, 12, 3, 2);
+        grid.add(new Label("(*) required"), 0, 14);
         this.getChildren().add(grid);
     }
 
@@ -282,7 +288,22 @@ public class AddSubjectsForm extends VBox {
         Integer initial_id = startIdSpinner.getValue();
         String previewName = createName(prefix, name, initial_id, 4);
         previewLabel.setText("(preview: " + previewName + ")");
+        updatePreviewList();
         return previewName;
+    }
+
+    private void updatePreviewList() {
+        Integer count = countSpinner.getValue();
+        LocalDate hdate = housingDate.getValue();
+        String prefix = String.valueOf(hdate.getYear());
+        String name = nameField.getText();
+        Integer initial_id = startIdSpinner.getValue();
+        ObservableList<String> list = FXCollections.observableArrayList();
+        for (int i=0; i < count; i++) {
+            String previewName = createName(prefix, name, initial_id + i, 4);
+            list.add(i, previewName);
+        }
+        previewList.setItems(list);
     }
 
     private String createName(String prefix, String name, Integer count, Integer digit_count) {
