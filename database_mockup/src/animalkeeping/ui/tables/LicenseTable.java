@@ -216,6 +216,6 @@ public class LicenseTable extends TableView<License> {
     }
 
     public void setActiveFilter(Boolean showAll) {
-        filteredList.setPredicate(license -> showAll || license.getEndDate().after(new Date()));
+        filteredList.setPredicate(license -> showAll || license.getEndDate() == null || (license.getEndDate() != null && license.getEndDate().after(new Date())));
     }
 }
