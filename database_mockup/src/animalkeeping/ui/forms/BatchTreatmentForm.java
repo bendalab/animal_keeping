@@ -3,13 +3,11 @@ package animalkeeping.ui.forms;
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
 import animalkeeping.ui.Main;
+import animalkeeping.ui.widgets.DelayButtons;
 import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.EntityHelper;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
@@ -23,7 +21,14 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 import java.util.prefs.Preferences;
 
 import static animalkeeping.util.Dialogs.editHousingUnitDialog;
@@ -35,7 +40,6 @@ public class BatchTreatmentForm extends VBox {
     private ComboBox<Person> personComboBox;
     private DatePicker treatmentStartDate, treatmentEndDate;
     private SpecialTextField startTimeField, endTimeField;
-    private CheckBox immediateEnd;
     private TextField commentNameField;
     private TextArea commentArea;
     private Preferences prefs;
@@ -90,31 +94,32 @@ public class BatchTreatmentForm extends VBox {
         treatmentStartDate = new DatePicker(LocalDate.now());
         treatmentEndDate = new DatePicker();
         startTimeField = new SpecialTextField("##:##:##");
-        startTimeField.setTooltip(new Tooltip("Start time of treatment, use hh:mm:ss format"));
+        startTimeField.setTooltip(new Tooltip("Start time of treatment, use HH:mm:ss format"));
         endTimeField = new SpecialTextField("##:##:##");
         startTimeField.setText(timeFormat.format(new Date()));
-        startTimeField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (!newValue && immediateEnd.isSelected()) {
-                    endTimeField.setText(startTimeField.getText());
-                }
-            }
-        });
-        endTimeField.setTooltip(new Tooltip("End time of treatment, use hh:mm:ss format"));
+        endTimeField.setTooltip(new Tooltip("End time of treatment, use HH:mm:ss format"));
         commentNameField = new TextField();
         commentArea = new TextArea();
-        immediateEnd = new CheckBox("treatment ends immediately");
-        immediateEnd.setSelected(false);
-        immediateEnd.setOnAction(event -> {
-            treatmentEndDate.setDisable(immediateEnd.isSelected());
-            endTimeField.setDisable(immediateEnd.isSelected());
-            if (immediateEnd.isSelected()) {
-                treatmentEndDate.setValue(treatmentStartDate.getValue());
-                endTimeField.setText(startTimeField.getText());
+
+        DelayButtons delay = new DelayButtons();
+        delay.minutesProperty.addListener((observable, oldValue, newValue) -> {
+            if (newValue.intValue() == -1) {
+               treatmentEndDate.setValue(treatmentStartDate.getValue());
+               endTimeField.setText(startTimeField.getText());
+            } else if (newValue.intValue() == 0) {
+               treatmentEndDate.setValue(LocalDate.now());
+               endTimeField.setText(timeFormat.format(new Date()));
+            } else {
+                LocalDate sdate = treatmentStartDate.getValue();
+                Date startDate = getDateTime(sdate, startTimeField.getText());
+                LocalDateTime ld = DateTimeHelper.toLocalDateTime(startDate);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+                ld = ld.plusMinutes(newValue.longValue());
+                ZonedDateTime zd = ld.atZone(ZoneId.systemDefault());
+                treatmentEndDate.setValue(zd.toLocalDate());
+                endTimeField.setText(zd.format(formatter));
             }
         });
-
         Button newHousingUnit = new Button("+");
         newHousingUnit.setTooltip(new Tooltip("create a new housing unit"));
         newHousingUnit.setOnAction(event -> editHousingUnitDialog(null));
@@ -165,8 +170,7 @@ public class BatchTreatmentForm extends VBox {
         endTimeField.prefWidthProperty().bind(column2.maxWidthProperty().add(column3.maxWidthProperty()));
         treatmentEndDate.prefWidthProperty().bind(column2.maxWidthProperty());
         commentNameField.prefWidthProperty().bind(column2.maxWidthProperty().add(column3.maxWidthProperty()));
-        immediateEnd.prefWidthProperty().bind(column2.maxWidthProperty());
-        immediateEnd.setFont(new Font(Font.getDefault().getFamily(), 9));
+        delay.prefWidthProperty().bind(column1.maxWidthProperty().add(column2.maxWidthProperty().add(column3.maxWidthProperty())));
 
         grid.setVgap(5);
         grid.setHgap(2);
@@ -190,7 +194,7 @@ public class BatchTreatmentForm extends VBox {
         grid.add(startTimeField, 1, 4, 2, 1);
         startTimeField.setText(timeFormat.format(date));
 
-        grid.add(immediateEnd, 1, 5);
+        grid.add(delay, 0, 5, 3, 1);
 
         grid.add(new Label("end date:"), 0, 6);
         grid.add(treatmentEndDate, 1, 6, 2, 1);
@@ -229,7 +233,7 @@ public class BatchTreatmentForm extends VBox {
         }
 
         String datetimestr = d + " " + timeStr;
-        DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date datetime;
 
         try {
