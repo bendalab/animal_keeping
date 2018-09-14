@@ -7,6 +7,7 @@ import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.EntityHelper;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
@@ -241,7 +242,7 @@ public class BatchTreatmentForm extends VBox {
     }
 
 
-    public List<Treatment> persist() {
+    public Boolean persist() {
         HousingUnit unit = housingUnitComboBox.getHousingUnit();
         if(unit == null) {
             return null;
@@ -254,31 +255,33 @@ public class BatchTreatmentForm extends VBox {
         }
 
         Set<Housing> housings = unit.getAllHousings(true);
-        ArrayList<Treatment> treatments = new ArrayList<>(housings.size());
+        Boolean ok = true;
         for (Housing h : housings) {
             Treatment treatment = new Treatment(startDate, h.getSubject(), personComboBox.getValue(),
                                                 treatmentComboBox.getValue());
             if (endDate != null) {
                 treatment.setEnd(endDate);
-                if (treatment.getTreatmentType().isInvasive()) {
+                if (treatment.getTreatmentType().isFinalExperiment()) {
                     h.setEnd(endDate);
-                    Communicator.pushSaveOrUpdate(h);
+                    ok = Communicator.pushSaveOrUpdate(h);
                 }
             }
             Communicator.pushSaveOrUpdate(treatment);
-            treatments.add(treatment);
-            if (!commentNameField.getText().isEmpty()) {
+            if (ok && !commentNameField.getText().isEmpty()) {
                 TreatmentNote tn = new TreatmentNote();
                 tn.setName(commentNameField.getText());
                 tn.setDate(startDate);
                 tn.setPerson(personComboBox.getValue());
                 tn.setComment(commentArea.getText());
                 tn.setTreatment(treatment);
-                Communicator.pushSaveOrUpdate(tn);
+                ok = Communicator.pushSaveOrUpdate(tn);
+            }
+            if (!ok) {
+                return ok;
             }
         }
         storePreferences();
-        return treatments;
+        return ok;
     }
 
     private void applyPreferences() {

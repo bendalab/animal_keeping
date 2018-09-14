@@ -72,16 +72,18 @@ public class Dialogs {
         });
 
         Optional<Integer> result = dialog.showAndWait();
+        /*
         if (!result.isPresent() || result.get() < 0) {
             showInfo("Something went wrong while creating new subjects!");
         } else if (result.get() == 0) {
             showInfo("Successfully created subjects.");
         }
+        */
     }
 
     public static void batchTreatmentDialog(HousingUnit unit) {
         BatchTreatmentForm btf = new BatchTreatmentForm(unit);
-        Dialog<List<Treatment>> dialog = new Dialog<>();
+        Dialog<Boolean> dialog = new Dialog<>();
 
         dialog.setTitle("Batch Treatment");
         dialog.setResizable(false);
@@ -108,10 +110,7 @@ public class Dialogs {
             return null;
         });
 
-        Optional<List<Treatment>> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            showInfo("Successfully created a batch treatment!");
-        }
+        Optional<Boolean> result = dialog.showAndWait();
     }
 
     public static HousingType editHousingTypeDialog(HousingType type) {
