@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox alignment="CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Button fx:id="immediateBtn" mnemonicParsing="false" text="immediately">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Button>
+      <Button fx:id="nowBtn" mnemonicParsing="false" text="now">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Button>
+      <Button fx:id="fifteenBtn" mnemonicParsing="false" text="+15min">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Button>
+      <Button fx:id="thirtyBtn" mnemonicParsing="false" text="+30min" textOverrun="CLIP">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Button>
+      <Button fx:id="oneHourBtn" mnemonicParsing="false" text="+1h">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Button>
+      <Button fx:id="sixHourBtn" mnemonicParsing="false" text="+6h">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Button>
+   </children>
+</HBox>
