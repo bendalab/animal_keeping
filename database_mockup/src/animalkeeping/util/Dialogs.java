@@ -45,7 +45,7 @@ public class Dialogs {
         dialog.setTitle("Import subjects");
         dialog.setResizable(false);
         dialog.getDialogPane().setContent(htd);
-        dialog.setWidth(400);
+        dialog.setWidth(425);
         htd.prefWidthProperty().bind(dialog.widthProperty());
 
         ButtonType buttonTypeOk = new ButtonType("ok", ButtonBar.ButtonData.OK_DONE);

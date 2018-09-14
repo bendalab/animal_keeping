@@ -170,7 +170,7 @@ public class BatchTreatmentForm extends VBox {
         endTimeField.prefWidthProperty().bind(column2.maxWidthProperty().add(column3.maxWidthProperty()));
         treatmentEndDate.prefWidthProperty().bind(column2.maxWidthProperty());
         commentNameField.prefWidthProperty().bind(column2.maxWidthProperty().add(column3.maxWidthProperty()));
-        delay.prefWidthProperty().bind(column1.maxWidthProperty().add(column2.maxWidthProperty().add(column3.maxWidthProperty())));
+        delay.prefWidthProperty().bind(column2.maxWidthProperty().add(column3.maxWidthProperty()));
 
         grid.setVgap(5);
         grid.setHgap(2);
@@ -194,12 +194,13 @@ public class BatchTreatmentForm extends VBox {
         grid.add(startTimeField, 1, 4, 2, 1);
         startTimeField.setText(timeFormat.format(date));
 
-        grid.add(delay, 0, 5, 3, 1);
+        grid.add(new Label("treatment end:"), 0, 5);
+        grid.add(delay, 1, 5, 2, 1);
 
-        grid.add(new Label("end date:"), 0, 6);
+        grid.add(new Label("date:"), 0, 6);
         grid.add(treatmentEndDate, 1, 6, 2, 1);
         treatmentEndDate.setOnAction(event -> endTimeField.setText(timeFormat.format(date)));
-        grid.add(new Label("end time:"), 0, 7);
+        grid.add(new Label("time:"), 0, 7);
         grid.add(endTimeField, 1, 7, 2, 1);
 
         grid.add(new Separator(Orientation.HORIZONTAL), 0, 8, 3, 1);

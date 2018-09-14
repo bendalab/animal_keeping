@@ -240,12 +240,13 @@ public class TreatmentForm extends VBox {
         grid.add(new Label("start time(*):"), 0,5);
         grid.add(startTimeField, 1,5, 2, 1);
 
-        grid.add(delay, 0, 6, 3, 1);
+        grid.add(new Label("treatment end:"), 0, 6);
+        grid.add(delay, 1, 6, 2, 1);
 
-        grid.add(new Label("end date:"), 0, 7);
+        grid.add(new Label("date:"), 0, 7);
         grid.add(endDate, 1, 7, 2, 1);
 
-        grid.add(new Label("end time:"), 0, 8);
+        grid.add(new Label("time:"), 0, 8);
         grid.add(endTimeField, 1, 8, 2, 1);
         grid.add(new Label("(*required)"), 0, 9);
 
