@@ -8,12 +8,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import javafx.util.Callback;
 import javafx.util.Pair;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
 
@@ -313,7 +311,7 @@ public class Dialogs {
     }
 
     public static Pair<Date, Date> getDateTimeInterval(Date start, Date end) {
-        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         LocalDate sd = start != null ? DateTimeHelper.toLocalDate(start) : LocalDate.now().minusYears(1);
         LocalDate ed = end != null ? DateTimeHelper.toLocalDate(end) : LocalDate.now();
         String st = start != null ? timeFormat.format(start) : timeFormat.format(new Date());
