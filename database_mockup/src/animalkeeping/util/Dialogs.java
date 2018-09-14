@@ -299,12 +299,11 @@ public class Dialogs {
             if (b == buttonTypeOk) {
                 Date start = DateTimeHelper.localDateToUtilDate(sdp.getValue());
                 Date end = DateTimeHelper.localDateToUtilDate(edp.getValue());
-                if (end.before(start)) {
+                if (end != null && start!= null && end.before(start)) {
                     Dialogs.showInfo("End date is before start date. Cancelled!");
                     return null;
                 }
-                Pair<Date, Date> interval = new Pair<>(start, end);
-                return interval;
+                return new Pair<>(start, end);
             }
             return null;
         });
@@ -364,12 +363,11 @@ public class Dialogs {
             if (b == buttonTypeOk) {
                 Date startDate = DateTimeHelper.getDateTime(sdp.getValue(), sdf.getText());
                 Date endDate = DateTimeHelper.getDateTime(edp.getValue(), edf.getText());
-                if (endDate.before(startDate)) {
+                if (startDate != null && endDate != null && endDate.before(startDate)) {
                     Dialogs.showInfo("End date is before start date. Cancelled!");
                     return null;
                 }
-                Pair<Date, Date> interval = new Pair<>(startDate, endDate);
-                return interval;
+                return new Pair<>(startDate, endDate);
             }
             return null;
         });
@@ -653,14 +651,11 @@ public class Dialogs {
         dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialog.getDialogPane().getButtonTypes().add(buttonTypeCancel);
 
-        dialog.setResultConverter(new Callback<ButtonType, SubjectNote>() {
-            @Override
-            public SubjectNote call(ButtonType b) {
-                if (b == buttonTypeOk) {
-                    return snf.persist();
-                }
-                return null;
+        dialog.setResultConverter(b -> {
+            if (b == buttonTypeOk) {
+                return snf.persist();
             }
+            return null;
         });
         Optional<SubjectNote> result = dialog.showAndWait();
         return result.orElse(null);
