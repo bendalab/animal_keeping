@@ -1,10 +1,9 @@
 package animalkeeping.util;
 
-import javafx.util.Pair;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
@@ -44,7 +43,7 @@ public class DateTimeHelper {
     }
 
     public static LocalDate toLocalDate(java.sql.Date date) {
-        return ((java.sql.Date) date).toLocalDate();
+        return date.toLocalDate();
     }
 
     public static LocalDate toLocalDate(java.util.Date date) {
@@ -52,6 +51,10 @@ public class DateTimeHelper {
             return toLocalDate((java.sql.Date) date);
         }
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    public static LocalDateTime toLocalDateTime(java.util.Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
     public static Boolean validateTime(String time_str) {
@@ -70,7 +73,7 @@ public class DateTimeHelper {
             years = Period.between(birthDate, currentDate).getYears();
             LocalDate ref = LocalDate.of(birthDate.getYear() + years, birthDate.getMonth(), birthDate.getDayOfMonth());
             months = Period.between(ref, currentDate).getMonths();
-            ref.plusMonths(months);
+            ref = ref.plusMonths(months);
             days = Period.between(ref, currentDate).getDays();
             return new Age(years, months, days);
         } else {
