@@ -7,6 +7,8 @@ import animalkeeping.ui.widgets.HousingDropDown;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.EntityHelper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
@@ -32,6 +34,7 @@ public class BatchTreatmentForm extends VBox {
     private ComboBox<Person> personComboBox;
     private DatePicker treatmentStartDate, treatmentEndDate;
     private SpecialTextField startTimeField, endTimeField;
+    private CheckBox immediateEnd;
     private TextField commentNameField;
     private TextArea commentArea;
     private Preferences prefs;
@@ -51,7 +54,7 @@ public class BatchTreatmentForm extends VBox {
     private void init(HousingUnit unit) {
         prefs = Preferences.userNodeForPackage(BatchTreatmentForm.class);
 
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         Date date = new Date();
 
         housingUnitComboBox = new HousingDropDown();
@@ -88,9 +91,28 @@ public class BatchTreatmentForm extends VBox {
         startTimeField = new SpecialTextField("##:##:##");
         startTimeField.setTooltip(new Tooltip("Start time of treatment, use hh:mm:ss format"));
         endTimeField = new SpecialTextField("##:##:##");
+        startTimeField.setText(timeFormat.format(new Date()));
+        startTimeField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if (!newValue && immediateEnd.isSelected()) {
+                    endTimeField.setText(startTimeField.getText());
+                }
+            }
+        });
         endTimeField.setTooltip(new Tooltip("End time of treatment, use hh:mm:ss format"));
         commentNameField = new TextField();
         commentArea = new TextArea();
+        immediateEnd = new CheckBox("treatment ends immediately");
+        immediateEnd.setSelected(false);
+        immediateEnd.setOnAction(event -> {
+            treatmentEndDate.setDisable(immediateEnd.isSelected());
+            endTimeField.setDisable(immediateEnd.isSelected());
+            if (immediateEnd.isSelected()) {
+                treatmentEndDate.setValue(treatmentStartDate.getValue());
+                endTimeField.setText(startTimeField.getText());
+            }
+        });
 
         Button newHousingUnit = new Button("+");
         newHousingUnit.setTooltip(new Tooltip("create a new housing unit"));
@@ -142,6 +164,8 @@ public class BatchTreatmentForm extends VBox {
         endTimeField.prefWidthProperty().bind(column2.maxWidthProperty().add(column3.maxWidthProperty()));
         treatmentEndDate.prefWidthProperty().bind(column2.maxWidthProperty());
         commentNameField.prefWidthProperty().bind(column2.maxWidthProperty().add(column3.maxWidthProperty()));
+        immediateEnd.prefWidthProperty().bind(column2.maxWidthProperty());
+        immediateEnd.setFont(new Font(Font.getDefault().getFamily(), 9));
 
         grid.setVgap(5);
         grid.setHgap(2);
@@ -163,23 +187,25 @@ public class BatchTreatmentForm extends VBox {
 
         grid.add(new Label("start time(*):"), 0, 4);
         grid.add(startTimeField, 1, 4, 2, 1);
-        startTimeField.setText(dateFormat.format(date));
+        startTimeField.setText(timeFormat.format(date));
 
-        grid.add(new Label("end date:"), 0, 5);
-        grid.add(treatmentEndDate, 1, 5, 2, 1);
-        treatmentEndDate.setOnAction(event -> endTimeField.setText(dateFormat.format(date)));
-        grid.add(new Label("end time:"), 0, 6);
-        grid.add(endTimeField, 1, 6, 2, 1);
+        grid.add(immediateEnd, 1, 5);
 
-        grid.add(new Separator(Orientation.HORIZONTAL), 0, 7, 3, 1);
+        grid.add(new Label("end date:"), 0, 6);
+        grid.add(treatmentEndDate, 1, 6, 2, 1);
+        treatmentEndDate.setOnAction(event -> endTimeField.setText(timeFormat.format(date)));
+        grid.add(new Label("end time:"), 0, 7);
+        grid.add(endTimeField, 1, 7, 2, 1);
 
-        grid.add(new Label("comment title:"), 0, 8);
-        grid.add(commentNameField, 1, 8, 2, 1);
+        grid.add(new Separator(Orientation.HORIZONTAL), 0, 8, 3, 1);
 
-        grid.add(new Label("comment:"), 0, 9);
-        grid.add(commentArea, 0, 10, 3,3);
+        grid.add(new Label("comment title:"), 0, 9);
+        grid.add(commentNameField, 1, 9, 2, 1);
 
-        grid.add(new Label("(*) required"), 0, 13);
+        grid.add(new Label("comment:"), 0, 10);
+        grid.add(commentArea, 0, 11, 3,3);
+
+        grid.add(new Label("(*) required"), 0, 14);
 
         this.getChildren().add(grid);
     }
