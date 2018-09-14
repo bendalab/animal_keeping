@@ -2,23 +2,27 @@ package animalkeeping.ui.forms;
 
 import animalkeeping.logging.Communicator;
 import animalkeeping.model.*;
-import animalkeeping.ui.Main;
+import animalkeeping.ui.widgets.DelayButtons;
 import animalkeeping.ui.widgets.SpecialTextField;
 import animalkeeping.util.DateTimeHelper;
 import animalkeeping.util.Dialogs;
 import animalkeeping.util.EntityHelper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.Font;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -34,7 +38,6 @@ public class TreatmentForm extends VBox {
     private DatePicker startDate, endDate;
     private SpecialTextField startTimeField, endTimeField;
     private TextField commentNameField;
-    private CheckBox immediateEnd;
     private TextArea commentArea;
     private Subject subject;
     private Treatment treatment;
@@ -133,39 +136,32 @@ public class TreatmentForm extends VBox {
         });
         startDate = new DatePicker();
         startDate.setValue(LocalDate.now());
-        startDate.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (!newValue && immediateEnd.isSelected()) {
-                    endDate.setValue(startDate.getValue());
-                }
-            }
-        });
         startTimeField = new SpecialTextField("##:##:##");
         startTimeField.setText(timeFormat.format(new Date()));
-        startTimeField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (!newValue && immediateEnd.isSelected()) {
-                    endTimeField.setText(startTimeField.getText());
-                }
-            }
-        });
+
         endDate = new DatePicker();
         endTimeField = new SpecialTextField("##:##:##");
         endDate.setOnAction(event -> endTimeField.setText(timeFormat.format(new Date())));
         commentArea = new TextArea();
         commentArea.setWrapText(true);
         commentNameField = new TextField();
-
-        immediateEnd = new CheckBox("treatment ends immediately");
-        immediateEnd.setSelected(false);
-        immediateEnd.setOnAction(event -> {
-            endDate.setDisable(immediateEnd.isSelected());
-            endTimeField.setDisable(immediateEnd.isSelected());
-            if (immediateEnd.isSelected()) {
-                endDate.setValue(startDate.getValue());
-                endTimeField.setText(startTimeField.getText());
+        DelayButtons delay = new DelayButtons();
+        delay.minutesProperty.addListener((observable, oldValue, newValue) -> {
+            if (newValue.intValue() == -1) {
+               endDate.setValue(startDate.getValue());
+               endTimeField.setText(startTimeField.getText());
+            } else if (newValue.intValue() == 0) {
+               endDate.setValue(LocalDate.now());
+               endTimeField.setText(timeFormat.format(new Date()));
+            } else {
+                LocalDate sdate = startDate.getValue();
+                Date startDate = getDateTime(sdate, startTimeField.getText());
+                LocalDateTime ld = DateTimeHelper.toLocalDateTime(startDate);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+                ld = ld.plusMinutes(newValue.longValue());
+                ZonedDateTime zd = ld.atZone(ZoneId.systemDefault());
+                endDate.setValue(zd.toLocalDate());
+                endTimeField.setText(zd.format(formatter));
             }
         });
 
@@ -218,8 +214,7 @@ public class TreatmentForm extends VBox {
         startDate.prefWidthProperty().bind(column2.maxWidthProperty().add(column3.prefWidthProperty()));
         endTimeField.prefWidthProperty().bind(column2.prefWidthProperty().add(column3.prefWidthProperty()));
         endDate.prefWidthProperty().bind(column2.maxWidthProperty().add(column3.prefWidthProperty()));
-        immediateEnd.prefWidthProperty().bind(column2.maxWidthProperty());
-        immediateEnd.setFont(new Font(Font.getDefault().getFamily(), 9));
+        delay.prefWidthProperty().bind(column1.maxWidthProperty().add(column2.maxWidthProperty().add(column3.maxWidthProperty())));
         commentNameField.prefWidthProperty().bind(column2.prefWidthProperty().add(column3.prefWidthProperty()));
 
         grid.setVgap(5);
@@ -245,7 +240,7 @@ public class TreatmentForm extends VBox {
         grid.add(new Label("start time(*):"), 0,5);
         grid.add(startTimeField, 1,5, 2, 1);
 
-        grid.add(immediateEnd, 1, 6);
+        grid.add(delay, 0, 6, 3, 1);
 
         grid.add(new Label("end date:"), 0, 7);
         grid.add(endDate, 1, 7, 2, 1);
@@ -367,8 +362,6 @@ public class TreatmentForm extends VBox {
                 e.printStackTrace();
             }
         }
-        //immediateEnd.setSelected(prefs.getBoolean("treatment_immediate_end", false));
-        //immediateEnd.fire();
     }
 
     private void storePreferences() {
@@ -377,7 +370,6 @@ public class TreatmentForm extends VBox {
         prefs.put("treatment_subject", subjectComboBox.getValue().getId().toString());
         prefs.put("treatment_startdate", startDate.getValue().toString());
         prefs.put("treatment_enddate", endDate.getValue().toString());
-        //prefs.putBoolean("treatment_immediate_end", immediateEnd.isSelected());
     }
 
 
@@ -392,7 +384,7 @@ public class TreatmentForm extends VBox {
                 messages.add("Subject is no longer available!");
                 valid = false;
             }
-            if (startDate.getValue().isBefore(DateTimeHelper.toLocalDate(subjectComboBox.getValue().getImportDate()))) {
+            if (startDate.getValue() != null && startDate.getValue().isBefore(DateTimeHelper.toLocalDate(subjectComboBox.getValue().getImportDate()))) {
                 messages.add("Treatment date is before subject import date!");
                 valid = false;
             }
@@ -410,7 +402,7 @@ public class TreatmentForm extends VBox {
             Date start = DateTimeHelper.getDateTime(startDate.getValue(), startTimeField.getText());
             Date end = DateTimeHelper.getDateTime(endDate.getValue(), endTimeField.getText());
             if (start.after(end)) {
-                messages.add("Strart date is after end date!");
+                messages.add("Start date is after end date!");
                 valid = false;
             }
         }
