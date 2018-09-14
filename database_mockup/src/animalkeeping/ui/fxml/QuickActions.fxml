@@ -254,7 +254,10 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </Label>
-                        <Label onMouseClicked="#newBatchTreatment" text="batch treatment" />
+                        <Label onMouseClicked="#newBatchTreatment" text="batch treatment">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor></Label>
                      </children>
                   </VBox>
                   <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
