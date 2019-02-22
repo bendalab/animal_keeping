@@ -197,6 +197,7 @@ public class SubjectsTable extends TableView<SubjectsTable.SubjectTableItem> {
         tableLayout.applyLayout();
     }
 
+
     public Long getSelectedSubjectId() {
         if (! getSelectionModel().isEmpty()) {
             return getSelectionModel().getSelectedItem().getId();
@@ -212,6 +213,7 @@ public class SubjectsTable extends TableView<SubjectsTable.SubjectTableItem> {
             filteredList.setPredicate(null);
         }
     }
+
 
     public void setNameFilter(String name) {
         filteredList.setPredicate(subject -> {
@@ -334,18 +336,17 @@ public class SubjectsTable extends TableView<SubjectsTable.SubjectTableItem> {
             Number maxCount = (Number)countQuery.getSingleResult();
             Query idQuery = session.createQuery("SELECT MAX(s.id) from Subject s");
             Number max_id = (Number)idQuery.getSingleResult();
+
             int batchSize = 50, min_id = 0;
             Query<Subject> q = session.createQuery("FROM Subject s WHERE s.id > :min_id AND s.id <= :max_id", Subject.class);
             q.setReadOnly(true);
             q.setCacheable(false);
             int no_fetched = 0;
-            for (int i=0; i < max_id.intValue() / batchSize; i++) {
+            for (int i=0; i <= max_id.intValue() / batchSize; i++) {
                 min_id = i * batchSize;
                 q.setParameter("min_id", (long)min_id);
                 q.setParameter("max_id", (long)(min_id + batchSize));
-
                 List<Subject> ls = q.getResultList();
-
                 for (Subject s : ls) {
                     no_fetched++;
                     final SubjectTableItem si = new SubjectTableItem(s);
